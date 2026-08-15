@@ -1213,6 +1213,38 @@ a.land-cta:hover:visited {
   </nav>
 </section>
 
+<section class="lp-block tint" id="when-to-go">
+  <p class="lp-kicker">When to go</p>
+  <h2>Where is good in the month you actually have.</h2>
+  <p>
+    Most trips are decided by the fortnight you can take off, not the place. So pick the
+    month you are free and the weather you want, and see which destinations deliver it &mdash;
+    real month-by-month normals, not a smoothed yearly average.
+  </p>
+  <label for="climate-month" class="sr-only">Month</label>
+  <select id="climate-month" class="lp-select">
+    <option value="0">January</option>
+    <option value="1">February</option>
+    <option value="2">March</option>
+    <option value="3">April</option>
+    <option value="4">May</option>
+    <option value="5">June</option>
+    <option value="6">July</option>
+    <option value="7">August</option>
+    <option value="8">September</option>
+    <option value="9">October</option>
+    <option value="10">November</option>
+    <option value="11">December</option>
+  </select>
+  <nav class="lp-pills" id="climate-bands">
+    <a href="./guides/?warm=hot">Hot &mdash; 28&deg;C+</a>
+    <a href="./guides/?warm=warm">Warm &mdash; 22&ndash;28&deg;C</a>
+    <a href="./guides/?warm=mild">Mild &mdash; 15&ndash;22&deg;C</a>
+    <a href="./guides/?warm=cool">Cool &mdash; 8&ndash;15&deg;C</a>
+    <a href="./guides/?warm=cold">Cold &mdash; under 8&deg;C</a>
+  </nav>
+</section>
+
 <section class="lp-block" id="where">
   <p class="lp-kicker">Where</p>
   <h2>You already know the part of the world.</h2>
@@ -1737,6 +1769,14 @@ a.land-cta:hover:visited {
 
   var cache = null, inflight = null, active = {}, lastNav = null;
 
+  /* The month is CONTEXT, not a filter: on its own it excludes nothing. It picks
+     which column of the climate table the warmth bands read. Changing it
+     re-runs whatever bands are already lit. */
+  function climateMonth() {
+    var sel = document.getElementById('climate-month');
+    return sel && sel.value !== '' ? Number(sel.value) : new Date().getMonth();
+  }
+
   function load() {
     if (cache) return Promise.resolve(cache);
     if (inflight) return inflight;
@@ -1768,8 +1808,13 @@ a.land-cta:hover:visited {
           var re = /'([^']+)'\s*:\s*'([^']+)'/g, x;
           while ((x = re.exec(cm[1]))) cont[x[1]] = x[2];
         }
-        cache = { themes: grab('THEME_DATA'), days: grab('DAYS_DATA'), guides: guides, cont: cont };
-        return cache;
+        cache = { themes: grab('THEME_DATA'), days: grab('DAYS_DATA'), guides: guides, cont: cont, climate: null };
+        /* Climate is a second file and only matters if a warmth pill is used, so
+           it rides along rather than blocking the first filter. */
+        return fetch('./assets/climate.json')
+          .then(function (r) { return r.json(); })
+          .then(function (c) { cache.climate = c; return cache; })
+          .catch(function () { return cache; });
       })
       .catch(function () { inflight = null; return null; });
     return inflight;
@@ -1785,6 +1830,22 @@ a.land-cta:hover:visited {
     }
     if (kind === 'lang')      return g.lang.indexOf(value) > -1;
     if (kind === 'continent') return d.cont[g.country] === value;
+    if (kind === 'warm') {
+      if (!d.climate || typeof CLIMATE_KEY === 'undefined') return false;
+      var folder = (g.url.split('/')[2] || '');
+      var rec = d.climate[CLIMATE_KEY[folder]];
+      if (!rec || !rec.hi) return false;
+      var hi = rec.hi[climateMonth()];
+      if (typeof hi !== 'number') return false;
+      /* Bands are on the month's average daily HIGH — the number people picture
+         when they ask "is it warm in March". */
+      if (value === 'hot')  return hi >= 28;
+      if (value === 'warm') return hi >= 22 && hi < 28;
+      if (value === 'mild') return hi >= 15 && hi < 22;
+      if (value === 'cool') return hi >= 8  && hi < 15;
+      if (value === 'cold') return hi < 8;
+      return false;
+    }
     return true;
   }
 
@@ -1825,7 +1886,7 @@ a.land-cta:hover:visited {
 
   function syncPills() {
     [].forEach.call(document.querySelectorAll('.lp-pills a'), function (a) {
-      var m = (a.getAttribute('href') || '').match(/[?&](type|days|lang|continent)=([^&#]+)/);
+      var m = (a.getAttribute('href') || '').match(/[?&](type|days|lang|continent|warm)=([^&#]+)/);
       var on = false;
       if (m && active[m[1]]) {
         var v = decodeURIComponent(m[2]);
@@ -1897,11 +1958,17 @@ a.land-cta:hover:visited {
     });
   }
 
+  var mo = document.getElementById('climate-month');
+  if (mo) {
+    mo.value = String(new Date().getMonth());
+    mo.addEventListener('change', function () { if (active.warm) render(); });
+  }
+
   document.addEventListener('click', function (ev) {
     var pill = ev.target.closest ? ev.target.closest('.lp-pills a') : null;
     if (!pill) return;
     var href = pill.getAttribute('href') || '';
-    var m = href.match(/[?&](type|days|lang|continent)=([^&#]+)/);
+    var m = href.match(/[?&](type|days|lang|continent|warm)=([^&#]+)/);
     if (!m) return;                       /* plain link — let it navigate */
 
     ev.preventDefault();
@@ -2568,6 +2635,14 @@ function render() {
     if (sel.value) location.href = './guides/?country=' + encodeURIComponent(sel.value);
   });
 }());
+</script>
+<script>
+/* Folder -> climate.json key. Generated from build_climate.collect_pins(), the
+   same source climate.json is built from — NOT matched by name at runtime.
+   Name matching silently mapped San-Jose-Costa-Rica onto California's 'San Jose'
+   (Jan 15C) instead of 'San José CR' (Jan 25C), which is a wrong answer that
+   looks like a right one. */
+var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","Alaska":"Alaska","Alesund":"Alesund","Amalfi":"Amalfi","Amsterdam":"Amsterdam","Annecy":"Annecy","Aracaju":"Aracaju","Arenal":"Arenal","Aruba":"Aruba","Athens":"Athens","Atlanta":"Atlanta","Austin":"Austin","Azores":"Azores","Bahamas":"The Bahamas","Bali":"Bali","Banff":"Banff","Bangkok":"Bangkok","Barbados":"Barbados","Barcelona":"Barcelona","Beijing":"Beijing","Bend":"Bend","Bergen":"Bergen","Berlin":"Berlin","Bhutan":"Bhutan","Big-Island":"Big Island","Bilbao":"Bilbao","Bologna":"Bologna","Bora-Bora":"Bora Bora","Bordeaux":"Bordeaux","Boston":"Boston","Boulder":"Boulder","Bruges":"Bruges","Brussels":"Brussels","Budapest":"Budapest","Buenos-Aires":"Buenos Aires","Busan":"Busan","Cairo":"Cairo","Cambridge":"Cambridge","Cancun":"Canc\u00fan","Cannes":"Cannes","Cape-Cod":"Cape Cod","Cape-Town":"Cape Town","Capri":"Capri","Carmel-by-the-Sea":"Carmel by the Sea","Cascais":"Cascais","Cayman-Islands":"Cayman Islands","Charlotte":"Charlotte","Chiang-Mai":"Chiang Mai","Chicago":"Chicago","Chongqing":"Chongqing","Cinque-Terre":"Cinque Terre","Coeur-dAlene":"Coeur dAlene","Colmar":"Colmar","Cologne":"Cologne","Colombo":"Colombo","Columbia":"Columbia","Copenhagen":"Copenhagen","Corfu":"Corfu","Crete":"Crete","Curacao":"Cura\u00e7ao","Curitiba":"Curitiba","Cusco":"Cusco","Dallas":"Dallas","Denver":"Denver","Doha":"Doha","Dubai":"Dubai","Dublin":"Dublin","Dubrovnik":"Dubrovnik","Edinburgh":"Edinburgh","Florence":"Florence","Florianopolis":"Florian\u00f3polis","Florida-Keys":"Florida Keys","Fortaleza":"Fortaleza","Foz-do-Igua\u00e7u":"Foz do Igua\u00e7u","Frankfurt":"Frankfurt","Galapagos-Islands":"Galapagos-Islands","Geneva":"Geneva","Glacier-National-Park":"Glacier National Park","Glasgow":"Glasgow","Gothenburg":"Gothenburg","Granada":"Granada","Hamburg":"Hamburg","Hanoi":"Hanoi","Helsinki":"Helsinki","Hilton-Head-Island":"Hilton Head Island","Hiroshima":"Hiroshima","Hoi-An":"Hoi An","Hong-Kong":"Hong Kong","Istanbul":"Istanbul","Jo\u00e3o-Pessoa":"Jo\u00e3o Pessoa","Kauai":"Kauai","KeyWest":"Key West","Kotor":"Kotor","Krak\u00f3w":"Krak\u00f3w","Kyoto":"Kyoto","La-Jolla":"La Jolla","Lagos":"Lagos","Lake-Como":"Lake Como","Lake-Tahoe":"Lake Tahoe","Las-Vegas":"Las Vegas","Lecce":"Lecce","Lille":"Lille","Lima":"Lima","Lisbon":"Lisbon","Ljubljana":"Ljubljana","London":"London","Los-Angeles":"Los Angeles","Los-Cabos":"Los Cabos","Luang-Prabang":"Luang Prabang","Lucerne":"Lucerne","Luxembourg":"Luxembourg","Lyon":"Lyon","Macei\u00f3":"Macei\u00f3","MachuPicchu":"MachuPicchu","Madeira":"Madeira","Madrid":"Madrid","Malaga":"Malaga","Maldives":"Maldives","Malibu":"Malibu","Manuel-Antonio":"Manuel Antonio","Marco-Island":"Marco Island","Marktoberdorf":"Marktoberdorf","Marrakech":"Marrakech","Marseille":"Marseille","Maui":"Maui","Melbourne":"Melbourne","Miami":"Miami","Milan":"Milan","Monaco":"Monaco","Montevideo":"Montevideo","Montreal":"Montreal","Munich":"Munich","Muscat":"Muscat","Mykonos":"Mykonos","Napa":"Napa","Naples":"Naples","Naples-Florida":"Naples FL","Nashville":"Nashville","Natal":"Natal","New-Orleans":"New Orleans","New-York":"New York","Nice":"Nice","Oahu":"Oahu","Oaxaca":"Oaxaca","Olinda":"Olinda","Orcas-Island":"Orcas Island","Orlando":"Orlando","Osaka":"Osaka","Oslo":"Oslo","Oxford":"Oxford","Palawan":"Palawan","Palm-Desert":"Palm Desert","Palo-Alto":"Palo Alto","Paris":"Paris","Pasadena":"Pasadena","Pensacola":"Pensacola","Petra":"Petra","Philadelphia":"Philadelphia","Phoenix":"Phoenix","Phuket":"Phuket","Pisa":"Pisa","Pokhara":"Pokhara","Portland":"Portland","Porto":"Porto","Porto-Alegre":"Porto Alegre","Prague":"Prague","Puerto-Rico":"Puerto Rico","Puerto-Vallarta":"Puerto Vallarta","Quebec-City":"Quebec City","Queenstown":"Queenstown","Recife":"Recife","Reykjavik":"Reykjavik","Rhodes":"Rhodes","Rio-de-Janeiro":"Rio de Janeiro","Rome":"Rome","Rotterdam":"Rotterdam","Salvador":"Salvador","Salzburg":"Salzburg","San-Diego":"San Diego","San-Francisco":"San Francisco","San-Jose":"San Jose","San-Jose-Costa-Rica":"San Jos\u00e9 CR","San-Juan-Island":"San Juan Island","San-Sebastian":"San Sebastian","Santa-Barbara":"Santa Barbara","Santa-Cruz":"Santa Cruz","Santa-Fe":"Santa Fe","Santa-Monica":"Santa Monica","Santiago":"Santiago","Santorini":"Santorini","Sarasota":"Sarasota","Sardinia":"Sardinia","Scottsdale":"Scottsdale","Seattle":"Seattle","Sedona":"Sedona","Seoul":"Seoul","Seville":"Seville","Seychelles":"Seychelles","Shanghai":"Shanghai","Sicily":"Sicily","Siena":"Siena","Singapore":"Singapore","Sint-Maarten":"Sint Maarten","Sintra":"Sintra","Sorrento":"Sorrento","Split":"Split","Stockholm":"Stockholm","Strasbourg":"Strasbourg","Stuttgart":"Stuttgart","Sydney":"Sydney","S\u00e3o-Lu\u00eds":"S\u00e3o Lu\u00eds","S\u00e3o-Paulo":"S\u00e3o Paulo","Taipei":"Taipei","Tallinn":"Tallinn","Tbilisi":"Tbilisi","Tenerife":"Tenerife","Tokyo":"Tokyo","Toledo":"Toledo","Toronto":"Toronto","Tromso":"Tromso","Turin":"Turin","Turks-and-Caicos":"Turks and Caicos","Valletta":"Valletta","Vancouver":"Vancouver","Venice":"Venice","Verona":"Verona","Victoria":"Victoria","Vienna":"Vienna","Virgin-Islands":"Virgin Islands","Washington-DC":"Washington DC","Wellington":"Wellington","Whistler":"Whistler","Yellowstone":"Yellowstone","Zakynthos":"Zakynthos","Zhangjiajie":"Zhangjiajie","Zurich":"Zurich"};
 </script>
 </body>
 </html>
