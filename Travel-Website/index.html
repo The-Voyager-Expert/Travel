@@ -535,12 +535,10 @@ a.land-cta:hover:visited {
 
 /* The second stacked column sits on the RIGHT, so the two reference columns
    (stats, money) are staggered down the page rather than sitting parallel. */
-.lp-block.stack.right { text-align: right; }
-.lp-block.stack.right > h2,
-.lp-block.stack.right > p { margin-left: auto; }
-.lp-block.stack.right .lp-pills { margin-left: auto; align-items: stretch; }
-.lp-block.stack.right .lp-pills a { flex-direction: row-reverse; text-align: right; }
-.lp-block.stack.right .lp-pills a::after { content: '\2039'; }   /* ‹ */
+/* Right-alignment retired 2026-08-14 (owner: "move back to the left"). The
+   mirrored column — right-ragged text and a reversed ‹ chevron — read as a
+   different component rather than the same list on the other side. Everything
+   reads left now; .stack.right survives only as a placement hook. */
 
 /* ── Sections share the row ─────────────────────────────────────────────────
    A full-width card whose copy is capped at a reading measure leaves half the
@@ -687,6 +685,18 @@ a.land-cta:hover:visited {
 }
 .wx-cols .lp-links a:visited { color: #a94e1c; }
 .wx-cols .lp-links a:hover { border-bottom-color: #a94e1c; }
+
+/* Long link lists wrap into columns instead of running 35 rows down a narrow
+   card. A single-column Best Of list made its row roughly 2,000px tall, and
+   because the grid stretches row-mates, whatever sat beside it was padded out
+   with that much empty space. Columns cut the height to a third. */
+.lp-pills.cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(10.5rem, 100%), 1fr));
+  column-gap: clamp(0.9rem, 2vw, 1.6rem);
+  max-width: none;
+}
+.lp-pills.cols a { white-space: normal; }
 
 /* Before You Go rides in an iframe — see the loader for why. */
 #byg-mount { margin-top: clamp(1rem, 2.2vw, 1.6rem); }
@@ -971,9 +981,9 @@ a.land-cta:hover:visited {
      file the site search uses — so it can never drift from the shipped guides. -->
 <div class="lp-grid">
 <section class="lp-block open" id="skip-filters">
-  <h2>Or skip all of it.</h2>
+  <h2>Already know where you're going?</h2>
   <p>
-    If you already know where you're going, none of the filters below matter. Take the
+    Then none of the filters below matter. Take the
     whole list, or jump straight into one city's guide.
   </p>
   <div class="lp-jump">
@@ -1000,7 +1010,7 @@ a.land-cta:hover:visited {
 
 
 
-<section class="lp-block stack tint">
+<section class="lp-block tint" id="best-of">
   <p class="lp-kicker">The part you won't find elsewhere</p>
   <h2>Start from the thing, not the city.</h2>
   <p>
@@ -1013,7 +1023,7 @@ a.land-cta:hover:visited {
     country, but a single comparable list, each entry with the city it sits in and a link
     into that city's guide.
   </p>
-  <nav class="lp-pills">
+  <nav class="lp-pills cols">
     <a href="./Trip-Essentials/Best-Amusement-Parks.html">Amusement Parks</a>
     <a href="./Trip-Essentials/Best-Animal-Encounters.html">Animal Encounters</a>
     <a href="./Trip-Essentials/Best-Aquariums.html">Aquariums</a>
@@ -1143,8 +1153,7 @@ a.land-cta:hover:visited {
   <p>
     Every guide records <strong>the languages actually spoken</strong> at the destination,
     not just the official one. Pick yours and see everywhere you'd get by comfortably.
-  </p>
-  <nav class="lp-pills">
+  </<nav class="lp-pills cols">
     <a href="./guides/?lang=en">English</a>
     <a href="./guides/?lang=es">Spanish</a>
     <a href="./guides/?lang=fr">French</a>
@@ -1162,7 +1171,7 @@ a.land-cta:hover:visited {
     <a href="./guides/?lang=no">Norwegian</a>
     <a href="./guides/?lang=da">Danish</a>
     <a href="./guides/?lang=fi">Finnish</a>
-  </nav>
+  </nav>/nav>
 </section>
 
 <!-- ═══ BLOCK 6 — Best Of ═════════════════════════════════════════════════
@@ -1185,9 +1194,7 @@ a.land-cta:hover:visited {
     Which airline actually flies the route, how long a connection really needs at that
     specific airport, what the bag will cost, and where the lounge is once you're through
     security. The route maps are the <strong>full published networks</strong> for the three
-    US carriers — so you can see whether a nonstop exists before you start pricing.
-  </p>
-  <nav class="lp-pills">
+    US carriers — so you can see whether a nonstop exists before you start pricing.<nav class="lp-pills cols">
     <a href="./Trip-Essentials/Flights.html">All flight pages</a>
     <a href="./Trip-Essentials/Airlines-of-the-World.html">Airlines</a>
     <a href="./Trip-Essentials/Airport-Connection-Times.html">Connection times</a>
@@ -1200,6 +1207,7 @@ a.land-cta:hover:visited {
     <a href="./Trip-Essentials/Delta-Routes-Full.html">Delta network</a>
     <a href="./Trip-Essentials/United-Routes-Full.html">United network</a>
     <a href="./Trip-Essentials/American-Routes-Full.html">American network</a>
+  </nav>>
   </nav>
 </section>
 
@@ -1586,19 +1594,24 @@ a.land-cta:hover:visited {
 
 
 <script>
-/* ── Filters pull the guides in ─────────────────────────────────────────────
-   Clicking a filter pill renders the matching guides inside the section rather
-   than navigating to /guides. The href is left intact, so with scripting off —
-   or if the fetch fails — the pill still works the way it always did.
+/* ── Filters pull the guides in, and they LAYER ─────────────────────────────
+   Clicking a filter pill renders matching guides inside the section rather than
+   navigating to /guides. The href is left intact, so with scripting off — or if
+   the fetch fails — the pill still works the way it always did.
+
+   Filters COMBINE across groups, which is how the guides index has always
+   behaved: beach AND 3 days AND Europe narrows to the intersection, rather than
+   each pill throwing away the last. Picking a second pill inside the same group
+   replaces that one dimension; picking one in a new group adds a dimension.
+   Clicking an active pill removes just that dimension and leaves the rest.
 
    Tags come from /guides/index.html itself: THEME_DATA, DAYS_DATA, each card's
    href and data-lang, and the country grouping for continents. Parsed once,
-   cached for the page. Reading the listing directly means the tags can never
-   drift from it; a generated side-file would go stale the day a guide shipped. */
+   cached. Reading the listing directly means the tags cannot drift from it. */
 (function () {
   if (!window.fetch || !window.DOMParser) return;
 
-  var cache = null, inflight = null;
+  var cache = null, inflight = null, active = {}, lastNav = null;
 
   function load() {
     if (cache) return Promise.resolve(cache);
@@ -1611,53 +1624,50 @@ a.land-cta:hover:visited {
           if (!m) return {};
           try { return JSON.parse(m[1]); } catch (e) { return {}; }
         }
-        var themes = grab('THEME_DATA');
-        var days   = grab('DAYS_DATA');
-
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var guides = [];
         [].forEach.call(doc.querySelectorAll('.dest-card'), function (card) {
-          if (card.hasAttribute('data-special')) return;          /* not a guide */
+          if (card.hasAttribute('data-special')) return;
           var nameEl = card.querySelector('.dest-name');
           var href = card.getAttribute('href') || '';
           if (!nameEl || href.indexOf('Trip-Essentials') > -1) return;
           var country = card.closest('.country');
           guides.push({
             name: nameEl.textContent.trim(),
-            /* card hrefs are relative to /guides/, this page is its parent */
             url: './guides/' + href.replace(/^\.\//, ''),
             lang: (card.getAttribute('data-lang') || '').split(/\s+/),
             country: country ? (country.getAttribute('data-country') || '') : ''
           });
         });
-        cache = { themes: themes, days: days, guides: guides, html: html };
+        var cont = {}, cm = html.match(/var CONTINENT = \{([\s\S]*?)\};/);
+        if (cm) {
+          var re = /'([^']+)'\s*:\s*'([^']+)'/g, x;
+          while ((x = re.exec(cm[1]))) cont[x[1]] = x[2];
+        }
+        cache = { themes: grab('THEME_DATA'), days: grab('DAYS_DATA'), guides: guides, cont: cont };
         return cache;
       })
       .catch(function () { inflight = null; return null; });
     return inflight;
   }
 
-  /* country -> continent, read from the listing's own CONTINENT map */
-  function continents(html) {
-    var m = html.match(/var CONTINENT = \{([\s\S]*?)\};/);
-    var out = {};
-    if (!m) return out;
-    var re = /'([^']+)'\s*:\s*'([^']+)'/g, x;
-    while ((x = re.exec(m[1]))) out[x[1]] = x[2];
-    return out;
+  function one(d, g, kind, value) {
+    if (kind === 'type')      return (d.themes[g.name] || []).indexOf(value) > -1;
+    if (kind === 'days')      return String(d.days[g.name]) === value;
+    if (kind === 'lang')      return g.lang.indexOf(value) > -1;
+    if (kind === 'continent') return d.cont[g.country] === value;
+    return true;
   }
 
-  function match(d, kind, value) {
+  /* The layering itself: a guide has to satisfy EVERY active dimension. */
+  function matches(d) {
+    var kinds = Object.keys(active);
     return d.guides.filter(function (g) {
-      if (kind === 'type')  return (d.themes[g.name] || []).indexOf(value) > -1;
-      if (kind === 'days')  return String(d.days[g.name]) === value;
-      if (kind === 'lang')  return g.lang.indexOf(value) > -1;
-      if (kind === 'continent') {
-        d._cont = d._cont || continents(d.html);
-        return d._cont[g.country] === value;
+      for (var i = 0; i < kinds.length; i++) {
+        if (!one(d, g, kinds[i], active[kinds[i]].value)) return false;
       }
-      return false;
-    });
+      return true;
+    }).sort(function (a, b) { return a.name.localeCompare(b.name); });
   }
 
   function panelFor(nav) {
@@ -1671,6 +1681,75 @@ a.land-cta:hover:visited {
     return p;
   }
 
+  function clearAllPanels() {
+    [].forEach.call(document.querySelectorAll('.lp-results'), function (p) {
+      p.hidden = true; p.innerHTML = '';
+    });
+  }
+
+  function syncPills() {
+    [].forEach.call(document.querySelectorAll('.lp-pills a'), function (a) {
+      var m = (a.getAttribute('href') || '').match(/[?&](type|days|lang|continent)=([^&#]+)/);
+      var on = m && active[m[1]] && active[m[1]].value === decodeURIComponent(m[2]);
+      a.classList.toggle('on', !!on);
+    });
+  }
+
+  function render() {
+    syncPills();
+    clearAllPanels();
+    var kinds = Object.keys(active);
+    if (!kinds.length || !lastNav) return;
+
+    var panel = panelFor(lastNav);
+    panel.hidden = false;
+    panel.innerHTML = '<p class="lp-res-empty">Loading…</p>';
+
+    load().then(function (d) {
+      if (!d) return;
+      var hits = matches(d);
+      var head = document.createElement('div');
+      head.className = 'lp-res-head';
+      head.innerHTML = '<b>' + hits.length + ' guide' + (hits.length === 1 ? '' : 's') + '</b>';
+
+      /* Every active dimension is listed and individually removable, so it is
+         always visible WHY the list is this short. */
+      kinds.forEach(function (k) {
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'lp-res-clear';
+        chip.textContent = active[k].label + ' ×';
+        chip.addEventListener('click', function () { delete active[k]; render(); });
+        head.appendChild(chip);
+      });
+      if (kinds.length > 1) {
+        var all = document.createElement('button');
+        all.type = 'button'; all.className = 'lp-res-clear';
+        all.textContent = 'clear all';
+        all.addEventListener('click', function () { active = {}; render(); });
+        head.appendChild(all);
+      }
+
+      panel.innerHTML = '';
+      panel.appendChild(head);
+      if (!hits.length) {
+        var none = document.createElement('p');
+        none.className = 'lp-res-empty';
+        none.textContent = 'No guide matches all of those. Drop one of the filters above.';
+        panel.appendChild(none);
+        return;
+      }
+      var list = document.createElement('div');
+      list.className = 'lp-res-list';
+      hits.forEach(function (g) {
+        var a = document.createElement('a');
+        a.href = g.url; a.textContent = g.name;
+        list.appendChild(a);
+      });
+      panel.appendChild(list);
+    });
+  }
+
   document.addEventListener('click', function (ev) {
     var pill = ev.target.closest ? ev.target.closest('.lp-pills a') : null;
     if (!pill) return;
@@ -1680,47 +1759,13 @@ a.land-cta:hover:visited {
 
     ev.preventDefault();
     var kind = m[1], value = decodeURIComponent(m[2]);
-    var nav = pill.parentNode, panel = panelFor(nav);
-    var already = pill.classList.contains('on');
+    lastNav = pill.parentNode;
 
-    [].forEach.call(nav.querySelectorAll('a'), function (a) { a.classList.remove('on'); });
-    if (already) { panel.hidden = true; return; }   /* second click closes */
-    pill.classList.add('on');
-
-    panel.hidden = false;
-    panel.innerHTML = '<p class="lp-res-empty">Loading…</p>';
-
-    load().then(function (d) {
-      if (!d) { location.href = href; return; }     /* fetch failed — just navigate */
-      var hits = match(d, kind, value).sort(function (a, b) { return a.name.localeCompare(b.name); });
-      if (!hits.length) {
-        panel.innerHTML = '<p class="lp-res-empty">No guides match that yet.</p>';
-        return;
-      }
-      var head = document.createElement('div');
-      head.className = 'lp-res-head';
-      head.innerHTML = '<b>' + hits.length + ' guide' + (hits.length > 1 ? 's' : '') +
-                       '</b> &middot; ' + pill.textContent.trim();
-      var clear = document.createElement('button');
-      clear.type = 'button'; clear.className = 'lp-res-clear'; clear.textContent = 'clear';
-      clear.addEventListener('click', function () {
-        panel.hidden = true; pill.classList.remove('on');
-      });
-      head.appendChild(clear);
-
-      var list = document.createElement('div');
-      list.className = 'lp-res-list';
-      hits.forEach(function (g) {
-        var a = document.createElement('a');
-        a.href = g.url; a.textContent = g.name;
-        list.appendChild(a);
-      });
-      panel.innerHTML = '';
-      panel.appendChild(head);
-      panel.appendChild(list);
-    });
+    if (active[kind] && active[kind].value === value) delete active[kind];
+    else active[kind] = { value: value, label: pill.textContent.trim() };
+    render();
   });
-})();
+}());
 </script>
 <script src="./assets/search-autocomplete.js?v=8"></script>
 <script>
