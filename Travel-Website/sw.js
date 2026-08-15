@@ -1215,8 +1215,12 @@
    pills from the floating-control tap-target exemption. Both were left out of
    the toolbar.js bump above and the push guard caught it — the code would have
    reached Pages and no returning browser or installed PWA would ever have
-   loaded either sheet. guide-style.css -> v206, mobile.css -> v80. CACHE to v891. */
-var CACHE = 'travel-cache-v891';
+   loaded either sheet. guide-style.css -> v206, mobile.css -> v80. CACHE to v891.
+
+   v892: Trips.html — the Iceland card and the page intro banner are gone, and
+   Salzburg now checks in on Aug 17. No asset version moved, so the page itself
+   is the only thing that has to reach an installed PWA. CACHE to v892. */
+var CACHE = 'travel-cache-v892';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
