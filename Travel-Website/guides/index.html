@@ -70,6 +70,9 @@
 /* No size overrides here: the search bar follows the shared § 14 standard
    (360px, 16px, 1.5px border, 6px corners) like every other page. */
 #main-search-icon { left: 18px; }
+/* Brief highlight when arriving from the landing page's country picker, so the
+   reader can see which group they were dropped into. */
+.country-target { outline: 2px solid #b85c2a; outline-offset: 6px; border-radius: 10px; transition: outline-color .4s ease; }
 .page-intro-card { display: none !important; }
 /* The facet panels live OUTSIDE .topbar, so hiding the bar left them able to
    appear — arriving from a landing pill popped the Trip Type panel open above
@@ -4736,6 +4739,31 @@
     if (location.hash === '#compare') {
       var cmp = document.getElementById('view-compare');
       if (cmp) cmp.click();
+    }
+    /* #flights and #flights=<band> arrive from the landing page's flight-time
+       section. The bare hash opens the mode; a band pre-applies one duration
+       chip, so "Under 8h" on the home page lands on that result, not on an
+       unfiltered list the reader has to redo. */
+    /* ?country=<slug> comes from the landing page's Where card. The index is
+       already grouped by country, so this scrolls to that group and highlights
+       it rather than inventing a country facet that does not exist here. */
+    var cq = (location.search.match(/[?&]country=([^&#]+)/) || [])[1];
+    if (cq) {
+      var grp = document.querySelector('.country[data-country="' + decodeURIComponent(cq) + '"]');
+      if (grp) {
+        grp.scrollIntoView({ block: 'start' });
+        grp.classList.add('country-target');
+        setTimeout(function () { grp.classList.remove('country-target'); }, 2400);
+      }
+    }
+    if (location.hash.indexOf('#flights') === 0) {
+      var fv = document.getElementById('view-flights');
+      if (fv) fv.click();
+      var band = location.hash.split('=')[1];
+      if (band) {
+        var chip = document.querySelector('.fchip.dur[data-dur="' + band + '"]');
+        if (chip) setTimeout(function () { chip.click(); }, 60);
+      }
     }
   }
 
