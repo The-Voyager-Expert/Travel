@@ -981,6 +981,7 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
 @media (max-width: 560px) { .fnd-row { grid-template-columns: 1fr; } }
 .fnd-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
 .fnd-field label { font-size: 0.82rem; font-weight: 600; color: var(--muted, #6a6660); }
+.fnd-hint { font-weight: 400; font-size: 0.76rem; opacity: .8; }
 .fnd-ctl {
   display: flex; align-items: center; gap: 0.5rem; min-width: 0;
   border: 1px solid var(--border, #e3ddd2); border-radius: 999px;
@@ -1075,6 +1076,17 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
   color: var(--muted, #6a6660); background: var(--bg, #f5f4f0);
 }
 .rc-temp { color: var(--rust, #b85c2a); border-color: #e8cdb8; background: #fdf3ea; }
+.rc-from { opacity: .65; }
+.rc-open {
+  margin-top: auto; padding-top: 0.5rem;
+  font-size: 0.78rem; font-weight: 600; color: var(--rust, #b85c2a);
+  display: flex; align-items: center; gap: 0.25rem;
+}
+.rc-chev { font-size: 1.1em; line-height: 1; }
+/* The row is pinned to the bottom of the card, so a card with no flight data
+   does not float its link up level with a neighbour's facts. */
+.rescard { min-height: 100%; }
+.rescards { align-items: stretch; }
 
 /* ── The two that ask instead of filter ───────────────────────────────────────
    Bigger than a filter row on purpose: this is the path for a visitor who
@@ -1718,7 +1730,11 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
     </div>
 
     <div class="fnd-field">
-      <label for="fnd-far">How far do you want to travel?</label>
+      <!-- "from Seattle" is not decoration. Every route in FMAP starts at SEA —
+           all 237 of them — so this filter cannot mean "from you", and unlabelled
+           it silently claims to. The compare table has always said "Flight from
+           SEA"; this now matches it. -->
+      <label for="fnd-far">How far do you want to travel? <span class="fnd-hint">from Seattle</span></label>
       <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span><select id="fnd-far">
         <option value="">Any distance</option>
         <option value="u5">Under 5 hours</option>
@@ -5472,9 +5488,20 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
     }
     var n = Number(d.days[g.name]);
     if (n) bits.push('<span class="rc-fact">' + n + (n === 1 ? ' day' : ' days') + '</span>');
+    /* Every FMAP route starts at SEA, so a bare "10h 25m" on a card reads as a
+       flight time from wherever the reader happens to be. Say where from —
+       except for Seattle itself, which FMAP marks r:'home' and whose t is the
+       word "Home": "Home from SEA" is nonsense. The compare table guards the
+       same case with `f.r !== 'home'`. */
     var f = d.fmap[g.rel];
-    if (f && f.t) bits.push('<span class="rc-fact">' + esc(f.t) + '</span>');
+    if (f && f.r === 'home') bits.push('<span class="rc-fact">Home city</span>');
+    else if (f && f.t) bits.push('<span class="rc-fact">' + esc(f.t) +
+                                 ' <span class="rc-from">from SEA</span></span>');
 
+    /* Each result IS a guide, and the card has to say so. Without the closing
+       row it reads as a list of place names that happen to be clickable —
+       Help Me Choose and Trip Escape both end their cards on "Open ›" for the
+       same reason, and these sit on the same page. */
     return '<a class="rescard" href="' + g.url + '">' +
            '<span class="rc-top">' +
              (g.flag ? '<span class="rc-flag">' + g.flag + '</span>' : '') +
@@ -5482,6 +5509,7 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
            '</span>' +
            (g.countryName ? '<span class="rc-country">' + esc(g.countryName) + '</span>' : '') +
            (bits.length ? '<span class="rc-facts">' + bits.join('') + '</span>' : '') +
+           '<span class="rc-open">Open the guide <span class="rc-chev">&rsaquo;</span></span>' +
            '</a>';
   }
 
