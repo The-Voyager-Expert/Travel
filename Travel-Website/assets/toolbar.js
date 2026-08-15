@@ -924,54 +924,13 @@ window.TVE.isPhone = function () {
     { href: base + 'guides/index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
     { href: base + 'index.html#before-you-go', text: 'Before You Go', icon: 'luggage' },  /* owner 2026-08-14: the tool itself is on the landing page now, so the tab
      goes there rather than to the standalone page it was lifted from. */
-    { group: 'Best Of', groupIcon: 'star-cup', children: [
-{ href: base + 'Trip-Essentials/Best-Of-Index.html',                      text: 'Browse by category', icon: 'category' },
-        { href: base + 'Trip-Essentials/Best-Amusement-Parks.html',               text: 'Amusement Parks', icon: 'ferris' },
-        { href: base + 'Trip-Essentials/Best-Animal-Encounters.html',             text: 'Animal Encounters', icon: 'giraffe' },
-        { href: base + 'Trip-Essentials/Best-Aquariums.html',                     text: 'Aquariums', icon: 'fish' },
-        { href: base + 'Trip-Essentials/Best-Architecture.html',                  text: 'Architecture', icon: 'mosque' },
-        { href: base + 'Trip-Essentials/Best-Art-Museums.html',                   text: 'Art Museums', icon: 'artframe' },
-        { href: base + 'Trip-Essentials/Best-Beaches.html',                       text: 'Beaches', icon: 'beach' },
-        { href: base + 'Trip-Essentials/Best-Castles.html',                       text: 'Castles', icon: 'castle' },
-        { href: base + 'Trip-Essentials/Best-Cathedrals.html',                    text: 'Cathedrals', icon: 'cathedral' },
-        { href: base + 'Trip-Essentials/Best-Caves.html',                         text: 'Caves', icon: 'cave' },
-        /* OWNER-DIRECTED 2026-08-12: Cruise Lines, Disney Parks, Festival Finder
-           and Pickleball moved here out of 📋 Also Recommended. All four are
-           "the best X in the world" collections, not utilities, so they belong
-           with the rest of Best Of. Their FILES keep their existing names —
-           renaming them Best-*.html would sweep them into the country-ordered
-           Best-Of page validators (check_best_of_css_standard /
-           check_best_of_country_order), which govern a structure these four
-           pages do not use, and would break the sibling pills that link to
-           them from Climate-Finder, Sports-Calendar, When-to-Go, Hotels-Stays,
-           Rental-Cars, Airlines-of-the-World, Travel-Insurance,
-           Scenic-Train-Journeys and Tours-Tickets. */
-        { href: base + 'Trip-Essentials/Cruise-Ships.html',                       text: 'Cruise Lines', icon: 'ship' },
-        { href: base + 'Trip-Essentials/Disney-Parks.html',                       text: 'Disney Parks', icon: 'disney-parks' },
-        { href: base + 'Trip-Essentials/Festival-Finder.html',                    text: 'Festival Finder', icon: 'bunting' },
-        { href: base + 'Trip-Essentials/Best-Gardens.html',                       text: 'Gardens', icon: 'flower' },
-        { href: base + 'Trip-Essentials/Best-Hard-to-Reach-Places.html',          text: 'Hard-to-Reach Places', icon: 'compass-classic' },
-        { href: base + 'Trip-Essentials/Best-Hot-Springs.html',                   text: 'Hot Springs', icon: 'hot-pool' },
-        { href: base + 'Trip-Essentials/Best-Islands.html',                       text: 'Islands', icon: 'island' },
-        { href: base + 'Trip-Essentials/Best-Kids-Friendly-Places.html',          text: 'Kid-Friendly Destinations', icon: 'pagoda' },
-        { href: base + 'Trip-Essentials/Best-Kids-Museums.html',                  text: "Kids' Museums", icon: 'blocks' },
-        { href: base + 'Trip-Essentials/Best-Lakes.html',                         text: 'Lakes', icon: 'lake-jetty' },
-        { href: base + 'Trip-Essentials/Best-Mountains-and-Rock-Formations.html', text: 'Mountains & Rock Formations', icon: 'mountain' },
-        { href: base + 'Trip-Essentials/Best-Museums.html',                       text: 'Museums', icon: 'museumstar' },
-        { href: base + 'Trip-Essentials/Best-National-Parks-by-Country.html',     text: 'National Parks', icon: 'pine-forest' },
-        { href: base + 'Trip-Essentials/Best-Natural-Phenomena.html',             text: 'Natural Phenomena', icon: 'aurora' },
-        { href: base + 'Trip-Essentials/Best-Observation-Decks.html',             text: 'Observation Decks', icon: 'tower' },
-        { href: base + 'Trip-Essentials/Pickleball.html',                         text: 'Pickleball', icon: 'pickleball-clear' },
-        { href: base + 'Trip-Essentials/Best-Safari.html',                        text: 'Safari', icon: 'lion' },
-        { href: base + 'Trip-Essentials/Best-Scuba-Diving.html',                  text: 'Scuba Diving', icon: 'scuba' },
-        { href: base + 'Trip-Essentials/Best-Ski-Resorts.html',                   text: 'Ski Resorts', icon: 'ski' },
-        { href: base + 'Trip-Essentials/Best-Surfing.html',                       text: 'Surfing', icon: 'surf' },
-        { href: base + 'Trip-Essentials/Best-UNESCO-Sites.html',                  text: 'UNESCO Sites', icon: 'pagoda' },
-        { href: base + 'Trip-Essentials/Best-Unique-Museums.html',                text: 'Unique Museums', icon: 'museum-amber' },
-        { href: base + 'Trip-Essentials/Best-Volcanoes.html',                     text: 'Volcanoes', icon: 'volcano-erupting' },
-        { href: base + 'Trip-Essentials/Best-Wine-Regions.html',                  text: 'Wine Regions', icon: 'wine' },
-        { href: base + 'Trip-Essentials/Best-Wonders-of-the-World.html',          text: 'Wonders of the World', icon: 'mosque' },
-    ] },
+    /* OWNER-DIRECTED 2026-08-14: Best Of out of the toolbar, When to Go in.
+       Best Of keeps its own section on the landing page and its Browse-by-
+       category page — it loses the nav dropdown, not the content. When to Go
+       takes the freed slot rather than being appended, so the top strip stays
+       at five tabs; a sixth is what pushes the bar out of shape.
+       TOOLBAR_ITEMS_LOCK moved with this change. */
+    { href: base + 'Trip-Essentials/When-to-Go.html', text: 'When to Go', icon: 'calendar' },
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', icon: 'folded-map' },
     { href: 'mailto:contact@guidemydays.com?subject=Guide%20My%20Days', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
      to the form. NOT base + ... — a mailto must not be depth-prefixed. */
