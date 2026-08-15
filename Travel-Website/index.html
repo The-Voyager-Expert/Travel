@@ -665,6 +665,15 @@ a.land-cta:hover:visited {
 .wx-cols .lp-links a:visited { color: #a94e1c; }
 .wx-cols .lp-links a:hover { border-bottom-color: #a94e1c; }
 
+
+/* Before You Go rides in an iframe — see the loader for why. */
+#byg-mount { margin-top: clamp(1rem, 2.2vw, 1.6rem); }
+.byg-frame {
+  display: block; width: 100%; border: 0; min-height: 34rem;
+  border-radius: 12px; background: var(--surface, #fff);
+  box-shadow: 0 1px 6px rgba(92, 61, 17, 0.06);
+}
+
 /* ── Sunrise & sunset (moved off Trip-Essentials/Sunrise-Sunset.html, 2026-08-14) ──
    The standalone page is retired; this is the whole widget, verbatim, minus
    that page's .page-header strip. Classes are .sun-* / .sky-* and collide with
@@ -1246,6 +1255,18 @@ a.land-cta:hover:visited {
 </section>
 
 <!-- ═══ BLOCK 13 — weather & time ══════════════════════════════════════════ -->
+<section class="lp-block" id="before-you-go">
+  <p class="lp-kicker">Before you book</p>
+  <h2>The six things people check one at a time.</h2>
+  <p>
+    Weather for that month, whether you need a visa, how safe it is, roughly what a day
+    costs, which plug to pack, and whether the tap water is fine. Pick a city and a month
+    and they all answer at once — read live from the rest of the site, so none of it can
+    quietly go out of date.
+  </p>
+  <div id="byg-mount" data-src="./Trip-Essentials/Before-You-Go.html"></div>
+</section>
+
 <section class="lp-block feature weather">
   <p class="lp-kicker">Weather &amp; climate</p>
   <h2>Most trips are decided by a fortnight, not a place.</h2>
@@ -2147,5 +2168,88 @@ function render() {
     }
   });
 }());</script>
+
+<script>
+/* ── Before You Go, mounted on demand ───────────────────────────────────────
+   An iframe, deliberately, not an inline copy. The tool is ~2KB of markup on top
+   of ~165KB of baked tables (plugs, airports, safety, cost, lounges, visas), and
+   it is a self-contained page that already works. Inlining it costs three things
+   the frame avoids for free:
+
+     * weight — every visitor would parse 165KB for a tool most never open;
+     * globals — Before-You-Go declares CITY_LAT and so does the sunrise widget
+       above it, so in one scope the second silently clobbers the first;
+     * blast radius — evaluating its scripts into this page froze the renderer
+       outright while this was being built.
+
+   The frame loads only when the section nears the viewport. */
+(function () {
+  var mount = document.getElementById('byg-mount');
+  if (!mount) return;
+  var made = false;
+
+  function mk() {
+    if (made) return;
+    made = true;
+    var f = document.createElement('iframe');
+    f.className = 'byg-frame';
+    f.title = 'Before You Go \u2014 weather, visa, safety, cost and plugs by city and month';
+    f.loading = 'lazy';
+    /* allow-top-navigation is deliberately NOT granted: the framed page loads
+       toolbar.js, whose nav/referrer logic can navigate the TOP window. From
+       inside this frame that would reload the landing page, which rebuilds the
+       frame, which navigates again. */
+    f.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups');
+    f.src = mount.getAttribute('data-src');
+    f.addEventListener('load', function () {
+      try {
+        var d = f.contentDocument;
+
+        /* The frame serves a whole PAGE, so it arrives with that page's toolbar,
+           title strip and also-on-this-site row — a second site inside this one.
+           Strip the chrome so only the tool shows. Same-origin, so this is just a
+           stylesheet; the framed page on its own is untouched. */
+        var hide = d.createElement('style');
+        hide.textContent =
+          '#toolbar-mount,.tb,.site-header,.also-strip,.tve-scroll-btn,' +
+          '.tve-fab,#tve-stop-strip,.byg-intro{display:none!important}' +
+          'body{background:transparent!important;margin:0!important;padding:0!important}' +
+          '.byg-wrap{margin:0!important;padding:0!important;max-width:100%!important}';
+        d.head.appendChild(hide);
+
+        var last = 0, pending = 0;
+        /* NEVER put a ResizeObserver on the framed body. Setting the iframe height
+           resizes the frame's viewport, which reflows that body, which fires the
+           observer again — an unbreakable feedback loop. Poll on real interaction
+           instead, debounced, ignoring sub-24px churn so a settling layout cannot
+           ping-pong. */
+        var fit = function () {
+          clearTimeout(pending);
+          pending = setTimeout(function () {
+            var h = Math.max(d.body.scrollHeight, d.documentElement.scrollHeight);
+            if (h > 100 && Math.abs(h - last) > 24) { last = h; f.style.height = h + 'px'; }
+          }, 200);
+        };
+        fit();
+        /* The tool renders on picking a city, and again as sections fill in, so
+           re-measure a few times after each interaction rather than once. */
+        var nudge = function () { [0, 300, 900, 1800].forEach(function (t) { setTimeout(fit, t); }); };
+        d.addEventListener('change', nudge, true);
+        d.addEventListener('click',  nudge, true);
+        d.addEventListener('keyup',  nudge, true);
+        nudge();
+      } catch (e) { /* keep the CSS min-height */ }
+    });
+    mount.appendChild(f);
+  }
+
+  /* No IntersectionObserver: loading="lazy" on the iframe already defers the
+     fetch until it nears the viewport, and it is the browser's own scheduler
+     rather than one more thing to get wrong. An earlier IO here never fired at
+     all — silently, with the section fully in view — and the tool simply never
+     appeared. Let the platform do it. */
+  mk();
+}());
+</script>
 </body>
 </html>
