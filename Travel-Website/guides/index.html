@@ -3063,8 +3063,15 @@
       var flag = (card.querySelector('.dest-flag') || {}).textContent || '';
       var name = (card.querySelector('.dest-name') || {}).textContent || '';
       var status = card.getAttribute('data-status') || 'been';
-      /* climate.json key = folder name from href */
-      var climateKey = decodeURIComponent(href).replace(/^\.\//, '').split('/')[1];
+      /* climate.json key = folder name from href, which is segment [0]:
+         './Amsterdam/amsterdam.html' -> 'Amsterdam'. This read [1] and so
+         produced 'amsterdam.html', a key that exists in no dataset — Climate
+         and Best season rendered '—' for every city in the table, and Cost and
+         Safety survived only on the `|| [c.name]` fallback, which works for
+         'Amsterdam' and fails for every hyphenated folder ('Buenos-Aires' vs
+         'Buenos Aires'). Silent because '—' is also what a genuinely missing
+         row looks like. */
+      var climateKey = decodeURIComponent(href).replace(/^\.\//, '').split('/')[0];
       /* country = parent .country block's label, minus the flag + guide count */
       var country = '';
       var cBlock = card.closest ? card.closest('.country') : null;
