@@ -1236,7 +1236,9 @@
 /* 2026-08-15: Mobile toolbar swap — hamburger left, theme toggle right. toolbar.js -> v652. CACHE to v900. */
 /* 2026-08-15: Hotels & Flights tab pills side-by-side on iOS Safari — added min-width:0 + width:50% + overflow:hidden to .tve-book-tab; flex-wrap:nowrap on .tve-book-tabs. guide-style.css -> v209. CACHE to v901. */
 /* 2026-08-15: Local time chip moved to Quick Facts pill strip (after weather/months pill, above Trip Overview) — removed .open-now-row container. toolbar.js -> v653, guide-style.css -> v210. CACHE to v902. */
-var CACHE = 'travel-cache-v903';
+/* 2026-08-15: SHOW ONLY filter chips moved to first position inside Trip Overview (before Day 1), collapses with days. toolbar.js -> v654. CACHE to v903. */
+/* 2026-08-15: Help Me Choose filter fix — computeScores() now iterates _THEME_DATA directly; HC and Trip Escape results use .hc-pill-result pills. CACHE to v904. */
+var CACHE = 'travel-cache-v904';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
