@@ -865,7 +865,9 @@ a.land-cta:hover:visited {
   display: flex; align-items: center; gap: 0.5rem; min-width: 0;
   border: 1px solid var(--border, #e3ddd2); border-radius: 999px;
   background: var(--surface, #fff); padding: 0 0.9rem;
+  height: 2.8rem; box-sizing: border-box;
 }
+.fnd-ctl select option:disabled { color: #bbb; }
 .fnd-ctl:focus-within { border-color: var(--rust, #b85c2a); }
 .fnd-ic { flex: 0 0 auto; width: 20px; height: 20px; display: block; }
 .fnd-ic svg { width: 100%; height: 100%; display: block; }
@@ -1166,7 +1168,7 @@ html[data-theme="dark"] .byg-card { background: #26231e; border-color: rgba(232,
 html[data-theme="dark"] .byg-card-head { border-bottom-color: rgba(232,228,220,0.1); }
 .byg-card-links { display: flex; flex-direction: column; gap: 0.28rem; }
 .byg-card-links a { font-size: 0.85rem; line-height: 1.4; color: var(--text, #3d3a32); text-decoration: none; width: fit-content; }
-.byg-card-links a:visited { color: var(--text, #3d3a32); }
+.byg-card-links a:visited { color: #3d3a32; }
 .byg-card-links a:hover { color: var(--rust, #b85c2a); }
 
 /* Help me choose + Trip Escape, lifted whole from the guides index. */
@@ -1184,6 +1186,8 @@ html[data-theme="dark"] .byg-card-head { border-bottom-color: rgba(232,228,220,0
 .tt-res-head { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 14px; }
 .tt-back-btn { display:inline-block; margin-top:16px; font-family:inherit; font-size:12px; background:none; border:none; color:#8a6c1a; cursor:pointer; padding:0; text-decoration:underline; }
 .tt-back-btn:hover { color:#7a3b1e; }
+.hc-pill-result { display:flex; align-items:center; gap:10px; padding:13px 16px; background:var(--surface,#fff); border:1px solid var(--border,#e3ddd2); border-left:3px solid #b85c2a; border-radius:8px; text-decoration:none; color:var(--text,#1a1917); font-size:14px; font-weight:600; margin-bottom:8px; }
+.hc-pill-result:hover { background:var(--surface2,#faf7f2); }
 /* ── Help Me Choose wizard ── */
 #help-choose-panel { margin:8px 0 20px; padding:20px 22px 22px; background:var(--warm); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 16px rgba(122,59,30,.08); }
 #help-choose-panel[hidden],#hc-inner[hidden],#hc-results[hidden] { display:none !important; }
@@ -2148,11 +2152,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
 </section>
 
 <section class="lp-byg" id="before-you-go">
- <div class="lp-byg-card">
-  <!-- Heading and sub-line removed (owner 2026-08-14). "Before You Go" is a
-       toolbar tab on every page now, so a heading naming it here and a link
-       saying "Or start from Before You Go" were both repeating the nav. The
-       columns of practical pages below are the content and stay. -->
+ <div>
   <div class="byg-grid">
     <div class="byg-card">
       <p class="byg-card-head">Money</p>
@@ -3369,33 +3369,37 @@ function render() {
   }
 
   function computeScores() {
-    var allCards = [].slice.call(document.querySelectorAll('.mosaic-wrap a.dest-card'));
-    var scored = [];
-    allCards.forEach(function (card) {
-      if (card.hasAttribute('data-special')) return;
-      var nameEl = card.querySelector('.dest-name');
+    /* Build a city→{href, flag, folder} lookup from the grafted cards */
+    var lookup = {};
+    [].forEach.call(document.querySelectorAll('.mosaic-wrap a.dest-card'), function (c) {
+      if (c.hasAttribute('data-special')) return;
+      var nameEl = c.querySelector('.dest-name');
       if (!nameEl) return;
-      var city = nameEl.textContent.trim();
-      var href = card.getAttribute('href') || '';
-      var climateKey = decodeURIComponent(href).replace(/^\.\//, '').split('/')[1];
-      var flag = ((card.querySelector('.dest-flag') || {}).textContent || '').trim();
-      var country = '';
-      var cBlock = card.closest ? card.closest('.country') : null;
-      if (cBlock) {
-        var cLbl = cBlock.querySelector('.country-label');
-        if (cLbl) {
-          var cCnt = cLbl.querySelector('.country-count');
-          country = cLbl.textContent
-            .replace(cCnt ? cCnt.textContent : '', '')
-            .replace(/·\s*$/, '').replace(/^[^A-Za-zÀ-ÿÀ-ɏ]+/, '').trim();
-        }
-      }
-      var cs = climateScore(climateKey, ans.month, ans.climate);
+      var n = nameEl.textContent.trim();
+      if (!n || lookup[n]) return;
+      var h = c.getAttribute('href') || '';
+      var folder = decodeURIComponent(h).replace(/^\.\/(?:guides\/)?/, '').split('/')[0];
+      lookup[n] = {
+        href: h,
+        flag: ((c.querySelector('.dest-flag') || {}).textContent || '').trim(),
+        folder: folder
+      };
+    });
+    /* Iterate _THEME_DATA keys directly — works even if the mosaic graft failed */
+    var td = window._THEME_DATA || {};
+    var cities = Object.keys(td);
+    var scored = [];
+    cities.forEach(function (city) {
+      if (!city) return;
+      var info = lookup[city] || {};
+      /* Derive folder name from city name when not in lookup */
+      var folder = info.folder || city.replace(/ /g, '-');
+      var cs = climateScore(folder, ans.month, ans.climate);
       var ls = lengthScore(city, ans.length);
       var as = activityScore(city, ans.activities);
       var total = cs * 2 + ls * 2 + as;
       if (total === 0) return;
-      scored.push({ href: href, city: city, flag: flag, country: country, climateKey: climateKey, total: total });
+      scored.push({ href: info.href || ('./guides/' + folder + '/' + folder.toLowerCase() + '.html'), city: city, flag: info.flag || '', total: total });
     });
     scored.sort(function (a, b) { return b.total - a.total; });
     return scored;
@@ -3407,19 +3411,17 @@ function render() {
     inner.hidden = true;
     results.hidden = false;
     var container = document.getElementById('hc-res-cards');
+    container.className = '';
     container.innerHTML = '';
     if (top.length === 0) {
       container.innerHTML = '<p style="font-size:13px;color:var(--muted)">No strong matches — try different settings.</p>';
       return;
     }
-    /* One card for every search on this page — see lpGuideCard (owner,
-       2026-08-15). The theme pills, the days pill, the country line and the
-       "Open ›" footer went with the bespoke card: this panel already states
-       what it ranked on in the question the reader just answered, and a result
-       here is the same guide the guides index lists. */
-    container.className = 'flt-grid';
+    function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
     container.innerHTML = top.map(function (item) {
-      return window.lpGuideCard(item.href, item.flag, item.city, '');
+      return '<a class="hc-pill-result" href="' + esc(item.href) + '">' +
+             (item.flag ? '<span aria-hidden="true">' + item.flag + '</span>' : '') +
+             esc(item.city) + '</a>';
     }).join('');
   }
 
@@ -3699,14 +3701,15 @@ function render() {
       errP.hidden = false;
       return;
     }
-    /* Same one card as every other search on this page — see lpGuideCard
-       (owner, 2026-08-15). The contrast percentage and the reason pills were
-       the bespoke card's, not the guide's; the ranking still decides WHICH
-       three guides appear and in what order, which is what the tool is for. */
-    cards.className = 'flt-grid';
+    function escTE(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    cards.className = '';
     cards.innerHTML = top.map(function (item) {
-      return window.lpGuideCard(item.card.getAttribute('href'),
-                                flagOf(item.card), cityName(item.card), '');
+      var href = item.card.getAttribute('href') || '';
+      var flag = flagOf(item.card);
+      var name = cityName(item.card);
+      return '<a class="hc-pill-result" href="' + escTE(href) + '">' +
+             (flag ? '<span aria-hidden="true">' + flag + '</span>' : '') +
+             escTE(name) + '</a>';
     }).join('');
     inner.hidden = true;
     results.hidden = false;
@@ -4722,6 +4725,28 @@ function render() {
      `.fiata`, the same markup the guides index puts on a card in flight view.
      It appears ONLY when the reader filtered on distance — they asked how far,
      so the card answers, in the house component rather than a new one. */
+  /* Disable any Country or Continent option that would give zero results
+     when combined with the other currently-active filters, so the user
+     can never land in a dead end by picking that option. */
+  function pruneSelects(d, s) {
+    [
+      { el: fCont,    field: 'ct' },
+      { el: fCountry, field: 'co' }
+    ].forEach(function (pair) {
+      if (!pair.el) return;
+      [].slice.call(pair.el.options).forEach(function (opt) {
+        if (!opt.value) { opt.disabled = false; return; }
+        var test = {
+          mo: s.mo, wx: s.wx, len: s.len, fr: s.fr,
+          ty: s.ty, lg: s.lg, ct: s.ct, st: s.st,
+          bd: s.bd, sf: s.sf, co: s.co
+        };
+        test[pair.field] = opt.value;
+        opt.disabled = matches(d, test).length === 0;
+      });
+    });
+  }
+
   function card(d, g, s) {
     var far = s.fr ? farOf(d, g) : null;
     var flt = '';
@@ -4761,6 +4786,7 @@ function render() {
         return;
       }
       var hits = matches(d, s);
+      pruneSelects(d, s);
 
       /* A month on its own narrows nothing — every guide is open every month.
          Say that, rather than returning all 237 as though it were an answer. */
