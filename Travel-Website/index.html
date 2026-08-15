@@ -970,6 +970,22 @@ a.land-cta:hover:visited {
      The city picker is built at runtime from assets/search_index.json — the same
      file the site search uses — so it can never drift from the shipped guides. -->
 <div class="lp-grid">
+<section class="lp-block open" id="skip-filters">
+  <h2>Or skip all of it.</h2>
+  <p>
+    If you already know where you're going, none of the filters below matter. Take the
+    whole list, or jump straight into one city's guide.
+  </p>
+  <div class="lp-jump">
+    <a class="lp-btn big" href="./guides/">Browse all my guides</a>
+    <label for="guide-pick" class="sr-only">Jump to one guide</label>
+    <select id="guide-pick">
+      <option value="">&hellip;or pick one city</option>
+    </select>
+  </div>
+</section>
+
+
 <section class="lp-block" id="before-you-go">
   <p class="lp-kicker">Before you book</p>
   <h2>The six things people check one at a time.</h2>
@@ -1076,23 +1092,6 @@ a.land-cta:hover:visited {
      against the pre-move backup (identical counts), so it predates the
      restructure. Until that is fixed, this card sends readers to the two
      pages that genuinely answer the question. -->
-<section class="lp-block tint">
-  <h2>Your dates are fixed. The destination isn't.</h2>
-  <p>
-    Most trips are decided by the fortnight you can actually take off, not by the place.
-    So work it the other way round: start from the month you're free, and let the dates
-    pick the destination.
-  </p>
-  <p>
-    <strong>Browse by Climate</strong> matches the weather you want against the month you
-    have and returns what fits. <strong>When to Go</strong> does it per destination — the
-    best window for each city, and the months worth avoiding.
-  </p>
-  <nav class="lp-pills">
-    <a href="./guides/">Browse all guides</a>
-  </nav>
-</section>
-
 <!-- ═══ BLOCK 3 — trip length ══════════════════════════════════════════════ -->
 <section class="lp-block bare">
   <h2>You know how many days you've got.</h2>
@@ -2311,6 +2310,37 @@ function render() {
      all — silently, with the section fully in view — and the tool simply never
      appeared. Let the platform do it. */
   mk();
+}());
+</script>
+<script>
+/* The city picker is built from search_index.json — the same file the site
+   search reads — so it lists exactly the guides that shipped and cannot drift
+   as guides are added. If the fetch fails the select goes disabled with a note;
+   the Browse all button beside it is a plain link and always works. */
+(function () {
+  var pick = document.getElementById('guide-pick');
+  if (!pick || !window.fetch) return;
+  fetch('./assets/search_index.json')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var guides = (data && data.guides) || [];
+      if (!guides.length) throw new Error('no guides');
+      guides.slice().sort(function (a, b) { return (a.c || '').localeCompare(b.c || ''); })
+        .forEach(function (g) {
+          if (!g.u || !g.c) return;
+          var o = document.createElement('option');
+          /* `u` is WEB_ROOT-relative and this page IS the web root. */
+          o.value = './' + g.u;
+          o.textContent = g.c;
+          pick.appendChild(o);
+        });
+      pick.options[0].textContent = '\u2026or pick one of ' + guides.length + ' cities';
+      pick.addEventListener('change', function () { if (pick.value) location.href = pick.value; });
+    })
+    .catch(function () {
+      pick.disabled = true;
+      pick.options[0].textContent = 'City list unavailable \u2014 use Browse all';
+    });
 }());
 </script>
 </body>
