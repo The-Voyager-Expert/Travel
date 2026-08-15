@@ -1234,11 +1234,25 @@ window.TVE.home = (function () {
        below 1260. So the hamburger stays here on a narrow desktop window. It is
        responsive nav, not the mobile site: the page around it is still desktop. */
     '@media (max-width: 1260px) and (pointer: coarse){' +
-      '.tb{background:transparent!important}' +
+      /* Opaque, not transparent (owner rule 2026-08-15). This rule dates from
+         when the mobile bar sat in normal flow, where transparent simply
+         inherited the page ground and cost nothing. The bar is position:fixed
+         now, so a transparent ground let the page scroll THROUGH the wordmark
+         and the two icons — verified at 393px, the guide's prose ran straight
+         across the logo. Same token the .tb rule above uses, and it carries a
+         dark-mode value, so the bar follows the theme. */
+      '.tb{background:var(--c-page-bg,#f5f4f0)!important}' +
       '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#b85c2a!important}' +
       '.tb-theme-toggle{border-color:#b85c2a!important;background:transparent!important;color:#b85c2a!important}' +
       '.tb-theme-toggle:hover{border-color:#b85c2a!important;background:transparent!important}' +
-      '.tb a.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:3px 0 0;flex:none;pointer-events:none;text-align:center}' +
+      /* padding-top 3px -> 14px (owner rule 2026-08-15: "move the title guide my
+         days lower in mobile"). The wordmark is absolutely positioned with no
+         `top`, so its vertical seat IS this padding — it sat hard against the
+         top of the bar, above the optical centre of the hamburger and the theme
+         toggle that flank it. 14px drops it onto their line. The image renders
+         ~37px tall at its 150-168px cap, so 14 + 37 = 51px still clears the
+         bar's 56px min-height and the bar does not grow. */
+      '.tb a.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:14px 0 0;flex:none;pointer-events:none;text-align:center}' +
       '.tb a.tb-brand-logo img{max-width:168px;margin:0 auto;display:inline-block;pointer-events:auto}' +
     '}' +
     '@media (max-width: 600px) and (pointer: coarse) {.tb a.tb-brand-logo img{max-width:150px}}' +
@@ -1467,7 +1481,30 @@ window.TVE.home = (function () {
        The row must be made to FIT 1260px instead — hence the tab gap cut from
        18px to 10px in the same pass. */
     '@media (max-width: 1260px) and (pointer: coarse){' +
-      '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:transparent;box-shadow:none}' +
+      /* STICKY ON MOBILE (owner rule 2026-08-15): "in mobile make the menu and
+         title available in all pages ... with dark mode toggle." The bar holds
+         all three — theme toggle far left, wordmark centred, hamburger right —
+         and it used to be position:relative, so it scrolled off the top and a
+         reader four screens into a guide had no menu, no title and no way to
+         switch theme without scrolling all the way back up. Sticky keeps the
+         whole set on screen on EVERY page, since toolbar.js mounts the bar on
+         every page of the site.
+         The background MUST be opaque here — on the relative bar transparent
+         was free, but a sticky bar with no ground lets the page's own content
+         scroll through the wordmark and the icons. --c-page-bg is the site
+         ground token and is redefined in both theme blocks above, so the bar
+         follows dark mode instead of pinning a light strip over a dark page.
+         The hamburger panel is position:fixed at top:64px and clears this. */
+      /* FIXED, not sticky — measured, and the difference is not cosmetic.
+         `position:sticky` was the obvious answer and it does not work here:
+         guide-style.css sets `html, body { overflow-x: hidden }` at this same
+         breakpoint, which makes body a scroll container, and a sticky child of
+         that container scrolls away with it in Chrome. Verified at 393px — the
+         bar's own getBoundingClientRect().top read -1800 after scrolling 1800.
+         Removing the overflow-x guard instead would reopen horizontal overflow
+         across the whole site, so the bar takes the fixed route and gives back
+         the space it occupies via the body padding set by _padForFixedBar(). */
+      '.tb{position:fixed;top:0;left:0;right:0;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:var(--c-page-bg,#f5f4f0);box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
@@ -1496,12 +1533,6 @@ window.TVE.home = (function () {
         'overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
-      /* While the hamburger menu is open it covers the viewport (z-index:1001),
-         but the floating back pills (#tve-back-to-guide / #tve-back-to-byg) sit
-         at z-index:1400 and would otherwise punch through and overlap the menu's
-         bottom rows. Hide them for as long as the menu is open — body.tve-ham-open
-         is toggled by toggleHamMenu()/closeHamMenu(). */
-      'body.tve-ham-open #tve-back-to-guide,body.tve-ham-open #tve-back-to-byg{display:none!important}' +
       '.tb-ham-menu a,.tb-ham-menu a:visited{display:block;font-size:14px;color:#3d3a32!important;text-decoration:none;' +
         'padding:10px 24px;border-bottom:none;-webkit-tap-highlight-color:transparent;cursor:pointer;touch-action:manipulation}' +
       /* LOCKED — pill matches desktop .tb-active chip shape (border-radius:14px,
@@ -1522,15 +1553,6 @@ window.TVE.home = (function () {
       '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 24px}' +
       '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 24px 2px}' +
     '}' +
-    '@media (max-width: 600px) and (pointer: coarse) {#tve-back-guides{padding-left:14px!important;padding-right:14px!important}}' +
-    /* OWNER RULE 2026-08-10: the back-strip pills are MOBILE-ONLY, same call that
-       made the floating family mobile-only — "they should be only in mobile!".
-       This hides all three at once (🖨 Print Guide, Before You Go, ‹ All Guides)
-       plus the stops-map "‹ {City}" variant, since they share the strip. The
-       strip carries display:flex as an inline style, so the hide needs
-       !important to win. Desktop keeps the toolbar for every one of these
-       destinations; print is reachable from the browser's own Print. */
-    '@media (min-width: 601px), (pointer: fine) {#tve-back-guides{display:none!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
     '@media (pointer: fine){.tb-theme-toggle{position:absolute;top:10px;right:16px;margin-right:0}}' +
     '.tb-theme-toggle{flex-shrink:0;margin-left:0;margin-right:10px;width:40px;height:40px;border-radius:50%;' +
@@ -1587,6 +1609,10 @@ window.TVE.home = (function () {
       '--c-warn-text:#e0c080;--c-warn-link:#d4a030;' +
       '--c-tastes-text:#e0d0a0;--c-headsup-text:#e0a0a0;--c-headsup-link:#d06040}' +
     'html[data-theme="dark"] ::selection{background:rgba(200,160,64,.35)}' +
+    /* Mirrors the guide-style.css dark block — that one is a prefers-color-scheme
+       media query, so without this line a reader who toggles dark on a light OS
+       keeps the light-mode terracotta on a dark ground. */
+    'html[data-theme="dark"] .title-hotel-request{color:#d4874a}' +
     'html[data-theme="dark"] .also-on-this-site-pill,' +
     'html[data-theme="dark"] .nearby-guide-pill{background:var(--c-card-bg);color:#b8962a;border-color:#8a7a40}' +
     /* ── Light-mode override — forces light tokens even when OS is dark ───── */
@@ -1892,9 +1918,6 @@ window.TVE.home = (function () {
       if (_navBYG) _navBYG.href += cityHash;
     }
 
-    /* Back-pill source is recorded at click time by stashNavSource() below
-       (single slot, works from guide OR Before-You-Go), so no per-page
-       load-time stash is needed here. */
   }
 
   function guideNameFromHref(href) {
@@ -2016,7 +2039,13 @@ window.TVE.home = (function () {
 
   var hamMenu = document.createElement('div');
   hamMenu.className = 'tb-ham-menu';
-  bar.style.position = 'relative';
+  /* No inline `bar.style.position = 'relative'` here. It used to be set so the
+     absolutely-positioned mobile wordmark had something to anchor to, but an
+     inline style outranks every stylesheet rule — and on 2026-08-15 the mobile
+     bar became position:sticky, which that one line would have silently
+     cancelled on every page. The base .tb rule is already position:relative for
+     desktop, and a sticky box is itself a containing block for abspos children,
+     so the anchor holds in both states. Never re-add it. */
 
   /* Build flat link list from ITEMS */
   var firstItem = true;
@@ -2047,162 +2076,36 @@ window.TVE.home = (function () {
       });
       firstItem = false;
     } else {
-      var isMapsItem = /World-Map\.html$/.test(item.href);
       if (!firstItem) {
         var sep2 = document.createElement('div');
         sep2.className = 'tb-ham-sep';
         hamMenu.appendChild(sep2);
-      }
-      /* Maps header (added 2026-07-20) — same tb-ham-hdr treatment as the
-         Lounges/Flights groups just above/below it, so "World Map" + its
-         Region children read as a labeled group like everything else in the
-         menu instead of an unlabeled pair of flat items. */
-      if (isMapsItem) {
-        var hdrM = document.createElement('div');
-        hdrM.className = 'tb-ham-hdr';
-        hdrM.textContent = 'Maps';
-        hamMenu.appendChild(hdrM);
       }
       var a2 = document.createElement('a');
       a2.href = item.href;
       a2.textContent = item.full || item.text;
       if (item.href.split('/').pop() === curr) a2.classList.add('tb-active');
       hamMenu.appendChild(a2);
-      /* OWNER-DIRECTED 2026-07-20: My Trips — injected mobile-only, right under Guides.
-         DO NOT REMOVE. brain_check hard-fails if this injection is missing. See Toolbar.html § 18b + Cleanliness Checks Rule 569. */
-      if (/(?:Guides-Index|index)\.html$/.test(item.href)) {
-        var aTrips = document.createElement('a');
-        var sepTrips = document.createElement('div'); sepTrips.className = 'tb-ham-sep'; hamMenu.appendChild(sepTrips);
-        aTrips.href = base + 'Trip-Essentials/Trips.html';
-        /* These two rows are hand-built rather than ITEMS-driven, and they were
-           the last two in the hamburger still carrying an AUTHORED EMOJI in
-           textContent ('✈️ My Trips' / '📊 Travel Stats') — every other row
-           draws an SVG. Routed through setEntryLabel so they take the same
-           drawn marks their own destinations already use in PAGE_ICON below
-           (plane / chart). The guard on this injection matches "My Trips", not
-           the glyph, so the label is free to drop it. */
-        setEntryLabel(aTrips, 'My Trips', { icon: 'plane' }, 'tb-ham-new');
-        if ('Trips.html' === curr) aTrips.classList.add('tb-active');
-        hamMenu.appendChild(aTrips);
-        /* OWNER-DIRECTED 2026-07-20: Travel Stats — mobile-only, right under My Trips. (File was Personal-Stats.html until 2026-07-28.) */
-        var aPS = document.createElement('a');
-        aPS.href = base + 'Trip-Essentials/Travel-Stats.html';
-        setEntryLabel(aPS, 'Travel Stats', { icon: 'chart' }, 'tb-ham-new');
-        if ('Travel-Stats.html' === curr) aPS.classList.add('tb-active');
-        hamMenu.appendChild(aPS);
-      }
       firstItem = false;
-      /* ── Region links (added 2026-07-19, moved right under World Map and
-         merged into it 2026-07-20 — Dani: no separator between them and
-         "World Map" (reads as one continuous group now, not two), same
-         leading icon as "World Map" on every row (matches the site's locked
-         "toolbar dropdown group children share the group's leading icon"
-         rule), and no separate "World" entry — that's what tapping
-         "World Map" itself already does, no need to repeat it. Works via the
-         hash router already built into World-Map.html (World-Map.html#eu
-         flies to Europe, etc.), which also fires on in-page hash changes,
-         not just initial load. ── */
-      if (isMapsItem) {
-        var regionLinks = [
-          ['Europe', 'eu'], ['North America', 'na'], ['Caribbean', 'cb'],
-          ['Asia', 'as'], ['Africa', 'af'], ['South America', 'sa'], ['Oceania', 'oc'],
-        ];
-        regionLinks.forEach(function (r) {
-          var a = document.createElement('a');
-          a.href = base + 'Trip-Essentials/Maps/World-Map.html#' + r[1];
-          a.textContent = r[0];
-          hamMenu.appendChild(a);
-        });
-      }
     }
   });
 
-  /* ── Best Of section ── */
-  (function () {
-    var sepBo = document.createElement('div'); sepBo.className = 'tb-ham-sep'; hamMenu.appendChild(sepBo);
-    var hdrBo = document.createElement('div'); hdrBo.className = 'tb-ham-hdr'; hdrBo.textContent = 'Best Of'; hamMenu.appendChild(hdrBo);
-    var browseLink = document.createElement('a');
-    browseLink.href = base + 'Trip-Essentials/Best-Of-Index.html';
-    browseLink.textContent = 'Browse by category';
-    browseLink.style.cssText = 'color:#b85c2a;font-weight:500;background:#fdf8f4;';
-    if ('Best-Of-Index.html' === curr) browseLink.classList.add('tb-active');
-    hamMenu.appendChild(browseLink);
-    var bestOfPages = [
-      ['Amusement Parks',           'Best-Amusement-Parks.html'],
-      ['Animal Encounters',         'Best-Animal-Encounters.html'],
-      ['Aquariums',                 'Best-Aquariums.html'],
-      ['Architecture',              'Best-Architecture.html'],
-      ['Art Museums',               'Best-Art-Museums.html'],
-      ['Beaches',                   'Best-Beaches.html'],
-      ['Castles',                   'Best-Castles.html'],
-      ['Cathedrals',                'Best-Cathedrals.html'],
-      ['Caves',                     'Best-Caves.html'],
-      /* OWNER-DIRECTED 2026-08-12 — mirrors the 🏆 Best Of group in ITEMS.
-         These four are the only rows here whose file is not Best-*.html;
-         check_best_of_toolbar_coverage matches on the Best- prefix, so they
-         are invisible to it in both directions. */
-      ['Cruise Lines',              'Cruise-Ships.html'],
-      ['Disney Parks',              'Disney-Parks.html'],
-      ['Festival Finder',           'Festival-Finder.html'],
-      ['Gardens',                   'Best-Gardens.html'],
-      ['Hard-to-Reach Places',      'Best-Hard-to-Reach-Places.html'],
-      ['Hot Springs',               'Best-Hot-Springs.html'],
-      ['Islands',                   'Best-Islands.html'],
-      ['Kid-Friendly Destinations', 'Best-Kids-Friendly-Places.html'],
-      ["Kids' Museums",             'Best-Kids-Museums.html'],
-      ['Lakes',                     'Best-Lakes.html'],
-      ['Mountains & Rock Formations','Best-Mountains-and-Rock-Formations.html'],
-      ['Museums',                   'Best-Museums.html'],
-      ['National Parks',            'Best-National-Parks-by-Country.html'],
-      ['Natural Phenomena',         'Best-Natural-Phenomena.html'],
-      ['Observation Decks',         'Best-Observation-Decks.html'],
-      ['Pickleball',                'Pickleball.html'],
-      ['Safari',                    'Best-Safari.html'],
-      ['Scuba Diving',              'Best-Scuba-Diving.html'],
-      ['Ski Resorts',               'Best-Ski-Resorts.html'],
-      ['Surfing',                   'Best-Surfing.html'],
-      ['UNESCO Sites',              'Best-UNESCO-Sites.html'],
-      ['Unique Museums',            'Best-Unique-Museums.html'],
-      ['Volcanoes',                 'Best-Volcanoes.html'],
-      ['Wine Regions',              'Best-Wine-Regions.html'],
-      ['Wonders of the World',      'Best-Wonders-of-the-World.html'],
-    ];
-    bestOfPages.forEach(function (p) {
-      var a = document.createElement('a');
-      a.href = base + 'Trip-Essentials/' + p[1];
-      a.textContent = p[0];
-      if (p[1] === curr) a.classList.add('tb-active');
-      hamMenu.appendChild(a);
-    });
-  }());
-
-  /* ── Also on this site section ── */
-  (function () {
-    var sepAo = document.createElement('div'); sepAo.className = 'tb-ham-sep'; hamMenu.appendChild(sepAo);
-    var hdrAo = document.createElement('div'); hdrAo.className = 'tb-ham-hdr'; hdrAo.textContent = 'Also on this site'; hamMenu.appendChild(hdrAo);
-    var alsoPages = [
-      ['Budget',                'Budget-Guide.html'],
-      ['Car Rental & Private',  'Rental-Cars.html'],
-      ['Cards & ATM',           'Cards-ATM.html'],
-      ['City Transit Cards',    'City-Transit-Cards.html'],
-      /* Festival Finder and Pickleball moved to the Best Of section above on
-         2026-08-12 (owner-directed). */
-      ['Hotels & Stays',        'Hotels-Stays.html'],
-      ['More Resources',        'More-Resources.html'],
-      ['Restaurants',           'Restaurants.html'],
-      ['SIM Cards',             'SIM-Cards.html'],
-      ['Tipping',               'Tipping-Guide.html'],
-      ['Tours & Tickets',       'Tours-Tickets.html'],
-      ['Travel Apps',           'Travel-Apps.html'],
-    ];
-    alsoPages.forEach(function (p) {
-      var a = document.createElement('a');
-      a.href = base + 'Trip-Essentials/' + p[1];
-      a.textContent = p[0];
-      if (p[1] === curr) a.classList.add('tb-active');
-      hamMenu.appendChild(a);
-    });
-  }());
+  /* ── Best Of + Also-on-this-site sections — REMOVED (owner rule 2026-08-15)
+     The hamburger used to append two hand-maintained lists after the ITEMS
+     loop: a 34-row "Best Of" block and an 11-row "Also on this site" block,
+     plus a "My Trips"/"Travel Stats" pair injected under Guides and seven
+     region rows under Maps. All of it is gone. Owner: "the menu should have
+     only the stuff on the toolbar as of now remove the rest."
+     THE MENU IS NOW EXACTLY ITEMS — nothing hand-added, nothing to keep in
+     sync, and a new page appears in the menu the moment the owner puts it in
+     the toolbar. That is the whole point: the two lists were separate copies
+     of the navigation and drifted from it.
+     Every page they used to reach is still reachable from the landing page,
+     the hub the five-link bar delegates to. Do not re-add either list, and
+     never rebuild a bestOfPages/alsoPages array here.
+     check_mobile_menu_sections and check_mobile_trips_injection were retired
+     in the same pass; check_best_of_toolbar_coverage now reads ITEMS and the
+     landing page instead of a bestOfPages array. */
 
   /* Patch hamburger BYG link with city hash so it deep-links like the others. */
   if (cityHash) {
@@ -2238,8 +2141,6 @@ window.TVE.home = (function () {
     hamBtn.setAttribute('aria-expanded', 'false');
     hamBtn.innerHTML = hamMenuClosedHTML;
     _unlockBodyScroll();
-    var djBtn = document.querySelector('.day-jump-btn');
-    if (djBtn) djBtn.style.display = '';
   }
   function toggleHamMenu(e) {
     e.stopPropagation();
@@ -2265,11 +2166,15 @@ window.TVE.home = (function () {
     var open = hamMenu.classList.contains('tb-ham-open');
     document.body.classList.toggle('tve-ham-open', open);
     if (open) { _lockBodyScroll(); } else { _unlockBodyScroll(); }
-    var djBtn = document.querySelector('.day-jump-btn');
-    if (djBtn) djBtn.style.display = open ? 'none' : '';
     hamBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     hamBtn.innerHTML = open
-      ? '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><line x1="1" y1="1" x2="13" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>'
+      /* currentColor, not #fff. The white ✕ dates from the terracotta bar; the
+         mobile bar is beige now (see the background rule in the 1260/coarse
+         block), so white rendered a nearly invisible close button on the one
+         screen where the reader most needs it. currentColor inherits the
+         .tb-ham colour — #b85c2a here, and whatever the theme sets elsewhere —
+         so it can never fall out of step with the bar again. */
+      ? '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>'
       : hamMenuClosedHTML;
   }
   hamBtn.addEventListener('click', toggleHamMenu);
@@ -2332,412 +2237,62 @@ window.TVE.home = (function () {
     document.body.insertBefore(bar, document.body.firstChild);
   }
 
-  /* ── Guide-page back-link — pill strip below toolbar (above country name) ── */
-  if (isRealGuide) {
-    var backStrip = document.createElement('div');
-    backStrip.id = 'tve-back-guides';
-    backStrip.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;padding:2px 32px;background:var(--c-page-bg,#f5f4f0);margin-bottom:12px;overflow-x:auto;';
-    var pillStyle = 'display:inline-flex;align-items:center;height:28px;padding:0 12px;' +
-      'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:14px;' +
-      'font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
-      'text-decoration:none;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;' +
-      'white-space:nowrap;line-height:1;box-sizing:border-box;';
-    if (isStopsMap) {
-      var _smParts = location.pathname.split('/');
-      var _smGi = _smParts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
-      var _smCity = _smGi >= 0 && _smParts[_smGi + 1] ? _smParts[_smGi + 1].replace(/-/g, ' ') : 'Guide';
-      var smPill = document.createElement('a');
-      smPill.href = '#';
-      smPill.textContent = '‹ ' + _smCity;
-      smPill.style.cssText = pillStyle;
-      smPill.addEventListener('click', function (e) { e.preventDefault(); history.back(); });
-      smPill.addEventListener('mouseenter', function () { smPill.style.color = '#b85c2a'; smPill.style.borderColor = '#b85c2a'; });
-      smPill.addEventListener('mouseleave', function () { smPill.style.color = 'var(--c-float-text,#8a6c1a)'; smPill.style.borderColor = 'var(--c-float-bd,#c8a44a)'; });
-      backStrip.appendChild(smPill);
-      bar.insertAdjacentElement('afterend', backStrip);
-    } else {
-    var backBYG = document.createElement('a');
-    backBYG.href = base + 'Trip-Essentials/Before-You-Go.html' + cityHash;
-    backBYG.textContent = 'Before You Go';
-    backBYG.style.cssText = pillStyle;
-    backBYG.addEventListener('mouseenter', function () {
-      backBYG.style.color = '#b85c2a'; backBYG.style.borderColor = '#b85c2a';
-    });
-    backBYG.addEventListener('mouseleave', function () {
-      backBYG.style.color = 'var(--c-float-text,#8a6c1a)'; backBYG.style.borderColor = 'var(--c-float-bd,#c8a44a)';
-    });
-    var backGuides = document.createElement('a');
-    if (isReadAbout) {
-      backGuides.textContent = '‹ ' + (_raCityName || 'Guide');
-      backGuides.href = './';
-      document.addEventListener('DOMContentLoaded', function () {
-        var sb = document.querySelector('.story-footer-back');
-        if (sb) backGuides.href = sb.getAttribute('href');
-        /* Inject a print pill into the story-footer alongside the back link. */
-        var sf = document.querySelector('.story-footer');
-        if (sf) {
-          var fp = document.createElement('button');
-          fp.type = 'button';
-          fp.innerHTML = iconSVG(NAV_ICONS['printer'], 15, 'printer') + ' Print';
-          fp.style.cssText = 'font-size:13px;font-weight:500;color:var(--c-float-text,#8a6c1a);' +
-            'background:none;border:none;padding:0;cursor:pointer;font-family:inherit;' +
-            'transition:color .12s;-webkit-appearance:none;';
-          fp.addEventListener('mouseenter', function () { fp.style.color = '#b85c2a'; });
-          fp.addEventListener('mouseleave', function () { fp.style.color = 'var(--c-float-text,#8a6c1a)'; });
-          fp.id = 'tve-ra-print';
-          fp.addEventListener('click', function () { window.print(); });
-          var lbl = sf.querySelector('.story-footer-label');
-          if (lbl) sf.insertBefore(fp, lbl); else sf.appendChild(fp);
-          var phs = document.createElement('style');
-          phs.textContent = '@media print{#tve-ra-print{display:none!important}}';
-          document.head.appendChild(phs);
-        }
-      });
-    } else {
-      backGuides.href = base + 'guides/index.html';
-      backGuides.textContent = '‹ All Guides';
-    }
-    backGuides.style.cssText = pillStyle;
-    backGuides.addEventListener('mouseenter', function () {
-      backGuides.style.color = '#b85c2a'; backGuides.style.borderColor = '#b85c2a';
-    });
-    backGuides.addEventListener('mouseleave', function () {
-      backGuides.style.color = 'var(--c-float-text,#8a6c1a)'; backGuides.style.borderColor = 'var(--c-float-bd,#c8a44a)';
-    });
-    /* ── Print-Ready Full Guide Mode — guide pages only ─────────────────────
-       "🖨 Print Guide" sits at the left of the back-strip (margin-right:auto
-       pushes the nav pills to the right). Click injects a <style> tag with
-       @media print rules that hide all site chrome; the browser print dialog
-       opens immediately. The afterprint event auto-reverts the button. A
-       second click before printing also removes the style tag. */
-    var printBtn = document.createElement('button');
-    printBtn.type = 'button';
-    printBtn.innerHTML = iconSVG(NAV_ICONS['printer'], 15, 'printer') + ' Print Guide';
-    printBtn.style.cssText = 'display:inline-flex;align-items:center;height:28px;padding:0 12px;' +
-      'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:14px;' +
-      'font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
-      'cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;' +
-      'margin-right:auto;-webkit-appearance:none;box-sizing:border-box;line-height:1;font-family:inherit;';
-    printBtn.addEventListener('mouseenter', function () {
-      if (document.getElementById('tve-print-mode')) return;
-      printBtn.style.color = '#b85c2a'; printBtn.style.borderColor = '#b85c2a';
-    });
-    printBtn.addEventListener('mouseleave', function () {
-      if (document.getElementById('tve-print-mode')) return;
-      printBtn.style.color = 'var(--c-float-text,#8a6c1a)'; printBtn.style.borderColor = 'var(--c-float-bd,#c8a44a)';
-    });
-    printBtn.addEventListener('click', function () {
-      var existing = document.getElementById('tve-print-mode');
-      if (existing) {
-        existing.parentNode.removeChild(existing);
-        printBtn.innerHTML = iconSVG(NAV_ICONS['printer'], 15, 'printer') + ' Print Guide';
-        printBtn.style.color = 'var(--c-float-text,#8a6c1a)';
-        printBtn.style.borderColor = 'var(--c-float-bd,#c8a44a)';
-      } else {
-        var css = document.createElement('style');
-        css.id = 'tve-print-mode';
-        css.textContent =
-          '@media print{' +
-            '.tb,#tve-back-guides,.day-jump-btn,.day-jump-overlay,' +
-            '#tve-stop-strip,#tve-wx-strip,#hotel-alternatives,' +
-            '#tve-best-of-crosslinks,#also-in-country,#also-on-this-site,' +
-            '#nearby-guides,.title-updated,.overview-extras' +
-            '{display:none!important}' +
-            '.container{max-width:100%!important}' +
-          '}';
-        document.head.appendChild(css);
-        printBtn.innerHTML = iconSVG(NAV_ICONS['close'], 15, 'close') + ' Exit Print Mode';
-        printBtn.style.color = '#b85c2a';
-        printBtn.style.borderColor = '#b85c2a';
-        window.addEventListener('afterprint', function onAP() {
-          var st = document.getElementById('tve-print-mode');
-          if (st) { st.parentNode.removeChild(st); }
-          printBtn.innerHTML = iconSVG(NAV_ICONS['printer'], 15, 'printer') + ' Print Guide';
-          printBtn.style.color = 'var(--c-float-text,#8a6c1a)';
-          printBtn.style.borderColor = 'var(--c-float-bd,#c8a44a)';
-          window.removeEventListener('afterprint', onAP);
-        });
-        window.print();
-      }
-    });
-    backStrip.appendChild(printBtn);
-    backStrip.appendChild(backBYG);
-    backStrip.appendChild(backGuides);
-    bar.insertAdjacentElement('afterend', backStrip);
-    }
+  /* ── Give back the space the fixed mobile bar takes ──────────────────────
+     The bar is position:fixed at this breakpoint (see the note on the .tb rule
+     in the 1260/coarse block), so it is out of flow and the top of every page
+     would sit underneath it. Pad the body by the bar's MEASURED height rather
+     than a literal: the height moves with the wordmark cap, the safe-area
+     inset and the min-height, and a hardcoded number goes stale the first time
+     any of those is retuned. Padding, not margin — margin on body would
+     collapse with the first child's own margin and give back less than it
+     took. Only ever applied at the fixed breakpoint; on desktop the bar is in
+     normal flow and the padding is cleared. */
+  function _padForFixedBar() {
+    var fixedNow = window.matchMedia('(max-width: 1260px) and (pointer: coarse)').matches;
+    if (!fixedNow) { document.body.style.paddingTop = ''; return; }
+    var h = bar.offsetHeight;
+    if (h) document.body.style.paddingTop = h + 'px';
   }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _padForFixedBar);
+  } else {
+    _padForFixedBar();
+  }
+  window.addEventListener('load', _padForFixedBar);
+  window.addEventListener('resize', _padForFixedBar);
 
-  /* ── Back-to-guide pill on Trip-Essentials pages linked from guides ──
-     Uses document.referrer to detect the source guide (no per-guide edits,
-     no per-page HTML edits). Injects a MOBILE-ONLY fixed pill at the
-     bottom-left of the viewport so it stays visible while the reader
-     scrolls. Silently no-ops if the referrer isn't a guide (new tab,
-     bookmark, external link, Before-You-Go, etc.), and on every page not
-     in the allow-list below. Hidden on desktop (>600px) via inline
-     media-query stylesheet.
+  /* ── Guide-page back-strip — REMOVED (owner rule 2026-08-15) ──────────────
+     The mobile-only #tve-back-guides strip ('🖨 Print Guide' · 'Before You Go' ·
+     '‹ All Guides', and the '‹ {City}' variant on stops-map) is gone with the
+     rest of the hand-built mobile navigation. Owner: "remove all navigation
+     made by us use the native one for mobile." The reader's own back gesture
+     covers every destination the strip offered, and the browser's Share/Print
+     covers the print button — mobile now navigates the way the phone does,
+     with the toolbar for forward moves and the OS for backward ones.
+     Do not re-add it, and do not rebuild any of it as a floating pill. */
 
-     Allow-list: EXACTLY the Trip-Essentials pages that guide HTML links
-     to (verified via `find Guides -name '*_v1.html' -exec grep -hoE
-     'Trip-Essentials/...'`). Adding a new page here without a
-     corresponding guide link would show a pill that can never appear;
-     removing a page that guides link to would silently break navigation. */
-  /* ── Back-pill navigation source (single slot, click-time) ──────────────
-     The back-to-guide and back-to-BYG pills prefer document.referrer, but iOS
-     standalone/PWA strips it, so the pill silently vanishes. This global
-     capture-phase click listener records WHERE the reader is leaving FROM in
-     ONE sessionStorage slot ('tve-nav-src' = {kind,url}) the moment they tap
-     an outbound link. Exactly one slot → only ONE pill can ever fire, always
-     matching the immediate source: BYG→page shows only the BYG pill, guide→
-     page shows only the guide pill. A click from any page that is neither a
-     guide nor Before-You-Go CLEARS the slot, so arriving at a Trip-Essentials
-     page from the index or a direct link shows NO pill. Referrer stays the
-     primary signal — this is only the fallback for when it's absent. */
-  (function stashNavSource() {
-    function _srcOfThisPage() {
-      var p = location.pathname;
-      if (/\/guides\//i.test(p) && p.indexOf('guides_index') < 0 && p.indexOf('Guides-Index') < 0) {
-        return { kind: 'guide', url: location.href };
-      }
-      if (/\/Before-You-Go\.html/.test(p)) { return { kind: 'byg', url: location.href }; }
-      return null;
-    }
-    document.addEventListener('click', function (e) {
-      var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
-      if (!a) return;
-      var href = a.getAttribute('href') || '';
-      if (!href || href.charAt(0) === '#') return;   /* in-page anchor — ignore */
-      try {
-        var src = _srcOfThisPage();
-        if (src) { sessionStorage.setItem('tve-nav-src', JSON.stringify(src)); }
-        else { sessionStorage.removeItem('tve-nav-src'); }
-      } catch (err) {}
-    }, true);
-  }());
+  /* ── Floating back pills — REMOVED (owner rule 2026-08-15) ────────────────
+     #tve-back-to-guide ("← {City}"), #tve-back-to-byg ("← Back to Before You
+     Go") and #tve-nav-back ("Back") are gone, together with the
+     stashNavSource() sessionStorage slot that fed the first two. All three
+     were mobile-only re-implementations of the back button the phone already
+     has. Owner: "remove all navigation made by us use the native one for
+     mobile." The reader goes back with the OS gesture or the browser chrome;
+     the toolbar handles every forward move. Never rebuild any of them, and
+     never re-add a Forward pill (already cut once, 2026-08-09). */
 
-  (function injectBackToGuidePill() {
-    var thisPage = location.pathname.replace(/.*\//, '').replace(/\.html$/, '');
-    /* Owner rule 2026-07-28: never chain guide-to-guide — a reader who reached
-       Guide B from Guide A's strip doesn't need a "back to Guide A" pill.
-       Skip any page inside the Guides folder (real guide + stops-map + read-about). */
-    if (/\/guides\/[^\/]+\/[^\/]+\.html/i.test(location.pathname)) return;
-    /* Owner bug 2026-08-04: guide → Guides Index showed "← Amsterdam" on
-       the index. The Guides Index is a pure-navigation hub — exclude it.
-       Climate-Finder and When-to-Go were previously excluded here too, but
-       owner rule 2026-08-06: every page reachable from a guide must show the
-       back pill, so those exclusions are removed. */
-    if ({ '': 1, 'index': 1, 'guides_index': 1, 'Guides-Index': 1 }[thisPage]) return;
-    /* Source guide = document.referrer when it points at a guide. The
-       referrer is empty on a hard refresh, a bookmark/hamburger entry, an
-       iOS standalone/PWA launch, or any hop that isn't a direct guide→page
-       click — which silently killed the pill. Fall back to the click-time
-       'tve-nav-src' slot set by stashNavSource() (only when its kind is
-       'guide', so the guide pill never fires when the reader came from BYG). */
-    var ref = document.referrer || '';
-    if (!/\/guides\/[^\/]+\/[^\/]+\.html/i.test(ref)) {
-      ref = '';
-      try {
-        var _nav = JSON.parse(sessionStorage.getItem('tve-nav-src') || 'null');
-        if (_nav && _nav.kind === 'guide' && /\/guides\/[^\/]+\/[^\/]+\.html/i.test(_nav.url)) ref = _nav.url;
-      } catch (e) {}
-    }
-    var m = ref.match(/\/guides\/([^\/]+)\/[^\/]+\.html(?:[?#].*)?$/i);
-    if (!m) return;
-    var citySlug = m[1];
-    var cityName = decodeURIComponent(citySlug).replace(/-/g, ' ');
-    /* Owner rule 2026-07-28: the pill ALWAYS returns to the "Also on this
-       site" card at the bottom of the guide, never to the top and never to
-       the reader's exact scroll position. That card is the origin point for
-       every link that leads here — the reader knows to look for it there.
-       Strip any existing fragment/query from the referrer and append the
-       fixed anchor. */
-    var guideHref = ref.split('#')[0].split('?')[0] + '#also-on-this-site';
-    function build() {
-      var css = document.createElement('style');
-      css.textContent =
-        '#tve-back-to-guide{position:fixed;bottom:24px;left:16px;z-index:1400;' +
-        'display:inline-flex;align-items:center;height:28px;padding:0 11px;' +
-        'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:14px;' +
-        'font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
-        'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
-        'transition:color .15s,border-color .15s,box-shadow .15s;' +
-        'transform:translateZ(0);-webkit-transform:translateZ(0)}' +
-        '#tve-back-to-guide:hover{color:#b85c2a;border-color:#b85c2a;' +
-        'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
-        '@media (min-width: 601px), (pointer: fine) {#tve-back-to-guide{display:none}}';
-      document.head.appendChild(css);
-      var pill = document.createElement('a');
-      pill.id = 'tve-back-to-guide';
-      pill.href = guideHref;
-      pill.textContent = '← ' + cityName;
-      document.body.appendChild(pill);
-      void pill.offsetHeight;
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', build);
-    } else {
-      build();
-    }
-  }());
-
-  /* ── Back-to-Before-You-Go pill (mobile only) ────────────────────────── */
-  /* Sibling to #tve-back-to-guide. Fires when the reader arrived on a
-     Trip-Essentials page FROM Before-You-Go. Same visual, different label
-     ("← Back to Before You Go") and destination (the Before-You-Go card
-     grid via #byg-results, so a short scroll reaches the next section).
-     Referrer is the source of truth — one pill or the other, never both.  */
-  (function injectBackToBygPill() {
-    var pagesLinkedFromByg = {
-      'Asia-Stats': 1, 'Caribbean-Stats': 1, 'Currency-Guide': 1,
-      'Day-Trips': 1, 'Entry-Requirements': 1, 'Europe-Stats': 1,
-      'European-Train-Guide': 1, 'Lounges-Europe': 1, 'Lounges-US': 1,
-      'Oceania-Stats': 1, 'Plug-Adapter-Guide': 1, 'Safety-Guide': 1, 'South-America-Stats': 1,
-      'Stats-Across-Canada': 1, 'Stats-Across-US': 1, 'Sunrise-Sunset': 1,
-      'Tap-Water': 1, 'Time-Zones': 1, 'Travel-Packing': 1,
-      'Trusted-Traveler': 1, 'Vaccines': 1, 'Visas': 1, 'Weather': 1,
-      /* The six lodging pages the Where to Stay card on Before-You-Go links
-         out to (added 2026-08-09 with that card). Without these rows a reader
-         who taps through from Before-You-Go lands with no back pill. */
-      'Neighborhoods': 1, 'Hotels-Stays': 1,
-      'Best-Most-Luxurious-Hotels': 1, 'Best-Unique-Hotels': 1,
-      'Best-Resorts': 1, 'Best-Ultra-Luxurious-Resorts': 1
-    };
-    var thisPage = location.pathname.replace(/.*\//, '').replace(/\.html$/, '');
-    if (!pagesLinkedFromByg[thisPage]) return;
-    /* Source = document.referrer when it's Before-You-Go; else the click-time
-       'tve-nav-src' slot set by stashNavSource() (only when its kind is 'byg',
-       so the BYG pill never fires when the reader came from a guide). */
-    var ref = document.referrer || '';
-    if (!/\/Before-You-Go\.html(?:[?#].*)?$/.test(ref)) {
-      ref = '';
-      try {
-        var _nav = JSON.parse(sessionStorage.getItem('tve-nav-src') || 'null');
-        if (_nav && _nav.kind === 'byg' && /\/Before-You-Go\.html/.test(_nav.url)) ref = _nav.url;
-      } catch (e) {}
-    }
-    if (!/\/Before-You-Go\.html(?:[?#].*)?$/.test(ref)) return;
-    /* Preserve referrer's query string (city / month state if URL-encoded)
-       and drop any fragment; append #byg-results so the reader lands on the
-       card grid, ready to pick the next section with a short scroll. */
-    var bygHref = ref.split('#')[0] + '#byg-results';
-    function buildByg() {
-      var css = document.createElement('style');
-      css.textContent =
-        '#tve-back-to-byg{position:fixed;bottom:24px;left:16px;z-index:1400;' +
-        'display:inline-flex;align-items:center;height:28px;padding:0 11px;' +
-        'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:14px;' +
-        'font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
-        'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
-        'transition:color .15s,border-color .15s,box-shadow .15s;' +
-        'transform:translateZ(0);-webkit-transform:translateZ(0)}' +
-        '#tve-back-to-byg:hover{color:#b85c2a;border-color:#b85c2a;' +
-        'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
-        '@media (min-width: 601px), (pointer: fine) {#tve-back-to-byg{display:none}}';
-      document.head.appendChild(css);
-      var pill = document.createElement('a');
-      pill.id = 'tve-back-to-byg';
-      pill.href = bygHref;
-      pill.textContent = '← Back to Before You Go';
-      document.body.appendChild(pill);
-      void pill.offsetHeight;
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', buildByg);
-    } else {
-      buildByg();
-    }
-  }());
-
-  /* ── History back pill (mobile only, guide pages only) ───────────────────
-     Replaces the native iOS/Android back arrow that disappears in standalone
-     PWA mode. Bottom-left of the floating row.
-     There is NO Forward pill (owner rule 2026-08-09): it shipped bottom-right,
-     hidden until a popstate revealed it, and the owner cut it — the browser's
-     own forward gesture already covers the case, and a third pill crowded a
-     row that only has 393px to work with. Do not re-add it.
-     Only injected when history.length > 1 (something to go back to).        */
-  (function injectHistoryBackPill() {
-    if (!/\/guides\/[^\/]+\/[^\/]+\.html/i.test(location.pathname)) return;
-    if (history.length <= 1) return;
-
-    function build() {
-      var css = document.createElement('style');
-      css.textContent =
-        /* 28px tall / 12px text — the floating family shrank a size on
-           2026-08-09 (owner: the pills were too big). bottom:6px seats the pill
-           as low as the viewport allows and puts its centre 20px above the
-           floor — the same optical line as the centred .day-jump-btn (28px at
-           bottom:6px) and .tve-scroll-top (30px at bottom:5px) in
-           guide-style.css. Move all three together. */
-        '#tve-nav-back{position:fixed;bottom:6px;left:16px;z-index:1400;' +
-        'display:inline-flex;align-items:center;height:28px;padding:0 11px;' +
-        'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:14px;' +
-        'font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
-        'box-shadow:0 2px 10px rgba(0,0,0,.14);cursor:pointer;' +
-        'font-family:inherit;-webkit-appearance:none;' +
-        'transition:color .15s,border-color .15s,box-shadow .15s}' +
-        '#tve-nav-back:hover{color:#b85c2a;border-color:#b85c2a;' +
-        'box-shadow:0 4px 16px rgba(0,0,0,.18)}' +
-        'body.tve-ham-open #tve-nav-back{display:none!important}' +
-        '@media (min-width: 601px), (pointer: fine) {#tve-nav-back{display:none!important}}';
-      document.head.appendChild(css);
-
-      var backPill = document.createElement('button');
-      backPill.id = 'tve-nav-back';
-      backPill.textContent = 'Back';
-      backPill.addEventListener('click', function () { history.back(); });
-
-      document.body.appendChild(backPill);
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', build);
-    } else {
-      build();
-    }
-  }());
-
-  /* ── Arrows inside .overview-title: [‹] · title · [›] — real guides only ─── */
-  /* Deferred to DOMContentLoaded: script runs at the top of <body>, before
-     .overview-title exists in the DOM. querySelector would return null if run
-     synchronously here.                                                       */
-  if (isRealGuide && (prevHref || nextHref)) {
-    function injectOverviewArrows() {
-      var overviewTitle = document.querySelector('.overview-title');
-      if (!overviewTitle) return;
-
-      var titleSpan = document.createElement('span');
-      titleSpan.style.cssText = 'flex:1;text-align:center;';
-      while (overviewTitle.firstChild) titleSpan.appendChild(overviewTitle.firstChild);
-
-      overviewTitle.style.display       = 'flex';
-      overviewTitle.style.alignItems    = 'center';
-      overviewTitle.style.paddingBottom = '8px';
-
-      if (prevHref) {
-        var btnPrev = document.createElement('a');
-        btnPrev.href = prevHref;
-        btnPrev.textContent = '‹';
-        btnPrev.setAttribute('aria-label', 'Previous');
-        btnPrev.style.cssText = btnStyle;
-        overviewTitle.appendChild(btnPrev);
-      } else {
-        var sL = document.createElement('span'); sL.style.cssText = 'width:36px;flex-shrink:0;'; overviewTitle.appendChild(sL);
-      }
-
-      overviewTitle.appendChild(titleSpan);
-
-      if (nextHref) {
-        var btnNext = document.createElement('a');
-        btnNext.href = nextHref;
-        btnNext.textContent = '›';
-        btnNext.setAttribute('aria-label', 'Next');
-        btnNext.style.cssText = btnStyle;
-        overviewTitle.appendChild(btnNext);
-      } else {
-        var sR = document.createElement('span'); sR.style.cssText = 'width:36px;flex-shrink:0;'; overviewTitle.appendChild(sR);
-      }
-
-    }
+  /* ── Trip Overview prev/next arrows — REMOVED (owner rule 2026-08-15) ─────
+     The [‹] title [›] pair that cycled the reader from one guide to the next
+     is gone on BOTH desktop and mobile. Owner: "trip overview remove the
+     arrows to circle as guides from both desktop and mobile." The carousel
+     data (data-prev-guide / data-next-guide) stays on the mount and the
+     wiring script keeps it current — nothing else reads it today, but the
+     chain is what other tools walk. Do not re-inject the arrows.
+     Best-Of pages keep THEIR own prev/next row (injectBestOfArrows below);
+     the owner named the guide Trip Overview only. */
+  /* The block below is deferred to DOMContentLoaded: this script runs at the
+     top of <body>, before .overview-title exists in the DOM. */
+  if (isRealGuide) {
 
     /* On mobile, lift the READ ABOUT link out of the title (guides inject it
        either inside .overview-title or as a sibling — normalise both) to the
@@ -2797,6 +2352,107 @@ window.TVE.home = (function () {
     if (document.readyState !== 'loading') shortenTrainPill();
     else document.addEventListener('DOMContentLoaded', shortenTrainPill);
 
+    /* ── "Cappuccino" reads "Cafe" (owner rule 2026-08-15) ──────────────────
+       "cappuccino pill mobile and desktop needs to rename to Cafe." Renamed at
+       RENDER TIME, exactly like shortenTrainPill above and for the same reason:
+       the label lives in 245 guide files, and the section id (#cappuccino), the
+       section's own heading and every validator that reads them are unchanged.
+       This touches the pill in the Trip Overview extras row only, on every
+       viewport — there is no mobile/desktop split in the extras row. */
+    function renameCappuccinoPill() {
+      [].slice.call(document.querySelectorAll('.overview-extra-link[href="#cappuccino"]')).forEach(function (a) {
+        /* Rewrite the TEXT NODES only. The leading glyph is swapped for a drawn
+           mark by _injectRowMarks, which leaves a hidden .gm-mk-src span behind
+           whose textContent must stay byte-identical (Twenty-fourth
+           non-negotiable) — setting a.textContent would destroy both. */
+        var w = document.createTreeWalker(a, NodeFilter.SHOW_TEXT, null), n;
+        while ((n = w.nextNode())) {
+          if (/Cappuccino/.test(n.nodeValue)) n.nodeValue = n.nodeValue.replace(/Cappuccino/g, 'Cafe');
+        }
+      });
+    }
+    if (document.readyState !== 'loading') renameCappuccinoPill();
+    else document.addEventListener('DOMContentLoaded', renameCappuccinoPill);
+
+    /* ── Extras row follows the page (owner rule 2026-08-15) ─────────────────
+       "the pills order is wrong and needs to be in the order the sections show
+       up." The row is authored by hand in each guide and grown at runtime by
+       _injectEndSectionPills and the Also-in-Country XHR, so its order was a
+       mix of authoring habit and whichever async call resolved first — a reader
+       scanning it could not use it to predict what came next in the guide.
+
+       Sort key is the section's own position in the document, so the row can
+       never disagree with the page: move a section, add one, inject one late,
+       and the row re-sorts itself. Anything that is NOT an in-page jump — the
+       stops-map link, which points at another file — keeps its place at the
+       END, which is where the stops-map pill is deliberately appended.
+
+       Re-run on a SHORT FIXED SCHEDULE, never on a MutationObserver. The late
+       injections arrive after DOMContentLoaded, so one pass is not enough — but
+       an observer on this row deadlocks the page. Measured, not guessed: with
+       the observer wired up, guide pages never reached DOMContentLoaded at all
+       (Playwright timed out at 25s, and the Chrome extension could not inject a
+       screenshot script). The row is also watched by the drawn-mark pass, so
+       reordering it makes that observer re-process the row, which mutates it,
+       which re-fires ours — a mutual loop no disconnect() on our side can
+       break. Fixed passes are bounded by construction and idempotent (the
+       `same` check below returns without touching the DOM once the order is
+       right), so the extra passes cost nothing. */
+    function orderExtrasRow() {
+      var row = document.querySelector('.overview-extras:not(#ics-pill-row)');
+      if (!row) return;
+      var kids = [].slice.call(row.children);
+      if (kids.length < 2) return;
+      function target(el) {
+        var href = el.getAttribute && el.getAttribute('href');
+        if (!href || href.charAt(0) !== '#' || href.length < 2) return null;
+        try { return document.querySelector(href); } catch (e) { return null; }
+      }
+      /* compareDocumentPosition is the only correct answer here: sections are
+         not guaranteed to be siblings (Worth Knowing and the injected banners
+         nest one level deeper), so a previousElementSibling count would order
+         a nested section against the wrong scale. Flag 4 = DOCUMENT_POSITION_
+         FOLLOWING, i.e. b comes after a in the document. getBoundingClientRect
+         is not an option — a collapsed or off-screen section measures 0. */
+      /* Three buckets, and only the middle one is sorted:
+           0 — not a link at all. Every guide opens its row with a decorative
+               `<span>|</span>` separator; it is authored first in 199 of them
+               and belongs at the head, so non-anchors keep their place ahead of
+               the pills rather than being swept to the end as "no target".
+           1 — an in-page jump whose section resolves. THIS is the row the owner
+               wants in page order.
+           2 — a link that leaves the page (the stops-map pill) or whose target
+               is missing. Stays at the end, which is where the stops-map pill
+               is deliberately appended. */
+      function bucket(el, t) {
+        if (!el.getAttribute || el.tagName !== 'A') return 0;
+        return t ? 1 : 2;
+      }
+      var keyed = kids.map(function (el, i) {
+        var t = target(el);
+        return { el: el, t: t, b: bucket(el, t), i: i };
+      });
+      var sorted = keyed.slice().sort(function (a, b) {
+        if (a.b !== b.b) return a.b - b.b;
+        if (a.b !== 1) return a.i - b.i;               /* buckets 0 and 2: as authored */
+        if (a.t === b.t) return a.i - b.i;
+        return (a.t.compareDocumentPosition(b.t) & 4) ? -1 : 1;
+      });
+      var same = sorted.every(function (x, i) { return x.i === i; });
+      if (same) return;
+      sorted.forEach(function (x) { row.appendChild(x.el); });
+    }
+    /* The tail covers the slowest injector on the row — the Also-in-Country
+       pill, which waits on an XHR. 4s is well past it on a cold load and the
+       passes are free once the order has settled. */
+    function _extrasInit() {
+      orderExtrasRow();
+      [300, 900, 2000, 4000].forEach(function (ms) { setTimeout(orderExtrasRow, ms); });
+    }
+    if (document.readyState !== 'loading') _extrasInit();
+    else document.addEventListener('DOMContentLoaded', _extrasInit);
+    window.addEventListener('load', orderExtrasRow);
+
     /* ── Per-guide stops map pill — injected when {slug}-stops-map.html exists.
        Appended at the END of the .gel overview-extras row, after all static
        pills (including ✨ Worth Knowing). Uses a HEAD request so the guide
@@ -2828,269 +2484,16 @@ window.TVE.home = (function () {
     if (document.readyState !== 'loading') injectStopsMapPill();
     else document.addEventListener('DOMContentLoaded', injectStopsMapPill);
 
-    /* ── Route Optimizer Preview Button — guide pages with a stops-map only ── */
-    function injectOptimizeButton() {
-      var gelRow = document.querySelector('.overview-extras');
-      if (!gelRow) return;
-      var pageName = location.pathname.split('/').pop() || '';
-      var slugMatch = pageName.match(/^(.+?)(?:_v\d+)?\.html$/);
-      if (!slugMatch) return;
-      var mapHref = './' + slugMatch[1] + '-stops-map.html';
+    /* ── "Preview Optimized" button — REMOVED (owner rule 2026-08-15) ───────
+       #tve-preview-btn re-ran the route optimizer in the reader's browser and
+       redrew the day list as a preview, with a floating "Preview only — run
+       optimize_route.py to commit" notice. It was build tooling that shipped
+       on the public page: the reader has no route to commit and no reason to
+       reshuffle a guide the crib already optimized. Owner: "below remove
+       preview otipmitze." Route optimization stays exactly where it belongs —
+       Brain/scripts/optimize_route.py, run at build and rebuild time (Twenty-
+       first non-negotiable). Do not re-inject the button. */
 
-      /* Only show the button if the stops-map actually exists */
-      var checkXhr = new XMLHttpRequest();
-      checkXhr.open('HEAD', mapHref, true);
-      checkXhr.onload = function () {
-        if (checkXhr.status < 200 || checkXhr.status >= 300) return;
-
-        var optBtn = document.createElement('a');
-        optBtn.className = 'overview-extra-link';
-        optBtn.id = 'tve-preview-btn';
-        optBtn.href = '#';
-        optBtn.innerHTML = iconSVG(NAV_ICONS['shuffle'], 15, 'shuffle') + ' Preview Optimized';
-        optBtn.style.cssText = 'cursor:pointer;';
-
-        optBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          if (optBtn.getAttribute('data-busy') === '1') return;
-          optBtn.setAttribute('data-busy', '1');
-          optBtn.textContent = '⏳ Loading…';
-
-          var fetchXhr = new XMLHttpRequest();
-          fetchXhr.open('GET', mapHref, true);
-          fetchXhr.onload = function () {
-            if (fetchXhr.status < 200 || fetchXhr.status >= 300) {
-              optBtn.innerHTML = iconSVG(NAV_ICONS['shuffle'], 15, 'shuffle') + ' Preview Optimized';
-              optBtn.removeAttribute('data-busy');
-              return;
-            }
-            var m = fetchXhr.responseText.match(/(?:var|const|let)\s+STOPS\s*=\s*(\[[\s\S]*?\]);/);
-            if (!m) { optBtn.innerHTML = iconSVG(NAV_ICONS['shuffle'], 15, 'shuffle') + ' Preview Optimized'; optBtn.removeAttribute('data-busy'); return; }
-            var stops;
-            try { stops = JSON.parse(m[1]); } catch (ex) { optBtn.innerHTML = iconSVG(NAV_ICONS['shuffle'], 15, 'shuffle') + ' Preview Optimized'; optBtn.removeAttribute('data-busy'); return; }
-            runPreview(stops);
-            optBtn.innerHTML = iconSVG(NAV_ICONS['check'], 15, 'check') + ' Optimized (preview)';
-          };
-          fetchXhr.onerror = function () { optBtn.innerHTML = iconSVG(NAV_ICONS['shuffle'], 15, 'shuffle') + ' Preview Optimized'; optBtn.removeAttribute('data-busy'); };
-          fetchXhr.send();
-        });
-
-        /* Place in the ICS pill row between All Stops Map and Save for Offline */
-        optBtn.style.setProperty('flex', '1 1 0', 'important');
-        optBtn.style.setProperty('min-width', '0', 'important');
-        optBtn.style.setProperty('align-items', 'center', 'important');
-        optBtn.style.setProperty('justify-content', 'center', 'important');
-        optBtn.style.setProperty('text-align', 'center', 'important');
-        optBtn.addEventListener('touchstart', function () {
-          optBtn.classList.add('tve-pressed');
-          optBtn.style.setProperty('color', '#fff', 'important');
-          optBtn.style.setProperty('-webkit-text-fill-color', '#fff', 'important');
-        }, { passive: true });
-        optBtn.addEventListener('touchend', function () {
-          setTimeout(function () {
-            optBtn.classList.remove('tve-pressed');
-            optBtn.style.removeProperty('color');
-            optBtn.style.removeProperty('-webkit-text-fill-color');
-          }, 300);
-        }, { passive: true });
-        optBtn.addEventListener('touchcancel', function () {
-          optBtn.classList.remove('tve-pressed');
-          optBtn.style.removeProperty('color');
-          optBtn.style.removeProperty('-webkit-text-fill-color');
-        }, { passive: true });
-        var offlineBtn = document.getElementById('tve-offline-btn');
-        if (offlineBtn) {
-          offlineBtn.parentNode.insertBefore(optBtn, offlineBtn);
-        } else {
-          var icsRow = document.getElementById('ics-pill-row');
-          if (icsRow) icsRow.appendChild(optBtn);
-          else gelRow.appendChild(optBtn);
-        }
-      };
-      checkXhr.send();
-
-      /* ── k-means geographic clustering ─────────────────────────────────── */
-      function distKm(a, b) {
-        var dlat = (a.lat - b.lat) * 111;
-        var dlng = (a.lng - b.lng) * 88;
-        return Math.sqrt(dlat * dlat + dlng * dlng);
-      }
-
-      function kmeans(items, k) {
-        var withCoord = items.filter(function (s) { return s.lat !== null && s.lng !== null; });
-        var noCoord   = items.filter(function (s) { return s.lat === null || s.lng === null; });
-        if (withCoord.length === 0) {
-          /* No coordinates: split evenly */
-          var even = []; for (var ei = 0; ei < k; ei++) even.push([]);
-          items.forEach(function (s, i) { even[i % k].push(s); });
-          return even;
-        }
-        /* k-means++ initialisation */
-        var centroids = [withCoord[0]];
-        while (centroids.length < Math.min(k, withCoord.length)) {
-          var dists2 = withCoord.map(function (s) {
-            var mn = Infinity;
-            centroids.forEach(function (c) { var d = distKm(s, c); if (d < mn) mn = d; });
-            return mn * mn;
-          });
-          var tot = dists2.reduce(function (a, b) { return a + b; }, 0);
-          var r = (tot * 17393 / 65536) % tot; /* deterministic pseudo-random pick */
-          var cum = 0;
-          for (var j = 0; j < withCoord.length; j++) {
-            cum += dists2[j];
-            if (cum >= r) { centroids.push(withCoord[j]); break; }
-          }
-        }
-        while (centroids.length < k) centroids.push(centroids[centroids.length - 1]);
-
-        /* Iterate */
-        var asgn = new Array(withCoord.length).fill(0);
-        for (var iter = 0; iter < 60; iter++) {
-          var changed = false;
-          withCoord.forEach(function (s, i) {
-            var best = 0, bestD = Infinity;
-            centroids.forEach(function (c, ci) { var d = distKm(s, c); if (d < bestD) { bestD = d; best = ci; } });
-            if (asgn[i] !== best) { asgn[i] = best; changed = true; }
-          });
-          if (!changed) break;
-          centroids = centroids.map(function (_, ci) {
-            var mem = withCoord.filter(function (_, i) { return asgn[i] === ci; });
-            if (!mem.length) return centroids[ci];
-            return { lat: mem.reduce(function (s, m) { return s + m.lat; }, 0) / mem.length,
-                     lng: mem.reduce(function (s, m) { return s + m.lng; }, 0) / mem.length };
-          });
-        }
-
-        /* Build clusters */
-        var clusters = []; for (var ci = 0; ci < k; ci++) clusters.push([]);
-        withCoord.forEach(function (s, i) { clusters[asgn[i]].push(s); });
-        noCoord.forEach(function (s) {
-          var mi = 0; clusters.forEach(function (c, i) { if (c.length < clusters[mi].length) mi = i; });
-          clusters[mi].push(s);
-        });
-        return clusters;
-      }
-
-      function nearestNeighborOrder(items) {
-        if (items.length <= 1) return items.slice();
-        var withCoord = items.filter(function (s) { return s.lat !== null && s.lng !== null; });
-        var noCoord   = items.filter(function (s) { return s.lat === null || s.lng === null; });
-        if (!withCoord.length) return items.slice();
-        var ordered = [withCoord[0]];
-        var rem = withCoord.slice(1);
-        while (rem.length) {
-          var last = ordered[ordered.length - 1];
-          var bi = 0, bd = Infinity;
-          rem.forEach(function (s, i) { var d = distKm(last, s); if (d < bd) { bd = d; bi = i; } });
-          ordered.push(rem[bi]);
-          rem.splice(bi, 1);
-        }
-        return ordered.concat(noCoord);
-      }
-
-      /* ── DOM rewrite ──────────────────────────────────────────────────── */
-      function runPreview(stopsData) {
-        /* Build name → coords lookup */
-        var coordMap = {};
-        stopsData.forEach(function (s) { coordMap[s.name] = { lat: s.lat, lng: s.lng }; });
-
-        /* Collect stop-block elements, keyed by name */
-        var dayBlocks = [].slice.call(document.querySelectorAll('.day-block'));
-        var nonTrainBlocks = [];
-        dayBlocks.forEach(function (db) {
-          var hdr = db.querySelector('.day-header');
-          if (hdr && /Train Day/i.test(hdr.textContent)) return;
-          nonTrainBlocks.push(db);
-        });
-
-        /* Gather all stop elements from non-train days */
-        var allItems = [];
-        nonTrainBlocks.forEach(function (db) {
-          [].slice.call(db.querySelectorAll('.stop-block')).forEach(function (sb) {
-            var nameEl = sb.querySelector('.stop-name');
-            var name = nameEl ? nameEl.textContent.trim() : '';
-            var coords = coordMap[name] || { lat: null, lng: null };
-            allItems.push({ elem: sb, name: name, lat: coords.lat, lng: coords.lng });
-          });
-        });
-        if (!allItems.length) return;
-
-        /* k-means then nearest-neighbor */
-        var k = nonTrainBlocks.length;
-        var clusters = kmeans(allItems, k);
-        var ordered = clusters.map(function (c) { return nearestNeighborOrder(c); });
-
-        /* Rewrite each non-train day-block */
-        nonTrainBlocks.forEach(function (db, ci) {
-          var dayStops = ordered[ci] || [];
-
-          /* Detach all stop-blocks and .next / .next-tram / .next-metro banners */
-          [].slice.call(db.querySelectorAll('.stop-block, .next, .next-tram, .next-metro')).forEach(function (el) {
-            if (el.parentNode) el.parentNode.removeChild(el);
-          });
-
-          /* Re-insert in optimized order */
-          dayStops.forEach(function (stop, si) {
-            /* Inter-stop motion banner */
-            if (si > 0) {
-              var prev = dayStops[si - 1];
-              var banner = document.createElement('div');
-              banner.className = 'next';
-              if (prev.lat !== null && stop.lat !== null) {
-                var dlat = (stop.lat - prev.lat) * 111;
-                var dlng = (stop.lng - prev.lng) * 88;
-                var km = Math.sqrt(dlat * dlat + dlng * dlng);
-                var walkM = Math.round(km / (5 / 60));
-                var taxiM = Math.max(2, Math.round(km / (20 / 60)));
-                banner.textContent = walkM <= 30
-                  ? '🚶 ' + walkM + ' min · 🚕 ' + taxiM + ' min → ' + stop.name
-                  : '🚕 ' + taxiM + ' min → ' + stop.name;
-              } else {
-                banner.textContent = '→ ' + stop.name;
-              }
-              db.appendChild(banner);
-            }
-
-            /* Update stop number */
-            var numEl = stop.elem.querySelector('.stop-num');
-            if (numEl) numEl.textContent = (si + 1) + '.';
-
-            db.appendChild(stop.elem);
-          });
-
-          /* Close with → hotel */
-          if (dayStops.length) {
-            var hotelBanner = document.createElement('div');
-            hotelBanner.className = 'next';
-            hotelBanner.textContent = '→ hotel';
-            db.appendChild(hotelBanner);
-          }
-        });
-
-        /* Floating notice */
-        var notice = document.createElement('div');
-        notice.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);' +
-          'background:#2c2c2c;color:#7a3b1e;padding:10px 18px;border-radius:8px;font-size:13px;' +
-          'z-index:9999;display:flex;align-items:center;gap:14px;' +
-          'box-shadow:0 2px 12px rgba(0,0,0,.35);max-width:90vw;white-space:nowrap;';
-        notice.innerHTML = '<span>🔀 Preview only — run <code style="background:rgba(255,255,255,.15);padding:1px 5px;border-radius:3px;">optimize_route.py</code> to commit</span>';
-        var resetBtn = document.createElement('button');
-        resetBtn.textContent = 'Reset';
-        resetBtn.style.cssText = 'background:#fff;color:#2c2c2c;border:none;border-radius:4px;' +
-          'padding:4px 12px;font-size:12px;cursor:pointer;font-weight:700;flex-shrink:0;';
-        resetBtn.addEventListener('click', function () { location.reload(); });
-        notice.appendChild(resetBtn);
-        document.body.appendChild(notice);
-      }
-    }
-    if (document.readyState !== 'loading') injectOptimizeButton();
-    else document.addEventListener('DOMContentLoaded', injectOptimizeButton);
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', injectOverviewArrows);
-    } else {
-      injectOverviewArrows();
-    }
   }
 
   /* ── Trip Overview: colour the leading "Day N" label ──────────────────────
@@ -4774,150 +4177,39 @@ window.TVE.home = (function () {
     _injectAddrCopy();
   }
 
-  /* ── Day Jump — floating pill + overlay on guide pages ────────────────────
-     Shows a small "📅 N days" pill fixed at bottom-right of the viewport.
-     Clicking opens a centered overlay card listing every day in the guide with
-     the first three stops as a preview. Tapping a day row smooth-scrolls there
-     and closes the overlay. CSS lives in guide-style.css (.day-jump-*). */
-  function _injectDayJump() {
-    if (!isRealGuide) return;
-    var dayBlocks = [].slice.call(document.querySelectorAll('.day-block[id^="day"]'));
-    if (dayBlocks.length < 2) return;
-
-    var days = [];
-    dayBlocks.forEach(function (block) {
-      var num = parseInt((block.id || '').replace('day', ''), 10);
-      if (isNaN(num) || num < 1) return;
-      var stops = [];
-      [].forEach.call(block.querySelectorAll('.stop-name'), function (s) {
-        var t = s.textContent.trim(); if (t) stops.push(t);
-      });
-      days.push({ num: num, id: block.id, stops: stops });
-    });
-    days.sort(function (a, b) { return a.num - b.num; });
-    if (!days.length) return;
-
-    var cityEl = document.querySelector('.title-city');
-    var city = cityEl ? cityEl.textContent.trim() : '';
-
-    /* ── Floating trigger button ── */
-    var trigBtn = document.createElement('button');
-    trigBtn.type = 'button';
-    trigBtn.className = 'day-jump-btn';
-    trigBtn.setAttribute('aria-label', 'Jump to a day');
-    trigBtn.innerHTML =
-      '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
-        '<rect x="1" y="3" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/>' +
-        '<path d="M4 1v2M9 1v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
-        '<path d="M1 6h11" stroke="currentColor" stroke-width="1.2"/>' +
-      '</svg>' +
-      '<span>' + days.length + ' days</span>';
-
-    /* ── Overlay ── */
-    var ov = document.createElement('div');
-    ov.className = 'day-jump-overlay';
-    ov.setAttribute('role', 'dialog');
-    ov.setAttribute('aria-modal', 'true');
-    ov.setAttribute('aria-label', 'Jump to day');
-
-    var card = document.createElement('div');
-    card.className = 'day-jump-card';
-    card.addEventListener('click', function (e) { e.stopPropagation(); });
-
-    /* Head */
-    var head = document.createElement('div');
-    head.className = 'day-jump-head';
-    if (city) {
-      var cityLbl = document.createElement('div');
-      cityLbl.className = 'day-jump-city';
-      cityLbl.textContent = city;
-      head.appendChild(cityLbl);
+  /* ── The stop-header control rail ────────────────────────────────────────
+     ONE flex item holding all four per-stop controls — ✓ visited, share, ★
+     wishlist, ✎ note — instead of four loose ones (owner rule 2026-08-15:
+     "they will be all 4 together instead of bookmark being in a line alone").
+     Grouping is what actually keeps them together: .stop-header is
+     flex-wrap:wrap on mobile, and loose flex items wrap ONE AT A TIME, so a
+     long stop name split the row 3 + 1 even after the ✓ moved over to join the
+     others. As a single item the rail wraps whole or not at all.
+     Created on demand by whichever injector runs first and reused by the rest,
+     so the four stay in a fixed order (✓ share ★ ✎) however they are scheduled.
+     No auto margin here — the spacer stays on the left group's last item
+     (.open-now-status → .stop-dur → .stop-name in guide-style.css); two auto
+     margins would split the free space and strand the left group mid-row. */
+  function stopActionRail(header) {
+    if (!header) return null;
+    var rail = header.querySelector(':scope > .stop-actions');
+    if (!rail) {
+      rail = document.createElement('span');
+      rail.className = 'stop-actions';
+      header.appendChild(rail);
     }
-    var titleEl = document.createElement('div');
-    titleEl.className = 'day-jump-title';
-    titleEl.textContent = 'Jump to Day';
-    head.appendChild(titleEl);
-    var xBtn = document.createElement('button');
-    xBtn.type = 'button'; xBtn.className = 'day-jump-x'; xBtn.textContent = '✕';
-    head.appendChild(xBtn);
-    card.appendChild(head);
-
-    /* Day rows */
-    var rowEls = [];
-    days.forEach(function (d, i) {
-      var row = document.createElement('button');
-      row.type = 'button';
-      row.className = 'day-jump-row';
-
-      var numBadge = document.createElement('span');
-      numBadge.className = 'day-jump-num';
-      numBadge.textContent = d.num;
-
-      var info = document.createElement('span');
-      info.className = 'day-jump-info';
-
-      var lbl = document.createElement('span');
-      lbl.className = 'day-jump-lbl';
-      lbl.textContent = 'Day ' + d.num;
-      info.appendChild(lbl);
-
-      if (d.stops.length) {
-        var prev = document.createElement('span');
-        prev.className = 'day-jump-preview';
-        prev.textContent = d.stops.join(' · ');
-        info.appendChild(prev);
-      }
-
-      row.appendChild(numBadge);
-      row.appendChild(info);
-      row.addEventListener('click', function () {
-        closeDJ();
-        var el = document.getElementById(d.id);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-      card.appendChild(row);
-      rowEls.push(row);
-    });
-
-    ov.appendChild(card);
-
-    function getCurrentDayNum() {
-      var best = days[0].num;
-      dayBlocks.forEach(function (block) {
-        if (block.getBoundingClientRect().top <= 80) {
-          var n = parseInt((block.id || '').replace('day', ''), 10);
-          if (!isNaN(n)) best = n;
-        }
-      });
-      return best;
-    }
-
-    function openDJ() {
-      var cur = getCurrentDayNum();
-      rowEls.forEach(function (r, i) {
-        r.classList.toggle('day-jump-row--active', days[i] && days[i].num === cur);
-      });
-      ov.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeDJ() {
-      ov.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    trigBtn.addEventListener('click', function (e) { e.stopPropagation(); openDJ(); });
-    xBtn.addEventListener('click', function (e) { e.stopPropagation(); closeDJ(); });
-    ov.addEventListener('click', closeDJ);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDJ(); });
-
-    document.body.appendChild(ov);
-    document.body.appendChild(trigBtn);
+    return rail;
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _injectDayJump);
-  } else {
-    _injectDayJump();
-  }
+
+  /* ── Day Jump pill — REMOVED (owner rule 2026-08-15) ──────────────────────
+     The floating "📅 N days" pill (.day-jump-btn) and its jump-to-day overlay
+     (.day-jump-overlay) are gone on every viewport. Owner: "remove the 5 days
+     6 days pills from mobile as well we dont need anymore." The Trip Overview
+     at the head of every guide already lists each day as a jump link, so the
+     pill duplicated navigation that is one scroll away — and it was the last
+     floating control sitting over the foot of a guide page.
+     Do not re-inject it. Its CSS in guide-style.css is kept for now only
+     where shared with .tve-scroll-top positioning notes. */
 
   /* ── ?day=N deep link — scroll to Day N on page load ────────────────────
      Sharing guide.html?day=2 opens directly at Day 2 without hunting for it.
@@ -5174,12 +4466,21 @@ window.TVE.home = (function () {
       header.style.display = 'flex';
       header.style.alignItems = 'center';
 
-      /* The control sits against the stop name, not out on the right rail, so
-         it reads as part of the title. That means the NAME must size to its
-         own content — _injectStopDuration sets flex:1, which would swallow the
-         row and push the control back to the far right — and the control
-         carries margin-right:auto instead. It, not the name, is now the spacer
-         that keeps the duration chip, share and star pinned right. */
+      /* The control belongs with the OTHER CONTROLS on the right rail — share,
+         star and notes — not against the title (owner rule 2026-08-15: "when
+         the stop name is too long the bookmark is pushed below. so the move the
+         bookmark to close to share, start and write note they will be all 4
+         together instead of bookmark being in a line alone").
+         It used to sit directly after .stop-name and carry margin-right:auto as
+         the row's spacer, which is exactly what broke: on mobile .stop-header
+         is flex-wrap:wrap, so a long name filled the first line, the auto
+         margin ate the remaining space, and the ✓ landed on a line of its own
+         with share/star/notes stranded on a third.
+         The spacer job hands down to .stop-name in guide-style.css now — the
+         name is the one element every header has, so the chain can never fall
+         through. The name still sizes to its own content (flex:0 1 auto beats
+         the flex:1 _injectStopDuration sets) and its auto margin does the
+         pushing. */
       var nameEl = header.querySelector('.stop-name');
       if (nameEl) {
         nameEl.style.flex = '0 1 auto';
@@ -5227,9 +4528,10 @@ window.TVE.home = (function () {
         if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); btn.click(); }
       });
 
-      /* Directly after the name — insertBefore(x, null) degrades to append. */
-      if (nameEl) header.insertBefore(btn, nameEl.nextSibling);
-      else header.appendChild(btn);
+      /* APPEND, not insertBefore(nameEl.nextSibling) — this injector runs
+         before the share, star and notes injectors, so appending here puts
+         the four controls in the rail in a fixed order: ✓ share ★ ✎. */
+      stopActionRail(header).appendChild(btn);
     });
   }
   if (document.readyState === 'loading') {
@@ -7397,18 +6699,19 @@ window.TVE.home = (function () {
       }
       row.appendChild(a);
     }
-    /* 1. Also on This Site — always present in real guides */
-    if (document.getElementById('also-on-this-site')) {
-      addPill('#also-on-this-site', 'Also on this site', 'burst');
-    }
-    /* 3. Nearby Guides — only when the section has pills (build_nearby_guides populated it) */
-    var _epng = document.getElementById('nearby-guides');
-    if (_epng) {
-      var _epngp = _epng.querySelector('.nearby-guides-pills');
-      if (_epngp && _epngp.children.length > 0) {
-        addPill('#nearby-guides', 'Nearby Guides', 'nearby-guides');
-      }
-    }
+    /* 1. Also on This Site — NO PILL (owner rule 2026-08-15). The extras row
+       used to carry an "Also on this site" jump pill; the section itself now
+       stands alone at the bottom of the guide, where the reader meets it after
+       the itinerary. Owner: "also in this site remove pill from extra sections
+       and will only show in the bottom." The #also-on-this-site section is
+       untouched and still required by the validators — only its shortcut in the
+       Trip Overview extras row is gone. Do not re-add the pill. */
+    /* 3. Nearby Guides — NO PILL (owner rule 2026-08-15), same call as "Also on
+       this site" above: "nearby guide remove to be a pills on extra section
+       also and will only show below in the own section too." The #nearby-guides
+       section still ships, still built by build_nearby_guides.py, and still
+       carries its own heading at the foot of the guide — only its shortcut in
+       the Trip Overview extras row is gone. Do not re-add the pill. */
     /* 4. Alternative Hotel Recommendations — only when HOTEL_ALT_DATA has an entry for this guide */
     var _epPage = location.pathname.split('/').pop() || '';
     var _epMatch = _epPage.match(/^(.+?)(?:_v\d+)?\.html$/);
@@ -7558,6 +6861,53 @@ window.TVE.home = (function () {
     }
   })();
 
+  /* ── "Request a different hotel" — guide title cards ──────────────────────
+     Owner rule 2026-08-15: "below the hotel in each guide write request a
+     diffrent hotel and when clicks opens the person email app with the
+     contact." A mailto: link under the hotel banner on every guide. It carries
+     the city and the hotel currently on the card in the subject and body, so
+     the reply arrives with the context already in it and the reader types only
+     what they actually want.
+
+     contact@guidemydays.com is the same address the Contact tab in ITEMS uses —
+     one inbox for the site, and a mailto is never depth-prefixed with `base`.
+
+     Injected from here rather than authored into 245 guide files: the title
+     card's shape is identical on every guide, so one injection covers the fleet
+     and a future wording change is one edit. Deferred to DOMContentLoaded —
+     this script runs at the top of <body>, before .title-page is parsed.
+     Styles (including the mobile order and the dark-mode colour) live in
+     guide-style.css next to the rest of the title-card rules. */
+  (function () {
+    if (!isRealGuide) return;
+    function buildHotelRequest() {
+      var titlePage = document.querySelector('.title-page');
+      if (!titlePage) return;
+      var hotel = titlePage.querySelector('.title-hotel');
+      if (!hotel) return;                                  /* no hotel, no ask */
+      if (titlePage.querySelector('.title-hotel-request')) return;
+      var cityEl = titlePage.querySelector('.title-city');
+      var city = cityEl ? (cityEl.textContent || '').trim() : '';
+      var hotelName = (hotel.textContent || '').trim();
+      var link = document.createElement('a');
+      link.className = 'title-hotel-request';
+      link.href = 'mailto:contact@guidemydays.com' +
+        '?subject=' + encodeURIComponent('Request a different hotel' + (city ? ' — ' + city : '')) +
+        '&body=' + encodeURIComponent(
+          (city ? 'Guide: ' + city + '\n' : '') +
+          (hotelName ? 'Hotel on the guide: ' + hotelName + '\n' : '') +
+          '\nWhat I am looking for instead:\n');
+      link.textContent = 'Request a different hotel';
+      var addr = titlePage.querySelector('.title-address');
+      (addr || hotel).insertAdjacentElement('afterend', link);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', buildHotelRequest);
+    } else {
+      buildHotelRequest();
+    }
+  })();
+
   /* ── Quick Facts strip — real guide pages only ────────────────────────────
      The four facts a reader checks before committing to an itinerary:
      🗣️ language · 💰 cost tier · 🔌 plug type · 🌤️ best months. Each one
@@ -7614,22 +6964,17 @@ window.TVE.home = (function () {
         'display:flex;flex-wrap:wrap;gap:6px;width:100%;box-sizing:border-box;' +
         'margin:' + (isMobile ? '12px 0' : '0 0 16px') + ';';
 
-      
-    /* A chip whose subject the site has a page for becomes a link. `language` has no
-       page, so it stays a plain span rather than pointing somewhere invented. */
-    var QF_HREF = {
-      money: 'Trip-Essentials/Budget-Guide.html',
-      plug:  'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html',
-      sun:   'Trip-Essentials/When-to-Go.html'
-    };
-items.forEach(function (it) {
-        var _href = QF_HREF[it[0]];
-        var pill = document.createElement(_href ? 'a' : 'span');
-        if (_href) {
-          pill.href = base + _href;
-          pill.style.textDecoration = 'none';
-          pill.style.cursor = 'pointer';
-        }
+      /* EVERY CHIP IS A STATIC LABEL — no links (owner rule 2026-08-15).
+         Cost, plug and best-months used to link out to Budget-Guide,
+         Plug-Adapter-Guide and When-to-Go. Owner: "The results below the
+         wetaher banner in all guide mobile and desktop remove al links. This
+         should not send the person to a huge list so language, plug, etc is not
+         a link anymore. turns into static label." The chip already carries the
+         answer for THIS city; the destination was a site-wide table the reader
+         then had to search for their own city again. Desktop and mobile alike —
+         do not re-add hrefs here, and do not reintroduce a QF_HREF map. */
+      items.forEach(function (it) {
+        var pill = document.createElement('span');
         pill.title = it[1];
         pill.style.cssText =
           'display:inline-flex;align-items:center;gap:5px;' +
@@ -8466,72 +7811,14 @@ items.forEach(function (it) {
     document.head.appendChild(_wx);
   }
 
-  /* ── Sticky stop-name strip — guide pages only ──────────────────────────────
-     A slim fixed strip at the top of the viewport that shows the name of the
-     stop currently being read — "📍 1. Panthéon" — so context is never lost on
-     long days where the stop header has scrolled off screen. Uses
-     IntersectionObserver on every .stop-header element. The strip appears when
-     a header exits the top of the viewport and clears when no headers remain
-     above it (e.g. scrolled back to the top). Zero guide HTML changes. */
-  function _injectStopStrip() {
-    if (!isRealGuide) return;
-    if (!window.IntersectionObserver) return;
-
-    var strip = document.createElement('div');
-    strip.id = 'tve-stop-strip';
-    strip.style.cssText =
-      'display:none;position:fixed;top:0;left:0;right:0;z-index:101;' +
-      'height:28px;align-items:center;' +
-      'background:#f0ede5;border-bottom:1px solid #ddd8cc;' +
-      'padding:0 16px;font-size:12px;font-weight:500;color:#6b6860;' +
-      'letter-spacing:0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' +
-      'box-sizing:border-box;pointer-events:none;';
-    document.body.appendChild(strip);
-
-    function _setupStopStrip() {
-      var headers = [].slice.call(document.querySelectorAll('.stop-header'));
-      if (!headers.length) return;
-
-      var aboveViewport = new Set();
-
-      function _updateStrip() {
-        var current = null;
-        for (var i = headers.length - 1; i >= 0; i--) {
-          if (aboveViewport.has(headers[i])) { current = headers[i]; break; }
-        }
-        if (current) {
-          var nameEl = current.querySelector('.stop-name');
-          var numEl  = current.querySelector('.stop-num');
-          var num    = numEl  ? numEl.textContent.trim()  : '';
-          var name   = nameEl ? nameEl.textContent.trim() : '';
-          strip.textContent = '📍 ' + (num ? num + ' ' : '') + name;
-          strip.style.display = 'flex';
-        } else {
-          strip.style.display = 'none';
-        }
-      }
-
-      var obs = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-            aboveViewport.add(entry.target);
-          } else {
-            aboveViewport.delete(entry.target);
-          }
-        });
-        _updateStrip();
-      }, { threshold: 0 });
-
-      headers.forEach(function(h) { obs.observe(h); });
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', _setupStopStrip);
-    } else {
-      _setupStopStrip();
-    }
-  }
-  _injectStopStrip();
+  /* ── Sticky stop-name strip — REMOVED (owner rule 2026-08-15) ─────────────
+     #tve-stop-strip was a fixed 28px bar pinned to the top of the viewport
+     that named the stop currently being read ("📍 1. Panthéon") once its
+     header scrolled past. Owner: "when we scroll a pin shows on top of the
+     guide with the name of the stop remove this pin ... we have that now when
+     we click on the picture." It also fought the toolbar, which became
+     position:sticky on mobile in this same pass — two bars stacking at the top
+     of every guide. Do not re-inject it. */
 
   /* ── 7-day weather strip — real guide pages only ──────────────────────────
      Fetches a live forecast from Open-Meteo (free, no API key). Coordinates
@@ -8778,14 +8065,6 @@ items.forEach(function (it) {
 
     topBtn.addEventListener('click', function () {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      /* Owner rule 2026-07-28: once the reader taps ↑ to return to the top
-         of the page, the #tve-back-to-guide pill has served its purpose and
-         is just clutter. Hide it for the rest of this page load. Same rule
-         applies to its sibling #tve-back-to-byg (Back to Before You Go). */
-      var _pill = document.getElementById('tve-back-to-guide');
-      if (_pill) _pill.style.display = 'none';
-      var _pillByg = document.getElementById('tve-back-to-byg');
-      if (_pillByg) _pillByg.style.display = 'none';
     });
 
     function _syncFab() {
@@ -8833,8 +8112,8 @@ items.forEach(function (it) {
       '#tve-bo-jump{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));' +
       'right:16px;z-index:1400;display:inline-flex;align-items:center;gap:6px;' +
       /* 28px / 14px radius — the size EVERY gold floating pill uses
-         (#tve-back-to-guide, #tve-back-to-byg, #tve-nav-back, #tve-map-back
-         and .day-jump-btn at its mobile breakpoint). The family ran at 34/17
+         (this one and .day-jump-btn at its mobile breakpoint; the four back
+         pills that shared it were removed 2026-08-15). The family ran at 34/17
          until 2026-08-09, when the owner cut it a size ("all these pills are
          too big"); before that this pill was authored at 36/18 and the drift
          hid behind mobile.css § 7's 40px tap-target floor, which flattened
@@ -8991,78 +8270,11 @@ items.forEach(function (it) {
     _injectBestOfJump();
   }
 
-  /* ── Map pages: "← All Guides" pill (MOBILE ONLY) ─────────────────────────
-     World-Map and the seven region maps fill the viewport with Leaflet and
-     ship exactly one on-screen control between them (#visited-pill-mobile,
-     World-Map only). Leaving the map relied entirely on the branch in
-     toggleHamMenu() that turns the hamburger's CLOSE tap into "go to the
-     Guides Index" — correct behaviour, but nothing on screen says so, and a
-     reader has no reason to expect a close button to navigate. This makes
-     that exact destination visible, using the same fixed-pill family as
-     #tve-back-to-guide / #tve-back-to-byg.
-
-     Per-guide stops-maps are excluded: they already carry both the "‹ City"
-     back-strip and the #tve-nav-back history pill.
-
-     Bottom-LEFT so it clears #visited-pill-mobile, which is centred
-     (left:50%, translateX(-50%), ~110px wide) — no overlap at 393px. */
-  function _injectMapBackPill() {
-    if (!document.getElementById('map')) return;
-    if (/-stops-map\.html$/.test(location.pathname)) return;
-    /* World-Map.html?embed=1 strips the toolbar and the visited pill for
-       embedding; this pill is chrome too, so it goes with them. */
-    if (location.search.indexOf('embed=1') !== -1) return;
-    /* ONE back control per screen (owner rule 2026-08-09). This pill and
-       #tve-back-to-guide both seat at bottom:24px / left:16px, so a reader who
-       reached World-Map FROM a guide got two of them stacked exactly on top of
-       each other — same z-index, so "← All Guides" simply covered "← Abu Dhabi"
-       and the contextual return path was unreachable. It is the same principle
-       that already excludes per-guide stops-maps two paragraphs up: where the
-       page already carries a back control, this one stands down.
-
-       This pill yields rather than the other, on both counts that matter:
-       "← {City}" is contextual (it returns the reader to the exact guide card
-       they left from, which nothing else on the page offers) while "← All
-       Guides" duplicates a destination the hamburger's CLOSE tap already
-       reaches; and owner rule 2026-08-06 requires every page reachable from a
-       guide to show the back pill.
-
-       Reading the DOM is safe here, not a race: injectBackToGuidePill() is an
-       IIFE defined ~5,300 lines above. On a parsed document its build() has
-       already run synchronously before this call; while loading, its
-       DOMContentLoaded listener was registered first and fires first. Either
-       way the pill is in the DOM by now. #tve-back-to-byg cannot currently
-       reach a map page (World-Map is not in pagesLinkedFromByg) but is checked
-       too, so the family stays one rule rather than two.
-       Locked by brain_check.check_map_back_pill. */
-    if (document.getElementById('tve-back-to-guide') ||
-        document.getElementById('tve-back-to-byg')) return;
-
-    var css = document.createElement('style');
-    css.textContent =
-      '#tve-map-back{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));' +
-      'left:16px;z-index:1400;display:inline-flex;align-items:center;height:28px;' +
-      'padding:0 11px;background:#fff;border:1.5px solid #c8a44a;border-radius:14px;' +
-      'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
-      'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
-      'white-space:nowrap;transition:color .15s,border-color .15s,box-shadow .15s}' +
-      '#tve-map-back:hover{color:#b85c2a;border-color:#b85c2a;' +
-      'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
-      'body.tve-ham-open #tve-map-back{display:none!important}' +
-      '@media (min-width: 601px), (pointer: fine) {#tve-map-back{display:none!important}}';
-    document.head.appendChild(css);
-
-    var pill = document.createElement('a');
-    pill.id = 'tve-map-back';
-    pill.href = base + 'guides/index.html';
-    pill.textContent = '← All Guides';
-    document.body.appendChild(pill);
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _injectMapBackPill);
-  } else {
-    _injectMapBackPill();
-  }
+  /* ── Map "← All Guides" pill — REMOVED (owner rule 2026-08-15) ───────────
+     #tve-map-back was the last of the mobile-only floating back controls.
+     Owner: "remove all navigation made by us use the native one for mobile."
+     A reader who opened a map from the toolbar leaves it with the phone's own
+     back gesture; the hamburger reaches every destination going forward. */
 
   /* ── Share-this-stop button — guide pages only ───────────────────────────
      Injects a share-icon button into each .stop-header so readers can share
@@ -9159,7 +8371,7 @@ items.forEach(function (it) {
         });
 
         var header = block.querySelector('.stop-header');
-        if (header) header.appendChild(btn);
+        if (header) stopActionRail(header).appendChild(btn);
       });
     }
 
@@ -10190,7 +9402,7 @@ items.forEach(function (it) {
         });
 
         var header = sb.querySelector('.stop-header');
-        if (header) header.appendChild(btn);
+        if (header) stopActionRail(header).appendChild(btn);
       });
 
       _renderPanel();
@@ -10542,7 +9754,7 @@ items.forEach(function (it) {
           }, 150);
         });
 
-        header.appendChild(btn);
+        stopActionRail(header).appendChild(btn);
         header.insertAdjacentElement('afterend', edit);
         header.insertAdjacentElement('afterend', saved);
         _paint();
@@ -12429,11 +11641,15 @@ items.forEach(function (it) {
         }
       }
 
-      /* Sits at the foot of the white Trip Overview card. .overview-extras is
-         normally pulled out of the card before this runs; guard for both. */
-      var extras = ovSec.querySelector(':scope > .overview-extras');
-      if (extras) ovSec.insertBefore(wrap, extras);
-      else ovSec.appendChild(wrap);
+      /* LAST child of the Trip Overview card (owner rule 2026-08-15: "show only
+         pills needs to move to below extra sections and above collapse/expende
+         pill"). It used to be inserted BEFORE .overview-extras, which put the
+         filter above the row of section jump links; the reading order the owner
+         wants is days -> section links -> filter -> Collapse. Appending is all
+         that is needed for the second half of that: #overview-toggle-btn is
+         inserted AFTER .overview-section entirely (injectOverviewToggle), so
+         anything last inside the card is automatically above it. */
+      ovSec.appendChild(wrap);
     }
 
     if (document.readyState === 'loading') {

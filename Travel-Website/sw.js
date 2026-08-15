@@ -1206,7 +1206,8 @@
    toolbar.js -> v647, mobile.css -> v79. CACHE to v889 — v888 was already
    the Day Trips rebuild's, whose changelog line above this one was dropped
    by the merge that landed this and is restored here. */
-var CACHE = 'travel-cache-v889';
+/* 2026-08-15: mobile toolbar fixed to the top on every page; hamburger cut to the toolbar items; all hand-built mobile back navigation removed toolbar.js -> v648. CACHE to v890. */
+var CACHE = 'travel-cache-v890';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1214,7 +1215,7 @@ var CACHE = 'travel-cache-v889';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 647, 'mobile.css': 79, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 648, 'mobile.css': 79, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

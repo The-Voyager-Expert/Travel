@@ -311,6 +311,24 @@ a:hover { text-decoration: underline; }
 .title-page .title-address a:visited,
 .title-page .title-address a:hover { color: #3d3a32; }
 
+/* ─── "Request a different hotel" ───────────────────────────────────────────
+   Owner rule 2026-08-15: "below the hotel in each guide write request a
+   diffrent hotel and when clicks opens the person email app with the contact."
+   One line under the hotel banner on every guide, desktop and mobile. It is a
+   mailto: — tapping it hands off to the reader's own mail app with the city and
+   the current hotel already in the message, so a reply needs no context.
+   Injected by toolbar.js (no per-guide HTML), so all 245 guides carry it
+   without a fleet edit. flex-basis:100% puts it on its own line under the
+   hotel/address pair rather than trailing them on the same row.
+   No external-link chevron class here: mailto: is a hand-off, not a page. */
+.title-hotel-request {
+  order: 5; flex-basis: 100%; align-self: flex-start;
+  margin-top: 6px; font-size: 12px; font-weight: 500;
+  color: #b85c2a; text-decoration: none;
+}
+a.title-hotel-request:visited { color: #b85c2a; }   /* owner rule 2026-07-28: no colour change after visit */
+.title-hotel-request:hover { text-decoration: underline; }
+
 
 /* ─── TRIP OVERVIEW ─────────────────────────────────────────────────────── */
 /* Per core rules/Trip Overview.html and core rules/Guide Structure.html.
@@ -688,9 +706,9 @@ a:hover { text-decoration: underline; }
 #ams-advisory .ams-read-more:visited { color:#4a7fa8; }  /* literal hex — browsers don't resolve var() in :visited */
 #ams-advisory .ams-read-more:hover   { text-decoration:underline; }
 
-#ics-cal-pill, #ics-map-pill, #tve-offline-btn, #tve-visited-btn, #tve-preview-btn { color: var(--c-action-text); }
+#ics-cal-pill, #ics-map-pill, #tve-offline-btn, #tve-visited-btn { color: var(--c-action-text); }
 #ics-cal-pill:visited, #ics-map-pill:visited, #tve-offline-btn:visited, #tve-visited-btn:visited { color: #5a3c0e; }  /* literal hex — browsers don't resolve var() in :visited */
-#ics-cal-pill:active, #ics-map-pill:active, #tve-offline-btn:active, #tve-visited-btn:active, #tve-preview-btn:active,
+#ics-cal-pill:active, #ics-map-pill:active, #tve-offline-btn:active, #tve-visited-btn:active,
 #ics-cal-pill.tve-pressed, #ics-map-pill.tve-pressed, #tve-offline-btn.tve-pressed, #tve-visited-btn.tve-pressed { background: var(--c-action-press); }
 /* "Toggled-on" states — I've Been (visited) and Save-for-offline (saved) share the
    same terracotta-bold treatment so the row reads one consistent "this is on" language. */
@@ -703,7 +721,7 @@ a:hover { text-decoration: underline; }
 #ics-pill-row > #tve-visited-btn.tve-been,
 #ics-pill-row > #tve-offline-btn.tve-saved { border-left-width: 1px; margin-left: -1px; }
 @media (hover: hover) {
-  #ics-cal-pill:hover, #ics-map-pill:hover, #tve-offline-btn:hover, #tve-visited-btn:hover, #tve-preview-btn:hover { background: var(--c-pill-hover); border-color: var(--c-pill-bd-hover); }
+  #ics-cal-pill:hover, #ics-map-pill:hover, #tve-offline-btn:hover, #tve-visited-btn:hover { background: var(--c-pill-hover); border-color: var(--c-pill-bd-hover); }
 }
 
 /* ── In-guide currency converter — 💱 Currency pill + expanded panel ─────────
@@ -1353,9 +1371,27 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
   white-space: nowrap;
   flex-shrink: 0;
 }
-/* ── Mark Stop — checkbox injected by toolbar.js directly after .stop-name,
-   so it sits against the title rather than out on the right rail with the
-   share and star. Two states, and they swap places rather than stacking:
+/* ── The stop-header control rail — ONE flex item holding ✓ share ★ ✎.
+   Built by stopActionRail() in toolbar.js (owner rule 2026-08-15, "they will
+   be all 4 together"). It exists because .stop-header is flex-wrap:wrap on
+   mobile and loose flex items wrap one at a time: with the four as siblings a
+   long stop name split them 3 + 1 across two lines. Wrapped in this span they
+   are a single item and move as a block.
+   No margin-left:auto — the auto-margin spacer belongs to the left group's
+   last item (see the hand-down chain below), and a second one here would split
+   the free space between them. */
+.stop-actions {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ── Mark Stop — checkbox injected by toolbar.js as the FIRST control on the
+   right rail, with share, star and notes (owner rule 2026-08-15: all four
+   together). It used to sit directly after .stop-name and be the row's spacer;
+   on mobile, where .stop-header wraps, a long name then left it alone on its
+   own line with the other three below it. Two states, and they swap places rather than stacking:
    unchecked is a small ring with a faint ✓ inside; checked replaces that ring
    entirely with the plain brown word "Visited" — no fill, no border, no
    glyph. The earlier solid-terracotta pill read far too loud sitting next to
@@ -1363,9 +1399,6 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
 .stop-mark-btn {
   flex-shrink: 0;
   margin-left: 8px;
-  /* The spacer for the whole header — see toolbar.js _injectMarkStops. The
-     name sizes to its content, so this is what pushes chip/share/star right. */
-  margin-right: auto;
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -1389,12 +1422,17 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
 .stop-mark-btn:hover { border-color: #b85c2a; color: #b85c2a; }
 /* Exactly ONE element in the header may carry the auto margin, or the free
    space is split between them and the left group is stranded mid-row. The
-   spacer is the LAST item of the left group, which is whichever of these three
-   is present: open/closed status → duration chip → mark button. Each rule
-   below hands the job down the chain and cancels it on the one above.
-   (Re-homed 2026-08-10 when the chip moved off the right rail.) */
-.stop-header:has(.stop-dur) .stop-mark-btn,
-.stop-header:has(.open-now-status) .stop-mark-btn { margin-right: 0; }
+   spacer is the LAST item of the left group, which is whichever of these is
+   present: open/closed status → duration chip → the stop name. Each rule below
+   hands the job down the chain and cancels it on the one above.
+   (Re-homed 2026-08-10 when the chip moved off the right rail; the chain now
+   ENDS at .stop-name rather than at .stop-mark-btn, which left the left group
+   on 2026-08-15 to join the other three controls. Ending on the name is the
+   sturdier arrangement anyway — it is the one element every header has, so the
+   chain can never fall through to nothing.) */
+.stop-header .stop-name { margin-right: auto; }
+.stop-header:has(.stop-dur) .stop-name,
+.stop-header:has(.open-now-status) .stop-name { margin-right: 0; }
 .stop-header:has(.open-now-status) .stop-dur { margin-right: 0; }
 /* Checked: the ring is gone and the word stands in its place, wearing the
    EXACT treatment of the .stop-dur chip it shares the row with — same
@@ -1442,7 +1480,7 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
    Hand the job back down: to the chip if there is one, otherwise to the mark
    button. Both selectors outrank the chain above on specificity. */
 .stop-block.stop-done .stop-header .stop-dur { margin-right: auto; }
-.stop-block.stop-done .stop-header:not(:has(.stop-dur)) .stop-mark-btn { margin-right: auto; }
+.stop-block.stop-done .stop-header:not(:has(.stop-dur)) .stop-name { margin-right: auto; }
 /* .stop-row matches body weight (17px desktop / 21px mobile) — the prose
    summary and #652 Wikipedia row are PRIMARY content under each stop name,
    not "support content," so they should read at body size, not at the
@@ -2250,6 +2288,17 @@ div.train .train-time   { padding: 2px 0; }
    Color is set once on the base .extras-title rule (var(--c-extras-border) — unified gold 2026-08-04).
    No per-section color overrides; all sections share the same gold. ── */
 #also-on-this-site  .extras-title:empty::before { content: "💥 Also on this site"; }
+/* Owner bug 2026-08-15: "Worth knowing title in the collapse/expandle is not
+   showing up in any guide." Correct — it never had a label. All 237 guides
+   author `<div class="extras-title"></div>` empty inside .worth-knowing, and
+   unlike #also-on-this-site and #nearby-guides no ::before ever supplied the
+   text, so the section rendered with a blank gold bar. It shows most obviously
+   collapsed, where the title is the ONLY thing left on screen
+   (.worth-knowing.collapsed > *:not(.extras-title) is display:none) — a
+   collapsed Worth Knowing was an unlabelled strip with nothing to click back.
+   Same shape as the two rules it sits with; :empty means a guide that ever
+   authors its own title still wins. */
+.worth-knowing      .extras-title:empty::before { content: "\2728 Worth Knowing"; }
 
 /* ── extras-sub title color — matches each section's border token.
    Same token drives the left stripe, the big title, and the sub-titles.
@@ -2931,6 +2980,8 @@ div.train .train-time   { padding: 2px 0; }
   .title-page .title-address a,
   .title-page .title-address a:visited,
   .title-page .title-address a:hover { color: #ccc8c0; }
+  /* #b85c2a is unreadable on the dark ground — same shift the nav links make. */
+  .title-hotel-request, a.title-hotel-request:visited { color: #d4874a; }
   .title-updated { color: #7a7670; }
   .title-updated + .title-no-entries { color: #615e5a !important; }
   .stop-num, .stop-name { color: var(--c-text-primary); }
@@ -3068,6 +3119,8 @@ div.train .train-time   { padding: 2px 0; }
     font-size: 14px !important; font-weight: 600 !important; color: var(--c-pill-text) !important;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .title-address { order: 6 !important; flex-basis: 100% !important; min-width: 0; margin-top: 0 !important; }
+  /* Under the white hotel card, above the "Updated" stamp (order 7). */
+  .title-hotel-request { order: 7 !important; flex-basis: 100% !important; margin: 7px 0 0 !important; }
   .title-address::before { display: none !important; }
   /* min-height:0 overrides the 40px tap-target `a{}` rule in mobile.css that the
      ~22 legacy guides still loading mobile.css pick up — it inflated this card
@@ -4438,14 +4491,14 @@ a.also-in-country-pill:active {
     margin-top: 5px;
   }
   .stop-header:not(:has(.stop-dur)) .open-now-status { margin-left: 0; }
-  /* Neither is on the first row any more, so the mark button is its spacer
-     again — otherwise share/star/notes collapse onto the end of the name.
+  /* Neither is on the first row any more, so the NAME is the spacer again —
+     otherwise the four controls collapse onto the end of the name.
      Both selectors are repeated verbatim from the desktop hand-down chain
      above: `:has()` takes the specificity of its argument, so a plain
-     `.stop-header .stop-mark-btn` here would lose to them and the override
-     would silently do nothing. */
-  .stop-header:has(.stop-dur) .stop-mark-btn,
-  .stop-header:has(.open-now-status) .stop-mark-btn { margin-right: auto; }
+     `.stop-header .stop-name` here would lose to them and the override would
+     silently do nothing. */
+  .stop-header:has(.stop-dur) .stop-name,
+  .stop-header:has(.open-now-status) .stop-name { margin-right: auto; }
 }
 
 @media (prefers-color-scheme: dark) {
