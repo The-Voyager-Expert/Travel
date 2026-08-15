@@ -71,7 +71,7 @@ Per owner 2026-05-18 (*"always this order. Hubby's stuff first"*), trips that in
 7. **🚗 Car Rental** (if any)
 8. **⏳ Action box** (orange) — only things still to book or confirm
 
-For trips with no separation (Wifey solo all the way, e.g. Iceland; or Hubby solo, e.g. Seoul; or Together the whole time, e.g. FLoC), skip the empty phases and keep the remaining sections in the same relative order.
+For trips with no separation (Wifey solo all the way; or Hubby solo, e.g. Seoul; or Together the whole time, e.g. FLoC), skip the empty phases and keep the remaining sections in the same relative order.
 
 ### Who-tag on section labels
 
@@ -497,6 +497,29 @@ Use icons already established in the guide vocabulary. Don't introduce new ones 
 
 ---
 
+## Export to Calendar — one file for the flights, one file per hotel
+
+Per owner 2026-08-15 (*"i want export separated by flights 1 export, each hotel calendar export"* · *"flights 1 calendar to export hotels calendar by each so when i export only that comes"*): the **Export to Calendar** pill on each upcoming trip card opens a chooser, and the chooser is split exactly this way — never a single combined file for the whole trip.
+
+| Row | Contains | File |
+|---|---|---|
+| **All flights** | every leg of the trip, outbound and return, in one `.ics` | `{trip}-flights.ics` |
+| **One row per hotel** | that stay and nothing else — one `VEVENT` | `{trip}-{who}-{hotel}-{checkin}.ics` |
+
+**The separation is the whole point: tapping a row exports only that row.** A hotel file never carries a flight leg, and the flights file never carries a stay — so each of the two of us can take just the pieces we need without importing the rest of the trip.
+
+Rules:
+- **Flights are always grouped, hotels are always split.** Don't "helpfully" split the flights into one file per leg, and don't merge the stays into one hotels file.
+- The check-in date is part of a hotel's filename because the same hotel can be booked twice on one trip (out and back) — without it the two files collide. Keep it.
+- Each hotel row inherits the **Who** of the `.sec` above it (Both / Hubby / Wifey), which shows in the chooser row and in the event notes.
+- Upcoming trips only. A past trip (last date before today) and a **🤔 Not confirmed** trip get no pill at all.
+- The `.ics` is built in the browser from the rows already on the page — a corrected flight time or hotel date is picked up on the next click with no other edit. Never hand-maintain a parallel export.
+- Re-importing a file already added corrects the events rather than duplicating them (stable `UID` per event). Don't change the UID shape.
+
+Implementation lives in the export `<script>` at the bottom of `Trips.html`. The `save()` helper is copied verbatim from the guide export in `toolbar.js` (`_injectICSExport`) and has been through several rounds of fixes on real devices — **do not "improve" it**, especially the iOS navigation path and the 1500 ms `revokeObjectURL` delay.
+
+---
+
 # Shared Calendar — Rules
 
 Per owner 2026-05-19: trip rules and calendar rules live in this one document. The shared **Hubby&Wifey Trips** Google Calendar is the second surface for trip data; `Trips.html` is the first. Both stay in sync.
@@ -537,7 +560,7 @@ Per owner 2026-05-19 (*"everything that is booked should be in the calendar. we 
 
 **What stays off the calendar (per owner 2026-05-19 — *"only add the confirmed stuff"*):**
 - Anything with badge 🤔 Not confirmed in `Trips.html` (Seoul, Germany, anything held pending Hubby's confirmation).
-- Anything with badge 📋 Planning where no date is locked yet (e.g. Iceland June TBD — flights, hotel, car all `to book`).
+- Anything with badge 📋 Planning where no date is locked yet (flights, hotel, car all still `to book`).
 - Hypothetical or backup itineraries.
 
 Promote events to the calendar the moment a booking is confirmed and dates lock in.
