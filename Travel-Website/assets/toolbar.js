@@ -922,7 +922,8 @@ window.TVE.isPhone = function () {
      SHOW ONLY chips. Never re-pin these to one capitalisation. */
   var ITEMS = [
     { href: base + 'guides/index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
-    { href: base + 'Trip-Essentials/Before-You-Go.html', text: 'Before You Go', icon: 'luggage' },
+    { href: base + 'index.html#before-you-go', text: 'Before You Go', icon: 'luggage' },  /* owner 2026-08-14: the tool itself is on the landing page now, so the tab
+     goes there rather than to the standalone page it was lifted from. */
     { group: 'Best Of', groupIcon: 'star-cup', children: [
 { href: base + 'Trip-Essentials/Best-Of-Index.html',                      text: 'Browse by category', icon: 'category' },
         { href: base + 'Trip-Essentials/Best-Amusement-Parks.html',               text: 'Amusement Parks', icon: 'ferris' },
@@ -972,7 +973,8 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Wonders-of-the-World.html',          text: 'Wonders of the World', icon: 'mosque' },
     ] },
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', icon: 'folded-map' },
-    { href: base + 'index.html#contact', text: 'Contact', icon: 'faq-book' }
+    { href: 'mailto:contact@guidemydays.com?subject=Guide%20My%20Days', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
+     to the form. NOT base + ... — a mailto must not be depth-prefixed. */
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
   // Guide pages now share the #f5f4f0 warm background with essentials — colour detection
