@@ -1156,7 +1156,10 @@
 /* 2026-08-14: World-Map.html — per-visitor Visited + Mark mine; Before-You-Go.html
    — new hero. Both are page HTML, which this SW caches, so returning visitors
    were still being served the old pages. CACHE to v877. */
-var CACHE = 'travel-cache-v877';
+/* 2026-08-14: World-Map.html — visited now reads the shared tve-visited-{folder}
+   keys the guides' I've Been pill writes, so map, guide and index are one list.
+   CACHE to v878. */
+var CACHE = 'travel-cache-v878';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
