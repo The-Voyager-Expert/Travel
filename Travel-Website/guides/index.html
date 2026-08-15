@@ -2759,7 +2759,10 @@
     /* Flight row */
     out += '<tr><td class="cmp-row-label">Flight<br>from SEA</td>';
     sel.forEach(function(c) {
-      var key = c.href.replace(/^\.\//, '');
+      /* FMAP is keyed relative to /guides/ ('Athens/athens.html'). The landing
+         page grafts these same cards in with './guides/' prepended, so strip
+         that segment too or every city's flight time is a dash there. */
+      var key = c.href.replace(/^\.\//, '').replace(/^guides\//, '');
       var f = FMAP[key];
       if (f && f.r !== 'home') {
         out += '<td class="cmp-col"><span class="cmp-v">' + f.t + '</span>' +
@@ -3070,8 +3073,14 @@
          Safety survived only on the `|| [c.name]` fallback, which works for
          'Amsterdam' and fails for every hyphenated folder ('Buenos-Aires' vs
          'Buenos Aires'). Silent because '—' is also what a genuinely missing
-         row looks like. */
-      var climateKey = decodeURIComponent(href).replace(/^\.\//, '').split('/')[0];
+         row looks like.
+
+         The leading 'guides/' strip is for the landing page, which lifts this
+         whole block and grafts these same cards in with their hrefs rewritten
+         to './guides/X/...'; without it the key there is the literal 'guides'
+         for all five cities. */
+      var climateKey = decodeURIComponent(href)
+        .replace(/^\.\//, '').replace(/^guides\//, '').split('/')[0];
       /* country = parent .country block's label, minus the flag + guide count */
       var country = '';
       var cBlock = card.closest ? card.closest('.country') : null;
