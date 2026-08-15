@@ -1187,7 +1187,11 @@
    a search hero, both sibling link strips removed. CACHE to v883. */
 /* 2026-08-14: guides/index.html — hero with the search lifted out of the hidden
    topbar; Climate-Finder.html — banner removed again per owner. CACHE to v884. */
-var CACHE = 'travel-cache-v885';
+/* 2026-08-14: toolbar — strip reordered to Where to Go · When to Go · Where to
+   Stay (new dropdown, 6 lodging pages) · Before You Go · Maps · Contact; landing
+   page drops the Sunrise picker and the Before-you-go heading. floor -> 646,
+   CACHE v887. */
+var CACHE = 'travel-cache-v887';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1195,7 +1199,7 @@ var CACHE = 'travel-cache-v885';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 645, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 646, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
