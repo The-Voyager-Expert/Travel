@@ -2684,6 +2684,33 @@
   window._COST_DATA   = COST_DATA;
   window._SAFETY_DATA = SAFETY_DATA;
 
+  /* Stamp the three data attributes onto every card.
+     Trip Escape does NOT read the globals above — hiData(), costMid() and
+     safety() read data-climate / data-cost / data-safety off each CARD, and
+     scoreCard() returns -1 the moment data-climate is absent. Only 31 of the
+     286 cards carry them in the source HTML, so without this it scored 31
+     guides out of 237 and returned a ranked list from 13% of the fleet — no
+     error, just quietly wrong answers.
+
+     Keyed by folder, which is how all three tables are keyed. The 49 cards
+     that match nothing are the Best-Of specials, which are not guides.
+     hasAttribute guards the 31 that are authored inline: those carry
+     per-month climate and real {mid,high} costs, which are better than the
+     table's 12-value average and coarse tier, so they win. */
+  (function () {
+    [].forEach.call(document.querySelectorAll('a.dest-card'), function (c) {
+      var m = (c.getAttribute('href') || '').match(/^\.\/([^\/]+)\//);
+      var folder = m ? m[1] : null;
+      if (!folder) return;
+      if (!c.hasAttribute('data-climate') && CLIMATE_INLINE[folder])
+        c.setAttribute('data-climate', JSON.stringify(CLIMATE_INLINE[folder]));
+      if (!c.hasAttribute('data-cost') && COST_DATA[folder])
+        c.setAttribute('data-cost', JSON.stringify(COST_DATA[folder]));
+      if (!c.hasAttribute('data-safety') && SAFETY_DATA[folder])
+        c.setAttribute('data-safety', JSON.stringify(SAFETY_DATA[folder]));
+    });
+  }());
+
   /* ── Build comparison table ──────────────────────────────────────── */
   function buildTable() {
     var FMAP = window._FMAP || {};
@@ -4301,7 +4328,12 @@
     if (d.mid) return +d.mid;
     var t = (d.tier || '').toLowerCase();
     if (t === 'budget') return 60;
-    if (t === 'mid' || t === 'mid-range') return 150;
+    /* 'moderate' and 'expensive' are the site's own vocabulary — COST_DATA is
+       Moderate x111, Expensive x58, Budget x44, Premium x24, and nothing else.
+       Without these two, 169 of the 237 stamped cards return null here and the
+       budget half of the score silently falls back to a flat 0.5 contrast. */
+    if (t === 'mid' || t === 'mid-range' || t === 'moderate') return 150;
+    if (t === 'expensive') return 300;
     if (t === 'premium') return 350;
     if (t === 'luxury') return 550;
     if (t === 'upscale') return 420;
