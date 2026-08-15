@@ -853,6 +853,14 @@ a.land-cta:hover:visited {
   font: inherit; color: var(--rust, #b85c2a); background: none; border: 0; padding: 0;
   cursor: pointer; text-decoration: underline;
 }
+#fnd-home-list {
+  position: absolute; z-index: 40; left: 0; right: 0; top: calc(100% + 4px);
+  background: var(--surface, #fff); border: 1px solid var(--border, #e3ddd2);
+  border-radius: 10px; box-shadow: 0 4px 16px rgba(92,61,17,.1);
+  padding: 0.25rem 0; list-style: none; margin: 0;
+}
+#fnd-home-list[hidden] { display: none !important; }
+#fnd-home-note { margin: 0.3rem 0 0; }
 .fnd-ctl {
   display: flex; align-items: center; gap: 0.5rem; min-width: 0;
   border: 1px solid var(--border, #e3ddd2); border-radius: 999px;
@@ -1641,24 +1649,15 @@ window.lpGuideCard = function (href, flag, name, extra) {
     </div>
 
     <div class="fnd-field">
-      <!-- The origin is not decoration and it is no longer fixed. Every route in
-           FMAP starts at SEA — all 237 of them — so unlabelled this filter
-           silently claimed to measure from wherever the reader happens to be.
-           Naming Seattle fixed the lie; naming it and letting the reader change
-           it fixes the filter. Seattle keeps the exact routings, any other home
-           gets a labelled estimate — see TVE.home in toolbar.js § 43. -->
-      <label for="fnd-far">How far do you want to travel?
-        <span class="fnd-home-wrap"><button type="button" id="fnd-home" class="fnd-home"
-          aria-haspopup="dialog" aria-expanded="false">from Seattle</button></span></label>
-      <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span><select id="fnd-far">
-        <option value="">Any distance</option>
-        <option value="u5">Under 5 hours</option>
-        <option value="u8">Under 8 hours</option>
-        <option value="u10">Under 10 hours</option>
-        <option value="u12">Under 12 hours</option>
-        <option value="u15">Under 15 hours</option>
-        <option value="o15">15 hours and over</option>
-      </select></div>
+      <label for="fnd-home-in">Where are you flying from?</label>
+      <div class="fnd-ctl">
+        <span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span>
+        <input type="text" id="fnd-home-in" placeholder="City or airport" autocomplete="off" spellcheck="false">
+      </div>
+      <ul id="fnd-home-list" class="fnd-home-list" role="listbox" hidden></ul>
+      <p id="fnd-home-note" class="fnd-home-note"></p>
+      <!-- kept for filter engine compat; defaults to any distance -->
+      <select id="fnd-far" hidden aria-hidden="true"><option value=""></option></select>
     </div>
   </div>
 
@@ -4912,52 +4911,30 @@ function render() {
      because the site already knows 3,268 of them with positions attached. A
      reader in Bergamo picks BGY and gets Bergamo's distances; a city list would
      have to guess which field they fly from. */
-  var homeBtn = document.getElementById('fnd-home');
-  if (homeBtn && HOME) {
-    var pop = document.createElement('div');
-    pop.className = 'fnd-home-pop';
-    pop.hidden = true;
-    pop.setAttribute('role', 'dialog');
-    pop.setAttribute('aria-label', 'Set your home airport');
-    var input = document.createElement('input');
-    input.className = 'fnd-home-in';
-    input.type = 'text';
-    input.placeholder = 'City or airport code';
-    input.setAttribute('aria-label', 'Home city or airport code');
-    var list = document.createElement('ul');
-    list.className = 'fnd-home-list';
-    list.setAttribute('role', 'listbox');
-    var note = document.createElement('p');
-    note.className = 'fnd-home-note';
-    pop.appendChild(input); pop.appendChild(list); pop.appendChild(note);
-    homeBtn.parentNode.appendChild(pop);
+  var homeIn = document.getElementById('fnd-home-in');
+  if (homeIn && HOME) {
+    var homeList = document.getElementById('fnd-home-list');
+    var homeNote = document.getElementById('fnd-home-note');
 
     var rows = [], active = -1;
 
     function label(r) { return r[1] + ' (' + r[0] + ')' + (r[2] ? ' · ' + r[2] : ''); }
 
-    /* The button carries the answer, so the label stays a readable sentence:
-       "from Rome", never "from FCO". The code shows on the result cards, where
-       the reader is comparing numbers and the three letters are the shorter,
-       clearer tag. */
     function syncHome() {
       var h = HOME.get();
-      homeBtn.textContent = 'from ' + h.city;
-      note.textContent = '';
+      homeNote.textContent = '';
       if (!HOME.isDefault()) {
-        note.appendChild(document.createTextNode(
-          'Flight times are estimated flying time from ' + h.code + ', layovers not included. '));
+        homeIn.value = h.city + ' (' + h.code + ')';
+        homeNote.appendChild(document.createTextNode(
+          'Estimated flying time from ' + h.code + ', layovers not included. '));
         var undo = document.createElement('button');
         undo.type = 'button';
         undo.textContent = 'Back to Seattle';
         undo.addEventListener('click', function () { HOME.clear(); syncHome(); run(); });
-        note.appendChild(undo);
+        homeNote.appendChild(undo);
       } else {
-        note.textContent = 'Set where you fly from and every flight time on this page follows.';
+        homeIn.value = '';
       }
-      /* Routing is a fact about the SEA itineraries and about nothing else, so
-         the Stops control leaves with them rather than filtering on a flight
-         the reader is not taking. */
       if (fStops) {
         var field = fStops.closest ? fStops.closest('.fnd-field') : null;
         if (field) field.hidden = !HOME.isDefault();
@@ -4966,16 +4943,16 @@ function render() {
     }
 
     function paint() {
-      list.textContent = '';
+      homeList.textContent = '';
+      if (!rows.length) { homeList.hidden = true; return; }
+      homeList.hidden = false;
       rows.forEach(function (r, i) {
         var li = document.createElement('li');
         li.className = 'fnd-home-opt' + (i === active ? ' fnd-home-opt-on' : '');
         li.setAttribute('role', 'option');
         li.textContent = label(r);
-        /* mousedown, not click: blur fires first on click and would close the
-           popover before the selection ever lands. */
         li.addEventListener('mousedown', function (e) { e.preventDefault(); choose(r); });
-        list.appendChild(li);
+        homeList.appendChild(li);
       });
     }
 
@@ -4983,17 +4960,12 @@ function render() {
       var h = HOME.fromRow(r);
       if (!h) return;
       HOME.set(h);
-      close();
+      homeList.hidden = true;
+      rows = []; active = -1;
       syncHome();
-      /* The picked airport's own guide, if the site has one, is now the home
-         city rather than a destination — so the list is rebuilt, not patched. */
       AIR ? run() : loadAir(run);
     }
 
-    /* The site's own 198 destinations and hubs, boosted in the ranking. Without
-       it "rome" offers Ciampino above Fiumicino and "paris" offers Le Bourget
-       above Charles de Gaulle: same city, same match rank, and OurAirports'
-       size tier does not know which one people actually fly from. */
     var majorSet = null;
     function majors() {
       if (majorSet) return majorSet;
@@ -5003,7 +4975,7 @@ function render() {
     }
 
     function search() {
-      var q = input.value.trim();
+      var q = homeIn.value.trim();
       if (!q) { rows = []; active = -1; paint(); return; }
       HOME.names(function (all) {
         rows = HOME.lookup(q, all, majors(), 6);
@@ -5012,38 +4984,23 @@ function render() {
       });
     }
 
-    function open() {
-      pop.hidden = false;
-      homeBtn.setAttribute('aria-expanded', 'true');
-      /* 29 KB, and only for a reader who has actually opened the picker: the
-         major list ranks the results, and the positions answer the first
-         search that follows without a second wait. */
-      if (!AIR) loadAir(function () { majorSet = null; if (input.value.trim()) search(); });
-      input.value = '';
-      rows = []; active = -1; paint();
-      input.focus();
-    }
-    function close() {
-      pop.hidden = true;
-      homeBtn.setAttribute('aria-expanded', 'false');
-    }
-
-    homeBtn.addEventListener('click', function () { pop.hidden ? open() : close(); });
-    input.addEventListener('input', search);
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { close(); homeBtn.focus(); return; }
+    homeIn.addEventListener('focus', function () {
+      if (!AIR) loadAir(function () { majorSet = null; if (homeIn.value.trim()) search(); });
+    });
+    homeIn.addEventListener('input', search);
+    homeIn.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { homeList.hidden = true; rows = []; active = -1; homeIn.blur(); return; }
       if (!rows.length) return;
       if (e.key === 'ArrowDown') { e.preventDefault(); active = (active + 1) % rows.length; paint(); }
       else if (e.key === 'ArrowUp') { e.preventDefault(); active = (active - 1 + rows.length) % rows.length; paint(); }
       else if (e.key === 'Enter') { e.preventDefault(); if (active >= 0) choose(rows[active]); }
     });
     document.addEventListener('mousedown', function (e) {
-      if (!pop.hidden && !pop.contains(e.target) && e.target !== homeBtn) close();
+      if (!homeList.hidden && !homeList.contains(e.target) && e.target !== homeIn) {
+        homeList.hidden = true; rows = []; active = -1;
+      }
     });
 
-    /* The home is site-wide, so this label follows the setting rather than the
-       button that happens to sit next to it — any other surface that sets a
-       home leaves this one correct instead of stale. */
     HOME.onChange(syncHome);
     syncHome();
   }
