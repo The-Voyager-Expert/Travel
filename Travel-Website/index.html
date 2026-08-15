@@ -963,6 +963,256 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
 .lp-sec > summary h2 { margin-bottom: 0; }
 .lp-sec-body { padding-top: clamp(0.7rem, 1.8vw, 1.1rem); }
 
+
+/* ── Find your next destination ───────────────────────────────────────────────
+   Four questions in one row above the blocks. Below 900px they stack, because
+   four controls side by side at phone width give each one about 80px and the
+   placeholder truncates to nothing. */
+.lp-finder {
+  max-width: var(--lp-max, 1180px); margin: 0 auto clamp(1.4rem, 3vw, 2.4rem);
+  padding: clamp(1.1rem, 2.4vw, 1.7rem) clamp(1.1rem, 2.6vw, 1.9rem);
+  background: var(--surface, #fff);
+  border: 1px solid var(--border2, #e6e2da); border-radius: 14px;
+  box-shadow: 0 1px 6px rgba(92, 61, 17, .05);
+}
+.lp-finder h2 { margin: 0 0 clamp(0.8rem, 1.8vw, 1.2rem); color: var(--ink); }
+.fnd-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(0.6rem, 1.4vw, 1rem); }
+@media (max-width: 900px) { .fnd-row { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .fnd-row { grid-template-columns: 1fr; } }
+.fnd-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+.fnd-field label { font-size: 0.82rem; font-weight: 600; color: var(--muted, #6a6660); }
+.fnd-ctl {
+  display: flex; align-items: center; gap: 0.5rem; min-width: 0;
+  border: 1px solid var(--border, #e3ddd2); border-radius: 999px;
+  background: var(--surface, #fff); padding: 0 0.9rem;
+}
+.fnd-ctl:focus-within { border-color: var(--rust, #b85c2a); }
+.fnd-ic { flex: 0 0 auto; width: 20px; height: 20px; display: block; }
+.fnd-ic svg { width: 100%; height: 100%; display: block; }
+/* The control itself carries the border, so the field inside must not draw a
+   second one — and must not paint a background over the rounded corners. */
+.fnd-ctl input, .fnd-ctl select {
+  flex: 1 1 auto; min-width: 0; border: 0; outline: none; background: transparent;
+  font: inherit; color: var(--text, #3d3a32); padding: 0.7em 0; cursor: pointer;
+}
+.fnd-ctl input { cursor: text; }
+.fnd-more {
+  margin-top: clamp(0.7rem, 1.6vw, 1rem); border: 1px solid var(--border, #e3ddd2);
+  background: transparent; color: var(--text, #3d3a32); font: inherit; font-weight: 600;
+  border-radius: 999px; padding: 0.5em 1.1em; cursor: pointer;
+}
+.fnd-more:hover { border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); }
+.fnd-more::after { content: ' \25be'; }
+.fnd-more[aria-expanded="true"]::after { content: ' \25b4'; }
+#fnd-more-panel { margin-top: clamp(0.7rem, 1.6vw, 1rem); }
+.fnd-results { margin-top: clamp(0.9rem, 2vw, 1.3rem); border-top: 1px solid var(--border2, #e6e2da); padding-top: clamp(0.8rem, 1.8vw, 1.1rem); }
+.fnd-res-head { font-size: 0.9rem; color: var(--muted, #6a6660); margin: 0 0 0.7rem; }
+.fnd-res-head b { color: var(--ink, #3d3a32); }
+.fnd-res-list { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.fnd-res-list a {
+  border: 1px solid var(--border, #e3ddd2); border-radius: 999px;
+  padding: 0.35em 0.85em; font-size: 0.9rem; text-decoration: none;
+  color: var(--text, #3d3a32);
+}
+.fnd-res-list a:hover { border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); }
+.fnd-lede { font-size: 0.95rem; color: var(--muted, #6a6660); margin: -0.3rem 0 clamp(1rem, 2.2vw, 1.5rem); }
+/* Country alone on its row — 73 options need the width. */
+.fnd-row-1 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); margin-top: clamp(0.6rem, 1.4vw, 1rem); }
+@media (max-width: 560px) { .fnd-row-1 { grid-template-columns: 1fr; } }
+
+.fnd-go-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; margin-top: clamp(1rem, 2.2vw, 1.5rem); }
+.fnd-go {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  background: var(--rust, #b85c2a); border: 1px solid var(--rust, #b85c2a);
+  color: #fff; font: inherit; font-weight: 700; font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  border-radius: 999px; padding: 0.8em 1.7em; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.fnd-go:hover, .fnd-go:focus-visible { background: transparent; color: var(--rust, #b85c2a); }
+.fnd-go-ic { width: 18px; height: 18px; display: block; flex: 0 0 auto; }
+.fnd-reset {
+  border: 1px solid var(--border, #e3ddd2); background: transparent;
+  color: var(--muted, #6a6660); font: inherit; border-radius: 999px;
+  padding: 0.7em 1.2em; cursor: pointer;
+}
+.fnd-reset:hover { border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); }
+.fnd-reset[hidden] { display: none !important; }
+/* A filter set behind a shut panel has to stay visible somehow. */
+.fnd-more.on { border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); }
+.fnd-res-empty { font-size: 0.92rem; color: var(--muted, #6a6660); margin: 0; }
+
+/* ── Result cards ─────────────────────────────────────────────────────────────
+   A card states the facts that were actually asked about — the temperature for
+   the chosen month, the guide's length, the flight time — so a result can be
+   checked rather than taken on trust. */
+.rescards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: clamp(0.5rem, 1.2vw, 0.75rem); }
+.rescard {
+  display: flex; flex-direction: column; gap: 0.22rem;
+  padding: 0.75rem 0.85rem; text-decoration: none;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e3ddd2); border-radius: 11px;
+  transition: border-color .15s, background .15s;
+}
+.rescard:hover { border-color: var(--rust, #b85c2a); background: var(--surface2, #faf7f2); }
+.rc-top { display: flex; align-items: baseline; gap: 0.4rem; min-width: 0; }
+.rc-flag { font-size: 0.95rem; flex: 0 0 auto; }
+.rc-name { font-size: 0.95rem; font-weight: 700; color: var(--ink, #3d3a32); overflow-wrap: anywhere; }
+.rescard:hover .rc-name { color: var(--rust, #b85c2a); }
+.rc-country { font-size: 0.76rem; color: var(--muted, #6a6660); }
+.rc-facts { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.3rem; }
+.rc-fact {
+  font-size: 0.72rem; line-height: 1; padding: 0.32em 0.55em;
+  border: 1px solid var(--border2, #e6e2da); border-radius: 5px;
+  color: var(--muted, #6a6660); background: var(--bg, #f5f4f0);
+}
+.rc-temp { color: var(--rust, #b85c2a); border-color: #e8cdb8; background: #fdf3ea; }
+
+/* ── The two that ask instead of filter ───────────────────────────────────────
+   Bigger than a filter row on purpose: this is the path for a visitor who
+   cannot answer the four questions above, which is most first-time visitors. */
+.lp-ask { max-width: var(--lp-max, 1180px); margin: clamp(1.2rem, 2.6vw, 1.8rem) auto 0; }
+.ask-row { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.6rem, 1.4vw, 1rem); }
+@media (max-width: 700px) { .ask-row { grid-template-columns: 1fr; } }
+.ask-card {
+  display: grid; grid-template-columns: auto 1fr; column-gap: 0.85rem; row-gap: 0.25rem;
+  align-content: center; text-align: left; cursor: pointer; font: inherit;
+  padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1.1rem, 2.6vw, 1.8rem);
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e3ddd2); border-radius: 14px;
+  transition: border-color .15s, background .15s;
+}
+.ask-card:hover, .ask-card:focus-visible { border-color: var(--rust, #b85c2a); }
+.ask-card.on { border-color: var(--rust, #b85c2a); background: var(--surface2, #faf7f2); }
+.ask-ic { grid-row: 1 / span 2; width: 34px; height: 34px; align-self: center; flex: 0 0 auto; }
+.ask-ic svg { width: 100%; height: 100%; display: block; }
+.ask-name { font-size: clamp(1rem, 1.6vw, 1.15rem); font-weight: 700; color: var(--ink, #3d3a32); }
+.ask-card:hover .ask-name, .ask-card.on .ask-name { color: var(--rust, #b85c2a); }
+.ask-desc { font-size: 0.88rem; line-height: 1.5; color: var(--muted, #6a6660); }
+
+.tl-panel {
+  margin-top: clamp(0.8rem, 1.8vw, 1.2rem);
+  padding: clamp(1rem, 2.2vw, 1.6rem);
+  background: var(--surface, #fff);
+  border: 1px solid var(--border2, #e6e2da); border-radius: 14px;
+}
+.tl-panel[hidden] { display: none !important; }
+/* The panel fetches /guides/index.html on first open; without this it is an
+   empty bordered box for the length of that request. */
+.tl-panel.waking { min-height: 5rem; position: relative; }
+.tl-panel.waking::after {
+  content: 'Loading\2026'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; color: var(--muted, #6a6660);
+}
+
+/* ── More ways to filter ──────────────────────────────────────────────────────
+   The open panel takes the same card chrome as the finder, so seven more
+   controls read as more of the same search rather than as loose fields
+   scattered on the page background. */
+.lp-more { max-width: var(--lp-max, 1180px); margin: clamp(1rem, 2.2vw, 1.5rem) auto 0; }
+#fnd-more-panel {
+  margin-top: clamp(0.7rem, 1.6vw, 1rem);
+  padding: clamp(1.1rem, 2.4vw, 1.7rem) clamp(1.1rem, 2.6vw, 1.9rem);
+  background: var(--surface, #fff);
+  border: 1px solid var(--border2, #e6e2da); border-radius: 14px;
+}
+#fnd-more-panel[hidden] { display: none !important; }
+
+/* ── Destination results ──────────────────────────────────────────────────── */
+.lp-results-sec { max-width: var(--lp-max, 1180px); margin: 0 auto; }
+.lp-results-sec .fnd-results { margin-top: clamp(1.2rem, 2.6vw, 1.8rem); border-top: 0; padding-top: 0; }
+.lp-results-sec .fnd-results[hidden] { display: none !important; }
+
+/* ── Best Of, promoted to a section ───────────────────────────────────────── */
+.lp-best { max-width: var(--lp-max, 1180px); margin: clamp(2.4rem, 5vw, 4rem) auto 0; }
+.lp-best h2 {
+  display: flex; align-items: center; gap: 0.55rem;
+  font-size: clamp(1.3rem, 2.6vw, 1.75rem); font-weight: 700;
+  color: var(--ink, #3d3a32); margin: 0 0 0.4rem;
+}
+.lp-best-ic { width: 30px; height: 30px; flex: 0 0 auto; }
+.lp-best-ic svg { width: 100%; height: 100%; display: block; }
+.lp-best-sub {
+  font-size: 0.95rem; line-height: 1.62; color: var(--muted, #6a6660);
+  margin: 0 0 clamp(1rem, 2.2vw, 1.5rem); max-width: 68ch;
+}
+.lp-best-sub strong { color: var(--text, #3d3a32); font-weight: 600; }
+/* Three or four columns of category names rather than one long ribbon — the
+   category name is the reason to click, so it has to be scannable. */
+.lp-best .lp-links {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.1rem 1.4rem; border: 0; padding: 0;
+}
+.lp-best .lp-links a { padding: 0.34rem 0; align-self: start; }
+
+/* ── The quiet end ────────────────────────────────────────────────────────── */
+.lp-quiet { max-width: var(--lp-max, 1180px); margin: clamp(2.4rem, 5vw, 4rem) auto 0; }
+.qt-row { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.6rem, 1.4vw, 0.9rem); }
+@media (max-width: 700px) { .qt-row { grid-template-columns: 1fr; } }
+.qt-card {
+  display: grid; grid-template-columns: auto 1fr; column-gap: 0.65rem; row-gap: 0.2rem;
+  align-content: start; text-align: left; cursor: pointer; font: inherit; text-decoration: none;
+  padding: clamp(0.85rem, 1.8vw, 1.15rem);
+  background: transparent; border: 1px solid var(--border, #e3ddd2); border-radius: 12px;
+  transition: border-color .15s, background .15s;
+}
+.qt-card:hover, .qt-card:focus-visible { border-color: var(--rust, #b85c2a); }
+.qt-card.on { border-color: var(--rust, #b85c2a); background: var(--surface2, #faf7f2); }
+.qt-ic { grid-row: 1 / span 2; width: 24px; height: 24px; flex: 0 0 auto; }
+.qt-ic svg { width: 100%; height: 100%; display: block; }
+.qt-name { font-size: 0.95rem; font-weight: 700; color: var(--ink, #3d3a32); align-self: center; }
+.qt-card:hover .qt-name, .qt-card.on .qt-name { color: var(--rust, #b85c2a); }
+.qt-desc { font-size: 0.82rem; line-height: 1.45; color: var(--muted, #6a6660); }
+
+/* Section heading + subtitle, shared by Best Of, the quiet end and
+   Before you go. */
+.lp-best h2, .lp-byg h2 {
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem); font-weight: 700;
+  color: var(--ink, #3d3a32); margin: 0 0 0.3rem;
+}
+.lp-byg-sub { font-size: 0.92rem; color: var(--muted, #6a6660); margin: 0 0 clamp(0.9rem, 2vw, 1.3rem); }
+
+/* ── Weather, closed by default ───────────────────────────────────────────── */
+.lp-wx { max-width: var(--lp-max, 1180px); margin: clamp(2.2rem, 5vw, 3.6rem) auto 0; }
+.lp-wx-d > summary {
+  list-style: none; cursor: pointer; display: flex; flex-direction: column; gap: 0.2rem;
+  padding: clamp(0.9rem, 2vw, 1.2rem) clamp(1rem, 2.2vw, 1.4rem);
+  border: 1px solid var(--border, #e3ddd2); border-radius: 12px;
+  background: var(--surface, #fff);
+}
+.lp-wx-d > summary::-webkit-details-marker { display: none; }
+.lp-wx-d > summary:hover { border-color: var(--rust, #b85c2a); }
+.lp-wx-q { font-size: 1rem; font-weight: 700; color: var(--ink, #3d3a32); }
+.lp-wx-hint { font-size: 0.85rem; line-height: 1.45; color: var(--muted, #6a6660); }
+.lp-wx-body { margin-top: clamp(0.8rem, 1.8vw, 1.2rem); }
+/* Climate Finder keeps its own card chrome; it must not gain a second one. */
+.lp-wx-body > .lp-block { background: transparent; border: 0; padding: 0; margin: 0; }
+.lp-wx-sun {
+  margin-top: clamp(1.4rem, 3vw, 2.2rem); padding-top: clamp(1.1rem, 2.4vw, 1.6rem);
+  border-top: 1px solid var(--border2, #e6e2da);
+}
+.lp-wx-sun h3 { font-size: 1rem; font-weight: 700; color: var(--ink, #3d3a32); margin: 0 0 0.4rem; }
+.lp-wx-sun > p { font-size: 0.9rem; line-height: 1.6; color: var(--muted, #6a6660); margin: 0 0 1rem; max-width: 62ch; }
+
+/* ── Before you go ────────────────────────────────────────────────────────────
+   Ten sections' worth of links as six columns. auto-fit again, so the columns
+   halve rather than squeeze. */
+.lp-byg { max-width: var(--lp-max, 1180px); margin: clamp(2.2rem, 5vw, 3.6rem) auto 0; }
+.lp-byg-all { margin-left: 0.5rem; color: var(--rust, #b85c2a); text-decoration: none; border-bottom: 1px solid transparent; }
+.lp-byg-all:hover { border-bottom-color: var(--rust, #b85c2a); }
+.byg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: clamp(1rem, 2.4vw, 1.8rem); }
+.byg-col { display: flex; flex-direction: column; gap: 0.32rem; min-width: 0; }
+.byg-col h3 {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--muted, #6a6660); margin: 0 0 0.3rem;
+}
+.byg-col a {
+  font-size: 0.88rem; line-height: 1.4; color: var(--text, #3d3a32);
+  text-decoration: none; border-bottom: 1px solid transparent; align-self: flex-start;
+}
+.byg-col a:visited { color: var(--text, #3d3a32); }
+.byg-col a:hover { color: var(--rust, #b85c2a); border-bottom-color: var(--rust, #b85c2a); }
+
 /* Help me choose + Trip Escape, lifted whole from the guides index. */
 .tt-tagline { font-size:13px; color:var(--muted); margin:0 0 18px; line-height:1.5; }
 .tt-label { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0 0 7px; }
@@ -1321,8 +1571,8 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
   <p>
     237 cities, each written the same way — what to see and in what order, how long every
     stop really takes, and how to get between them on foot or by ride. If you already know
-    where you're going, go straight to the guide. If you don't, each block below explains
-    one way of narrowing it down, and ends with the filter itself.
+    where you're going, go straight to the guide. If you don't, answer as much or as
+    little as you like below and the list narrows as you go.
   </p>
   <div class="lp-actions">
     <a class="lp-btn" href="./guides/">Browse all 237 guides</a>
@@ -1353,860 +1603,722 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
   </div>
 </header>
 
-<!-- ═══ BLOCK 0 — straight to the guides ═══════════════════════════════════════
-     Two ways in, both without touching a filter: the whole list, or one city.
-     The city picker is built at runtime from assets/search_index.json — the same
-     file the site search uses — so it can never drift from the shipped guides. -->
-<div class="lp-grid">
-<section class="lp-block open" id="skip-filters">
-  <!-- Not a <details>. This heading is part of the title and stays visible at
-       all times — the block never collapses. -->
-  <h2>Or skip all of it.</h2>
-    <div class="lp-sec-body"><p>
-    Then none of the filters below matter. Take the
-    whole list, or jump straight into one city's guide.
-  </p>
-  <div class="lp-jump">
-    <a class="lp-btn big" href="./guides/">Browse all the guides</a>
-    <label for="guide-pick" class="sr-only">Jump to one guide</label>
-    <select id="guide-pick">
-      <option value="">&hellip;or pick one city</option>
-    </select>
-  </div>
+<!-- ═══ FIND YOUR NEXT DESTINATION ══════════════════════════════════════════
+     The four questions that actually narrow a destination, in one row, above
+     the blocks. Everything below this is a longer way of asking the same
+     things; this is the short way. Icons are catalogue ids (Site-Icons.html),
+     never typed emoji — 1204 globe search, 46 calendar, 300 partly cloudy,
+     59 duration bar. -->
+<!-- ═══ FIND THE RIGHT DESTINATION ══════════════════════════════════════════════
+     Four questions, then a button. Not "Where?" — somebody who can answer that
+     does not need this block and has a Browse button in the hero and a search
+     in the toolbar. These are the four a person can answer BEFORE they have a
+     destination, which is the whole point of the block.
+
+     Everything narrows one list, computed here. It cannot hand off to /guides/
+     instead: that page enforces one filter at a time (_mutexClearFilters), so
+     "July AND 22-28° AND under 10h" is not a thing it can be asked.
+
+     Icons are catalogue ids (Brain/Reference/Formatting/Site-Icons.html) drawn
+     from the toolbar sprite, never a typed emoji. -->
+<section class="lp-finder" id="finder">
+  <h2>Find the right destination for your trip.</h2>
+  <p class="fnd-lede">Answer what you know. Leave the rest alone.</p>
+
+  <div class="fnd-row">
+    <div class="fnd-field">
+      <label for="fnd-when">When are you going?</label>
+      <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-wall-calendar"/></svg></span><select id="fnd-when">
+        <option value="">Any month</option>
+        <option value="0">January</option><option value="1">February</option>
+        <option value="2">March</option><option value="3">April</option>
+        <option value="4">May</option><option value="5">June</option>
+        <option value="6">July</option><option value="7">August</option>
+        <option value="8">September</option><option value="9">October</option>
+        <option value="10">November</option><option value="11">December</option>
+      </select></div>
     </div>
+
+    <div class="fnd-field">
+      <label for="fnd-weather">What weather do you want?</label>
+      <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-sun-cloud-colour"/></svg></span><select id="fnd-weather">
+        <option value="">Any temperature</option>
+        <option value="hot">Hot &mdash; 28&deg;C and up</option>
+        <option value="warm">Warm &mdash; 22 to 28&deg;C</option>
+        <option value="mild">Mild &mdash; 15 to 22&deg;C</option>
+        <option value="cool">Cool &mdash; 8 to 15&deg;C</option>
+        <option value="cold">Cold &mdash; under 8&deg;C</option>
+      </select></div>
+    </div>
+
+    <div class="fnd-field">
+      <label for="fnd-length">How long?</label>
+      <!-- day-dots, not clock-hourglass: the hourglass is a two-object drawing
+           (clock plus glass) and at 20px it reads as a smudge. The question is
+           "how many days", and dots count. -->
+      <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-day-dots"/></svg></span><select id="fnd-length">
+        <option value="">Any length</option>
+        <option value="1-3">1 to 3 days</option>
+        <option value="4-6">4 to 6 days</option>
+        <option value="7-9">7 to 9 days</option>
+        <option value="10">10 days or more</option>
+      </select></div>
+    </div>
+
+    <div class="fnd-field">
+      <label for="fnd-far">How far do you want to travel?</label>
+      <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span><select id="fnd-far">
+        <option value="">Any distance</option>
+        <option value="u5">Under 5 hours</option>
+        <option value="u8">Under 8 hours</option>
+        <option value="u10">Under 10 hours</option>
+        <option value="u12">Under 12 hours</option>
+        <option value="u15">Under 15 hours</option>
+        <option value="o15">15 hours and over</option>
+      </select></div>
+    </div>
+  </div>
+
+  <div class="fnd-go-row">
+    <!-- The one place a catalogue icon is wrong. Every mark in the catalogue is
+         a fixed gradient fill plus a same-family rim, which is exactly right on
+         the page's cream and invisible on a filled terracotta button — the rust
+         magnifier vanished into the rust. This is the button's own glyph, drawn
+         in currentColor, so it is white on the filled state and terracotta on
+         the hover outline. Not a new catalogue entry and not an emoji. -->
+    <button type="button" id="fnd-go" class="fnd-go"><svg class="fnd-go-ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/></svg>Find My Destinations</button>
+    <button type="button" id="fnd-reset" class="fnd-reset" hidden>Clear everything</button>
+  </div>
+
+  <!-- Results are NOT here. They render below the advanced panel — see the
+       #fnd-results block after "More ways to filter". Inside this card they
+       updated off-screen whenever a filter in the advanced panel changed, which
+       looks exactly like an advanced filter doing nothing. -->
 </section>
 
-<section class="lp-block" id="trip-escape">
-  <details class="lp-sec">
-    <summary><h2>Trip Escape</h2></summary>
-    <div class="lp-sec-body">
-      <button id="btn-trip-twin" hidden aria-hidden="true"></button>
-<div id="trip-twin-panel" hidden>
-  <div id="tt-inner">
-    <p class="tt-tagline">Find guides that are nothing like home — the opposite climate, opposite budget, total change of scene.</p>
-    <div id="tt-city-row">
-      <div class="tt-label">Where you are <span style="font-weight:400;font-size:9px;letter-spacing:.04em;text-transform:none;color:var(--muted)">(optional — any fleet city as a proxy)</span></div>
-      <div id="tt-city-wrap">
-        <input type="text" id="tt-city" placeholder="e.g. Miami, London, Sedona" autocomplete="off" spellcheck="false" aria-label="Your current city">
-        <div id="tt-suggest-list" hidden></div>
-      </div>
-      <span id="tt-city-badge" hidden></span>
-    </div>
-    <div class="tt-or">or describe your home</div>
-    <div class="tt-section">
-      <div class="tt-label">Climate</div>
-      <div class="ttchip-row" id="tt-climate-chips">
-        <button type="button" class="ttchip" data-v="hot"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-sun-palms"/></svg> Hot &amp; humid</button>
-        <button type="button" class="ttchip" data-v="warm"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-clear"/></svg> Warm &amp; sunny</button>
-        <button type="button" class="ttchip" data-v="mild"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-partly"/></svg> Mild</button>
-        <button type="button" class="ttchip" data-v="cool"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-overcast"/></svg> Cool</button>
-        <button type="button" class="ttchip" data-v="cold"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-snow"/></svg> Cold</button>
-      </div>
-    </div>
-    <div class="tt-section">
-      <div class="tt-label">Travel budget (per night)</div>
-      <div class="ttchip-row" id="tt-budget-chips">
-        <button type="button" class="ttchip" data-v="budget"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-bills"/></svg> Budget (under $100)</button>
-        <button type="button" class="ttchip" data-v="mid"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-credit-card"/></svg> Mid-range ($100–$250)</button>
-        <button type="button" class="ttchip" data-v="premium"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-money-bag"/></svg> Premium ($250+)</button>
-      </div>
-    </div>
-    <div class="tt-safe-row">
-      <label class="tt-check-lbl"><input type="checkbox" id="tt-safe"> Safe destinations only</label>
-    </div>
-    <button id="tt-go" type="button" class="tt-go-btn" disabled>Find My Escape</button>
-    <p id="tt-err" hidden></p>
+<!-- ═══ THE TWO THAT ASK INSTEAD OF FILTER ══════════════════════════════════════
+     Directly under the finder and deliberately larger than a filter row: these
+     are for the visitor who cannot answer the four questions above, which is
+     most first-time visitors. Both widgets already existed on this page — they
+     are moved, not rewritten, and their original hidden buttons stay in the
+     markup because the scripts further up this file bind to them. -->
+<section class="lp-ask" id="ask">
+  <div class="ask-row">
+    <button type="button" class="ask-card" data-tool="help-choose"
+            aria-expanded="false" aria-controls="tp-help-choose">
+      <span class="ask-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-wand"/></svg></span>
+      <span class="ask-name">Help Me Choose</span>
+      <span class="ask-desc">I don&rsquo;t know where I want to go.</span>
+    </button>
+    <button type="button" class="ask-card" data-tool="trip-escape"
+            aria-expanded="false" aria-controls="tp-trip-escape">
+      <span class="ask-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-compass"/></svg></span>
+      <span class="ask-name">Trip Escape</span>
+      <span class="ask-desc">Show me destinations that feel completely different from home.</span>
+    </button>
   </div>
-  <div id="tt-results" hidden>
-    <p class="tt-res-head">Your escape destinations</p>
-    <div id="tt-res-cards"></div>
-    <button id="tt-back" type="button" class="tt-back-btn">← Try again</button>
-  </div>
-</div>
-    </div>
-  </details>
-</section>
 
-<section class="lp-block" id="help-choose">
-  <details class="lp-sec">
-    <summary><h2>Help me choose</h2></summary>
-    <div class="lp-sec-body">
+  <div class="tl-panel" id="tp-help-choose" hidden>
+      <!-- Not decoration and not removable. The Help Me Choose script binds every handler to this button and bails out entirely (`if (!btn) return`) when it is absent, so deleting it kills the widget with no error anywhere. The card above clicks it once to build the panel. -->
       <button id="btn-help-choose" hidden aria-hidden="true"></button>
-<div id="help-choose-panel">
-  <div id="hc-inner">
-    <div class="hc-progress">
-      <span class="hc-step-dot on" id="hc-dot-1">1</span>
-      <span class="hc-step-line"></span>
-      <span class="hc-step-dot" id="hc-dot-2">2</span>
-      <span class="hc-step-line"></span>
-      <span class="hc-step-dot" id="hc-dot-3">3</span>
-      <span class="hc-step-line"></span>
-      <span class="hc-step-dot" id="hc-dot-4">4</span>
-    </div>
+    <div id="help-choose-panel">
+      <div id="hc-inner">
+        <div class="hc-progress">
+          <span class="hc-step-dot on" id="hc-dot-1">1</span>
+          <span class="hc-step-line"></span>
+          <span class="hc-step-dot" id="hc-dot-2">2</span>
+          <span class="hc-step-line"></span>
+          <span class="hc-step-dot" id="hc-dot-3">3</span>
+          <span class="hc-step-line"></span>
+          <span class="hc-step-dot" id="hc-dot-4">4</span>
+        </div>
 
-    <div id="hc-s1" class="hc-step">
-      <div class="tt-label">When are you travelling?</div>
-      <div class="hc-month-grid">
-        <button type="button" class="hcchip" data-v="0">Jan</button>
-        <button type="button" class="hcchip" data-v="1">Feb</button>
-        <button type="button" class="hcchip" data-v="2">Mar</button>
-        <button type="button" class="hcchip" data-v="3">Apr</button>
-        <button type="button" class="hcchip" data-v="4">May</button>
-        <button type="button" class="hcchip" data-v="5">Jun</button>
-        <button type="button" class="hcchip" data-v="6">Jul</button>
-        <button type="button" class="hcchip" data-v="7">Aug</button>
-        <button type="button" class="hcchip" data-v="8">Sep</button>
-        <button type="button" class="hcchip" data-v="9">Oct</button>
-        <button type="button" class="hcchip" data-v="10">Nov</button>
-        <button type="button" class="hcchip" data-v="11">Dec</button>
+        <div id="hc-s1" class="hc-step">
+          <div class="tt-label">When are you travelling?</div>
+          <div class="hc-month-grid">
+            <button type="button" class="hcchip" data-v="0">Jan</button>
+            <button type="button" class="hcchip" data-v="1">Feb</button>
+            <button type="button" class="hcchip" data-v="2">Mar</button>
+            <button type="button" class="hcchip" data-v="3">Apr</button>
+            <button type="button" class="hcchip" data-v="4">May</button>
+            <button type="button" class="hcchip" data-v="5">Jun</button>
+            <button type="button" class="hcchip" data-v="6">Jul</button>
+            <button type="button" class="hcchip" data-v="7">Aug</button>
+            <button type="button" class="hcchip" data-v="8">Sep</button>
+            <button type="button" class="hcchip" data-v="9">Oct</button>
+            <button type="button" class="hcchip" data-v="10">Nov</button>
+            <button type="button" class="hcchip" data-v="11">Dec</button>
+          </div>
+        </div>
+
+        <div id="hc-s2" class="hc-step" hidden>
+          <div class="tt-label">How long is the trip?</div>
+          <div class="ttchip-row" style="margin-top:10px">
+            <button type="button" class="hcchip" data-v="short">1–3 days</button>
+            <button type="button" class="hcchip" data-v="medium">4–6 days</button>
+            <button type="button" class="hcchip" data-v="long">7–10 days</button>
+            <button type="button" class="hcchip" data-v="extended">10+ days</button>
+          </div>
+        </div>
+
+        <div id="hc-s3" class="hc-step" hidden>
+          <div class="tt-label">What weather do you want?</div>
+          <div class="ttchip-row" style="margin-top:10px">
+            <button type="button" class="hcchip" data-v="hot">🌴 Hot (30°C+)</button>
+            <button type="button" class="hcchip" data-v="warm">☀️ Warm (22–30°C)</button>
+            <button type="button" class="hcchip" data-v="mild">🌤 Mild (15–22°C)</button>
+            <button type="button" class="hcchip" data-v="cool">🍂 Cool (8–15°C)</button>
+            <button type="button" class="hcchip" data-v="cold">❄️ Cold (under 8°C)</button>
+            <button type="button" class="hcchip" data-v="any">🌍 Any weather</button>
+          </div>
+        </div>
+
+        <div id="hc-s4" class="hc-step" hidden>
+          <div class="tt-label">What kind of trip? <span style="font-weight:400;font-size:9px;letter-spacing:.04em;text-transform:none;color:var(--muted)">(pick one or more)</span></div>
+          <div class="hc-activity-grid">
+            <button type="button" class="hcchip" data-v="beach">🏖 Beach</button>
+            <button type="button" class="hcchip" data-v="nature">🌲 Nature</button>
+            <button type="button" class="hcchip" data-v="history">🏛 History</button>
+            <button type="button" class="hcchip" data-v="art">🎨 Art &amp; museums</button>
+            <button type="button" class="hcchip" data-v="foodie">🍽 Food scene</button>
+            <button type="button" class="hcchip" data-v="nightlife">🌃 Nightlife</button>
+            <button type="button" class="hcchip" data-v="islands">🏝 Islands</button>
+            <button type="button" class="hcchip" data-v="snow">🎿 Snow / ski</button>
+            <button type="button" class="hcchip" data-v="wine">🍷 Wine</button>
+            <button type="button" class="hcchip" data-v="kids">🛝 Kids friendly</button>
+            <button type="button" class="hcchip" data-v="amusement">🎢 Amusement</button>
+          </div>
+        </div>
+
+        <div class="hc-nav">
+          <button id="hc-go" type="button" hidden disabled>Show my matches</button>
+          <button id="hc-back" type="button" hidden>← Back</button>
+        </div>
+      </div>
+
+      <div id="hc-results" hidden>
+        <p class="tt-res-head">Your destination matches</p>
+        <div id="hc-res-cards"></div>
+        <button id="hc-restart" type="button" class="tt-back-btn">← Start over</button>
       </div>
     </div>
-
-    <div id="hc-s2" class="hc-step" hidden>
-      <div class="tt-label">How long is the trip?</div>
-      <div class="ttchip-row" style="margin-top:10px">
-        <button type="button" class="hcchip" data-v="short">1–3 days</button>
-        <button type="button" class="hcchip" data-v="medium">4–6 days</button>
-        <button type="button" class="hcchip" data-v="long">7–10 days</button>
-        <button type="button" class="hcchip" data-v="extended">10+ days</button>
+  </div>
+  <div class="tl-panel" id="tp-trip-escape" hidden>
+      <!-- Not decoration and not removable. The Trip Escape script binds every handler to this button and bails out entirely (`if (!btn) return`) when it is absent, so deleting it kills the widget with no error anywhere. The card above clicks it once to build the panel. -->
+      <button id="btn-trip-twin" hidden aria-hidden="true"></button>
+    <div id="trip-twin-panel" hidden>
+      <div id="tt-inner">
+        <p class="tt-tagline">Find guides that are nothing like home — the opposite climate, opposite budget, total change of scene.</p>
+        <div id="tt-city-row">
+          <div class="tt-label">Where you are <span style="font-weight:400;font-size:9px;letter-spacing:.04em;text-transform:none;color:var(--muted)">(optional — any fleet city as a proxy)</span></div>
+          <div id="tt-city-wrap">
+            <input type="text" id="tt-city" placeholder="e.g. Miami, London, Sedona" autocomplete="off" spellcheck="false" aria-label="Your current city">
+            <div id="tt-suggest-list" hidden></div>
+          </div>
+          <span id="tt-city-badge" hidden></span>
+        </div>
+        <div class="tt-or">or describe your home</div>
+        <div class="tt-section">
+          <div class="tt-label">Climate</div>
+          <div class="ttchip-row" id="tt-climate-chips">
+            <button type="button" class="ttchip" data-v="hot"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-sun-palms"/></svg> Hot &amp; humid</button>
+            <button type="button" class="ttchip" data-v="warm"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-clear"/></svg> Warm &amp; sunny</button>
+            <button type="button" class="ttchip" data-v="mild"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-partly"/></svg> Mild</button>
+            <button type="button" class="ttchip" data-v="cool"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-overcast"/></svg> Cool</button>
+            <button type="button" class="ttchip" data-v="cold"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-snow"/></svg> Cold</button>
+          </div>
+        </div>
+        <div class="tt-section">
+          <div class="tt-label">Travel budget (per night)</div>
+          <div class="ttchip-row" id="tt-budget-chips">
+            <button type="button" class="ttchip" data-v="budget"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-bills"/></svg> Budget (under $100)</button>
+            <button type="button" class="ttchip" data-v="mid"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-credit-card"/></svg> Mid-range ($100–$250)</button>
+            <button type="button" class="ttchip" data-v="premium"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-money-bag"/></svg> Premium ($250+)</button>
+          </div>
+        </div>
+        <div class="tt-safe-row">
+          <label class="tt-check-lbl"><input type="checkbox" id="tt-safe"> Safe destinations only</label>
+        </div>
+        <button id="tt-go" type="button" class="tt-go-btn" disabled>Find My Escape</button>
+        <p id="tt-err" hidden></p>
+      </div>
+      <div id="tt-results" hidden>
+        <p class="tt-res-head">Your escape destinations</p>
+        <div id="tt-res-cards"></div>
+        <button id="tt-back" type="button" class="tt-back-btn">← Try again</button>
       </div>
     </div>
+  </div>
+</section>
 
-    <div id="hc-s3" class="hc-step" hidden>
-      <div class="tt-label">What weather do you want?</div>
-      <div class="ttchip-row" style="margin-top:10px">
-        <button type="button" class="hcchip" data-v="hot">🌴 Hot (30°C+)</button>
-        <button type="button" class="hcchip" data-v="warm">☀️ Warm (22–30°C)</button>
-        <button type="button" class="hcchip" data-v="mild">🌤 Mild (15–22°C)</button>
-        <button type="button" class="hcchip" data-v="cool">🍂 Cool (8–15°C)</button>
-        <button type="button" class="hcchip" data-v="cold">❄️ Cold (under 8°C)</button>
-        <button type="button" class="hcchip" data-v="any">🌍 Any weather</button>
+<!-- ═══ MORE WAYS TO FILTER ═════════════════════════════════════════════════════
+     Seven more dimensions, all narrowing the same list as the four above. Every
+     one is real data already on the site, parsed out of /guides/index.html so it
+     cannot drift from the listing: THEME_DATA, COST_DATA, SAFETY_DATA, FMAP,
+     CONTINENT, each card's data-lang and its country grouping.
+
+     Two names from the brief are not here as separate controls, deliberately.
+     "Activities" and "Trip Type" are one field — they are the same THEME_DATA
+     tags, and shipping both would be two controls fighting over one dimension.
+     "Temperature" and "Flight time" are the Weather and How-far questions in
+     the main row; repeating them here would let a visitor set the same filter
+     to two different values. -->
+<section class="lp-more" id="more-filters">
+  <button type="button" id="fnd-more" class="fnd-more" aria-expanded="false" aria-controls="fnd-more-panel">More ways to filter</button>
+    <div id="fnd-more-panel" hidden>
+      <div class="fnd-row">
+        <div class="fnd-field">
+          <label for="fnd-type">Trip type</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-triptype"/></svg></span><select id="fnd-type">
+            <option value="">Any type</option>
+            <option value="beach">Beach</option>
+            <option value="islands">Islands</option>
+            <option value="nature">Nature</option>
+            <option value="snow">Snow &amp; ski</option>
+            <option value="history">History</option>
+            <option value="art">Art &amp; museums</option>
+            <option value="foodie">Food scene</option>
+            <option value="wine">Wine</option>
+            <option value="nightlife">Nightlife</option>
+            <option value="kids">Kid-friendly</option>
+            <option value="amusement">Theme parks</option>
+          </select></div>
+        </div>
+
+        <div class="fnd-field">
+          <label for="fnd-lang">Language</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-language-roundel"/></svg></span><select id="fnd-lang">
+            <option value="">Any language</option>
+            <option value="en">English</option><option value="es">Spanish</option>
+            <option value="fr">French</option><option value="de">German</option>
+            <option value="it">Italian</option><option value="pt">Portuguese</option>
+            <option value="nl">Dutch</option><option value="ja">Japanese</option>
+            <option value="zh">Chinese</option><option value="ko">Korean</option>
+            <option value="ar">Arabic</option><option value="th">Thai</option>
+            <option value="tr">Turkish</option><option value="sv">Swedish</option>
+            <option value="no">Norwegian</option><option value="da">Danish</option>
+            <option value="fi">Finnish</option>
+          </select></div>
+        </div>
+
+        <div class="fnd-field">
+          <label for="fnd-cont">Continent</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-orbited-globe"/></svg></span><select id="fnd-cont">
+            <option value="">Anywhere</option>
+            <option value="Europe">Europe</option>
+            <option value="Asia">Asia</option>
+            <option value="North America">North America</option>
+            <option value="South America">South America</option>
+            <option value="Africa">Africa</option>
+            <option value="Oceania">Oceania</option>
+          </select></div>
+        </div>
+
+        <div class="fnd-field">
+          <label for="fnd-stops">Stops</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-boarding-pass"/></svg></span><select id="fnd-stops">
+            <option value="">Any routing</option>
+            <option value="nonstop">Nonstop</option>
+            <option value="1stop">One connection</option>
+            <option value="2stop">Two connections</option>
+          </select></div>
+        </div>
+
+        <div class="fnd-field">
+          <label for="fnd-budget">Budget</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-budget"/></svg></span><select id="fnd-budget">
+            <option value="">Any budget</option>
+            <option value="Budget">Budget</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Expensive">Expensive</option>
+            <option value="Premium">Premium</option>
+          </select></div>
+        </div>
+
+        <div class="fnd-field">
+          <label for="fnd-safety">Safety</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-safety-guide"/></svg></span><select id="fnd-safety">
+            <option value="">Any advisory level</option>
+            <option value="Very Safe">Very safe only</option>
+            <option value="Safe">Very safe or safe</option>
+            <option value="Moderate">Moderate and above</option>
+          </select></div>
+        </div>
+      </div>
+
+      <!-- 73 countries is a select, not a row of pills. -->
+      <div class="fnd-row fnd-row-1">
+        <div class="fnd-field">
+          <label for="fnd-country">Country</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-country-map"/></svg></span><select id="fnd-country">
+            <option value="">Any country</option>
+            <option value="argentina">Argentina (1)</option>
+            <option value="aruba">Aruba (1)</option>
+            <option value="australia">Australia (2)</option>
+            <option value="austria">Austria (2)</option>
+            <option value="bahamas">Bahamas (1)</option>
+            <option value="barbados">Barbados (1)</option>
+            <option value="belgium">Belgium (2)</option>
+            <option value="bhutan">Bhutan (1)</option>
+            <option value="brazil">Brazil (15)</option>
+            <option value="canada">Canada (7)</option>
+            <option value="cayman-islands">Cayman Islands (1)</option>
+            <option value="chile">Chile (1)</option>
+            <option value="china">China (5)</option>
+            <option value="costa-rica">Costa Rica (3)</option>
+            <option value="croatia">Croatia (2)</option>
+            <option value="curacao">Curacao (1)</option>
+            <option value="czechia">Czechia (1)</option>
+            <option value="denmark">Denmark (1)</option>
+            <option value="ecuador">Ecuador (1)</option>
+            <option value="egypt">Egypt (1)</option>
+            <option value="estonia">Estonia (1)</option>
+            <option value="finland">Finland (1)</option>
+            <option value="france">France (11)</option>
+            <option value="french-polynesia">French Polynesia (1)</option>
+            <option value="georgia">Georgia (1)</option>
+            <option value="germany">Germany (7)</option>
+            <option value="greece">Greece (7)</option>
+            <option value="hungary">Hungary (1)</option>
+            <option value="iceland">Iceland (1)</option>
+            <option value="indonesia">Indonesia (1)</option>
+            <option value="ireland">Ireland (1)</option>
+            <option value="italy">Italy (18)</option>
+            <option value="japan">Japan (4)</option>
+            <option value="jordan">Jordan (1)</option>
+            <option value="laos">Laos (1)</option>
+            <option value="luxembourg">Luxembourg (1)</option>
+            <option value="maldives">Maldives (1)</option>
+            <option value="malta">Malta (1)</option>
+            <option value="mexico">Mexico (4)</option>
+            <option value="monaco">Monaco (1)</option>
+            <option value="montenegro">Montenegro (1)</option>
+            <option value="morocco">Morocco (1)</option>
+            <option value="nepal">Nepal (1)</option>
+            <option value="netherlands">Netherlands (2)</option>
+            <option value="new-zealand">New Zealand (2)</option>
+            <option value="norway">Norway (4)</option>
+            <option value="oman">Oman (1)</option>
+            <option value="peru">Peru (3)</option>
+            <option value="philippines">Philippines (1)</option>
+            <option value="poland">Poland (1)</option>
+            <option value="portugal">Portugal (7)</option>
+            <option value="puerto-rico">Puerto Rico (1)</option>
+            <option value="qatar">Qatar (1)</option>
+            <option value="seychelles">Seychelles (1)</option>
+            <option value="singapore">Singapore (1)</option>
+            <option value="sint-maarten">Sint Maarten (1)</option>
+            <option value="slovenia">Slovenia (1)</option>
+            <option value="south-africa">South Africa (1)</option>
+            <option value="south-korea">South Korea (2)</option>
+            <option value="spain">Spain (9)</option>
+            <option value="sri-lanka">Sri Lanka (1)</option>
+            <option value="sweden">Sweden (2)</option>
+            <option value="switzerland">Switzerland (3)</option>
+            <option value="taiwan">Taiwan (1)</option>
+            <option value="thailand">Thailand (3)</option>
+            <option value="turkey">Turkey (1)</option>
+            <option value="turks-and-caicos">Turks And Caicos (1)</option>
+            <option value="united-arab-emirates">United Arab Emirates (2)</option>
+            <option value="united-kingdom">United Kingdom (5)</option>
+            <option value="united-states">United States (57)</option>
+            <option value="uruguay">Uruguay (1)</option>
+            <option value="vietnam">Vietnam (2)</option>
+            <option value="virgin-islands">Virgin Islands (1)</option>
+          </select></div>
+        </div>
       </div>
     </div>
+</section>
 
-    <div id="hc-s4" class="hc-step" hidden>
-      <div class="tt-label">What kind of trip? <span style="font-weight:400;font-size:9px;letter-spacing:.04em;text-transform:none;color:var(--muted)">(pick one or more)</span></div>
-      <div class="hc-activity-grid">
-        <button type="button" class="hcchip" data-v="beach">🏖 Beach</button>
-        <button type="button" class="hcchip" data-v="nature">🌲 Nature</button>
-        <button type="button" class="hcchip" data-v="history">🏛 History</button>
-        <button type="button" class="hcchip" data-v="art">🎨 Art &amp; museums</button>
-        <button type="button" class="hcchip" data-v="foodie">🍽 Food scene</button>
-        <button type="button" class="hcchip" data-v="nightlife">🌃 Nightlife</button>
-        <button type="button" class="hcchip" data-v="islands">🏝 Islands</button>
-        <button type="button" class="hcchip" data-v="snow">🎿 Snow / ski</button>
-        <button type="button" class="hcchip" data-v="wine">🍷 Wine</button>
-        <button type="button" class="hcchip" data-v="kids">🛝 Kids friendly</button>
-        <button type="button" class="hcchip" data-v="amusement">🎢 Amusement</button>
+<!-- ═══ DESTINATION RESULTS ═══════════════════════════════════════════════════
+     Below every control that feeds it — the four questions AND the advanced
+     panel. It lived inside the finder card first, where changing a filter in
+     the panel below updated a list above the fold-line the visitor was looking
+     at: the filter appeared to do nothing. The Find button scrolls here. -->
+<section class="lp-results-sec" id="results">
+  <div id="fnd-results" class="fnd-results" hidden></div>
+</section>
+
+<!-- ═══ BEST OF ═════════════════════════════════════════════════════════════════
+     Promoted out of a collapsed accordion box into a section of its own. It is
+     the part of the site with no equivalent anywhere else — one category ranked
+     across every destination rather than a top ten per country — and it was
+     behind a click that gave no reason to make it. The categories are listed
+     rather than hidden, because the category name IS the reason to click. -->
+<section class="lp-best" id="best-of">
+  <h2><span class="lp-best-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-trophy"/></svg></span>Best Of</h2>
+  <p class="lp-best-sub"><strong>One category, ranked across every destination.</strong>
+  Nobody decides to visit Slovenia and then discovers caves &mdash; they want to see a
+  cave, and the question is which one is worth the flight. Each entry names the city it
+  sits in and links into that city&rsquo;s guide.</p>
+          <nav class="lp-links">
+            <a href="./Trip-Essentials/Best-Amusement-Parks.html">Amusement Parks</a>
+            <a href="./Trip-Essentials/Best-Animal-Encounters.html">Animal Encounters</a>
+            <a href="./Trip-Essentials/Best-Aquariums.html">Aquariums</a>
+            <a href="./Trip-Essentials/Best-Architecture.html">Architecture</a>
+            <a href="./Trip-Essentials/Best-Art-Museums.html">Art Museums</a>
+            <a href="./Trip-Essentials/Best-Beaches.html">Beaches</a>
+            <a href="./Trip-Essentials/Best-Castles.html">Castles</a>
+            <a href="./Trip-Essentials/Best-Cathedrals.html">Cathedrals</a>
+            <a href="./Trip-Essentials/Best-Caves.html">Caves</a>
+            <a href="./Trip-Essentials/Cruise-Ships.html">Cruise Lines</a>
+            <a href="./Trip-Essentials/Disney-Parks.html">Disney Parks</a>
+            <a href="./Trip-Essentials/Festival-Finder.html">Festival Finder</a>
+            <a href="./Trip-Essentials/Best-Gardens.html">Gardens</a>
+            <a href="./Trip-Essentials/Best-Hard-to-Reach-Places.html">Hard-to-Reach Places</a>
+            <a href="./Trip-Essentials/Best-Hot-Springs.html">Hot Springs</a>
+            <a href="./Trip-Essentials/Best-Islands.html">Islands</a>
+            <a href="./Trip-Essentials/Best-Kids-Friendly-Places.html">Kid-Friendly</a>
+            <a href="./Trip-Essentials/Best-Lakes.html">Lakes</a>
+            <a href="./Trip-Essentials/Best-Mountains-and-Rock-Formations.html">Mountains &amp; Rock</a>
+            <a href="./Trip-Essentials/Best-Museums.html">Museums</a>
+            <a href="./Trip-Essentials/Best-National-Parks-by-Country.html">National Parks</a>
+            <a href="./Trip-Essentials/Best-Natural-Phenomena.html">Natural Phenomena</a>
+            <a href="./Trip-Essentials/Best-Observation-Decks.html">Observation Decks</a>
+            <a href="./Trip-Essentials/Pickleball.html">Pickleball</a>
+            <a href="./Trip-Essentials/Best-Safari.html">Safari</a>
+            <a href="./Trip-Essentials/Best-Scuba-Diving.html">Scuba Diving</a>
+            <a href="./Trip-Essentials/Best-Ski-Resorts.html">Ski Resorts</a>
+            <a href="./Trip-Essentials/Best-Surfing.html">Surfing</a>
+            <a href="./Trip-Essentials/Best-UNESCO-Sites.html">UNESCO Sites</a>
+            <a href="./Trip-Essentials/Best-Unique-Museums.html">Unique Museums</a>
+            <a href="./Trip-Essentials/Best-Volcanoes.html">Volcanoes</a>
+            <a href="./Trip-Essentials/Best-Wine-Regions.html">Wine Regions</a>
+            <a href="./Trip-Essentials/Best-Wonders-of-the-World.html">Wonders of the World</a>
+          </nav>
+</section>
+
+<section class="lp-wx" id="weather">
+  <details class="lp-wx-d">
+    <summary>
+      <span class="lp-wx-q">Weather in detail</span>
+      <span class="lp-wx-hint">Search destinations by temperature and rainfall for a
+      given month, or check when the sun rises and sets.</span>
+    </summary>
+
+    <div class="lp-wx-body">
+      <section class="lp-block" id="climate-finder">
+        <details class="lp-sec" open>
+          <summary><h2>Climate Finder</h2></summary>
+          <div class="lp-sec-body"><p>
+          Search for a destination by its weather instead of by its name. Set the month you can
+          travel, the daytime temperature you are after and how much rain you will put up with,
+          and this returns every city on the site that matches. It answers the question people
+          actually start with &mdash; somewhere warm, somewhere mild, somewhere dry &mdash; before
+          they have settled on a place at all.
+        </p>
+        <div style="margin:14px 0 14px;">
+          <div style="font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Forecast &amp; Research</div>
+          <div class="cf-presets" id="cf-presets">
+          <button type="button" class="cf-preset" data-preset="beach">Beach weather</button>
+          <button type="button" class="cf-preset" data-preset="spring">Mild spring</button>
+          <button type="button" class="cf-preset" data-preset="winter">Winter escape</button>
+          <button type="button" class="cf-preset" data-preset="autumn">Cool autumn</button>
+        </div>
+      <div class="cf-controls">
+          <div class="cf-block">
+            <div class="cf-label">Month</div>
+            <div id="cf-months" class="cf-months"></div>
+          </div>
+          <div class="cf-block">
+            <div class="cf-label">Search city</div>
+            <input type="text" id="cf-city-search" class="cf-city-search" placeholder="City name" autocomplete="off">
+          </div>
+          <div class="cf-block">
+            <div class="cf-label">Typical daytime high</div>
+            <div class="cf-sliderrow">
+              <span class="cf-to">From</span>
+              <input type="range" id="cf-min" min="-20" max="44" value="18" step="1" aria-label="Minimum temperature">
+              <span class="cf-tval" id="cf-min-val">18°C</span>
+              <span class="cf-to">to</span>
+              <input type="range" id="cf-max" min="-15" max="46" value="27" step="1" aria-label="Maximum temperature">
+              <span class="cf-tval" id="cf-max-val">27°C</span>
+              <div class="cf-spacer"></div>
+              <div>
+                <div class="cf-label">Units</div>
+                <div id="cf-unit" class="cf-seg">
+                  <button type="button" data-u="C" aria-label="Celsius">°C</button>
+                  <button type="button" data-u="F" aria-label="Fahrenheit">°F</button>
+                </div>
+              </div>
+              <div>
+                <div class="cf-label">Sort</div>
+                <select id="cf-sort" class="cf-sort">
+                  <option value="cool">Coolest first</option>
+                  <option value="warm">Warmest first</option>
+                  <option value="az">A–Z</option>
+                </select>
+              </div>
+              <div>
+                <div class="cf-label">Rainfall</div>
+                <div id="cf-rain-filter" class="cf-seg">
+                  <button type="button" data-rf="all">All</button>
+                  <button type="button" data-rf="dry">Dry</button>
+                  <button type="button" data-rf="wet">Wet</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="cf-summary" class="cf-summary"></div>
+        <div id="cf-results" class="cf-results"></div>
+        <div id="cf-compare" class="cf-compare-panel" style="display:none;"></div>
+
+          </div>
+        <!-- No </details> here. Climate Finder carried an unbalanced pair —
+             .lp-sec was closed at this point and then closed a second time at
+             the end of the section, three closers for two openers. It was
+             invisible while the section sat at the top level of .lp-grid,
+             because a stray closer with no open ancestor is simply dropped.
+             Nested inside the Weather disclosure it is not invisible: it closed
+             THAT, and hoisted sunrise out of the collapsed section onto the
+             page. Extra closer removed; cf-extras belongs inside .lp-sec. -->
+        <details class="cf-extras" open>
+          <summary>Elsewhere on the site</summary>
+          <div class="cf-sibling-row" style="display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 8px;">
+          <a href="./Trip-Essentials/Weather.html" class="sibling-pill">Weather by city</a>
+          <a href="./Trip-Essentials/When-to-Go.html" class="sibling-pill">When to go</a>
+          <a href="./Trip-Essentials/Festival-Finder.html" class="sibling-pill">Festival finder</a>
+          <a href="./Trip-Essentials/Sports-Calendar.html" class="sibling-pill">Sports calendar</a>
+        </div>
+          </details>
+          </div>
+        </details>
+      </section>
+
+      <div class="lp-wx-sun" id="sunrise">
+        <h3>Sunrise &amp; sunset</h3>
+        <p>A 9am winter sunrise changes what a day can hold. Pick a destination and a
+        month and see when the sun comes up, when it goes down, and how long the day
+        runs.</p>
+          <div class="sun-pickers">
+            <select id="sun-city" aria-label="Select city for sunrise and sunset times"></select>
+            <div id="sun-city-search-wrap">
+              <input id="sun-city-search" class="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="City" aria-label="Search city for sunrise and sunset times">
+            </div>
+            <select id="sun-month" aria-label="Select month for sunrise and sunset times">
+              <option value="">Month</option>
+              <option value="0">January</option><option value="1">February</option>
+              <option value="2">March</option><option value="3">April</option>
+              <option value="4">May</option><option value="5">June</option>
+              <option value="6">July</option><option value="7">August</option>
+              <option value="8">September</option><option value="9">October</option>
+              <option value="10">November</option><option value="11">December</option>
+            </select>
+          </div>
+
+          <div id="sun-output"></div>
+          <p class="sun-note-inline">Times are approximate (&plusmn;15&ndash;30 min) &middot; mid-month estimate &middot; computed from latitude.</p>
       </div>
     </div>
+  </details>
+</section>
 
-    <div class="hc-nav">
-      <button id="hc-go" type="button" hidden disabled>Show my matches</button>
-      <button id="hc-back" type="button" hidden>← Back</button>
-    </div>
+<!-- ═══ THE QUIET END ═══════════════════════════════════════════════════════════
+     Stats, Compare and the practical pages: used, but not on a first visit, and
+     they were taking the same visual weight as the finder. -->
+<section class="lp-quiet" id="quiet">
+  <div class="qt-row">
+    <a class="qt-card" href="./guides/#compare">
+      <span class="qt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-compare"/></svg></span>
+      <span class="qt-name">Compare cities</span>
+      <span class="qt-desc">Up to five shortlisted cities side by side &mdash; days, weather, flight time.</span>
+    </a>
+    <button type="button" class="qt-card" data-tool="stats" aria-expanded="false" aria-controls="tp-stats">
+      <span class="qt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-bar-chart"/></svg></span>
+      <span class="qt-name">Travel stats</span>
+      <span class="qt-desc">Guide counts and averages by region, the records page, and the world map.</span>
+    </button>
   </div>
-
-  <div id="hc-results" hidden>
-    <p class="tt-res-head">Your destination matches</p>
-    <div id="hc-res-cards"></div>
-    <button id="hc-restart" type="button" class="tt-back-btn">← Start over</button>
+  <div class="tl-panel" id="tp-stats" hidden>
+    <nav class="lp-links">
+      <a href="./Trip-Essentials/Maps/World-Map.html">World map</a>
+      <a href="./Trip-Essentials/Destination-Records.html">Destination records</a>
+      <a href="./Trip-Essentials/Europe-Stats.html">Europe</a>
+      <a href="./Trip-Essentials/Asia-Stats.html">Asia</a>
+      <a href="./Trip-Essentials/Africa-Stats.html">Africa</a>
+      <a href="./Trip-Essentials/South-America-Stats.html">South America</a>
+      <a href="./Trip-Essentials/Caribbean-Stats.html">Caribbean</a>
+      <a href="./Trip-Essentials/Oceania-Stats.html">Oceania</a>
+      <a href="./Trip-Essentials/Stats-Across-US.html">United States</a>
+      <a href="./Trip-Essentials/Stats-Across-Canada.html">Canada</a>
+    </nav>
   </div>
-</div>
-    </div>
-  </details>
 </section>
 
-<section class="lp-block" id="before-you-go">
-  <details class="lp-sec">
-    <summary><h2>Before You Go</h2></summary>
-    <div class="lp-sec-body"><p>
-    Weather for that month, whether you need a visa, how safe it is, roughly what a day
-    costs, which plug to pack, and whether the tap water is fine. Pick a city and a month
-    and they all answer at once — read live from the rest of the site, so none of it can
-    quietly go out of date.
-  </p>
-  <!-- Links out to the page rather than framing it. It used to ride in a lazy
-       iframe here; the tool is a whole page of its own and belongs on it. -->
-  <div class="lp-jump">
-    <a class="lp-btn big" href="./Trip-Essentials/Before-You-Go.html">Open Before You Go</a>
-  </div>
+<section class="lp-byg" id="before-you-go">
+  <h2>Before you go</h2>
+  <p class="lp-byg-sub">The practical pages, once a destination is settled.
+  <a class="lp-byg-all" href="./Trip-Essentials/Before-You-Go.html">Or start from Before You Go</a></p>
+  <div class="byg-grid">
+    <div class="byg-col">
+      <h3>Getting there</h3>
+      <a href="./Trip-Essentials/Flights.html">Flights</a>
+      <a href="./Trip-Essentials/Airlines-of-the-World.html">Airlines</a>
+      <a href="./Trip-Essentials/Airport-Connection-Times.html">Connection times</a>
+      <a href="./Trip-Essentials/Lounges-US.html">Lounges &middot; US</a>
+      <a href="./Trip-Essentials/Lounges-Europe.html">Lounges &middot; Europe</a>
+      <a href="./Trip-Essentials/Baggage.html">Baggage</a>
+      <a href="./Trip-Essentials/Trains.html">Trains</a>
+      <a href="./Trip-Essentials/European-Train-Guide.html">European train guide</a>
+      <a href="./Trip-Essentials/Train-Passes.html">Train passes</a>
+      <a href="./Trip-Essentials/Scenic-Train-Journeys.html">Scenic journeys</a>
+      <a href="./Trip-Essentials/Day-Trips.html">Day trips by train</a>
     </div>
-  </details>
-</section>
-
-<section class="lp-block">
-  <details class="lp-sec">
-    <summary><h2>Trip Type</h2></summary>
-    <div class="lp-sec-body"><p>
-    Every guide is tagged by what it is genuinely good for — not by what the city is famous
-    for. Lisbon is tagged for food and nightlife but not for museums; Vienna is the other
-    way round. The tags come from what actually ends up in the itinerary, so a city only
-    carries one if the guide really spends time on it.
-  </p>
-  <p>
-    Pick the shape of the trip and the list narrows to the cities that deliver it. Each pill
-    opens the guides list with that filter already applied.
-  </p>
-  <nav class="lp-pills">
-    <a href="./guides/?type=beach">Beach</a>
-    <a href="./guides/?type=islands">Islands</a>
-    <a href="./guides/?type=history">History</a>
-    <a href="./guides/?type=art">Art &amp; museums</a>
-    <a href="./guides/?type=foodie">Food scene</a>
-    <a href="./guides/?type=wine">Wine</a>
-    <a href="./guides/?type=nature">Nature</a>
-    <a href="./guides/?type=snow">Snow &amp; ski</a>
-    <a href="./guides/?type=nightlife">Nightlife</a>
-    <a href="./guides/?type=kids">Kid-friendly</a>
-    <a href="./guides/?type=amusement">Theme parks</a>
-  </nav>
+    <div class="byg-col">
+      <h3>Paperwork</h3>
+      <a href="./Trip-Essentials/Visas.html">Visas</a>
+      <a href="./Trip-Essentials/Entry-Requirements.html">Entry requirements</a>
+      <a href="./Trip-Essentials/Visa-Processing-Times.html">Processing times</a>
+      <a href="./Trip-Essentials/Digital-Nomad-Visas.html">Digital nomad visas</a>
+      <a href="./Trip-Essentials/Passport.html">Passport</a>
+      <a href="./Trip-Essentials/Trusted-Traveler.html">Global Entry</a>
     </div>
-  </details>
-</section>
-
-<a class="lp-photo" href="./guides/Santorini/santorini.html">
-  <img src="./guides/Santorini/_build/assets/800px-Amoudi_Bay.jpg" width="800" height="567" decoding="async" alt="Santorini">
-  <span class="lp-photo-cap">Santorini</span>
-</a>
-
-
-<section class="lp-block dark" id="best-of">
-  <details class="lp-sec">
-    <summary><h2>Best Of</h2></summary>
-    <div class="lp-sec-body"><p>
-    Most travel sites are organised by destination: pick a city, read what is in it. That is
-    backwards for a lot of trips. Nobody decides to visit Slovenia and then discovers caves —
-    they want to see a cave, and the question is which one is worth the flight.
-  </p>
-  <p>
-    <strong>Best Of ranks one category across every destination.</strong> Not a top-ten per
-    country, but a single comparable list, each entry with the city it sits in and a link
-    into that city's guide.
-  </p>
-  <nav class="lp-links">
-    <a href="./Trip-Essentials/Best-Amusement-Parks.html">Amusement Parks</a>
-    <a href="./Trip-Essentials/Best-Animal-Encounters.html">Animal Encounters</a>
-    <a href="./Trip-Essentials/Best-Aquariums.html">Aquariums</a>
-    <a href="./Trip-Essentials/Best-Architecture.html">Architecture</a>
-    <a href="./Trip-Essentials/Best-Art-Museums.html">Art Museums</a>
-    <a href="./Trip-Essentials/Best-Beaches.html">Beaches</a>
-    <a href="./Trip-Essentials/Best-Castles.html">Castles</a>
-    <a href="./Trip-Essentials/Best-Cathedrals.html">Cathedrals</a>
-    <a href="./Trip-Essentials/Best-Caves.html">Caves</a>
-    <a href="./Trip-Essentials/Cruise-Ships.html">Cruise Lines</a>
-    <a href="./Trip-Essentials/Disney-Parks.html">Disney Parks</a>
-    <a href="./Trip-Essentials/Festival-Finder.html">Festival Finder</a>
-    <a href="./Trip-Essentials/Best-Gardens.html">Gardens</a>
-    <a href="./Trip-Essentials/Best-Hard-to-Reach-Places.html">Hard-to-Reach Places</a>
-    <a href="./Trip-Essentials/Best-Hot-Springs.html">Hot Springs</a>
-    <a href="./Trip-Essentials/Best-Islands.html">Islands</a>
-    <a href="./Trip-Essentials/Best-Kids-Friendly-Places.html">Kid-Friendly</a>
-    <a href="./Trip-Essentials/Best-Lakes.html">Lakes</a>
-    <a href="./Trip-Essentials/Best-Mountains-and-Rock-Formations.html">Mountains &amp; Rock</a>
-    <a href="./Trip-Essentials/Best-Museums.html">Museums</a>
-    <a href="./Trip-Essentials/Best-National-Parks-by-Country.html">National Parks</a>
-    <a href="./Trip-Essentials/Best-Natural-Phenomena.html">Natural Phenomena</a>
-    <a href="./Trip-Essentials/Best-Observation-Decks.html">Observation Decks</a>
-    <a href="./Trip-Essentials/Pickleball.html">Pickleball</a>
-    <a href="./Trip-Essentials/Best-Safari.html">Safari</a>
-    <a href="./Trip-Essentials/Best-Scuba-Diving.html">Scuba Diving</a>
-    <a href="./Trip-Essentials/Best-Ski-Resorts.html">Ski Resorts</a>
-    <a href="./Trip-Essentials/Best-Surfing.html">Surfing</a>
-    <a href="./Trip-Essentials/Best-UNESCO-Sites.html">UNESCO Sites</a>
-    <a href="./Trip-Essentials/Best-Unique-Museums.html">Unique Museums</a>
-    <a href="./Trip-Essentials/Best-Volcanoes.html">Volcanoes</a>
-    <a href="./Trip-Essentials/Best-Wine-Regions.html">Wine Regions</a>
-    <a href="./Trip-Essentials/Best-Wonders-of-the-World.html">Wonders of the World</a>
-  </nav>
+    <div class="byg-col">
+      <h3>Money</h3>
+      <a href="./Trip-Essentials/Budget-Guide.html">Daily budget</a>
+      <a href="./Trip-Essentials/Currency-Guide.html">Currency</a>
+      <a href="./Trip-Essentials/Cards-ATM.html">Cards &amp; ATM</a>
+      <a href="./Trip-Essentials/Tipping-Guide.html">Tipping</a>
     </div>
-  </details>
-</section>
-
-<section class="lp-block dark">
-  <details class="lp-sec">
-    <summary><h2>Flights</h2></summary>
-    <div class="lp-sec-body"><p>
-    Which airline actually flies the route, how long a connection really needs at that
-    specific airport, what the bag will cost, and where the lounge is once you're through
-    security. The route maps are the <strong>full published networks</strong> for the three
-    US carriers — so you can see whether a nonstop exists before you start pricing.<nav class="lp-links">
-    <a href="./Trip-Essentials/Flights.html">All flight pages</a>
-    <a href="./Trip-Essentials/Airlines-of-the-World.html">Airlines</a>
-    <a href="./Trip-Essentials/Airport-Connection-Times.html">Connection times</a>
-    <a href="./Trip-Essentials/Lounges-US.html">US lounges</a>
-    <a href="./Trip-Essentials/Lounges-Europe.html">EU lounges</a>
-    <a href="./Trip-Essentials/Baggage.html">Baggage</a>
-    <a href="./Trip-Essentials/Luggage-Storage.html">Luggage storage</a>
-    <a href="./Trip-Essentials/Trusted-Traveler.html">Global Entry</a>
-    <a href="./Trip-Essentials/Passport.html">Passport</a>
-    <a href="./Trip-Essentials/Delta-Routes-Full.html">Delta network</a>
-    <a href="./Trip-Essentials/United-Routes-Full.html">United network</a>
-    <a href="./Trip-Essentials/American-Routes-Full.html">American network</a>
-  </nav>
+    <div class="byg-col">
+      <h3>Safety &amp; health</h3>
+      <a href="./Trip-Essentials/Safety-Guide.html">Safety guide</a>
+      <a href="./Trip-Essentials/Scams-By-City.html">Scams by city</a>
+      <a href="./Trip-Essentials/Tap-Water.html">Tap water</a>
+      <a href="./Trip-Essentials/Vaccines.html">Vaccines</a>
+      <a href="./Trip-Essentials/Travel-Insurance.html">Travel insurance</a>
+      <a href="./Trip-Essentials/First-Timer-Mistakes.html">First-timer mistakes</a>
     </div>
-  </details>
-</section>
-
-<a class="lp-photo" href="./guides/Marrakech/marrakech.html">
-  <img src="./guides/Marrakech/_build/assets/800px-A01_-_Marrakech_Koutoubia.jpg" width="960" height="640" decoding="async" alt="Marrakech">
-  <span class="lp-photo-cap">Marrakech</span>
-</a>
-
-
-<section class="lp-block stack" id="trip-length">
-  <details class="lp-sec">
-    <summary><h2>Trip Length</h2></summary>
-    <div class="lp-sec-body"><p>
-    Every guide is <strong>written to a length</strong> rather than padded to fill one &mdash;
-    a 3-day Lisbon is a different plan from a 6-day Lisbon, not the same plan stretched.
-  </p>
-  <label for="days-pick" class="sr-only">Filter guides by trip length</label>
-  <select id="days-pick" class="lp-select">
-    <option value="">Any length</option>
-    <option value="1">1 day</option>
-    <option value="2">2 days</option>
-    <option value="3">3 days</option>
-    <option value="4">4 days</option>
-    <option value="5">5 days</option>
-    <option value="6">6 days</option>
-    <option value="7">7 days</option>
-    <option value="8">8 days</option>
-    <option value="9">9 days</option>
-    <option value="10">10 days</option>
-    <option value="10plus">10+ days</option>
-  </select>
-  <nav class="lp-pills" hidden>
-    <a href="./guides/?days=1">1 day</a>
-    <a href="./guides/?days=2">2 days</a>
-    <a href="./guides/?days=3">3 days</a>
-    <a href="./guides/?days=4">4 days</a>
-    <a href="./guides/?days=5">5 days</a>
-    <a href="./guides/?days=6">6 days</a>
-    <a href="./guides/?days=7">7 days</a>
-    <a href="./guides/?days=8">8 days</a>
-    <a href="./guides/?days=9">9 days</a>
-    <a href="./guides/?days=10">10 days</a>
-    <a href="./guides/?days=10plus">10+ days</a>
-  </nav>
+    <div class="byg-col">
+      <h3>Where to stay</h3>
+      <a href="./Trip-Essentials/Neighborhoods.html">Neighbourhoods</a>
+      <a href="./Trip-Essentials/Hotels-Stays.html">Hotels &amp; stays</a>
+      <a href="./Trip-Essentials/Best-Unique-Hotels.html">Unique hotels</a>
+      <a href="./Trip-Essentials/Best-Most-Luxurious-Hotels.html">Most luxurious</a>
+      <a href="./Trip-Essentials/Best-Resorts.html">Resorts</a>
+      <a href="./Trip-Essentials/Best-Ultra-Luxurious-Resorts.html">Ultra-luxurious resorts</a>
     </div>
-  </details>
-</section>
-
-<section class="lp-block bare">
-  <details class="lp-sec">
-    <summary><h2>Trains</h2></summary>
-    <div class="lp-sec-body"><p>
-    Counted properly — the trip out to the airport, security, the wait, and the journey
-    back into the city at the other end — rail beats flying on more city pairs than people
-    expect. And on a few routes the journey is the reason to go rather than the cost of
-    getting there.
-  </p>
-  <nav class="lp-links">
-    <a href="./Trip-Essentials/Trains.html">All rail pages</a>
-    <a href="./Trip-Essentials/European-Train-Guide.html">European train guide</a>
-    <a href="./Trip-Essentials/Train-Passes.html">Train pass comparison</a>
-    <a href="./Trip-Essentials/Day-Trips.html">Day trips by train</a>
-    <a href="./Trip-Essentials/Scenic-Train-Journeys.html">Scenic journeys</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-<a class="lp-photo wide" href="./guides/Kyoto/kyoto.html">
-  <img src="./guides/Kyoto/_build/assets/800px-150124_Gion_Kyoto_Japan01s3.jpg" width="800" height="533" decoding="async" alt="Kyoto">
-  <span class="lp-photo-cap">Kyoto</span>
-</a>
-
-
-<section class="lp-block">
-  <details class="lp-sec">
-    <summary><h2>Visas &amp; Entry</h2></summary>
-    <div class="lp-sec-body"><p>
-    The question that quietly decides the trip. Whether you need a visa at all, whether it
-    is on arrival or applied for in advance, how long the processing genuinely takes right
-    now, and the six-month passport-validity rule that turns a valid passport into a
-    refused boarding at the gate.
-  </p>
-  <nav class="lp-links">
-    <a href="./Trip-Essentials/Visas.html">Visas</a>
-    <a href="./Trip-Essentials/Entry-Requirements.html">Entry requirements</a>
-    <a href="./Trip-Essentials/Visa-Processing-Times.html">Processing times</a>
-    <a href="./Trip-Essentials/Digital-Nomad-Visas.html">Digital nomad visas</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-
-<a class="lp-photo" href="./guides/Petra/petra.html">
-  <img src="./guides/Petra/_build/assets/800px-Ad_Deir_(The_Monastery),_El_Deir,_Petra,_Jordan.jpg" width="800" height="533" decoding="async" alt="Petra">
-  <span class="lp-photo-cap">Petra</span>
-</a>
-
-
-<section class="lp-block" id="where">
-  <details class="lp-sec">
-    <summary><h2>Continent &amp; Country</h2></summary>
-    <div class="lp-sec-body"><p>
-    Sometimes the region is settled before anything else &mdash; a continent you have never
-    seen, or a country you keep coming back to. Pick either and the list narrows to it.
-  </p>
-  <nav class="lp-pills">
-    <a href="./guides/?continent=Europe">Europe</a>
-    <a href="./guides/?continent=Asia">Asia</a>
-    <a href="./guides/?continent=North%20America">North America</a>
-    <a href="./guides/?continent=South%20America">South America</a>
-    <a href="./guides/?continent=Africa">Africa</a>
-    <a href="./guides/?continent=Oceania">Oceania</a>
-  </nav>
-  <label for="country-pick" class="sr-only">Jump to a country</label>
-  <select id="country-pick" class="lp-select">
-    <option value="">&hellip;or pick a country</option>
-    <option value="argentina">Argentina (1)</option>
-    <option value="aruba">Aruba (1)</option>
-    <option value="australia">Australia (2)</option>
-    <option value="austria">Austria (2)</option>
-    <option value="bahamas">Bahamas (1)</option>
-    <option value="barbados">Barbados (1)</option>
-    <option value="belgium">Belgium (2)</option>
-    <option value="bhutan">Bhutan (1)</option>
-    <option value="brazil">Brazil (15)</option>
-    <option value="canada">Canada (7)</option>
-    <option value="cayman-islands">Cayman Islands (1)</option>
-    <option value="chile">Chile (1)</option>
-    <option value="china">China (5)</option>
-    <option value="costa-rica">Costa Rica (3)</option>
-    <option value="croatia">Croatia (2)</option>
-    <option value="curacao">Curacao (1)</option>
-    <option value="czechia">Czechia (1)</option>
-    <option value="denmark">Denmark (1)</option>
-    <option value="ecuador">Ecuador (1)</option>
-    <option value="egypt">Egypt (1)</option>
-    <option value="estonia">Estonia (1)</option>
-    <option value="finland">Finland (1)</option>
-    <option value="france">France (11)</option>
-    <option value="french-polynesia">French Polynesia (1)</option>
-    <option value="georgia">Georgia (1)</option>
-    <option value="germany">Germany (7)</option>
-    <option value="greece">Greece (7)</option>
-    <option value="hungary">Hungary (1)</option>
-    <option value="iceland">Iceland (1)</option>
-    <option value="indonesia">Indonesia (1)</option>
-    <option value="ireland">Ireland (1)</option>
-    <option value="italy">Italy (18)</option>
-    <option value="japan">Japan (4)</option>
-    <option value="jordan">Jordan (1)</option>
-    <option value="laos">Laos (1)</option>
-    <option value="luxembourg">Luxembourg (1)</option>
-    <option value="maldives">Maldives (1)</option>
-    <option value="malta">Malta (1)</option>
-    <option value="mexico">Mexico (4)</option>
-    <option value="monaco">Monaco (1)</option>
-    <option value="montenegro">Montenegro (1)</option>
-    <option value="morocco">Morocco (1)</option>
-    <option value="nepal">Nepal (1)</option>
-    <option value="netherlands">Netherlands (2)</option>
-    <option value="new-zealand">New Zealand (2)</option>
-    <option value="norway">Norway (4)</option>
-    <option value="oman">Oman (1)</option>
-    <option value="peru">Peru (3)</option>
-    <option value="philippines">Philippines (1)</option>
-    <option value="poland">Poland (1)</option>
-    <option value="portugal">Portugal (7)</option>
-    <option value="puerto-rico">Puerto Rico (1)</option>
-    <option value="qatar">Qatar (1)</option>
-    <option value="seychelles">Seychelles (1)</option>
-    <option value="singapore">Singapore (1)</option>
-    <option value="sint-maarten">Sint Maarten (1)</option>
-    <option value="slovenia">Slovenia (1)</option>
-    <option value="south-africa">South Africa (1)</option>
-    <option value="south-korea">South Korea (2)</option>
-    <option value="spain">Spain (9)</option>
-    <option value="sri-lanka">Sri Lanka (1)</option>
-    <option value="sweden">Sweden (2)</option>
-    <option value="switzerland">Switzerland (3)</option>
-    <option value="taiwan">Taiwan (1)</option>
-    <option value="thailand">Thailand (3)</option>
-    <option value="turkey">Turkey (1)</option>
-    <option value="turks-and-caicos">Turks And Caicos (1)</option>
-    <option value="united-arab-emirates">United Arab Emirates (2)</option>
-    <option value="united-kingdom">United Kingdom (5)</option>
-    <option value="united-states">United States (57)</option>
-    <option value="uruguay">Uruguay (1)</option>
-    <option value="vietnam">Vietnam (2)</option>
-    <option value="virgin-islands">Virgin Islands (1)</option>
-  </select>
-    </div>
-  </details>
-</section>
-
-<section class="lp-block tint">
-  <details class="lp-sec">
-    <summary><h2>Safety</h2></summary>
-    <div class="lp-sec-body"><p>
-    The current advisory level per destination, stated plainly rather than hedged — plus
-    the things that actually catch travellers out: whether the tap water is drinkable, which
-    vaccines are needed and how far ahead, whether your insurance covers what you plan to
-    do, and the specific scams run in each city.
-  </p>
-  <nav class="lp-links">
-    <a href="./Trip-Essentials/Safety-Guide.html">Safety guide</a>
-    <a href="./Trip-Essentials/Scams-By-City.html">Scams by city</a>
-    <a href="./Trip-Essentials/Tap-Water.html">Tap water</a>
-    <a href="./Trip-Essentials/Vaccines.html">Vaccines</a>
-    <a href="./Trip-Essentials/Travel-Insurance.html">Travel insurance</a>
-    <a href="./Trip-Essentials/First-Timer-Mistakes.html">First-timer mistakes</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-<a class="lp-photo" href="./guides/Banff/banff.html">
-  <img src="./guides/Banff/_build/assets/800px-Banff_Bow_Falls.jpg" width="800" height="450" decoding="async" alt="Banff">
-  <span class="lp-photo-cap">Banff</span>
-</a>
-
-
-<section class="lp-block bare" id="flight-time">
-  <details class="lp-sec">
-    <summary><h2>Flight Time</h2></summary>
-    <div class="lp-sec-body"><p>
-    A long weekend rules out anything with a connection; two weeks makes 15 hours
-    reasonable. Pick the flight you'd actually sit through and the list narrows to
-    destinations you can reach that way &mdash; nonstop, one stop, or by hours in the air.
-  </p>
-  <nav class="lp-links">
-    <a href="./guides/#flights=u5">Under 5 hours</a>
-    <a href="./guides/#flights=u8">Under 8 hours</a>
-    <a href="./guides/#flights=u10">Under 10 hours</a>
-    <a href="./guides/#flights=u12">Under 12 hours</a>
-    <a href="./guides/#flights=u15">Under 15 hours</a>
-    <a href="./guides/#flights">Nonstop and connections</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-<section class="lp-block" id="plugs">
-  <details class="lp-sec">
-    <summary><h2>Plugs</h2></summary>
-    <div class="lp-sec-body"><p>
-    Fifteen socket types across the world, and the one in your bag probably fits about
-    three of them. Every country's socket, voltage and frequency &mdash; so you know whether
-    you need an adapter, a converter, or nothing at all.
-  </p>
-  <div class="plug-strip">
-    <figure><img src="./Trip-Essentials/Plug-Adapter/imgs/United_Kingdom_TG_Plug.jpg" width="180" height="180" decoding="async" alt="Type G — UK"><figcaption>Type G — UK</figcaption></figure>
-    <figure><img src="./Trip-Essentials/Plug-Adapter/imgs/Germany_TF_Plug.jpg" width="180" height="180" decoding="async" alt="Type F — Europe"><figcaption>Type F — Europe</figcaption></figure>
-    <figure><img src="./Trip-Essentials/Plug-Adapter/imgs/Japan_TA_Plug.jpg" width="180" height="180" decoding="async" alt="Type A — Japan & US"><figcaption>Type A — Japan & US</figcaption></figure>
-    <figure><img src="./Trip-Essentials/Plug-Adapter/imgs/Australia_TI_Plug.jpg" width="180" height="180" decoding="async" alt="Type I — Australia"><figcaption>Type I — Australia</figcaption></figure>
-  </div>
-  <nav class="lp-links">
-    <a href="./Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html">World plug guide</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-<section class="lp-block tint" id="packing">
-  <details class="lp-sec">
-    <summary><h2>Packing</h2></summary>
-    <div class="lp-sec-body"><p>
-    Not an article about packing &mdash; a working checklist. Tick items as you pack and it
-    remembers where you got to, so you can close the tab and come back to it the night
-    before. Print it if you would rather do this on paper.
-  </p>
-  <nav class="lp-links">
-    <a href="./Trip-Essentials/Travel-Packing.html">Open the packing checklist</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-<section class="lp-block bare" id="compare">
-  <details class="lp-sec">
-    <summary><h2>Compare Cities</h2></summary>
-    <div class="lp-sec-body"><p>
-    Choosing between Lisbon and Seville, or weighing five shortlisted cities against each
-    other? Put them side by side &mdash; days, weather, languages, flight time and what each
-    trip actually costs &mdash; instead of opening five tabs and holding it all in your head.
-  </p>
-  <nav class="lp-links">
-    <a href="./guides/#compare">Compare cities</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-<a class="lp-photo wide" href="./guides/Cape-Town/cape-town.html">
-  <img src="./guides/Cape-Town/_build/assets/800px-Camps_Bay_Cape_Town.jpg" width="800" height="548" decoding="async" alt="Cape Town">
-  <span class="lp-photo-cap">Cape Town</span>
-</a>
-
-
-
-<section class="lp-block bare">
-  <details class="lp-sec">
-    <summary><h2>Where to Stay</h2></summary>
-    <div class="lp-sec-body"><p>
-    The most common way to get a city wrong is to book a good hotel in the wrong part of it
-    — an hour from everything you came to see. Start with which area suits the trip, then
-    choose where to sleep inside it.
-  </p>
-  <nav class="lp-links">
-    <a href="./Trip-Essentials/Neighborhoods.html">Neighbourhoods</a>
-    <a href="./Trip-Essentials/Hotels-Stays.html">Hotels & stays</a>
-    <a href="./Trip-Essentials/Best-Unique-Hotels.html">Unique hotels</a>
-    <a href="./Trip-Essentials/Best-Most-Luxurious-Hotels.html">Most luxurious</a>
-    <a href="./Trip-Essentials/Best-Resorts.html">Resorts</a>
-    <a href="./Trip-Essentials/Best-Ultra-Luxurious-Resorts.html">Ultra-luxurious resorts</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-<a class="lp-photo" href="./guides/Amalfi/amalfi.html">
-  <img src="./guides/Amalfi/_build/assets/800px-Amalfi_-_Duomo_di_Sant_Andrea.jpg" width="800" height="663" decoding="async" alt="Amalfi">
-  <span class="lp-photo-cap">Amalfi</span>
-</a>
-
-
-<section class="lp-block tint">
-  <details class="lp-sec">
-    <summary><h2>Language</h2></summary>
-    <div class="lp-sec-body"><p>
-    Travelling somewhere you can read the menu and ask for directions changes the trip —
-    especially with kids, on a first trip abroad, or anywhere you'll be driving.
-  </p>
-  <p>
-    Every guide records <strong>the languages actually spoken</strong> at the destination,
-    not just the official one. Pick yours and see everywhere you'd get by comfortably.
-  </<nav class="lp-pills cols">
-    <a href="./guides/?lang=en">English</a>
-    <a href="./guides/?lang=es">Spanish</a>
-    <a href="./guides/?lang=fr">French</a>
-    <a href="./guides/?lang=de">German</a>
-    <a href="./guides/?lang=it">Italian</a>
-    <a href="./guides/?lang=pt">Portuguese</a>
-    <a href="./guides/?lang=nl">Dutch</a>
-    <a href="./guides/?lang=ja">Japanese</a>
-    <a href="./guides/?lang=zh">Chinese</a>
-    <a href="./guides/?lang=ko">Korean</a>
-    <a href="./guides/?lang=ar">Arabic</a>
-    <a href="./guides/?lang=th">Thai</a>
-    <a href="./guides/?lang=tr">Turkish</a>
-    <a href="./guides/?lang=sv">Swedish</a>
-    <a href="./guides/?lang=no">Norwegian</a>
-    <a href="./guides/?lang=da">Danish</a>
-    <a href="./guides/?lang=fi">Finnish</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-
-<a class="lp-photo" href="./guides/Lisbon/lisbon.html">
-  <img src="./guides/Lisbon/_build/assets/800px-Belem_Tower_Lisbon_Portugal.JPG" width="800" height="542" decoding="async" alt="Lisbon">
-  <span class="lp-photo-cap">Lisbon</span>
-</a>
-
-
-<section class="lp-block feature weather" id="sunrise">
-  <details class="lp-sec">
-    <summary><h2>Sunrise &amp; Sunset</h2></summary>
-    <div class="lp-sec-body"><p>
-    A 9am winter sunrise changes what a day can hold. Pick a destination and a month
-    and see when the sun comes up, when it goes down, and how long the day runs — enough
-    to plan a sunrise viewpoint, or work out whether a late arrival lands in the dark.
-  </p>
-
-  <div class="sun-pickers">
-    <select id="sun-city" aria-label="Select city for sunrise and sunset times"></select>
-    <div id="sun-city-search-wrap">
-      <input id="sun-city-search" class="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="City" aria-label="Search city for sunrise and sunset times">
-    </div>
-    <select id="sun-month" aria-label="Select month for sunrise and sunset times">
-      <option value="">Month</option>
-      <option value="0">January</option><option value="1">February</option>
-      <option value="2">March</option><option value="3">April</option>
-      <option value="4">May</option><option value="5">June</option>
-      <option value="6">July</option><option value="7">August</option>
-      <option value="8">September</option><option value="9">October</option>
-      <option value="10">November</option><option value="11">December</option>
-    </select>
-  </div>
-
-  <div id="sun-output"></div>
-  <p class="sun-note-inline">Times are approximate (&plusmn;15&ndash;30 min) &middot; mid-month estimate &middot; computed from latitude.</p>
-    </div>
-  </details>
-</section>
-
-<section class="lp-block stack right">
-  <details class="lp-sec">
-    <summary><h2>Money</h2></summary>
-    <div class="lp-sec-body"><p>
-    What a day actually costs by destination, which card to carry and where cash is still
-    required, and what tipping is expected — the rule that works in one country is wrong in
-    the next.
-  </p>
-  <img class="lp-inline-photo" src="./guides/Marrakech/_build/assets/800px-Marrakech_Souks.jpg" width="800" height="533" decoding="async" alt="A market stall, Marrakech">
-  <nav class="lp-links">
-    <a href="./Trip-Essentials/Budget-Guide.html">Daily budget</a>
-    <a href="./Trip-Essentials/Currency-Guide.html">Currency</a>
-    <a href="./Trip-Essentials/Cards-ATM.html">Cards &amp; ATM</a>
-    <a href="./Trip-Essentials/Tipping-Guide.html">Tipping</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-<section class="lp-block stack" id="stats">
-  <details class="lp-sec">
-    <summary><h2>Stats</h2></summary>
-    <div class="lp-sec-body"><p>
-    Guide counts, day counts and averages for each part of the world, plus one page of
-    records &mdash; the highest, oldest, longest and largest across all of them.
-  </p>
-  <nav class="lp-links">
-    <a href="./Trip-Essentials/Maps/World-Map.html">World map</a>
-    <a href="./Trip-Essentials/Destination-Records.html">Destination records</a>
-    <a href="./Trip-Essentials/Europe-Stats.html">Europe</a>
-    <a href="./Trip-Essentials/Asia-Stats.html">Asia</a>
-    <a href="./Trip-Essentials/Africa-Stats.html">Africa</a>
-    <a href="./Trip-Essentials/South-America-Stats.html">South America</a>
-    <a href="./Trip-Essentials/Caribbean-Stats.html">Caribbean</a>
-    <a href="./Trip-Essentials/Oceania-Stats.html">Oceania</a>
-    <a href="./Trip-Essentials/Stats-Across-US.html">United States</a>
-    <a href="./Trip-Essentials/Stats-Across-Canada.html">Canada</a>
-  </nav>
-    </div>
-  </details>
-</section>
-
-<section class="lp-block stack" id="travelers-help">
-  <details class="lp-sec">
-    <summary><h2>Travelers Help</h2></summary>
-    <div class="lp-sec-body"><p>
-    SIM cards, transit cards, car hire, restaurant booking windows, the sports calendar —
-    the practical questions that belong to no single part of a trip. Straight to each one,
-    rather than a hop through an index page.
-  </p>
-  <nav class="lp-links">
-    <a href="./Trip-Essentials/Budget-Guide.html">Budget</a>
-    <a href="./Trip-Essentials/Cards-ATM.html">Cards &amp; ATM</a>
-    <a href="./Trip-Essentials/Tipping-Guide.html">Tipping</a>
-    <a href="./Trip-Essentials/SIM-Cards.html">SIM cards</a>
-    <a href="./Trip-Essentials/Travel-Apps.html">Travel apps</a>
-    <a href="./Trip-Essentials/City-Transit-Cards.html">City transit cards</a>
-    <a href="./Trip-Essentials/Rental-Cars.html">Car rental &amp; transfers</a>
-    <a href="./Trip-Essentials/Tours-Tickets.html">Tours &amp; tickets</a>
-    <a href="./Trip-Essentials/Restaurants.html">Restaurants</a>
-    <a href="./Trip-Essentials/Sports-Calendar.html">Sports calendar</a>
+    <div class="byg-col">
+      <h3>On the ground</h3>
+      <a href="./Trip-Essentials/SIM-Cards.html">SIM cards</a>
+      <a href="./Trip-Essentials/City-Transit-Cards.html">City transit cards</a>
+      <a href="./Trip-Essentials/Rental-Cars.html">Car rental &amp; transfers</a>
+      <a href="./Trip-Essentials/Tours-Tickets.html">Tours &amp; tickets</a>
+      <a href="./Trip-Essentials/Restaurants.html">Restaurants</a>
+      <a href="./Trip-Essentials/Travel-Apps.html">Travel apps</a>
       <a href="./Trip-Essentials/Time-Zones.html">Time zones</a>
-    <a href="./Trip-Essentials/Tap-Water.html">Tap water</a>
-  </nav>
-  <details class="cf-extras">
-    <summary>Forecast &amp; research</summary>
-    <div class="cf-research-row" style="display:flex;flex-wrap:wrap;gap:6px;">
-      <a href="https://forecast.weather.gov" target="_blank" rel="noopener" class="sibling-pill">Weather.gov</a>
-      <a href="https://www.accuweather.com" target="_blank" rel="noopener" class="sibling-pill">AccuWeather</a>
-      <a href="https://www.timeanddate.com/weather" target="_blank" rel="noopener" class="sibling-pill">Time and Date</a>
-      <a href="https://www.windy.com" target="_blank" rel="noopener" class="sibling-pill">Windy</a>
-      <a href="https://weather.com" target="_blank" rel="noopener" class="sibling-pill">Weather Channel</a>
-      <a href="https://www.weather25.com" target="_blank" rel="noopener" class="sibling-pill">Weather25</a>
+      <a href="./Trip-Essentials/Sports-Calendar.html">Sports calendar</a>
+      <a href="./Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html">Plugs &amp; voltage</a>
+      <a href="./Trip-Essentials/Travel-Packing.html">Packing checklist</a>
+      <a href="./Trip-Essentials/Luggage-Storage.html">Luggage storage</a>
     </div>
   </div>
-  </details>
-    </div>
-  </details>
 </section>
 
-<section class="lp-block" id="climate-finder">
-  <details class="lp-sec" open>
-    <summary><h2>Climate Finder</h2></summary>
-    <div class="lp-sec-body"><p>
-    Search for a destination by its weather instead of by its name. Set the month you can
-    travel, the daytime temperature you are after and how much rain you will put up with,
-    and this returns every city on the site that matches. It answers the question people
-    actually start with &mdash; somewhere warm, somewhere mild, somewhere dry &mdash; before
-    they have settled on a place at all.
-  </p>
-  <div style="margin:14px 0 14px;">
-    <div style="font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Forecast &amp; Research</div>
-    <div class="cf-presets" id="cf-presets">
-    <button type="button" class="cf-preset" data-preset="beach">Beach weather</button>
-    <button type="button" class="cf-preset" data-preset="spring">Mild spring</button>
-    <button type="button" class="cf-preset" data-preset="winter">Winter escape</button>
-    <button type="button" class="cf-preset" data-preset="autumn">Cool autumn</button>
-  </div>
-<div class="cf-controls">
-    <div class="cf-block">
-      <div class="cf-label">Month</div>
-      <div id="cf-months" class="cf-months"></div>
-    </div>
-    <div class="cf-block">
-      <div class="cf-label">Search city</div>
-      <input type="text" id="cf-city-search" class="cf-city-search" placeholder="City name" autocomplete="off">
-    </div>
-    <div class="cf-block">
-      <div class="cf-label">Typical daytime high</div>
-      <div class="cf-sliderrow">
-        <span class="cf-to">From</span>
-        <input type="range" id="cf-min" min="-20" max="44" value="18" step="1" aria-label="Minimum temperature">
-        <span class="cf-tval" id="cf-min-val">18°C</span>
-        <span class="cf-to">to</span>
-        <input type="range" id="cf-max" min="-15" max="46" value="27" step="1" aria-label="Maximum temperature">
-        <span class="cf-tval" id="cf-max-val">27°C</span>
-        <div class="cf-spacer"></div>
-        <div>
-          <div class="cf-label">Units</div>
-          <div id="cf-unit" class="cf-seg">
-            <button type="button" data-u="C" aria-label="Celsius">°C</button>
-            <button type="button" data-u="F" aria-label="Fahrenheit">°F</button>
-          </div>
-        </div>
-        <div>
-          <div class="cf-label">Sort</div>
-          <select id="cf-sort" class="cf-sort">
-            <option value="cool">Coolest first</option>
-            <option value="warm">Warmest first</option>
-            <option value="az">A–Z</option>
-          </select>
-        </div>
-        <div>
-          <div class="cf-label">Rainfall</div>
-          <div id="cf-rain-filter" class="cf-seg">
-            <button type="button" data-rf="all">All</button>
-            <button type="button" data-rf="dry">Dry</button>
-            <button type="button" data-rf="wet">Wet</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div id="cf-summary" class="cf-summary"></div>
-  <div id="cf-results" class="cf-results"></div>
-  <div id="cf-compare" class="cf-compare-panel" style="display:none;"></div>
-
-    </div>
-  </details>
-  <details class="cf-extras" open>
-    <summary>Elsewhere on the site</summary>
-    <div class="cf-sibling-row" style="display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 8px;">
-    <a href="./Trip-Essentials/Weather.html" class="sibling-pill">Weather by city</a>
-    <a href="./Trip-Essentials/When-to-Go.html" class="sibling-pill">When to go</a>
-    <a href="./Trip-Essentials/Festival-Finder.html" class="sibling-pill">Festival finder</a>
-    <a href="./Trip-Essentials/Sports-Calendar.html" class="sibling-pill">Sports calendar</a>
-  </div>
-    </details>
-    </div>
-  </details>
-</section>
-
-</div>
 
 <!-- Collapsed by default. A contact form is the least likely thing on this page
      to be wanted, so it should not occupy a screen of height on the chance that
@@ -2406,11 +2518,22 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
           var href = card.getAttribute('href') || '';
           if (!nameEl || href.indexOf('Trip-Essentials') > -1) return;
           var country = card.closest('.country');
+          var rel = href.replace(/^\.\//, '');
+          var flagEl = card.querySelector('.dest-flag');
+          var label = country ? country.querySelector('.country-label') : null;
           guides.push({
             name: nameEl.textContent.trim(),
-            url: './guides/' + href.replace(/^\.\//, ''),
+            url: './guides/' + rel,
+            /* Two different keys, and mixing them up is silent: THEME_DATA and
+               DAYS_DATA are keyed by CITY name ("Abu Dhabi"), COST_DATA and
+               SAFETY_DATA by FOLDER ("Abu-Dhabi"), FMAP by the full relative
+               path. All three are carried so no lookup has to guess. */
+            rel: rel,
+            folder: rel.split('/')[0],
             lang: (card.getAttribute('data-lang') || '').split(/\s+/),
-            country: country ? (country.getAttribute('data-country') || '') : ''
+            country: country ? (country.getAttribute('data-country') || '') : '',
+            countryName: label ? (label.textContent.split('·')[0] || '').replace(/[\u{1F1E6}-\u{1F1FF}]/gu, '').trim() : '',
+            flag: flagEl ? flagEl.textContent.trim() : ''
           });
         });
         var cont = {}, cm = html.match(/var CONTINENT = \{([\s\S]*?)\};/);
@@ -2418,7 +2541,15 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
           var re = /'([^']+)'\s*:\s*'([^']+)'/g, x;
           while ((x = re.exec(cm[1]))) cont[x[1]] = x[2];
         }
-        cache = { themes: grab('THEME_DATA'), days: grab('DAYS_DATA'), guides: guides, cont: cont, climate: null };
+        cache = {
+          themes: grab('THEME_DATA'), days: grab('DAYS_DATA'),
+          /* Budget, advisory level and flight routing all already exist on the
+             guides index and are read from it rather than duplicated here — the
+             same reason the themes and day counts are. FMAP is every leg from
+             SEA: {m: total minutes, t: "9h 45m", r: nonstop|1stop|2stop}. */
+          cost: grab('COST_DATA'), safety: grab('SAFETY_DATA'), fmap: grab('FMAP'),
+          guides: guides, cont: cont, climate: null
+        };
         /* Climate is a second file and only matters if a warmth pill is used, so
            it rides along rather than blocking the first filter. */
         return fetch('./assets/climate.json')
@@ -2576,6 +2707,11 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
     if (group.length) active[kind] = group; else delete active[kind];
     render();
   });
+
+  /* Exposed so the finder above uses this same cached load() rather than
+     opening a third fetch of guides/index.html. Returns the cache promise:
+     {themes, days, guides:[{name,url,lang,country}], cont, climate}. */
+  window._lpData = load;
 }());
 </script>
 <script src="./assets/search-autocomplete.js?v=8"></script>
@@ -3776,12 +3912,12 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
   var tt = document.getElementById('trip-twin-panel');
   if (!hc && !tt) return;
   if (!window.fetch || !window.DOMParser) return;
-  var started = false;
+  var started = false, bootP = null;
 
   function boot() {
-    if (started) return;
+    if (started) return bootP;
     started = true;
-    fetch('./guides/index.html').then(function (r) { return r.text(); }).then(function (html) {
+    bootP = fetch('./guides/index.html').then(function (r) { return r.text(); }).then(function (html) {
       function lit(name) {
         var m = html.match(new RegExp('\\b' + name + '\\s*=\\s*(\\{[\\s\\S]*?\\});'));
         if (!m) return null;
@@ -3836,6 +3972,7 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
       window.__ttStamped = stamped;
       run();
     }).catch(function () { /* panels simply stay inert */ });
+    return bootP;
   }
 
   function run() {
@@ -4065,283 +4202,13 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
   /* ── Init ── */
   showStep(1);
 }());
-/* ── Trip Twin ── */
-(function () {
-  var btnTT   = document.getElementById('btn-trip-twin');
-  var panel   = document.getElementById('trip-twin-panel');
-  var inner   = document.getElementById('tt-inner');
-  var results = document.getElementById('tt-results');
-  var cityIn  = document.getElementById('tt-city');
-  var sugList = document.getElementById('tt-suggest-list');
-  var badge   = document.getElementById('tt-city-badge');
-  var goBtn   = document.getElementById('tt-go');
-  var errP    = document.getElementById('tt-err');
-  var cards   = document.getElementById('tt-res-cards');
-  var backBtn = document.getElementById('tt-back');
-  var safeBox = document.getElementById('tt-safe');
-  if (!btnTT) return;
-
-  var allCards = Array.from(document.querySelectorAll('a.dest-card'));
-  var matchedCard = null;
-
-  function closeTT() {
-    panel.hidden = true;
-    btnTT.setAttribute('aria-expanded', 'false');
-  }
-
-  // Register so other panels can close Trip Escape
-  window._closeTripTwin = closeTT;
-
-  // Patch _collapseFacetPanels to also close Trip Escape
-  var _origCollapse = window._collapseFacetPanels;
-  window._collapseFacetPanels = function () {
-    if (_origCollapse) _origCollapse();
-    closeTT();
-  };
-
-  // Panel toggle — close all other panels first when opening
-  btnTT.addEventListener('click', function () {
-    var opening = panel.hidden;
-    if (opening) {
-      if (window._collapseFacetPanels) window._collapseFacetPanels();
-      if (window._closeDaysMenu) window._closeDaysMenu();
-      if (window._closeCountryMenu) window._closeCountryMenu();
-      if (window._closeBestofMenu) window._closeBestofMenu();
-      if (window._closeContinentMenu) window._closeContinentMenu();
-    }
-    panel.hidden = !panel.hidden;
-    btnTT.setAttribute('aria-expanded', String(!panel.hidden));
-  });
-
-  // Close panel on outside click
-  document.addEventListener('click', function (e) {
-    if (!panel.hidden && !panel.contains(e.target) && e.target !== btnTT) closeTT();
-  }, true);
-
-  backBtn.addEventListener('click', function () {
-    results.hidden = true;
-    inner.hidden = false;
-  });
-
-  // Exclusive chip groups
-  ['tt-climate-chips','tt-budget-chips'].forEach(function (id) {
-    var group = document.querySelectorAll('#' + id + ' .ttchip');
-    Array.from(group).forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        Array.from(group).forEach(function (b) { b.classList.remove('on'); });
-        btn.classList.add('on');
-        updateGo();
-      });
-    });
-  });
-
-  function selVal(id) {
-    var on = document.querySelector('#' + id + ' .ttchip.on');
-    return on ? on.getAttribute('data-v') : null;
-  }
-
-  function updateGo() {
-    var hasCity    = matchedCard !== null;
-    var hasClimate = selVal('tt-climate-chips') !== null;
-    var hasBudget  = selVal('tt-budget-chips') !== null;
-    goBtn.disabled = !(hasCity || (hasClimate && hasBudget));
-  }
-
-  // Data extractors
-  function hiData(card) {
-    var raw = card.getAttribute('data-climate');
-    if (!raw) return null;
-    var d; try { d = JSON.parse(raw); } catch (e) { return null; }
-    var arr;
-    if (Array.isArray(d.hi)) {
-      arr = d.hi.slice();
-    } else {
-      var mo = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-      arr = [];
-      for (var i = 0; i < mo.length; i++) {
-        if (d[mo[i]] && d[mo[i]].hi !== undefined) arr.push(d[mo[i]].hi);
-      }
-    }
-    if (arr.length < 6) return null;
-    var mx = Math.max.apply(null, arr);
-    if (mx <= 55) arr = arr.map(function (v) { return v * 9 / 5 + 32; });
-    var avg = arr.reduce(function (a, b) { return a + b; }, 0) / arr.length;
-    return { avg: avg };
-  }
-
-  function costMid(card) {
-    var raw = card.getAttribute('data-cost');
-    if (!raw) return null;
-    var d; try { d = JSON.parse(raw); } catch (e) { return null; }
-    if (d.mid) return +d.mid;
-    var t = (d.tier || '').toLowerCase();
-    if (t === 'budget') return 60;
-    if (t === 'mid' || t === 'mid-range') return 150;
-    if (t === 'premium') return 350;
-    if (t === 'luxury') return 550;
-    if (t === 'upscale') return 420;
-    return null;
-  }
-
-  function safety(card) {
-    var raw = card.getAttribute('data-safety');
-    if (!raw) return null;
-    var d; try { d = JSON.parse(raw); } catch (e) { return null; }
-    var l = d.level;
-    if (l === 1 || l === '1' || l === 'Safe' || l === 'safe' || l === 'Low' || l === 'low') return 1;
-    if (l === 2 || l === '2' || l === 'Moderate' || l === 'moderate') return 2;
-    if (l === 3 || l === '3' || l === 'High' || l === 'high') return 3;
-    if (l === 4 || l === '4') return 4;
-    return null;
-  }
-
-  function cityName(card) { var s = card.querySelector('.dest-name'); return s ? s.textContent.trim() : ''; }
-  function flagOf(card)   { var s = card.querySelector('.dest-flag');  return s ? s.textContent.trim() : ''; }
-
-  // City search
-  cityIn.addEventListener('input', function () {
-    var q = cityIn.value.trim().toLowerCase();
-    matchedCard = null;
-    badge.hidden = true;
-    sugList.innerHTML = '';
-    if (q.length < 2) { sugList.hidden = true; updateGo(); return; }
-
-    var hits = allCards.filter(function (c) {
-      return cityName(c).toLowerCase().indexOf(q) !== -1;
-    }).slice(0, 6);
-
-    if (!hits.length) { sugList.hidden = true; updateGo(); return; }
-
-    hits.forEach(function (c) {
-      var btn = document.createElement('button');
-      btn.className = 'tt-sug-item';
-      btn.type = 'button';
-      btn.textContent = flagOf(c) + ' ' + cityName(c);
-      btn.addEventListener('click', function () {
-        cityIn.value = cityName(c);
-        matchedCard = c;
-        sugList.hidden = true;
-        badge.textContent = '✓ Escaping from ' + cityName(c);
-        badge.hidden = false;
-        updateGo();
-      });
-      sugList.appendChild(btn);
-    });
-    sugList.hidden = false;
-    updateGo();
-  });
-
-  document.addEventListener('click', function (e) {
-    if (!sugList.contains(e.target) && e.target !== cityIn) sugList.hidden = true;
-  });
-  cityIn.addEventListener('keydown', function (e) { if (e.key === 'Escape') sugList.hidden = true; });
-
-  // Scoring
-  var CLIM = { hot: 92, warm: 82, mild: 65, cool: 55, cold: 42 };
-  var BUDG = { budget: 70, mid: 150, premium: 380 };
-
-  function buildRef() {
-    if (matchedCard) {
-      var cl = hiData(matchedCard);
-      return { avgHi: cl ? cl.avg : null, costMid: costMid(matchedCard), safetyLvl: safety(matchedCard) };
-    }
-    return {
-      avgHi: CLIM[selVal('tt-climate-chips')] || null,
-      costMid: BUDG[selVal('tt-budget-chips')] || null,
-      safetyLvl: null
-    };
-  }
-
-  function scoreCard(ref, card) {
-    var cl = hiData(card);
-    if (!cl) return -1;
-    var cContrast = ref.avgHi !== null ? Math.min(1, Math.abs(ref.avgHi - cl.avg) / 50) : 0.5;
-    var co = costMid(card);
-    var coContrast = (ref.costMid !== null && co !== null) ? Math.min(1, Math.abs(ref.costMid - co) / 280) : 0.5;
-    var sa = safety(card);
-    var saScore = sa !== null ? (sa === 1 ? 1.0 : sa === 2 ? 0.7 : 0.4) : 0.65;
-    return 0.60 * cContrast + 0.25 * coContrast + 0.15 * saScore;
-  }
-
-  function whyReasons(ref, card) {
-    var list = [];
-    var cl = hiData(card);
-    if (cl && ref.avgHi !== null) {
-      var d = Math.abs(ref.avgHi - cl.avg);
-      if (d > 35) list.push('Complete climate flip');
-      else if (d > 22) list.push('Strong climate contrast');
-      else if (d > 10) list.push('Different climate');
-    }
-    var co = costMid(card);
-    if (co !== null && ref.costMid !== null) {
-      var cd = Math.abs(ref.costMid - co);
-      if (cd > 200) list.push('Opposite budget range');
-      else if (cd > 90) list.push('Different budget tier');
-    }
-    var sa = safety(card);
-    if (sa === 1) { list.push('Very safe'); }
-    if (!list.length) list.push('Strong contrast');
-    return list.slice(0, 3);
-  }
-
-  goBtn.addEventListener('click', function () {
-    errP.hidden = true;
-    var ref = buildRef();
-    if (ref.avgHi === null) {
-      errP.textContent = 'Please enter your current city or select a climate type to continue.';
-      errP.hidden = false;
-      return;
-    }
-    var safeOnly = safeBox.checked;
-    var scored = allCards.map(function (c) {
-      if (c === matchedCard) return null;
-      var sa = safety(c);
-      if (safeOnly && sa !== null && sa > 1) return null;
-      var s = scoreCard(ref, c);
-      return s >= 0 ? { card: c, score: s } : null;
-    }).filter(Boolean);
-    scored.sort(function (a, b) { return b.score - a.score; });
-    var seenNames = {};
-    scored = scored.filter(function (item) {
-      var n = cityName(item.card);
-      if (seenNames[n]) return false;
-      seenNames[n] = true;
-      return true;
-    });
-    var top = scored.slice(0, 3);
-    if (!top.length) {
-      errP.textContent = 'No escape destinations found. Try adjusting your preferences.';
-      errP.hidden = false;
-      return;
-    }
-    cards.innerHTML = '';
-    top.forEach(function (item) {
-      var pct  = Math.round(item.score * 100);
-      var name = cityName(item.card);
-      var flag = flagOf(item.card);
-      var href = item.card.getAttribute('href');
-      var rsns = whyReasons(ref, item.card);
-      var a = document.createElement('a');
-      a.className = 'tt-res-card';
-      a.href = href;
-      a.innerHTML =
-        '<span class="tt-res-flag">' + flag + '</span>' +
-        '<span class="tt-res-body">' +
-          '<span class="tt-res-name">' + name + '</span>' +
-          '<span class="tt-res-reasons">' +
-            rsns.map(function (r) { return '<span class="tt-res-pill">' + r + '</span>'; }).join('') +
-          '</span>' +
-        '</span>' +
-        '<span class="tt-res-score">' +
-          '<span class="tt-res-pct">' + pct + '%</span>' +
-          '<span class="tt-res-pct-lbl">contrast</span>' +
-        '</span>';
-      cards.appendChild(a);
-    });
-    inner.hidden = true;
-    results.hidden = false;
-  });
-}());
+/* One copy of Trip Twin, not two.
+   This IIFE was in the page verbatim twice (identical, 277 lines each), so
+   #btn-trip-twin carried two identical click handlers and every click toggled
+   the panel twice — net zero, panel never opens. It went unnoticed because the
+   old layout put the widget inside a <details> the reader opened directly and
+   nothing ever clicked that button. The tool card does click it, so the bug
+   became the whole feature not working. Duplicate removed. */
     } catch (e) { /* one panel failing must not take the other down */ }
     try {
 /* ── Trip Twin ── */
@@ -4392,10 +4259,11 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
     btnTT.setAttribute('aria-expanded', String(!panel.hidden));
   });
 
-  // Close panel on outside click
-  document.addEventListener('click', function (e) {
-    if (!panel.hidden && !panel.contains(e.target) && e.target !== btnTT) closeTT();
-  }, true);
+  /* No outside-click auto-close. On the guides index this panel is a dropdown
+     off a toolbar button, so dismissing it on an outside click is right. Here
+     it is the body of a card that the card itself opens and closes, and the
+     listener fired on every click anywhere — including the card — leaving the
+     card open around an empty box. The card owns the disclosure now. */
 
   backBtn.addEventListener('click', function () {
     results.hidden = true;
@@ -4624,12 +4492,326 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
     } catch (e) { /* ditto */ }
   }
 
-  /* Only pay for it when a reader actually opens one of the two sections. */
-  ['help-choose', 'trip-escape'].forEach(function (id) {
-    var sec = document.getElementById(id);
-    var det = sec && sec.querySelector('details');
-    if (det) det.addEventListener('toggle', function () { if (det.open) boot(); });
+  /* Only pay for it when a reader actually opens one of the two panels.
+
+     This used to hang off a `toggle` listener on a <details> inside #help-choose
+     / #trip-escape. Those sections are now cards with a panel underneath, there
+     is no <details>, and the listener bound to nothing — so boot() never ran,
+     run() never ran, and NEITHER widget had a single handler attached. Both
+     rendered their full markup and did nothing at all when clicked, which is
+     the failure mode that looks like CSS. Exposed instead, and the card calls
+     it; boot() now returns its promise so the caller can wait for run(). */
+  window._lpBootPanels = boot;
+}());
+</script>
+
+<script>
+/* ── Find the right destination for your trip ─────────────────────────────────
+   Eleven controls over one list. Every one of them is an AND: "July, warm,
+   4-6 days, under 10 hours, nonstop, Europe" is a single question with one
+   answer, and answering it is the only reason this block exists.
+
+   It has to be computed here. The obvious alternative — deep-link the answers
+   into /guides/?month=…&days=… — cannot work: that page runs
+   _mutexClearFilters() on every activation, so applying the second filter
+   clears the first and the visitor gets a list that silently ignores most of
+   what they asked. See guides/index.html § mutual exclusivity.
+
+   Data comes from window._lpData(), the cache the pill engine above already
+   built by parsing /guides/index.html. Nothing here is a second copy of the
+   listing, so nothing here can drift from it.
+
+   Two rules about missing data, and they are the same rule: a guide with no
+   climate row is DROPPED from a weather-filtered result, and one with no FMAP
+   entry is dropped from a distance-filtered result. Passing them through pads
+   the answer with cities nobody checked, which is worse than a shorter list. */
+(function () {
+  var when    = document.getElementById('fnd-when');
+  var weather = document.getElementById('fnd-weather');
+  var length  = document.getElementById('fnd-length');
+  var far     = document.getElementById('fnd-far');
+  var out     = document.getElementById('fnd-results');
+  if (!when || !weather || !length || !far || !out) return;
+
+  var adv = ['fnd-type', 'fnd-lang', 'fnd-cont', 'fnd-stops',
+             'fnd-budget', 'fnd-safety', 'fnd-country'].map(function (id) {
+    return document.getElementById(id);
   });
+  var fType = adv[0], fLang = adv[1], fCont = adv[2], fStops = adv[3],
+      fBudget = adv[4], fSafety = adv[5], fCountry = adv[6];
+
+  var BANDS = { hot: [28, 99], warm: [22, 28], mild: [15, 22], cool: [8, 15], cold: [-99, 8] };
+  var LEN = {
+    '1-3': function (n) { return n >= 1 && n <= 3; },
+    '4-6': function (n) { return n >= 4 && n <= 6; },
+    '7-9': function (n) { return n >= 7 && n <= 9; },
+    '10':  function (n) { return n >= 10; }
+  };
+  /* Same cut points the guides index uses for its duration chips, so "under
+     8 hours" means the same number in both places. */
+  var FAR = { u5: 300, u8: 480, u10: 600, u12: 720, u15: 900 };
+
+  /* FMAP.m is AIR time only; FMAP.t is the journey including layovers, and the
+     two differ by hours on a connection. Filtering on m while showing t put
+     "12h 50m" inside a list headed "under 12 hours" — a result the card itself
+     contradicted. The guides index filters on m plus a layover allowance (90
+     min per connection, guides/index.html § connBuffer) and displays the same
+     total, so this does too: one number, filtered and shown. */
+  function journeyMins(f) {
+    if (!f) return null;
+    var legs = (f.lg && f.lg.length) ? (f.lg.length - 1) * 90
+             : (f.r === '1stop' ? 90 : f.r === '2stop' ? 180 : 0);
+    return f.m + legs;
+  }
+  /* Ordered, so "Moderate and above" means Very Safe + Safe + Moderate rather
+     than Moderate exactly — a floor, which is what an advisory level is. */
+  var SAFE_RANK = { 'Very Safe': 1, 'Safe': 2, 'Moderate': 3, 'Caution': 4, 'High Risk': 5 };
+
+  var MON = ['January','February','March','April','May','June','July',
+             'August','September','October','November','December'];
+
+  function val(el) { return el ? el.value : ''; }
+
+  /* Chosen month when there is one, the year's mean when there is not: "warm in
+     March" and "warm on the whole" are different questions, and answering the
+     second with January's number is simply wrong. */
+  function hiFor(d, g, monthIdx) {
+    var c = d.climate && d.climate[g.name];
+    if (!c || !c.hi || !c.hi.length) return null;
+    if (monthIdx !== null) return c.hi[monthIdx];
+    var s = 0;
+    for (var i = 0; i < c.hi.length; i++) s += c.hi[i];
+    return s / c.hi.length;
+  }
+
+  function state() {
+    return {
+      mo:  when.value === '' ? null : parseInt(when.value, 10),
+      wx:  weather.value, len: length.value, fr: far.value,
+      ty:  val(fType), lg: val(fLang), ct: val(fCont), st: val(fStops),
+      bd:  val(fBudget), sf: val(fSafety), co: val(fCountry)
+    };
+  }
+  function anySet(s) {
+    return s.mo !== null || s.wx || s.len || s.fr || s.ty || s.lg ||
+           s.ct || s.st || s.bd || s.sf || s.co;
+  }
+
+  function matches(d, s) {
+    return d.guides.filter(function (g) {
+      if (s.co && g.country !== s.co) return false;
+      if (s.ct && d.cont[g.country] !== s.ct) return false;
+      if (s.lg && g.lang.indexOf(s.lg) === -1) return false;
+      if (s.ty && (d.themes[g.name] || []).indexOf(s.ty) === -1) return false;
+      if (s.bd) {
+        var c = d.cost[g.folder];
+        if (!c || c.tier !== s.bd) return false;
+      }
+      if (s.sf) {
+        var sv = d.safety[g.folder];
+        if (!sv || !SAFE_RANK[sv.level] || SAFE_RANK[sv.level] > SAFE_RANK[s.sf]) return false;
+      }
+      if (s.len) {
+        var n = Number(d.days[g.name]);
+        if (!n || !LEN[s.len](n)) return false;
+      }
+      if (s.fr || s.st) {
+        var f = d.fmap[g.rel];
+        if (!f) return false;
+        if (s.st && f.r !== s.st && !(s.st === 'nonstop' && f.r === 'seasonal')) return false;
+        var mins = journeyMins(f);
+        if (s.fr === 'o15' && !(mins >= 900)) return false;
+        if (s.fr && s.fr !== 'o15' && !(mins < FAR[s.fr])) return false;
+      }
+      if (s.wx) {
+        var hi = hiFor(d, g, s.mo);
+        if (hi === null) return false;
+        var b = BANDS[s.wx];
+        if (hi < b[0] || hi >= b[1]) return false;
+      }
+      return true;
+    }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+  }
+
+  function esc(t) {
+    return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /* The card states the facts that were actually asked about, so a result can
+     be checked rather than taken on trust: the temperature for the chosen
+     month, the guide's length, the flight time. A fact that was not asked for
+     and is not known is left off rather than shown blank. */
+  function card(d, g, s) {
+    var bits = [];
+    var hi = hiFor(d, g, s.mo);
+    if (hi !== null) {
+      bits.push('<span class="rc-fact rc-temp">' + Math.round(hi) + '&deg;' +
+                (s.mo !== null ? ' in ' + MON[s.mo].slice(0, 3) : '') + '</span>');
+    }
+    var n = Number(d.days[g.name]);
+    if (n) bits.push('<span class="rc-fact">' + n + (n === 1 ? ' day' : ' days') + '</span>');
+    var f = d.fmap[g.rel];
+    if (f && f.t) bits.push('<span class="rc-fact">' + esc(f.t) + '</span>');
+
+    return '<a class="rescard" href="' + g.url + '">' +
+           '<span class="rc-top">' +
+             (g.flag ? '<span class="rc-flag">' + g.flag + '</span>' : '') +
+             '<span class="rc-name">' + esc(g.name) + '</span>' +
+           '</span>' +
+           (g.countryName ? '<span class="rc-country">' + esc(g.countryName) + '</span>' : '') +
+           (bits.length ? '<span class="rc-facts">' + bits.join('') + '</span>' : '') +
+           '</a>';
+  }
+
+  function run() {
+    var s = state();
+    if (!anySet(s)) { out.hidden = true; out.innerHTML = ''; syncChrome(s); return; }
+
+    out.hidden = false;
+    out.innerHTML = '<p class="fnd-res-head">Searching&hellip;</p>';
+    syncChrome(s);
+
+    window._lpData().then(function (d) {
+      if (!d) {
+        out.innerHTML = '<p class="fnd-res-head">The destination list did not load. ' +
+                        '<a href="./guides/">Browse all guides</a> instead.</p>';
+        return;
+      }
+      var hits = matches(d, s);
+
+      /* A month on its own narrows nothing — every guide is open every month.
+         Say that, rather than returning all 237 as though it were an answer. */
+      var monthOnly = (s.mo !== null && !s.wx && !s.len && !s.fr && !s.ty &&
+                       !s.lg && !s.ct && !s.st && !s.bd && !s.sf && !s.co);
+
+      var head = '<p class="fnd-res-head"><b>' + hits.length + '</b> destination' +
+                 (hits.length === 1 ? '' : 's') +
+                 (monthOnly ? ' &mdash; every guide is open in ' + MON[s.mo] +
+                              '. Add a temperature and this narrows.' : '') + '</p>';
+
+      if (!hits.length) {
+        out.innerHTML = head +
+          '<p class="fnd-res-empty">Nothing matches all of those at once. ' +
+          'Drop one and try again.</p>';
+        return;
+      }
+      out.innerHTML = head + '<div class="rescards">' +
+                      hits.map(function (g) { return card(d, g, s); }).join('') + '</div>';
+    });
+  }
+
+  /* The advanced panel shuts, and a filter set inside it must not vanish with
+     it — otherwise a visitor sees a short list and nothing on screen explaining
+     why it is short. The count rides on the button. */
+  function syncChrome(s) {
+    var n = [s.ty, s.lg, s.ct, s.st, s.bd, s.sf, s.co].filter(Boolean).length;
+    var btn = document.getElementById('fnd-more');
+    if (btn) {
+      btn.textContent = n ? 'More ways to filter (' + n + ')' : 'More ways to filter';
+      btn.classList.toggle('on', n > 0);
+    }
+    var reset = document.getElementById('fnd-reset');
+    if (reset) reset.hidden = !anySet(s);
+  }
+
+  var all = [when, weather, length, far].concat(adv).filter(Boolean);
+  all.forEach(function (el) { el.addEventListener('change', run); });
+
+  /* The button is what the brief asked for and what a form is expected to have.
+     The controls also run on change, so it confirms rather than gates — nobody
+     sets four fields and then wonders why nothing happened. */
+  var go = document.getElementById('fnd-go');
+  if (go) go.addEventListener('click', function () {
+    run();
+    if (!out.hidden) out.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  });
+
+  var reset = document.getElementById('fnd-reset');
+  if (reset) reset.addEventListener('click', function () {
+    all.forEach(function (el) { el.value = ''; });
+    run();
+  });
+
+  var moreBtn = document.getElementById('fnd-more');
+  var morePanel = document.getElementById('fnd-more-panel');
+  if (moreBtn && morePanel) moreBtn.addEventListener('click', function () {
+    var opening = morePanel.hidden;
+    morePanel.hidden = !opening;
+    moreBtn.setAttribute('aria-expanded', String(opening));
+  });
+
+  syncChrome(state());
+}());
+</script>
+
+<script>
+/* ── The three panels that open in place ──────────────────────────────────────
+   Help Me Choose and Trip Escape under the finder, Travel stats at the foot.
+   One open at a time.
+
+   Both of the big widgets were already on this page and are moved, not
+   rewritten. Each only builds itself when its ORIGINAL hidden button is
+   clicked — those scripts bind to #btn-help-choose / #btn-trip-twin — so the
+   card fires that button once, the first time it opens. Removing either hidden
+   button empties the panel with no error anywhere. */
+(function () {
+  var cards = [].slice.call(document.querySelectorAll('[data-tool]'));
+  if (!cards.length) return;
+
+  /* tool id -> the inner panel the lazy bootstrap fills in. */
+  var WAKE = { 'help-choose': 'help-choose-panel', 'trip-escape': 'trip-twin-panel' };
+
+  function shutOthers(except) {
+    cards.forEach(function (c) {
+      var id = c.getAttribute('data-tool');
+      if (id === except) return;
+      var p = document.getElementById('tp-' + id);
+      if (p) p.hidden = true;
+      c.setAttribute('aria-expanded', 'false');
+      c.classList.remove('on');
+    });
+  }
+
+  cards.forEach(function (card) {
+    card.addEventListener('click', function () {
+      var id = card.getAttribute('data-tool');
+      var panel = document.getElementById('tp-' + id);
+      if (!panel) return;
+      var opening = panel.hidden;
+      shutOthers(opening ? id : null);
+      panel.hidden = !opening;
+      card.setAttribute('aria-expanded', String(opening));
+      card.classList.toggle('on', opening);
+
+      /* Help Me Choose and Trip Escape are lazy: their handlers are not
+         attached until _lpBootPanels() has fetched /guides/index.html and
+         replayed its data. Boot on first open, then unhide the inner panel —
+         run() leaves #trip-twin-panel hidden, since on the guides index a
+         toolbar button reveals it and there is no such button here. */
+      if (opening && WAKE[id]) {
+        var inner = document.getElementById(WAKE[id]);
+        var wake = window._lpBootPanels ? window._lpBootPanels() : null;
+        panel.classList.add('waking');
+        Promise.resolve(wake).then(function () {
+          panel.classList.remove('waking');
+          if (inner) inner.hidden = false;
+        });
+        if (inner && !panel.dataset.woke) panel.dataset.woke = '1';
+      }
+      if (opening) panel.scrollIntoView({ block: 'nearest' });
+    });
+  });
+
+  /* #help-choose / #trip-escape / #best-of used to be section ids and are still
+     linked from the toolbar and from other pages. Keep them landing somewhere. */
+  function openFromHash() {
+    var h = (location.hash || '').replace('#', '');
+    var card = document.querySelector('[data-tool="' + h + '"]');
+    var panel = document.getElementById('tp-' + h);
+    if (card && panel && panel.hidden) card.click();
+  }
+  window.addEventListener('hashchange', openFromHash);
+  openFromHash();
 }());
 </script>
 </body>
