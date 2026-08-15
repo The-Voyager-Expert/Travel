@@ -1,3 +1,7 @@
+/* 2026-08-15: Sunrise & Sunset results reverted to the sky card — the redesign
+   brief was the hero and the search, not the results (owner). Climate Finder
+   keeps its WHEN TO GO banner: 84 of 100 Trip-Essentials pages carry one, so a
+   page without it stops reading as part of the set. CACHE to v880. */
 /* 2026-08-15: Sunrise & Sunset rebuilt (sky card -> three stats + a twelve-month
    daylight chart); Climate Finder hero gains the temperature spill; the When to
    Go block leaves the landing page. Three HTML pages, no asset floors. CACHE to
