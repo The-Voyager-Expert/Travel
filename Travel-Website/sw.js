@@ -1241,7 +1241,8 @@
 /* 2026-08-15: SHOW ONLY filter chips moved to first item inside Trip Overview (before Day 1), collapses with days. toolbar.js -> v655. CACHE to v905. */
 /* 2026-08-15: Lounge arrival chip: remove label text (Before You Go / Lounges), chip links directly to lounge page. toolbar.js -> v656. CACHE to v906. */
 /* 2026-08-15: Trip Escape city autocomplete: exclude data-special Best Of cards. CACHE to v907. */
-var CACHE = 'travel-cache-v908';
+/* 2026-08-15: index.html finder — Stops filter + badge count fixes; routing pill hidden for non-SEA airports. CACHE to v909. */
+var CACHE = 'travel-cache-v909';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
