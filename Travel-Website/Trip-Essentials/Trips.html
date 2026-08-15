@@ -132,9 +132,21 @@
 .tsa-link { font-size: 11px; font-weight: 400; color: var(--muted); text-decoration: none; margin-left: 6px; }
 .tsa-link:hover { color: var(--accent); opacity: 1; text-decoration: none; }
 /* ── Airport address list ── */
-.flights-block { margin-top: 4px; padding: 8px 12px; background: var(--warm); border-radius: 4px; border: 1px solid var(--border2); }
-.flights-block .fc { color: var(--muted); font-weight: 700; }
-.flights-block .ftable + .ftable { border-top: 1px solid rgba(0,0,0,0.06); }
+/* .trains-block is .flights-block's twin on purpose — same warm card, same grid,
+   so a rail leg reads exactly like a flight leg. It is deliberately NOT called
+   .flights-block: the calendar export walks the card for .flights-block, and a
+   train sharing that class would inflate the "All flights" leg count. Trains
+   carry no export at all (owner rule 2026-08-15) — the booking link is the
+   whole point of the row. */
+.flights-block,
+.trains-block { margin-top: 4px; padding: 8px 12px; background: var(--warm); border-radius: 4px; border: 1px solid var(--border2); }
+.flights-block .fc,
+.trains-block .fc { color: var(--muted); font-weight: 700; }
+.flights-block .ftable + .ftable,
+.trains-block .ftable + .ftable { border-top: 1px solid rgba(0,0,0,0.06); }
+.trains-block .fc a,
+.trains-block .fc a:visited { color: var(--red); font-weight: 700; text-decoration: none; }
+@media (hover: hover) { .trains-block .fc a:hover { text-decoration: underline; } }
 .airport-addrs { margin-top: 10px; padding-top: 8px; }
 .airport-row { display: flex; align-items: baseline; gap: 5px; padding: 1px 0; }
 .ap-code { font-size: 12px; font-weight: 700; color: var(--muted); min-width: 32px; flex: none; white-space: nowrap; }
@@ -392,6 +404,9 @@ a.trip-jump-pill:visited { color: #3d3a32; }
   .cal-row.cal-done .cal-row-name { color: #4aaa4a; }
   .cal-pill { background: var(--surface2); color: var(--text); border-color: var(--border); }
   .red { color: #f07070; }
+  /* literal hex — var() is blocked inside a :visited rule */
+  .trains-block .fc a,
+  .trains-block .fc a:visited { color: #f07070; }
   #gate-overlay { background: rgba(26,25,23,0.96) !important; }
   #gate-overlay div { color: var(--text) !important; }
   #gate-error { color: #e06060 !important; }
@@ -428,6 +443,8 @@ a.trip-jump-pill:visited { color: #3d3a32; }
 :root[data-theme="dark"] .cal-row.cal-done .cal-row-name { color: #4aaa4a; }
 :root[data-theme="dark"] .cal-pill { background: var(--surface2); color: var(--text); border-color: var(--border); }
 :root[data-theme="dark"] .red { color: #f07070; }
+:root[data-theme="dark"] .trains-block .fc a,
+:root[data-theme="dark"] .trains-block .fc a:visited { color: #f07070; }  /* literal hex — var() blocked in :visited */
 :root[data-theme="dark"] #gate-overlay { background: rgba(26,25,23,0.96) !important; }
 :root[data-theme="dark"] #gate-overlay div { color: var(--text) !important; }
 :root[data-theme="dark"] #gate-error { color: #e06060 !important; }
@@ -545,6 +562,13 @@ document.addEventListener('DOMContentLoaded',()=>{
       <span class="hotel-addr"><a href="https://www.google.com/maps/search/?api=1&query=Bayerstrasse+12+80335+Munich+Germany" target="_blank" rel="noopener">Bayerstrasse 12, 80335 Munich, Germany</a></span>
     </div>
 
+    <div class="hotel">
+      <div class="hotel-meta">Munich <span class="hotel-sep">·</span> Aug 16 → Aug 17</div>
+      <div class="hotel-name"><a href="https://www.google.com/maps/search/?api=1&query=NH+Collection+Muenchen+Bavaria+Arnulfstrasse+2+80335+Munich">NH Collection München Bavaria</a></div>
+      <p><a href="https://secure.booking.com/mybooking.html" target="_blank" rel="noopener">booking.com</a></p>
+      <span class="hotel-addr"><a href="https://www.google.com/maps/search/?api=1&query=Arnulfstrasse+2+80335+Munich+Germany" target="_blank" rel="noopener">Arnulfstraße 2, 80335 Munich, Germany</a></span>
+    </div>
+
     <div class="sec"><span class="who hubby">Hubby</span><span class="sec-divider">|</span>Hotel + Venue</div>
     <div class="hotel hubby-block">
       <div class="hotel-meta">Herrsching am Ammersee <span class="hotel-sep">·</span> Aug 16 → Aug 22</div>
@@ -559,6 +583,12 @@ document.addEventListener('DOMContentLoaded',()=>{
       <div class="hotel-name"><a href="https://www.google.com/maps/search/?api=1&query=NH+Collection+Salzburg+City+Franz-Josef-Strasse+26+5020+Salzburg">NH Collection Salzburg City</a></div>
       <p><a href="https://www.nh-hotels.com/en/hotel/nh-collection-salzburg-city" target="_blank" rel="noopener">nh-hotels.com</a></p>
       <span class="hotel-addr"><a href="https://www.google.com/maps/search/?api=1&query=Franz-Josef-Strasse+26+5020+Salzburg+Austria" target="_blank" rel="noopener">Franz-Josef-Strasse 26, 5020 Salzburg, Austria</a></span>
+    </div>
+
+    <div class="sec"><span class="who wifey">Wifey</span><span class="sec-divider">|</span>Trains</div>
+    <div class="trains-block">
+    <div class="ftable"><span class="fc">Aug 17</span><span class="fc">10:00 AM</span><span class="fc">Munich → Salzburg</span><span class="fc">ÖBB</span><span class="fc"><a href="https://www.oebb.at/en/" target="_blank" rel="noopener">book on oebb.at</a></span></div>
+    <div class="ftable"><span class="fc">Aug 22</span><span class="fc">5:00 PM</span><span class="fc">Salzburg → Munich</span><span class="fc">ÖBB</span><span class="fc"><a href="https://www.oebb.at/en/" target="_blank" rel="noopener">book on oebb.at</a></span></div>
     </div>
 
     <div class="sec"><span class="who both">Both</span><span class="sec-divider">|</span>Hotels</div>

@@ -168,6 +168,8 @@ Per owner 2026-08-14 (*"lets add the hotel link from now on"* + *"add if i didnt
 - Booked direct with the hotel → the hotel's own site (`sofitel-munich.com`, `nh-hotels.com`).
 - Booked anywhere else — Booking.com, Expedia, Marriott/Hyatt/Accor loyalty site, a conference block, an agent → **link that**, not the hotel site. The point is to reach the reservation, not the brochure.
 
+**Never paste a confirmation URL that carries an `auth_key`, `pfi`, booking hash or any other credential in its query string.** `Travel-Website/` is the **public** repo — the PIN overlay on `Trips.html` is a JS convenience, not access control, and the file's source is readable by anyone. A link like `secure.booking.com/confirmation.en-us.html?auth_key=…` hands a stranger the reservation. Link the operator's own bookings page instead (`secure.booking.com/mybooking.html`), which asks for the account.
+
 Label the link with the bare domain or a short readable name, never the full URL:
 ```html
 <p><a href="https://www.sofitel-munich.com/" target="_blank" rel="noopener">sofitel-munich.com</a></p>
@@ -267,6 +269,25 @@ Hubby and Wifey frequently route SEA → AMS → destination on Delta/KLM. When 
 - Always link to cp.pt for Portugal trains
 - Trains that still need to be booked get `· **book on cp.pt**` in red bold
 - Portugal trains: Alfa Pendular is the fast intercity service; regional trains for short hops (Lisbon → Sintra etc.)
+
+### Markup — `.trains-block`, the flight block's twin
+
+A train section is a `.sec` with its who-pill, then a `.trains-block` wrapper holding one `.ftable` row per leg — the same five-column grid the flights use, so a rail leg reads exactly like a flight leg:
+
+```html
+<div class="sec"><span class="who wifey">Wifey</span><span class="sec-divider">|</span>Trains</div>
+<div class="trains-block">
+<div class="ftable"><span class="fc">Aug 17</span><span class="fc">10:00 AM</span><span class="fc">Munich → Salzburg</span><span class="fc">ÖBB</span><span class="fc"><a href="https://www.oebb.at/en/">book on oebb.at</a></span></div>
+</div>
+```
+
+**Never wrap a train in `.flights-block`.** The class is not cosmetic — the calendar export walks each trip card for `.flights-block` and counts every `.ftable` inside it, so a train sharing that class silently inflates the "All flights" leg count. `.trains-block` carries identical styling and is invisible to the export.
+
+The last column is the **booking link**, red and bold, pointing at the operator's site.
+
+### Trains are never exported (owner 2026-08-15)
+
+Per owner (*"i dont need anything here no need of export for trains just add the website to book"*): the calendar export covers **flights and hotels only**. A train gets no chooser row and no `.ics` — the booking link on the row is the whole point. Don't "complete" the export by adding trains.
 
 ---
 
@@ -488,6 +509,7 @@ If something is in `Trips.html` but not on the calendar (e.g. an offsite-arrange
 | Spain | Renfe | renfe.com |
 | UK | National Rail | nationalrail.co.uk |
 | Germany | DB | bahn.de |
+| Austria | ÖBB (also runs the Munich ↔ Salzburg corridor, both directions) | oebb.at |
 
 ---
 
@@ -505,6 +527,8 @@ Per owner 2026-08-15 (*"i want export separated by flights 1 export, each hotel 
 |---|---|---|
 | **All flights** | every leg of the trip, outbound and return, in one `.ics` | `{trip}-flights.ics` |
 | **One row per hotel** | that stay and nothing else — one `VEVENT` | `{trip}-{who}-{hotel}-{checkin}.ics` |
+
+**Flights and hotels only.** Trains, venues and car rentals get no chooser row — see § Trains.
 
 **The separation is the whole point: tapping a row exports only that row.** A hotel file never carries a flight leg, and the flights file never carries a stay — so each of the two of us can take just the pieces we need without importing the rest of the trip.
 
