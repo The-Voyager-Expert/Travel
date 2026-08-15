@@ -930,7 +930,7 @@ window.TVE.isPhone = function () {
        takes the freed slot rather than being appended, so the top strip stays
        at five tabs; a sixth is what pushes the bar out of shape.
        TOOLBAR_ITEMS_LOCK moved with this change. */
-    { href: base + 'Trip-Essentials/When-to-Go.html', text: 'When to Go', icon: 'calendar' },
+    { href: base + 'Trip-Essentials/Climate-Finder.html', text: 'Climate Finder', icon: 'sun-clear' },
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', icon: 'folded-map' },
     { href: 'mailto:contact@guidemydays.com?subject=Guide%20My%20Days', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
      to the form. NOT base + ... — a mailto must not be depth-prefixed. */
