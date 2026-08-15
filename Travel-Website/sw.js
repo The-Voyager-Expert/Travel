@@ -1180,7 +1180,9 @@
    the foot. CACHE to v882. */
 /* 2026-08-14: Weather.html — banner and intro card deleted, page rebuilt around
    a search hero, both sibling link strips removed. CACHE to v883. */
-var CACHE = 'travel-cache-v883';
+/* 2026-08-14: guides/index.html — hero with the search lifted out of the hidden
+   topbar; Climate-Finder.html — banner removed again per owner. CACHE to v884. */
+var CACHE = 'travel-cache-v884';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
