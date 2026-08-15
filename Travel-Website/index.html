@@ -721,6 +721,19 @@ a.land-cta:hover:visited {
 .lp-links a:hover { color: var(--rust, #b85c2a); border-bottom-color: var(--rust, #b85c2a); }
 .lp-links a:hover::after { opacity: 1; }
 
+/* Trip length is a select, not a pill row: six near-identical numbers made a
+   wide card out of the one filter with the least to say. The pills stay in the
+   markup, hidden — the filter engine reads them for labels and hrefs, and the
+   select just drives them, so there is still exactly one source of truth. */
+.lp-select {
+  font: inherit; font-size: 0.95rem; width: 100%; max-width: 14rem;
+  margin-top: clamp(0.8rem, 2vw, 1.2rem);
+  padding: 0.7em 2.2em 0.7em 1em;
+  border: 1px solid var(--border2, #e6e2da); border-radius: 6px;
+  background: var(--surface, #fff); color: var(--accent); cursor: pointer;
+}
+.lp-select:focus { outline: none; border-color: #c8b99a; }
+
 /* Before You Go rides in an iframe — see the loader for why. */
 #byg-mount { margin-top: clamp(1rem, 2.2vw, 1.6rem); }
 .byg-frame {
@@ -1130,25 +1143,40 @@ a.land-cta:hover:visited {
   </nav>
 </section>
 
-<section class="lp-block bare">
-  <h2>You know how many days you've got.</h2>
+<section class="lp-block stack" id="trip-length">
+  <p class="lp-kicker">Trip length</p>
+  <h2>How many days?</h2>
   <p>
-    Length decides which cities are worth it at all. Three days suits one dense city and
-    not a country; a week opens up loops and day trips; ten days is a different trip
-    entirely.
+    Every guide is <strong>written to a length</strong> rather than padded to fill one &mdash;
+    a 3-day Lisbon is a different plan from a 6-day Lisbon, not the same plan stretched.
   </p>
-  <p>
-    Every guide here is <strong>written to a length</strong> rather than padded to fill
-    one — a 3-day Lisbon is a genuinely different plan from a 6-day Lisbon, not the same
-    plan stretched. Pick your number and you only see guides built for it.
-  </p>
-  <nav class="lp-pills">
+  <label for="days-pick" class="sr-only">Filter guides by trip length</label>
+  <select id="days-pick" class="lp-select">
+    <option value="">Any length</option>
+    <option value="1">1 day</option>
+    <option value="2">2 days</option>
+    <option value="3">3 days</option>
+    <option value="4">4 days</option>
+    <option value="5">5 days</option>
+    <option value="6">6 days</option>
+    <option value="7">7 days</option>
+    <option value="8">8 days</option>
+    <option value="9">9 days</option>
+    <option value="10">10 days</option>
+    <option value="10plus">10+ days</option>
+  </select>
+  <nav class="lp-pills" hidden>
+    <a href="./guides/?days=1">1 day</a>
     <a href="./guides/?days=2">2 days</a>
     <a href="./guides/?days=3">3 days</a>
     <a href="./guides/?days=4">4 days</a>
     <a href="./guides/?days=5">5 days</a>
     <a href="./guides/?days=6">6 days</a>
     <a href="./guides/?days=7">7 days</a>
+    <a href="./guides/?days=8">8 days</a>
+    <a href="./guides/?days=9">9 days</a>
+    <a href="./guides/?days=10">10 days</a>
+    <a href="./guides/?days=10plus">10+ days</a>
   </nav>
 </section>
 
@@ -1654,7 +1682,12 @@ a.land-cta:hover:visited {
 
   function one(d, g, kind, value) {
     if (kind === 'type')      return (d.themes[g.name] || []).indexOf(value) > -1;
-    if (kind === 'days')      return String(d.days[g.name]) === value;
+    if (kind === 'days') {
+      var n = d.days[g.name];
+      /* '10plus' is a bucket, not a number — the guides index offers it and a
+         string compare would silently match nothing. */
+      return value === '10plus' ? Number(n) >= 10 : String(n) === value;
+    }
     if (kind === 'lang')      return g.lang.indexOf(value) > -1;
     if (kind === 'continent') return d.cont[g.country] === value;
     return true;
@@ -2409,6 +2442,24 @@ function render() {
       pick.disabled = true;
       pick.options[0].textContent = 'City list unavailable \u2014 use Browse all';
     });
+}());
+</script>
+<script>
+/* The trip-length select drives the hidden pills, so the layered filter engine
+   stays the only thing that actually filters — no second code path to keep in
+   step. Picking "Any length" clicks the active pill off. */
+(function () {
+  var sel = document.getElementById('days-pick');
+  if (!sel) return;
+  var nav = sel.parentNode.querySelector('.lp-pills');
+  if (!nav) return;
+  sel.addEventListener('change', function () {
+    var on = nav.querySelector('a.on');
+    if (on) on.click();                       /* clear whatever was set */
+    if (!sel.value) return;
+    var next = nav.querySelector('a[href*="days=' + sel.value + '"]');
+    if (next) next.click();
+  });
 }());
 </script>
 </body>
