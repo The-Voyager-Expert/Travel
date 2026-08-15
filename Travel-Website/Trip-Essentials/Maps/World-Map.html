@@ -140,7 +140,7 @@
 }
 </style>
 <link rel="stylesheet" href="../../assets/mobile.css?v=53">
-<script>if(location.search.includes('embed=1')){document.write('<style>.tb{display:none!important}#visited-pill-mobile{display:none!important}</style>');}</script>
+<script>if(location.search.includes('embed=1')){document.write('<style>.tb{display:none!important}#map-mine{display:none!important}</style>');}</script>
 </head>
 <body class="map-page">
 <div id="toolbar-mount" data-depth="2" data-maxwidth="1400" data-updated="2026-06-18"></div>
@@ -149,12 +149,39 @@
 if(location.search.includes('embed=1')){
 }
 
-function toggleVisited(btn) {
-  var on = btn.getAttribute('data-on') !== '1';
-  btn.setAttribute('data-on', on ? '1' : '0');
-  btn.classList.toggle('rn-on', on);
-  if (window.applyVisitedFilter) window.applyVisitedFilter(on);
+/* ── Visited is per-visitor (owner rule 2026-08-14) ──────────────────────────
+   The gold cities used to be a Set literal further down this file, so every
+   reader saw the owner's travel presented as their own and had no way to
+   record theirs. The list now lives in this browser's localStorage, one entry
+   per pin name, and the map paints whatever THIS browser has marked — a
+   first-time visitor sees no gold at all until they mark something.
+   There is no account behind it, so it is per-browser and per-device by
+   design; the owner accepted that trade rather than take on sign-in.
+   Same key is intended for the guide-page "Been here" control, so anything
+   marked there lights up here. */
+var BEEN_KEY = 'tve_been_cities';
+function beenLoad() {
+  try {
+    var raw = JSON.parse(localStorage.getItem(BEEN_KEY) || '[]');
+    return new Set(Array.isArray(raw) ? raw : []);
+  } catch (e) { return new Set(); }
 }
+function beenSave(set) {
+  try {
+    var out = []; set.forEach(function (n) { out.push(n); });
+    localStorage.setItem(BEEN_KEY, JSON.stringify(out));
+  } catch (e) {}   /* private mode / storage full — marking just doesn't persist */
+}
+window.BEEN = beenLoad();
+window.markMode = false;
+
+function beenPaintCount() {
+  var el = document.getElementById('visited-pill-count');
+  if (el) el.textContent = window.BEEN.size ? 'Visited · ' + window.BEEN.size : 'Visited';
+  var clr = document.getElementById('mine-clear');
+  if (clr) clr.style.display = window.BEEN.size ? '' : 'none';
+}
+
 function toggleVisitedMobile(btn) {
   var on = btn.getAttribute('data-on') !== '1';
   btn.setAttribute('data-on', on ? '1' : '0');
@@ -164,13 +191,56 @@ function toggleVisitedMobile(btn) {
   btn.querySelector('span').style.background = on ? 'rgba(255,255,255,0.7)' : '#c8940a';
   if (window.applyVisitedFilter) window.applyVisitedFilter(on);
 }
+
+/* Mark mode: while on, a pin tap records the city instead of opening its
+   guide. Off is the default, so the ordinary "tap a pin, read the guide"
+   behaviour is untouched for anyone who never turns this on. */
+function toggleMarkMode(btn) {
+  window.markMode = btn.getAttribute('data-on') !== '1';
+  btn.setAttribute('data-on', window.markMode ? '1' : '0');
+  btn.style.background = window.markMode ? '#b85c2a' : '#fff';
+  btn.style.color = window.markMode ? '#fff' : '#b85c2a';
+  var hint = document.getElementById('mine-hint');
+  if (hint) hint.style.display = window.markMode ? 'flex' : 'none';
+  /* Marking with the gold display off would give no feedback at all. */
+  var vm = document.getElementById('visited-pill-mobile');
+  if (window.markMode && vm && vm.getAttribute('data-on') !== '1') toggleVisitedMobile(vm);
+}
+
+function clearMine() {
+  window.BEEN = new Set();
+  beenSave(window.BEEN);
+  if (window.applyVisitedFilter) window.applyVisitedFilter(true);
+  beenPaintCount();
+}
+
+/* One-shot migration for the owner's own browser: open this page once at
+   World-Map.html#seed-mine and the 82 cities that used to be hardcoded are
+   written into this browser's store, after which the map treats them like
+   any other reader's marks. OWNER_SEED is scaffolding — delete it and this
+   block once the seed has been run. */
+if (location.hash === '#seed-mine') {
+  var OWNER_SEED = ['Amalfi','Amsterdam','Bologna','Bruges','Brussels','Cambridge','Cannes','Capri','Cascais','Cinque Terre','Copenhagen','Corfu','Edinburgh','Florence','Geneva','Gothenburg','Hamburg','London','Luxembourg','Madrid','Marktoberdorf','Monaco','Munich','Nice','Oxford','Paris','Pisa','Porto','Rome','San Sebastian','Sintra','Sorrento','Strasbourg','Stuttgart','Toledo','Turin','Venice','Vienna','Lagos','Chongqing','Atlanta','Austin','Big Island','Chicago','Kauai','La Jolla','Las Vegas','Los Cabos','Maui','Miami','Nashville','New York','Oahu','Orlando','Palo Alto','Pasadena','Puerto Vallarta','San Diego','San Francisco','San Juan Island','Scottsdale','Seattle','Sedona','Toronto','Vancouver','Victoria','Whistler','Athens','Beijing','Hiroshima','Kyoto','Seoul','Shanghai','Taipei','Tokyo','Zhangjiajie','Aruba','Cancún','Curaçao','Sint Maarten','Virgin Islands','The Bahamas','Rio de Janeiro'];
+  OWNER_SEED.forEach(function (c) { window.BEEN.add(c); });
+  beenSave(window.BEEN);
+  history.replaceState(null, '', location.pathname + location.search);
+}
 </script>
 
 <div id="wrap">
   <div id="map" role="application" aria-label="Interactive world map of guide destinations"></div>
-  <button id="visited-pill-mobile" onclick="toggleVisitedMobile(this)" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:1100;background:#fdf5d8;border:1.5px solid #d8c87a;border-radius:20px;height:28px;padding:0 16px;font-size:12px;font-weight:600;color:#7a6000;cursor:pointer;font-family:inherit;align-items:center;gap:7px;box-shadow:0 2px 10px rgba(0,0,0,0.15);white-space:nowrap;" aria-label="Toggle visited cities">
-    <span style="width:8px;height:8px;border-radius:50%;background:#c8940a;flex-shrink:0;display:inline-block;"></span> Visited
-  </button>
+  <div id="map-mine" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:1100;display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div id="mine-hint" style="display:none;align-items:center;gap:10px;background:rgba(255,255,255,0.96);border:1px solid #e6e2da;border-radius:14px;padding:6px 14px;font-size:12px;color:#6a6660;box-shadow:0 2px 10px rgba(0,0,0,0.12);white-space:nowrap;">
+      <span>Tap a city to mark it. Tap again to clear.</span>
+      <button id="mine-clear" onclick="clearMine()" style="display:none;border:none;background:none;padding:0;font:inherit;font-size:12px;font-weight:600;color:#b85c2a;cursor:pointer;">Clear all</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button id="visited-pill-mobile" onclick="toggleVisitedMobile(this)" style="background:#fdf5d8;border:1.5px solid #d8c87a;border-radius:20px;height:28px;padding:0 16px;font-size:12px;font-weight:600;color:#7a6000;cursor:pointer;font-family:inherit;align-items:center;gap:7px;box-shadow:0 2px 10px rgba(0,0,0,0.15);white-space:nowrap;" aria-label="Show the cities you have marked">
+        <span style="width:8px;height:8px;border-radius:50%;background:#c8940a;flex-shrink:0;display:inline-block;"></span> <span id="visited-pill-count">Visited</span>
+      </button>
+      <button id="mark-pill" onclick="toggleMarkMode(this)" style="display:flex;align-items:center;background:#fff;border:1.5px solid #b85c2a;border-radius:20px;height:28px;padding:0 16px;font-size:12px;font-weight:600;color:#b85c2a;cursor:pointer;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.15);white-space:nowrap;" aria-label="Mark the cities you have visited">Mark mine</button>
+    </div>
+  </div>
   <button id="map-back-btn" onclick="history.back()" style="display:none;position:fixed;top:72px;right:16px;z-index:1100;background:#ffffff;border:1.5px solid #b85c2a;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:700;color:#b85c2a;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.10);align-items:center;gap:6px;" aria-label="Go back">← Back</button>
   <script>
     if(new URLSearchParams(location.search).get('from')==='stats'){
@@ -183,8 +253,8 @@ function toggleVisitedMobile(btn) {
         },800);
       });
     }
-    // Hide Visited pill when hamburger menu opens
-    var _vpm = document.getElementById('visited-pill-mobile');
+    // Hide the Visited / Mark mine cluster when the hamburger menu opens
+    var _vpm = document.getElementById('map-mine');
     if (_vpm) {
       new MutationObserver(function() {
         var hamOpen = !!document.querySelector('.tb-ham-menu.tb-ham-open');
@@ -1141,7 +1211,8 @@ function buildPins() {
     iconAnchor: [6.5, 6.5],
   });
 
-  const BEEN_CITIES = new Set(['Amalfi','Amsterdam','Bologna','Bruges','Brussels','Cambridge','Cannes','Capri','Cascais','Cinque Terre','Copenhagen','Corfu','Edinburgh','Florence','Geneva','Gothenburg','Hamburg','London','Luxembourg','Madrid','Marktoberdorf','Monaco','Munich','Nice','Oxford','Paris','Pisa','Porto','Rome','San Sebastian','Sintra','Sorrento','Strasbourg','Stuttgart','Toledo','Turin','Venice','Vienna','Lagos','Chongqing','Atlanta','Austin','Big Island','Chicago','Kauai','La Jolla','Las Vegas','Los Cabos','Maui','Miami','Nashville','New York','Oahu','Orlando','Palo Alto','Pasadena','Puerto Vallarta','San Diego','San Francisco','San Juan Island','Scottsdale','Seattle','Sedona','Toronto','Vancouver','Victoria','Whistler','Athens','Beijing','Hiroshima','Kyoto','Seoul','Shanghai','Taipei','Tokyo','Zhangjiajie','Aruba','Cancún','Curaçao','Sint Maarten','Virgin Islands','The Bahamas','Rio de Janeiro']);
+  /* The owner's 82 cities used to be hardcoded here — see the per-visitor
+     store at the top of this file. window.BEEN replaced it. */
 
   const beenIcon = L.divIcon({
     className: '',
@@ -1158,7 +1229,10 @@ function buildPins() {
       className: 'pin-name-tip', interactive: false,
     });
     const href = p[3];
-    m.on('click', () => { (window.top || window).location.href = href; });
+    m.on('click', () => {
+      if (window.markMode) { window.toggleBeen(p[0]); return; }
+      (window.top || window).location.href = href;
+    });
     pinCluster.addLayer(m);
     pinMarkers.push(m);
     markersByName[p[0]] = m;
@@ -1170,10 +1244,26 @@ function buildPins() {
     PINS.forEach(p => {
       const m = markersByName[p[0]];
       if (!m) return;
-      m.setIcon(on && BEEN_CITIES.has(p[0]) ? beenIcon : pinIcon);
+      m.setIcon(on && window.BEEN.has(p[0]) ? beenIcon : pinIcon);
     });
     renderPinLabels();
+    beenPaintCount();
   };
+
+  /* Called by a pin click while Mark mine is on. Repaints one marker rather
+     than the whole set — marking is a rapid-fire action and a full repaint of
+     240 pins per tap is visible. */
+  window.toggleBeen = function(name) {
+    const m = markersByName[name];
+    if (!m) return;
+    if (window.BEEN.has(name)) window.BEEN.delete(name); else window.BEEN.add(name);
+    beenSave(window.BEEN);
+    m.setIcon(window.BEEN.has(name) ? beenIcon : pinIcon);
+    beenPaintCount();
+    renderPinLabels();
+  };
+
+  beenPaintCount();
 
   window.addEventListener('message', function(e) {
     if (e.data && e.data.action === 'filterBeen') window.applyVisitedFilter && window.applyVisitedFilter(e.data.on);
