@@ -38,101 +38,117 @@
 }
 .sun-pickers select:focus { border-color: var(--c-search-focus-border); outline: none; }
 
-/* ── Sky card ── */
-.sky-card {
-  border-radius: 18px; overflow: hidden;
-  box-shadow: 0 6px 32px rgba(0,0,0,.18);
-  position: relative;
-}
+/* ═══ RESULT — flat, on-palette, and the whole year at once ═══════════════
+   Rebuilt 2026-08-15 (owner: "looks old and awful"). What stood here was a
+   280px photo-realistic sky panel — a navy-to-amber gradient, a CSS star
+   field, a heavy drop shadow — carrying one small arc and the two times
+   flung into opposite corners. Three faults it could not be restyled out of:
 
-/* Sky gradient background — deep indigo top → twilight horizon → warm amber */
-.sky-bg {
-  background: linear-gradient(180deg,
-    #0d1540 0%,
-    #1a2e7a 18%,
-    #2563c0 38%,
-    #5ba3d9 55%,
-    #f0a84e 72%,
-    #c96a28 85%,
-    #7a2e10 100%
-  );
-  padding: 36px 32px 28px;
-  position: relative;
-  overflow: hidden;
-}
+     1. It contradicted the site. Every other page is flat warm paper; this
+        was a dark skeuomorphic weather widget from another decade.
+     2. It showed ONE month, on a page whose own heading promises "month by
+        month". The other eleven were a dropdown away, one at a time.
+     3. It never showed day length — the single number the intro card sells
+        ("judge how much daylight a short winter day leaves you"). fmtLen()
+        was defined in this file and called from nowhere at all.
 
-/* Stars layer (purely decorative) */
-.sky-bg::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,.6) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,.7) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,.5) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,.8) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,.4) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,.7) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,.5) 1px, transparent 1px);
-  background-size:
-    140px 100px, 220px 140px, 180px 110px, 260px 160px,
-    120px 90px, 200px 130px, 160px 105px, 240px 150px;
-  background-position:
-    23px 8px, 67px 22px, 130px 5px, 190px 14px,
-    40px 40px, 100px 30px, 170px 20px, 210px 8px;
-  opacity: .5;
-  pointer-events: none;
+   What replaces it: the three numbers that matter, then the whole year as
+   twelve 24-hour tracks with the daylight span filled. Same bar-per-month
+   idiom as the Climate Finder spill, so the two timing pages read as a pair.
+   Midnight sun draws as a full track and polar night as an empty one, so the
+   edge cases fall out of the drawing instead of each needing its own card. */
+.sy-card {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border2, #e6e2da);
+  border-radius: 14px;
+  padding: clamp(18px, 2.4vw, 26px);
+  box-shadow: 0 2px 12px rgba(92, 61, 17, .07);
 }
+.sy-head {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px;
+  margin-bottom: 16px;
+}
+.sy-city { font-size: 18px; font-weight: 700; color: var(--text, #3d3a32); }
+.sy-when { font-size: 13px; color: var(--muted, #6a6660); }
 
-/* Arc SVG container */
-.sky-arc-wrap {
-  position: relative; width: 100%; margin-bottom: 8px;
+.sy-stats {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px; margin-bottom: 20px;
 }
-#sun-arc {
-  display: block; width: 100%; height: auto;
-  max-height: 160px;
+.sy-stat {
+  background: var(--surface2, #faf7f2);
+  border-radius: 10px; padding: 13px 15px;
 }
-
-/* Times row */
-.sky-times {
-  display: flex; justify-content: space-between; align-items: flex-end;
-  gap: 12px; position: relative; z-index: 1;
-}
-.sky-time-block { min-width: 0; }
-.sky-time-label {
+.sy-lab {
   font-size: 10px; font-weight: 700; letter-spacing: .14em;
-  text-transform: uppercase; color: rgba(255,255,255,.65); margin-bottom: 4px;
+  text-transform: uppercase; color: var(--muted, #6a6660); margin-bottom: 6px;
 }
-.sky-time-value {
-  font-size: 28px; font-weight: 700; color: #fff;
-  font-variant-numeric: tabular-nums; letter-spacing: -.02em; line-height: 1;
-  white-space: nowrap;
+.sy-val {
+  font-size: clamp(19px, 2.5vw, 26px); font-weight: 700;
+  color: var(--text, #3d3a32); font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em; line-height: 1; white-space: nowrap;
+}
+.sy-val.is-day { color: var(--rust, #b85c2a); }
+.sy-flag {
+  font-size: 13px; color: var(--muted, #6a6660);
+  margin: -8px 0 18px;
 }
 
+/* One row per month. Grid rather than flex so every track starts and ends on
+   the same x across all twelve rows — the comparison only works if the 24h
+   axis is shared. Gridlines every 6h come from the track background. */
+.sy-row {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr) 60px;
+  align-items: center; gap: 10px; padding: 2.5px 0;
+}
+.sy-mon { font-size: 11px; font-weight: 600; color: var(--muted, #6a6660); }
+.sy-len {
+  font-size: 11px; color: var(--muted, #6a6660);
+  text-align: right; font-variant-numeric: tabular-nums;
+}
+.sy-track {
+  position: relative; height: 13px; border-radius: 999px;
+  background-color: var(--surface2, #f1ede6);
+  background-image: linear-gradient(90deg, rgba(120, 100, 70, .16) 1px, transparent 1px);
+  background-size: 25% 100%;
+}
+.sy-track > i {
+  position: absolute; top: 0; bottom: 0; border-radius: 999px;
+  background: linear-gradient(90deg, #e8a030, #f0c848 50%, #e8a030);
+}
+.sy-row.is-sel .sy-mon, .sy-row.is-sel .sy-len {
+  color: var(--text, #3d3a32); font-weight: 700;
+}
+.sy-row.is-sel .sy-track {
+  outline: 1.5px solid var(--rust, #b85c2a); outline-offset: 2px;
+}
+.sy-scale {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr) 60px;
+  gap: 10px; margin-top: 7px;
+}
+.sy-scale-in {
+  grid-column: 2; display: flex; justify-content: space-between;
+  font-size: 10px; color: var(--muted, #6a6660);
+  font-variant-numeric: tabular-nums;
+}
+.sy-note {
+  margin: 14px 0 0; font-size: 12.5px; color: var(--muted, #6a6660);
+}
 
-/* ── Special cases ── */
-.sky-special {
-  border-radius: 18px; overflow: hidden;
-  box-shadow: 0 6px 32px rgba(0,0,0,.18);
-  padding: 52px 36px 48px;
-  text-align: center;
+/* Arrival state. The page used to render nothing at all until BOTH a city and
+   a month were set, so it opened on a blank middle. Month now defaults to the
+   current one, leaving a single choice, and this says so. */
+.sy-empty {
+  border: 1px dashed var(--border2, #e6e2da); border-radius: 14px;
+  padding: clamp(26px, 5vw, 44px) 20px; text-align: center;
+  color: var(--muted, #6a6660); font-size: 14px;
 }
-.sky-special.midnight-sun {
-  background: linear-gradient(160deg, #1a6baf 0%, #f0a840 45%, #e85c18 100%);
+
+@media (max-width: 520px) {
+  .sy-stats { grid-template-columns: 1fr 1fr; }
+  .sy-stats > .sy-stat:last-child { grid-column: 1 / -1; }
+  .sy-row, .sy-scale { grid-template-columns: 30px minmax(0, 1fr) 54px; gap: 8px; }
 }
-.sky-special.polar-night {
-  background: linear-gradient(160deg, #050c2a 0%, #0d1f5c 50%, #1a2a6e 100%);
-}
-.sky-special-icon { font-size: 52px; line-height: 1; margin-bottom: 14px; }
-.sky-special-title {
-  font-size: 18px; font-weight: 700; letter-spacing: .06em;
-  text-transform: uppercase; margin-bottom: 8px;
-}
-.midnight-sun .sky-special-title { color: #fff; }
-.polar-night .sky-special-title { color: rgba(255,255,255,.88); }
-.sky-special-body { font-size: 14px; }
-.midnight-sun .sky-special-body { color: rgba(255,255,255,.75); }
-.polar-night .sky-special-body { color: rgba(255,255,255,.5); }
 
 /* Note line — lives inside .sun-band */
 .sun-note {
@@ -165,9 +181,6 @@
 
 /* ── Mobile ── */
 @media (max-width: 520px) {
-  .sky-bg { padding: 28px 18px 22px; }
-  .sky-time-value { font-size: 22px; }
-  .sky-special { padding: 40px 24px; }
   .sun-pickers { max-width: 100%; }
 }
 </style>
@@ -563,73 +576,39 @@ function fmtLen(h) {
   return hh+'h '+(mm<10?'0':'')+mm+'m';
 }
 
-/* Draw the SVG arc */
-function arcPoint(cx, cy, r, angleDeg) {
-  var a = angleDeg * Math.PI / 180;
-  return [cx + r * Math.cos(a), cy - r * Math.sin(a)];
-}
+/* The SVG day-arc builders (arcPoint / arcPath / buildArc, ~68 lines) were
+   deleted 2026-08-15 with the sky card that was their only caller. The
+   landing page keeps its own independent copy for the Sunrise section --
+   this was never shared code. */
+var MON_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MON_FULL = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
 
-function arcPath(cx, cy, r, startDeg, endDeg) {
-  var p1 = arcPoint(cx, cy, r, startDeg);
-  var p2 = arcPoint(cx, cy, r, endDeg);
-  var large = (startDeg - endDeg > 180) ? 1 : 0;
-  return 'M '+p1[0]+' '+p1[1]+' A '+r+' '+r+' 0 '+large+' 0 '+p2[0]+' '+p2[1];
-}
-
-function timeToAngle(t, tMin, tMax) {
-  /* maps tMin→180° (left) and tMax→0° (right) */
-  var frac = Math.max(0, Math.min(1, (t - tMin) / (tMax - tMin)));
-  return 180 - frac * 180;
-}
-
-function buildArc(sr, ss) {
-  var W = 520, H = 180;
-  var cx = W/2, cy = H + 10; /* centre below the arc, so we see the top half */
-  var r = H - 8;
-
-  var tMin = Math.min(sr - 1.5, 4);
-  var tMax = Math.max(ss + 1.5, 20);
-
-  function ta(t) { return timeToAngle(t, tMin, tMax); }
-
-  var angSr  = ta(sr);
-  var angSs  = ta(ss);
-  var angGm1 = ta(sr - 0.5); /* golden morning start */
-  var angGe2 = ta(ss + 0.5); /* golden evening end */
-
-  /* clamp to [0,180] */
-  function cl(a) { return Math.max(0, Math.min(180, a)); }
-
-  var parts = [];
-
-  /* 1. night left */
-  if (cl(angGm1) < 180) {
-    parts.push('<path d="'+arcPath(cx,cy,r,180,cl(angGm1))+'" stroke="#0b0f30" stroke-width="9" fill="none" stroke-linecap="round"/>');
+/* The twelve tracks. Each is the same 24h axis, so a row can be read against
+   the ones above and below it — that comparison is the whole point, and it is
+   what a one-month-at-a-time dropdown could never show. Percentages are off
+   24h, not off the daylight span, or every month would look identical. */
+function yearRows(lat, sel) {
+  var out = '';
+  for (var i = 0; i < 12; i++) {
+    var r = calcSunTimes(lat, i), bar, len;
+    if (r.type === 'sun')        { bar = 'left:0;right:0;';  len = '24h 00m'; }
+    else if (r.type === 'night') { bar = null;               len = '0h 00m';  }
+    else {
+      bar = 'left:' + (r.sr / 24 * 100).toFixed(2) + '%;width:'
+          + ((r.ss - r.sr) / 24 * 100).toFixed(2) + '%;';
+      len = fmtLen(r.len);
+    }
+    out += '<div class="sy-row' + (i === sel ? ' is-sel' : '') + '">'
+        +    '<span class="sy-mon">' + MON_ABBR[i] + '</span>'
+        +    '<span class="sy-track">' + (bar ? '<i style="' + bar + '"></i>' : '') + '</span>'
+        +    '<span class="sy-len">' + len + '</span>'
+        +  '</div>';
   }
-  /* 2. golden morning */
-  parts.push('<path d="'+arcPath(cx,cy,r,cl(angGm1),cl(angSr))+'" stroke="url(#goldenGrad)" stroke-width="9" fill="none" stroke-linecap="round"/>');
-  /* 3. day */
-  parts.push('<path d="'+arcPath(cx,cy,r,cl(angSr),cl(angSs))+'" stroke="url(#dayGrad)" stroke-width="9" fill="none" stroke-linecap="round"/>');
-  /* 4. golden evening */
-  parts.push('<path d="'+arcPath(cx,cy,r,cl(angSs),cl(angGe2))+'" stroke="url(#goldenGrad)" stroke-width="9" fill="none" stroke-linecap="round"/>');
-  /* 5. night right */
-  if (cl(angGe2) > 0) {
-    parts.push('<path d="'+arcPath(cx,cy,r,cl(angGe2),0)+'" stroke="#0b0f30" stroke-width="9" fill="none" stroke-linecap="round"/>');
-  }
-
-  /* sun dot at sunrise */
-  var srPt = arcPoint(cx, cy, r, angSr);
-  var ssPt = arcPoint(cx, cy, r, angSs);
-  parts.push('<circle cx="'+srPt[0]+'" cy="'+srPt[1]+'" r="6" fill="#f9c24b" stroke="#fff" stroke-width="2"/>');
-  parts.push('<circle cx="'+ssPt[0]+'" cy="'+ssPt[1]+'" r="6" fill="#e8601a" stroke="#fff" stroke-width="2"/>');
-
-  return '<svg id="sun-arc" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day arc">'
-    + '<defs>'
-    + '<linearGradient id="dayGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4ea8d9"/><stop offset="50%" stop-color="#7bc8f0"/><stop offset="100%" stop-color="#4ea8d9"/></linearGradient>'
-    + '<linearGradient id="goldenGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#e8a030"/><stop offset="100%" stop-color="#f0c848"/></linearGradient>'
-    + '</defs>'
-    + parts.join('')
-    + '</svg>';
+  return out
+    + '<div class="sy-scale"><span class="sy-scale-in">'
+    +   '<span>00</span><span>06</span><span>12</span><span>18</span><span>24</span>'
+    + '</span></div>';
 }
 
 function render() {
@@ -637,48 +616,46 @@ function render() {
   var mon = document.getElementById('sun-month');
   var out = document.getElementById('sun-output');
   if (!sel || !mon || !out) return;
+
   var idx = parseInt(sel.value, 10);
   var month = parseInt(mon.value, 10);
-  if (isNaN(idx) || isNaN(month)) { out.innerHTML = ''; return; }
+  if (isNaN(month)) month = new Date().getMonth();
+
+  if (isNaN(idx) || !CITIES[idx]) {
+    out.innerHTML = '<div class="sy-empty">Pick a destination to see its sunrise, '
+      + 'sunset and daylight through the whole year.</div>';
+    return;
+  }
   var city = CITIES[idx];
-  if (!city) { out.innerHTML = ''; return; }
   var lat = getSunLat(city);
   if (lat === null) {
-    out.innerHTML = '<p class="sun-note">No data available for ' + city.name + '.</p>';
+    out.innerHTML = '<div class="sy-empty">No data available for ' + city.name + '.</div>';
     return;
   }
-  var r = calcSunTimes(lat, month);
 
+  var r = calcSunTimes(lat, month), sr, ss, len, note = '';
   if (r.type === 'sun') {
-    out.innerHTML = '<div class="sun-city-label">' + city.flag + ' ' + city.name + ' · ' + city.country + '</div>'
-      + '<div class="sky-special midnight-sun">'
-      + ''
-      + '<div class="sky-special-title">Midnight Sun</div>'
-      + '<div class="sky-special-body">The sun does not set in ' + city.name + ' during this month.</div>'
-      + '</div>';
-    return;
-  }
-  if (r.type === 'night') {
-    out.innerHTML = '<div class="sun-city-label">' + city.flag + ' ' + city.name + ' · ' + city.country + '</div>'
-      + '<div class="sky-special polar-night">'
-      + ''
-      + '<div class="sky-special-title">Polar Night</div>'
-      + '<div class="sky-special-body">The sun does not rise in ' + city.name + ' during this month.</div>'
-      + '</div>';
-    return;
+    sr = ss = '—'; len = '24h 00m';
+    note = 'Midnight sun &mdash; the sun does not set in ' + city.name + ' this month.';
+  } else if (r.type === 'night') {
+    sr = ss = '—'; len = '0h 00m';
+    note = 'Polar night &mdash; the sun does not rise in ' + city.name + ' this month.';
+  } else {
+    sr = fmtTime(r.sr); ss = fmtTime(r.ss); len = fmtLen(r.len);
   }
 
-  var arc = buildArc(r.sr, r.ss);
-
-  out.innerHTML = '<div class="sun-city-label">' + city.flag + ' ' + city.name + ' · ' + city.country + '</div>'
-    + '<div class="sky-card">'
-    + '<div class="sky-bg">'
-    + '<div class="sky-arc-wrap">' + arc + '</div>'
-    + '<div class="sky-times">'
-    + '<div class="sky-time-block"><div class="sky-time-label">Sunrise</div><div class="sky-time-value">' + fmtTime(r.sr) + '</div></div>'
-    + '<div class="sky-time-block" style="text-align:right"><div class="sky-time-label">Sunset</div><div class="sky-time-value">' + fmtTime(r.ss) + '</div></div>'
+  out.innerHTML = '<div class="sy-card">'
+    + '<div class="sy-head">'
+    +   '<span class="sy-city">' + city.name + '</span>'
+    +   '<span class="sy-when">' + city.country + ' &middot; ' + MON_FULL[month] + '</span>'
     + '</div>'
+    + '<div class="sy-stats">'
+    +   '<div class="sy-stat"><div class="sy-lab">Sunrise</div><div class="sy-val">' + sr + '</div></div>'
+    +   '<div class="sy-stat"><div class="sy-lab">Sunset</div><div class="sy-val">' + ss + '</div></div>'
+    +   '<div class="sy-stat"><div class="sy-lab">Daylight</div><div class="sy-val is-day">' + len + '</div></div>'
     + '</div>'
+    + yearRows(lat, month)
+    + (note ? '<p class="sy-note">' + note + '</p>' : '')
     + '</div>';
 }
 
@@ -715,6 +692,14 @@ function render() {
     }
     render();
   });
+
+  /* Open on the current month rather than a blank "Month". The page needed a
+     city AND a month before it drew anything, so arriving on it showed an
+     empty middle and gave no clue which of the two controls was missing. The
+     month is the one a reader is least likely to care about picking first —
+     defaulting it leaves a single decision, and render() draws the prompt. */
+  if (!mon.value) mon.value = String(new Date().getMonth());
+  render();
 }());
 </script>
 

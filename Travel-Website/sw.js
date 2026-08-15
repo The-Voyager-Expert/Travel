@@ -1,3 +1,7 @@
+/* 2026-08-15: Sunrise & Sunset rebuilt (sky card -> three stats + a twelve-month
+   daylight chart); Climate Finder hero gains the temperature spill; the When to
+   Go block leaves the landing page. Three HTML pages, no asset floors. CACHE to
+   v879 — the pages are cache-first, so without it readers keep the old ones. */
 /* 2026-08-14: landing page — section order, markers removed, skip block back on
    top and collapsible. index.html changed 9x since the last bump; readers were
    testing a stale page and reporting fixes as not working. CACHE to v873. */
@@ -1159,7 +1163,7 @@
 /* 2026-08-14: World-Map.html — visited now reads the shared tve-visited-{folder}
    keys the guides' I've Been pill writes, so map, guide and index are one list.
    CACHE to v878. */
-var CACHE = 'travel-cache-v878';
+var CACHE = 'travel-cache-v879';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy

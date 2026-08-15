@@ -24,6 +24,72 @@
     var(--surface2, #faf7f2);
   border: 1px solid rgba(184, 92, 42, 0.2);
   border-radius: clamp(0.7rem, 1.4vw, 1.1rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: clamp(1.2rem, 3.2vw, 2.8rem);
+  align-items: center;
+}
+.cf-hero-copy { min-width: 0; }
+
+/* ═══ THE SPILL ═══════════════════════════════════════════════════════════
+   The hero card's right half was empty at every width above 62rem. This
+   fills it with the page's own subject: a temperate year of daytime highs
+   and overnight lows, one bar per month, each running lo -> hi and filled
+   on the site's temperature ramp (--c-temp-lo cool at the foot, --c-temp-hi
+   warm at the head). Both tokens already flip for dark mode.
+
+   Not a new chart family — it is .cf-strip from the result cards at scale,
+   same absolutely-positioned bars, same 12 months. Decorative: the shape is
+   a generic northern year, not one city's data, so it carries no reading
+   and needs no source. aria-hidden for exactly that reason. */
+.cf-spill { display: block; }
+.cf-spill-plot {
+  display: flex; align-items: flex-end; gap: clamp(3px, 0.7vw, 7px);
+  height: clamp(96px, 15vw, 168px);
+}
+.cf-spill-col { flex: 1; position: relative; height: 100%; }
+/* Width is pinned, not stretched to the column. A 999px radius on a bar as wide
+   as it is tall draws an ellipse, and twelve of those read as an arc of eggs
+   rather than a chart. Same trick as .cf-bar > span: fixed narrow width,
+   centred in its column. */
+.cf-spill-col > i {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: clamp(6px, 0.9vw, 10px); border-radius: 999px;
+  background: linear-gradient(to top, var(--c-temp-lo, #3d5282), var(--c-temp-hi, #a61c00));
+  opacity: 0.62;
+}
+.cf-spill-col.peak > i { opacity: 1; }
+.cf-spill-months {
+  display: flex; gap: clamp(3px, 0.7vw, 7px); margin-top: 9px;
+}
+.cf-spill-months span {
+  flex: 1; text-align: center;
+  font-size: clamp(9px, 0.85vw, 11px); font-weight: 600;
+  color: var(--muted, #6a6660);
+}
+/* Its own class, not .sibling-pill: that one is shared site-wide, carries an
+   injected icon, and is drawn as a white boxy chip — restyling it here would
+   change the row below and every other page that uses it. Outlined round pill,
+   #c8bfb0 rather than --border so it reads as clickable against the hero wash.
+   Hover follows the site rule: outline goes terracotta, fill stays empty. */
+.cf-spill-pill {
+  display: inline-flex; align-items: center;
+  font: inherit; font-size: clamp(0.86rem, 0.95vw, 0.94rem); font-weight: 600;
+  padding: 0.62em 1.4em;
+  border: 1.5px solid #c8bfb0; border-radius: 999px;
+  background: transparent; color: var(--text, #3d3a32);
+  text-decoration: none;
+  transition: border-color .18s ease, color .18s ease;
+}
+a.cf-spill-pill:visited { color: #3d3a32; }  /* literal: var() is inert in :visited */
+.cf-spill-pill:hover, .cf-spill-pill:focus-visible, a.cf-spill-pill:hover:visited {
+  border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a);
+}
+/* One column below 62rem: the spill sits under the lede rather than beside
+   it, and shortens so it never pushes the month row below the fold. */
+@media (max-width: 62rem) {
+  .cf-hero { grid-template-columns: 1fr; gap: clamp(1.1rem, 4vw, 1.6rem); }
+  .cf-spill-plot { height: clamp(72px, 18vw, 104px); }
 }
 .cf-hero h1 {
   font-size: clamp(1.7rem, 4.2vw, 3.1rem); line-height: 1.05;
@@ -209,13 +275,44 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
        compare panel and every result card — is untouched.
 
        The page is the climate tool; "When to Go" is the name it was given. -->
+  <!-- No .page-header banner on this page (owner, 2026-08-15). The hero's own h1
+       already names it, and the toolbar tab is lit — an ALL-CAPS "WHEN TO GO"
+       strip above a hero that opens "When to go, by the weather you want" said
+       the same thing three times. This is the one Trip-Essentials page without
+       the banner, deliberately; do not restore it to match the others. -->
   <header class="cf-hero">
-    <h1>When to go, <em>by the weather you want</em>.</h1>
-    <p class="cf-hero-lede">Set the month you can travel, the daytime temperature you
-    are after and how much rain you will put up with &mdash; this returns every city on
-    the site that matches. It answers the question people actually start with,
-    <strong>somewhere warm, somewhere mild, somewhere dry</strong>, before they have
-    settled on a place at all.</p>
+    <div class="cf-hero-copy">
+      <h1>When to go, <em>by the weather you want</em>.</h1>
+      <p class="cf-hero-lede">Set the month you can travel, the daytime temperature you
+      are after and how much rain you will put up with &mdash; this returns every city on
+      the site that matches. It answers the question people actually start with,
+      <strong>somewhere warm, somewhere mild, somewhere dry</strong>, before they have
+      settled on a place at all.</p>
+    </div>
+
+    <div class="cf-spill">
+      <div class="cf-spill-plot" aria-hidden="true">
+        <div class="cf-spill-col"><i style="bottom:8%;height:22%"></i></div>
+        <div class="cf-spill-col"><i style="bottom:10%;height:24%"></i></div>
+        <div class="cf-spill-col"><i style="bottom:18%;height:27%"></i></div>
+        <div class="cf-spill-col"><i style="bottom:28%;height:29%"></i></div>
+        <div class="cf-spill-col"><i style="bottom:40%;height:30%"></i></div>
+        <div class="cf-spill-col"><i style="bottom:52%;height:32%"></i></div>
+        <div class="cf-spill-col peak"><i style="bottom:60%;height:34%"></i></div>
+        <div class="cf-spill-col peak"><i style="bottom:58%;height:34%"></i></div>
+        <div class="cf-spill-col"><i style="bottom:47%;height:31%"></i></div>
+        <div class="cf-spill-col"><i style="bottom:34%;height:26%"></i></div>
+        <div class="cf-spill-col"><i style="bottom:20%;height:22%"></i></div>
+        <div class="cf-spill-col"><i style="bottom:11%;height:21%"></i></div>
+      </div>
+      <div class="cf-spill-months" aria-hidden="true">
+        <span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span>
+        <span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span>
+      </div>
+      <div style="margin:14px 0 0;">
+        <a href="Sunrise-Sunset.html" class="cf-spill-pill">Daylight by month</a>
+      </div>
+    </div>
   </header>
 
   <div class="cf-sibling-row" style="display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 8px;">
