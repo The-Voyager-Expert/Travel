@@ -149,37 +149,60 @@
 if(location.search.includes('embed=1')){
 }
 
-/* ── Visited is per-visitor (owner rule 2026-08-14) ──────────────────────────
+/* ── Visited is per-visitor, and it is the SAME store the guides write ───────
    The gold cities used to be a Set literal further down this file, so every
    reader saw the owner's travel presented as their own and had no way to
-   record theirs. The list now lives in this browser's localStorage, one entry
-   per pin name, and the map paints whatever THIS browser has marked — a
-   first-time visitor sees no gold at all until they mark something.
-   There is no account behind it, so it is per-browser and per-device by
-   design; the owner accepted that trade rather than take on sign-in.
-   Same key is intended for the guide-page "Been here" control, so anything
-   marked there lights up here. */
-var BEEN_KEY = 'tve_been_cities';
-function beenLoad() {
-  try {
-    var raw = JSON.parse(localStorage.getItem(BEEN_KEY) || '[]');
-    return new Set(Array.isArray(raw) ? raw : []);
-  } catch (e) { return new Set(); }
+   record theirs.
+
+   This does NOT invent a store. Guide pages already carry an "I've Been" pill
+   (toolbar.js _injectVisitedToggle) which writes tve-visited-{folder} to
+   localStorage, and the Guides Index already reads those keys to override a
+   card's status. The map now reads and writes the very same keys, so the three
+   surfaces are one list: mark Lisbon on its guide and its pin is gold here;
+   mark it here and the guide's pill shows checked.
+
+   The join key is the guide FOLDER, lowercased ('bora-bora') — the only name
+   a guide page can derive from its own URL. Pin display names would mean
+   hand-matching 'Cancún' and 'Curaçao' on both sides. The map takes the slug
+   out of each pin's own href, so the two can never drift apart.
+
+   No account behind it, so it is per-browser and per-device by design; the
+   owner accepted that trade rather than take on sign-in. */
+var BEEN_PREFIX = 'tve-visited-';
+function beenSlug(href) {
+  var parts = String(href || '').split('/');
+  for (var i = 0; i < parts.length; i++) {
+    if (parts[i].toLowerCase() === 'guides' && parts[i + 1]) return parts[i + 1].toLowerCase();
+  }
+  return '';
 }
-function beenSave(set) {
+function beenHas(slug) {
+  try { return !!slug && !!localStorage.getItem(BEEN_PREFIX + slug); } catch (e) { return false; }
+}
+function beenSet(slug, on) {
   try {
-    var out = []; set.forEach(function (n) { out.push(n); });
-    localStorage.setItem(BEEN_KEY, JSON.stringify(out));
+    if (on) localStorage.setItem(BEEN_PREFIX + slug, '1');
+    else localStorage.removeItem(BEEN_PREFIX + slug);
   } catch (e) {}   /* private mode / storage full — marking just doesn't persist */
 }
-window.BEEN = beenLoad();
+/* Counts every tve-visited- key, including guides with no pin on this map. */
+function beenCount() {
+  var n = 0;
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      if ((localStorage.key(i) || '').indexOf(BEEN_PREFIX) === 0) n++;
+    }
+  } catch (e) {}
+  return n;
+}
 window.markMode = false;
 
 function beenPaintCount() {
   var el = document.getElementById('visited-pill-count');
-  if (el) el.textContent = window.BEEN.size ? 'Visited · ' + window.BEEN.size : 'Visited';
+  var n = beenCount();
+  if (el) el.textContent = n ? 'Visited · ' + n : 'Visited';
   var clr = document.getElementById('mine-clear');
-  if (clr) clr.style.display = window.BEEN.size ? '' : 'none';
+  if (clr) clr.style.display = n ? '' : 'none';
 }
 
 function toggleVisitedMobile(btn) {
@@ -208,8 +231,16 @@ function toggleMarkMode(btn) {
 }
 
 function clearMine() {
-  window.BEEN = new Set();
-  beenSave(window.BEEN);
+  /* Clears the shared store, so it also clears the I've Been pill on every
+     guide page — that is the point of one list, not three. */
+  try {
+    var doomed = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i) || '';
+      if (k.indexOf(BEEN_PREFIX) === 0) doomed.push(k);
+    }
+    doomed.forEach(function (k) { localStorage.removeItem(k); });
+  } catch (e) {}
   if (window.applyVisitedFilter) window.applyVisitedFilter(true);
   beenPaintCount();
 }
@@ -221,8 +252,9 @@ function clearMine() {
    block once the seed has been run. */
 if (location.hash === '#seed-mine') {
   var OWNER_SEED = ['Amalfi','Amsterdam','Bologna','Bruges','Brussels','Cambridge','Cannes','Capri','Cascais','Cinque Terre','Copenhagen','Corfu','Edinburgh','Florence','Geneva','Gothenburg','Hamburg','London','Luxembourg','Madrid','Marktoberdorf','Monaco','Munich','Nice','Oxford','Paris','Pisa','Porto','Rome','San Sebastian','Sintra','Sorrento','Strasbourg','Stuttgart','Toledo','Turin','Venice','Vienna','Lagos','Chongqing','Atlanta','Austin','Big Island','Chicago','Kauai','La Jolla','Las Vegas','Los Cabos','Maui','Miami','Nashville','New York','Oahu','Orlando','Palo Alto','Pasadena','Puerto Vallarta','San Diego','San Francisco','San Juan Island','Scottsdale','Seattle','Sedona','Toronto','Vancouver','Victoria','Whistler','Athens','Beijing','Hiroshima','Kyoto','Seoul','Shanghai','Taipei','Tokyo','Zhangjiajie','Aruba','Cancún','Curaçao','Sint Maarten','Virgin Islands','The Bahamas','Rio de Janeiro'];
-  OWNER_SEED.forEach(function (c) { window.BEEN.add(c); });
-  beenSave(window.BEEN);
+  /* Held for buildPins, which is where a display name can be turned into the
+     guide slug via that pin's own href. */
+  window.SEED_NAMES = OWNER_SEED;
   history.replaceState(null, '', location.pathname + location.search);
 }
 </script>
@@ -1212,7 +1244,8 @@ function buildPins() {
   });
 
   /* The owner's 82 cities used to be hardcoded here — see the per-visitor
-     store at the top of this file. window.BEEN replaced it. */
+     per-visitor store at the top of this file — the same tve-visited- keys the
+     guide pages' I've Been pill writes. */
 
   const beenIcon = L.divIcon({
     className: '',
@@ -1230,7 +1263,7 @@ function buildPins() {
     });
     const href = p[3];
     m.on('click', () => {
-      if (window.markMode) { window.toggleBeen(p[0]); return; }
+      if (window.markMode) { window.toggleBeen(p[0], beenSlug(p[3])); return; }
       (window.top || window).location.href = href;
     });
     pinCluster.addLayer(m);
@@ -1244,7 +1277,7 @@ function buildPins() {
     PINS.forEach(p => {
       const m = markersByName[p[0]];
       if (!m) return;
-      m.setIcon(on && window.BEEN.has(p[0]) ? beenIcon : pinIcon);
+      m.setIcon(on && beenHas(beenSlug(p[3])) ? beenIcon : pinIcon);
     });
     renderPinLabels();
     beenPaintCount();
@@ -1253,16 +1286,23 @@ function buildPins() {
   /* Called by a pin click while Mark mine is on. Repaints one marker rather
      than the whole set — marking is a rapid-fire action and a full repaint of
      240 pins per tap is visible. */
-  window.toggleBeen = function(name) {
+  window.toggleBeen = function(name, slug) {
     const m = markersByName[name];
-    if (!m) return;
-    if (window.BEEN.has(name)) window.BEEN.delete(name); else window.BEEN.add(name);
-    beenSave(window.BEEN);
-    m.setIcon(window.BEEN.has(name) ? beenIcon : pinIcon);
+    if (!m || !slug) return;
+    const now = !beenHas(slug);
+    beenSet(slug, now);
+    m.setIcon(now ? beenIcon : pinIcon);
     beenPaintCount();
     renderPinLabels();
   };
 
+  if (window.SEED_NAMES) {
+    const slugByName = {};
+    PINS.forEach(p => { slugByName[p[0]] = beenSlug(p[3]); });
+    window.SEED_NAMES.forEach(n => { if (slugByName[n]) beenSet(slugByName[n], true); });
+    window.SEED_NAMES = null;
+    window.applyVisitedFilter(true);
+  }
   beenPaintCount();
 
   window.addEventListener('message', function(e) {
