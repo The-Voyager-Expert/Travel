@@ -10468,8 +10468,7 @@ window.TVE.home = (function () {
         ' style="margin-right:4px"></span><span class="gm-mk-src">✈ </span>' +
         info.iata + '</span>' +
         '<span class="lac-div">|</span>' +
-        '<span class="lac-name">' + info.name + '</span>' +
-        '<span class="lac-link">' + label + '</span>';
+        '<span class="lac-name">' + info.name + '</span>';
 
       dayHdr.insertAdjacentElement('afterend', chip);
     }
