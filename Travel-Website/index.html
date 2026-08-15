@@ -915,6 +915,38 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
 :root[data-theme="dark"] .cf-dry-badge { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
 :root[data-theme="dark"] .cf-wet-badge { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
 
+/* Collapsed by default. The tool is a month row, two sliders, rainfall, units,
+   sort and a long result list — opened on arrival it buries everything under it
+   and the page stops being scannable. Summary first, the rest on expand. */
+.lp-fold { margin-top: clamp(0.9rem, 2vw, 1.35rem); }
+.lp-fold > summary {
+  cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.6rem;
+  font-size: 0.95rem; font-weight: 600; color: var(--rust, #b85c2a);
+  padding: 0.75em 1em; border: 1px solid var(--border2, #e6e2da); border-radius: 10px;
+  background: var(--surface, #fff);
+}
+.lp-fold > summary::-webkit-details-marker { display: none; }
+.lp-fold > summary::after { content: '+'; margin-left: auto; font-size: 1.2em; line-height: 1; opacity: .7; }
+.lp-fold[open] > summary::after { content: '\2212'; }
+.lp-fold > summary:hover { border-color: var(--rust, #b85c2a); }
+.lp-fold-body { padding-top: clamp(0.9rem, 2vw, 1.3rem); }
+
+/* The sibling and forecast link rows sit AFTER the tool, not before it — they
+   are places to go next, and above the controls they read as the controls. */
+.cf-tail { margin-top: clamp(1.2rem, 2.6vw, 2rem); padding-top: clamp(0.9rem, 2vw, 1.3rem);
+  border-top: 1px solid var(--line, #e8e4dc); }
+
+/* The sibling and forecast links start open, then fold away the moment the
+   tool is used — before a search they are the obvious next move, after one
+   they are noise sitting above the results. */
+.cf-extras { margin-top: clamp(1rem, 2.4vw, 1.6rem); }
+.cf-extras > summary { cursor: pointer; list-style: none; font-size: 0.72rem;
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 700;
+  color: var(--muted, #6a6660); padding: 0.5em 0; }
+.cf-extras > summary::-webkit-details-marker { display: none; }
+.cf-extras > summary::after { content: " +"; opacity: .6; }
+.cf-extras[open] > summary::after { content: " \2212"; }
+
 /* Plug strip — the socket photos that ship with the plug guide, at a size where
    you can actually tell a Type G from a Type F. */
 .plug-strip { display: flex; flex-wrap: wrap; gap: clamp(0.7rem, 1.8vw, 1.2rem); margin: clamp(1rem,2.2vw,1.5rem) 0 0; }
@@ -1779,20 +1811,8 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
       <a href="./Trip-Essentials/Time-Zones.html">Time zones</a>
     <a href="./Trip-Essentials/Tap-Water.html">Tap water</a>
   </nav>
-</section>
-
-<section class="lp-block" id="climate-finder">
-  <p class="lp-kicker">Climate Finder</p>
-</div>
-
-  <div class="cf-sibling-row" style="display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 8px;">
-    <a href="Weather.html" class="sibling-pill">Weather by city</a>
-    <a href="When-to-Go.html" class="sibling-pill">When to go</a>
-    <a href="Festival-Finder.html" class="sibling-pill">Festival finder</a>
-    <a href="Sports-Calendar.html" class="sibling-pill">Sports calendar</a>
-  </div>
-  <div style="margin:14px 0 14px;">
-    <div style="font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Forecast &amp; Research</div>
+  <details class="cf-extras">
+    <summary>Forecast &amp; research</summary>
     <div class="cf-research-row" style="display:flex;flex-wrap:wrap;gap:6px;">
       <a href="https://forecast.weather.gov" target="_blank" rel="noopener" class="sibling-pill">Weather.gov</a>
       <a href="https://www.accuweather.com" target="_blank" rel="noopener" class="sibling-pill">AccuWeather</a>
@@ -1802,7 +1822,21 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
       <a href="https://www.weather25.com" target="_blank" rel="noopener" class="sibling-pill">Weather25</a>
     </div>
   </div>
-  <div class="cf-presets" id="cf-presets">
+  </details>
+</section>
+
+<section class="lp-block" id="climate-finder">
+  <h2>Climate Finder</h2>
+  <p>
+    Search for a destination by its weather instead of by its name. Set the month you can
+    travel, the daytime temperature you are after and how much rain you will put up with,
+    and this returns every city on the site that matches. It answers the question people
+    actually start with &mdash; somewhere warm, somewhere mild, somewhere dry &mdash; before
+    they have settled on a place at all.
+  </p>
+  <div style="margin:14px 0 14px;">
+    <div style="font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Forecast &amp; Research</div>
+    <div class="cf-presets" id="cf-presets">
     <button type="button" class="cf-preset" data-preset="beach">Beach weather</button>
     <button type="button" class="cf-preset" data-preset="spring">Mild spring</button>
     <button type="button" class="cf-preset" data-preset="winter">Winter escape</button>
@@ -1857,6 +1891,18 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
   <div id="cf-summary" class="cf-summary"></div>
   <div id="cf-results" class="cf-results"></div>
   <div id="cf-compare" class="cf-compare-panel" style="display:none;"></div>
+
+    </div>
+  </details>
+  <details class="cf-extras" open>
+    <summary>Elsewhere on the site</summary>
+    <div class="cf-sibling-row" style="display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 8px;">
+    <a href="./Trip-Essentials/Weather.html" class="sibling-pill">Weather by city</a>
+    <a href="./Trip-Essentials/When-to-Go.html" class="sibling-pill">When to go</a>
+    <a href="./Trip-Essentials/Festival-Finder.html" class="sibling-pill">Festival finder</a>
+    <a href="./Trip-Essentials/Sports-Calendar.html" class="sibling-pill">Sports calendar</a>
+  </div>
+    </details>
 </section>
 
 </div>
@@ -3487,6 +3533,18 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
   }});
 }());
 
+}());
+</script>
+<script>
+/* Fold the "elsewhere" links the first time the reader drives Climate Finder.
+   Once only — reopening it deliberately sticks. */
+(function () {
+  var sec = document.getElementById('climate-finder');
+  var ex = sec && sec.querySelector('.cf-extras');
+  if (!ex) return;
+  var done = false;
+  function fold(e) { if (!done && !ex.contains(e.target)) { done = true; ex.open = false; } }
+  ['input','change','click'].forEach(function (t) { sec.addEventListener(t, fold, true); });
 }());
 </script>
 </body>
