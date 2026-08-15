@@ -6713,13 +6713,10 @@ window.TVE.home = (function () {
        section still ships, still built by build_nearby_guides.py, and still
        carries its own heading at the foot of the guide — only its shortcut in
        the Trip Overview extras row is gone. Do not re-add the pill. */
-    /* 4. Alternative Hotel Recommendations — only when HOTEL_ALT_DATA has an entry for this guide */
-    var _epPage = location.pathname.split('/').pop() || '';
-    var _epMatch = _epPage.match(/^(.+?)(?:_v\d+)?\.html$/);
-    if (_epMatch && HOTEL_ALT_DATA[_epMatch[1]]) {
-      addPill('#hotel-alternatives', '🏨 Alt. Hotels');
-    }
-    /* 5. Also in Country — async; pill is appended by the XHR _build() callback below */
+    /* 4. Alternative Hotel Recommendations — NO PILL (owner rule 2026-08-15).
+       Section still ships at the bottom of the guide; only the shortcut here is removed. */
+    /* 5. Also in Country — NO PILL (owner rule 2026-08-15).
+       Section still ships at the bottom of the guide; only the shortcut here is removed. */
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _injectEndSectionPills);
@@ -6798,18 +6795,7 @@ window.TVE.home = (function () {
       });
       anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
       _fixPillGridOrphans(pills);
-      /* Append nav pill for Also in Country to the scrollable pill strip */
-      var _aicRow = document.querySelector('.overview-extras:not(#ics-pill-row)');
-      if (_aicRow) {
-        var _aicPill = document.createElement('a');
-        _aicPill.className = 'overview-extra-link';
-        _aicPill.href = '#also-in-country';
-        _aicPill.innerHTML = iconSVG(NAV_ICONS['map'], 15, 'map') + ' Also in ' + country;
-        _aicPill.addEventListener('click', function () {
-          if (wrap.classList.contains('collapsed')) wrap.classList.remove('collapsed');
-        });
-        _aicRow.appendChild(_aicPill);
-      }
+      /* Also in Country nav pill removed (owner rule 2026-08-15) — section at bottom stays. */
       /* Re-anchor the stamp (and no-entries row) after the now-last footer section.
          Uses the same DOM-last logic as repositionUpdatedStamp() — compareDocumentPosition
          flag 4 = DOCUMENT_POSITION_FOLLOWING — so #also-in-country (just inserted)
