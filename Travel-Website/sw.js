@@ -1191,7 +1191,9 @@
    Stay (new dropdown, 6 lodging pages) · Before You Go · Maps · Contact; landing
    page drops the Sunrise picker and the Before-you-go heading. floor -> 646,
    CACHE v887. */
-var CACHE = 'travel-cache-v887';
+/* 2026-08-14: Day-Trips.html rebuilt around journey time — hero, time bands,
+   city chips, trip cards. Page HTML, so it needs the bump. CACHE to v888. */
+var CACHE = 'travel-cache-v888';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
