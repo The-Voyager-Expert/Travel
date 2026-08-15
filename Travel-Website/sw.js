@@ -1,3 +1,8 @@
+/* 2026-08-15: Climate Finder foot pills — the two squared sibling rows cancelled
+   the canonical terracotta hover fill but could not cancel the shared rule's
+   color:#fff !important, so every pill rendered white-on-near-white and vanished
+   under the pointer. The fill is the design; the white label is correct ON it.
+   CACHE to v885. */
 /* 2026-08-15: Sunrise & Sunset — hero and search only. The boxed intro card and
    the two small centred controls become one hero holding a labelled full-size
    search and twelve month pills; the <select> stays hidden underneath so
@@ -1182,7 +1187,7 @@
    a search hero, both sibling link strips removed. CACHE to v883. */
 /* 2026-08-14: guides/index.html — hero with the search lifted out of the hidden
    topbar; Climate-Finder.html — banner removed again per owner. CACHE to v884. */
-var CACHE = 'travel-cache-v884';
+var CACHE = 'travel-cache-v885';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
