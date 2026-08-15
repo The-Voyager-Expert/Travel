@@ -2570,6 +2570,9 @@ window.TVE.home = (function () {
         btn.textContent = expanded ? '▲ Collapse' : '▼ Expand';
         btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         getTargets().forEach(function(el) { el.classList.toggle('collapsed', !expanded); });
+        /* SHOW ONLY chips collapse with the days — they live before Day 1 */
+        var stf = document.getElementById('tve-stf');
+        if (stf) stf.style.display = expanded ? '' : 'none';
         var ng = document.getElementById('nearby-guides');
         if (ng) {
           var ngPills = ng.querySelector('.nearby-guides-pills');
@@ -11481,8 +11484,8 @@ window.TVE.home = (function () {
       var css = document.createElement('style');
       css.id = 'tve-stf-css';
       css.textContent =
-        '#tve-stf{margin:14px 0 4px;padding-top:12px;' +
-        'border-top:1px solid rgba(138,108,26,.18);}' +
+        '#tve-stf{margin:4px 0 14px;padding-bottom:12px;' +
+        'border-bottom:1px solid rgba(138,108,26,.18);}' +
         '#tve-stf .tve-stf-lead{display:block;font-size:11px;font-weight:700;' +
         'letter-spacing:.06em;text-transform:uppercase;color:#a8a09a;margin-bottom:8px;}' +
         '#tve-stf .tve-stf-row{display:flex;flex-wrap:wrap;gap:8px;}' +
@@ -11510,7 +11513,7 @@ window.TVE.home = (function () {
         'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
         'border-color:#b85c2a;}}' +
         '.overview-day.tve-stf-dim{opacity:.35;pointer-events:none;}' +
-        ':root[data-theme="dark"] #tve-stf{border-top-color:rgba(212,184,150,.16);}' +
+        ':root[data-theme="dark"] #tve-stf{border-bottom-color:rgba(212,184,150,.16);}' +
         ':root[data-theme="dark"] #tve-stf .tve-stf-lead{color:#8a827a;}' +
         ':root[data-theme="dark"] .tve-stf-chip.is-on{' +
         'background:linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%);' +
@@ -11634,15 +11637,13 @@ window.TVE.home = (function () {
         }
       }
 
-      /* LAST child of the Trip Overview card (owner rule 2026-08-15: "show only
-         pills needs to move to below extra sections and above collapse/expende
-         pill"). It used to be inserted BEFORE .overview-extras, which put the
-         filter above the row of section jump links; the reading order the owner
-         wants is days -> section links -> filter -> Collapse. Appending is all
-         that is needed for the second half of that: #overview-toggle-btn is
-         inserted AFTER .overview-section entirely (injectOverviewToggle), so
-         anything last inside the card is automatically above it. */
-      ovSec.appendChild(wrap);
+      /* FIRST content item inside the Trip Overview card — before Day 1
+         (owner rule 2026-08-15: "moved down inside the collapse/expand as the
+         first thing"). Collapses with the days (render() in injectOverviewToggle
+         toggles display on #tve-stf). */
+      var firstDay = ovSec.querySelector('.day-block');
+      if (firstDay) ovSec.insertBefore(wrap, firstDay);
+      else ovSec.appendChild(wrap);
     }
 
     if (document.readyState === 'loading') {
