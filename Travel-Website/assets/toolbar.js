@@ -1128,7 +1128,7 @@ window.TVE.home = (function () {
        read as one set — Where to Go · When to Go · Where to Stay · Before You Go
        — naming the question the reader has rather than the kind of document they
        will get. The href is unchanged; only the label moved. */
-    { href: base + 'guides/index.html', text: 'Where to Go', full: 'Travel Guides', icon: 'orbited-globe' },
+    { href: base + 'guides/index.html', text: 'Where to Go', icon: 'orbited-globe' },
     /* OWNER-DIRECTED 2026-08-14, order: Guides · When to Go · Where to Stay ·
        Before You Go · Maps · Contact. It follows the order a trip is actually
        decided in — when to travel, then where to sleep, then what to sort out
