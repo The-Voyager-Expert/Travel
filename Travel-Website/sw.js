@@ -1178,7 +1178,9 @@
 /* 2026-08-14: Climate-Finder.html — the strip above Month is now one Try row;
    Weather by city moved into the hero, Festival finder and Sports calendar to
    the foot. CACHE to v882. */
-var CACHE = 'travel-cache-v882';
+/* 2026-08-14: Weather.html — banner and intro card deleted, page rebuilt around
+   a search hero, both sibling link strips removed. CACHE to v883. */
+var CACHE = 'travel-cache-v883';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
