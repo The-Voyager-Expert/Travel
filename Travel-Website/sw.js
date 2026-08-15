@@ -1234,7 +1234,8 @@
 /* 2026-08-15: Remove Alt. Hotels + Also in Country nav pills from Trip Overview. toolbar.js -> v651. CACHE to v898. */
 /* 2026-08-15: Scroll-to-top FAB hidden everywhere. guide-style.css -> v208, web-travel-style.css -> v48. CACHE to v899. */
 /* 2026-08-15: Mobile toolbar swap — hamburger left, theme toggle right. toolbar.js -> v652. CACHE to v900. */
-var CACHE = 'travel-cache-v900';
+/* 2026-08-15: Hotels & Flights tab pills side-by-side on iOS Safari — added min-width:0 + width:50% + overflow:hidden to .tve-book-tab; flex-wrap:nowrap on .tve-book-tabs. guide-style.css -> v209. CACHE to v901. */
+var CACHE = 'travel-cache-v901';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1242,7 +1243,7 @@ var CACHE = 'travel-cache-v900';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 208,'toolbar.js': 652, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 209,'toolbar.js': 652, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
