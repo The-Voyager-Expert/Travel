@@ -1175,7 +1175,10 @@
 /* 2026-08-14: World-Map.html — visited now reads the shared tve-visited-{folder}
    keys the guides' I've Been pill writes, so map, guide and index are one list.
    CACHE to v878. */
-var CACHE = 'travel-cache-v881';
+/* 2026-08-14: Climate-Finder.html — the strip above Month is now one Try row;
+   Weather by city moved into the hero, Festival finder and Sports calendar to
+   the foot. CACHE to v882. */
+var CACHE = 'travel-cache-v882';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
