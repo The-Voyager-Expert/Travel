@@ -791,6 +791,68 @@ a.land-cta:hover:visited {
 .fnd-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
 .fnd-field label { font-size: 0.82rem; font-weight: 600; color: var(--muted, #6a6660); }
 .fnd-hint { font-weight: 400; font-size: 0.76rem; opacity: .8; }
+
+/* ── Home-city control (2026-08-15) ────────────────────────────────────────
+   The "from Seattle" hint became a button. It sits inside the label because
+   that is where the question is qualified — a separate field would read as a
+   fifth filter, and it is not one: it is the ground the fourth filter stands
+   on. Styled as an underlined word rather than a pill so the label still reads
+   as a sentence, with the dotted rule saying "this part is yours to change".
+   Storage and the estimate live in TVE.home (toolbar.js § 43). */
+.fnd-home {
+  font: inherit; font-weight: 600; font-size: 0.76rem; color: var(--rust, #b85c2a);
+  background: none; border: 0; padding: 0 0 1px; margin: 0; cursor: pointer;
+  border-bottom: 1px dashed currentColor; border-radius: 0;
+}
+.fnd-home:hover, .fnd-home:focus-visible { border-bottom-style: solid; }
+/* The wrap stays STATIC so the popover measures against the whole field, not
+   against the inline word inside the label. Anchored to the word, a 384px
+   popover hanging off a button that sits at x=307 on a 393px phone starts at
+   -54 and loses its left edge off-screen; anchored to the field it lands
+   inside the card at every width. */
+.fnd-home-wrap { display: inline-block; }
+.fnd-field { position: relative; }
+/* Anchored to its RIGHT edge: this control sits in the last column of the
+   four, and a left-anchored popover hangs off the side of the finder card.
+   Sized TO the § 14 search bar rather than around it — the field inside is a
+   search box, so it is the site's standard 360px one, untouched, and the
+   popover is exactly that plus its own padding. An earlier pass set a 268px
+   width here and got a field overflowing its own card, which is what fighting
+   the standard looks like. */
+.fnd-home-pop {
+  position: absolute; z-index: 40; top: calc(100% + 6px); right: 0; left: auto;
+  width: min(384px, calc(100vw - 2rem)); box-sizing: border-box;
+  background: var(--surface, #fff); border: 1px solid var(--border, #e3ddd2);
+  border-radius: 12px; box-shadow: 0 8px 26px rgba(92, 61, 17, .14); padding: 0.7rem;
+}
+.fnd-home-pop[hidden] { display: none; }
+/* One column, and the field is now the full width of the card — so pin the
+   popover to both its edges rather than hanging a fixed width off the right,
+   which overshot the card by the few px the padding differs. */
+@media (max-width: 560px) { .fnd-home-pop { left: 0; right: 0; width: auto; } }
+/* Only the two things the standard cannot know: it must fill a popover that is
+   narrower than 360px on a phone, and its 14px ship-margin has nothing below
+   it to clear here. Everything else — height, radius, magnifier, focus ring —
+   is § 14 and is left alone. */
+.fnd-home-pop .fnd-home-in { width: 100%; margin-bottom: 0; }
+.fnd-home-list { list-style: none; margin: 0.5rem 0 0; padding: 0; max-height: 230px; overflow-y: auto; }
+.fnd-home-list:empty { display: none; }
+/* var(--text), not var(--ink): --ink is not defined on this site, so every
+   var(--ink, …) on the page silently resolves to its light-mode fallback and
+   would print near-black text on the dark popover. */
+.fnd-home-opt {
+  padding: 0.4rem 0.5rem; border-radius: 6px; font-size: 0.84rem; font-weight: 400;
+  color: var(--text, #3d3a32); cursor: pointer;
+}
+/* var(--bg), not the #f0ede8 literal the guides index uses for its selected
+   chip: this row has to darken in dark mode, and a hardcoded cream band under
+   light text is unreadable there. Same token .sa-row:hover uses. */
+.fnd-home-opt-on, .fnd-home-opt:hover { background: var(--bg, #f0ede8); }
+.fnd-home-note { margin: 0.45rem 0 0; font-size: 0.74rem; font-weight: 400; color: var(--muted, #6a6660); }
+.fnd-home-note button {
+  font: inherit; color: var(--rust, #b85c2a); background: none; border: 0; padding: 0;
+  cursor: pointer; text-decoration: underline;
+}
 .fnd-ctl {
   display: flex; align-items: center; gap: 0.5rem; min-width: 0;
   border: 1px solid var(--border, #e3ddd2); border-radius: 999px;
@@ -860,42 +922,10 @@ a.land-cta:hover:visited {
 .fnd-more.on { border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); }
 .fnd-res-empty { font-size: 0.92rem; color: var(--muted, #6a6660); margin: 0; }
 
-/* ── Result cards ─────────────────────────────────────────────────────────────
-   A card states the facts that were actually asked about — the temperature for
-   the chosen month, the guide's length, the flight time — so a result can be
-   checked rather than taken on trust. */
-.rescards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: clamp(0.5rem, 1.2vw, 0.75rem); }
-.rescard {
-  display: flex; flex-direction: column; gap: 0.22rem;
-  padding: 0.75rem 0.85rem; text-decoration: none;
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #e3ddd2); border-radius: 11px;
-  transition: border-color .15s, background .15s;
-}
-.rescard:hover { border-color: var(--rust, #b85c2a); background: var(--surface2, #faf7f2); }
-.rc-top { display: flex; align-items: baseline; gap: 0.4rem; min-width: 0; }
-.rc-flag { font-size: 0.95rem; flex: 0 0 auto; }
-.rc-name { font-size: 0.95rem; font-weight: 700; color: var(--ink, #3d3a32); overflow-wrap: anywhere; }
-.rescard:hover .rc-name { color: var(--rust, #b85c2a); }
-.rc-country { font-size: 0.76rem; color: var(--muted, #6a6660); }
-.rc-facts { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.3rem; }
-.rc-fact {
-  font-size: 0.72rem; line-height: 1; padding: 0.32em 0.55em;
-  border: 1px solid var(--border2, #e6e2da); border-radius: 5px;
-  color: var(--muted, #6a6660); background: var(--bg, #f5f4f0);
-}
-.rc-temp { color: var(--rust, #b85c2a); border-color: #e8cdb8; background: #fdf3ea; }
-.rc-from { opacity: .65; }
-.rc-open {
-  margin-top: auto; padding-top: 0.5rem;
-  font-size: 0.78rem; font-weight: 600; color: var(--rust, #b85c2a);
-  display: flex; align-items: center; gap: 0.25rem;
-}
-.rc-chev { font-size: 1.1em; line-height: 1; }
-/* The row is pinned to the bottom of the card, so a card with no flight data
-   does not float its link up level with a neighbour's facts. */
-.rescard { min-height: 100%; }
-.rescards { align-items: stretch; }
+/* Result cards are the site's guide card (.dest-card in .flt-grid, from
+   guides-index-style.css) — see lpGuideCard further down. The bespoke .rescard
+   / .rc-* family that used to live here is deleted, not disabled: it existed
+   only to draw a result, and a result is a guide. */
 
 /* ── The two that ask instead of filter ───────────────────────────────────────
    Bigger than a filter row on purpose: this is the path for a visitor who
@@ -1147,16 +1177,6 @@ a.land-cta:hover:visited {
 .tt-check-lbl { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--text,#1a1917); cursor:pointer; }
 .tt-check-lbl input[type="checkbox"] { width:14px; height:14px; accent-color:#b85c2a; cursor:pointer; }
 .tt-res-head { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 14px; }
-.tt-res-card { display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--surface,#fff); border:1px solid var(--border); border-radius:10px; text-decoration:none; transition:border-color .15s,box-shadow .15s; }
-.tt-res-card:hover { border-color:#b85c2a; box-shadow:0 3px 10px rgba(184,92,42,.15); }
-.tt-res-flag { font-size:26px; flex-shrink:0; line-height:1; }
-.tt-res-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; }
-.tt-res-name { font-size:14px; font-weight:600; color:var(--text,#1a1917); }
-.tt-res-reasons { display:flex; flex-wrap:wrap; gap:5px; }
-.tt-res-pill { font-size:11px; font-weight:500; padding:2px 8px; border-radius:12px; background:#f0ede8; color:#7a3b1e; border:1px solid rgba(122,59,30,.2); }
-.tt-res-score { flex-shrink:0; text-align:right; }
-.tt-res-pct { display:block; font-size:20px; font-weight:700; color:#b85c2a; font-variant-numeric:tabular-nums; line-height:1.1; }
-.tt-res-pct-lbl { font-size:10px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; }
 .tt-back-btn { display:inline-block; margin-top:16px; font-family:inherit; font-size:12px; background:none; border:none; color:#8a6c1a; cursor:pointer; padding:0; text-decoration:underline; }
 .tt-back-btn:hover { color:#7a3b1e; }
 /* ── Help Me Choose wizard ── */
@@ -1177,7 +1197,6 @@ a.land-cta:hover:visited {
 #hc-go::after { content:' ›'; font-size:15px; font-weight:400; }
 #hc-go:hover:not(:disabled) { background:#7a3b1e; border-color:#7a3b1e; }
 #hc-go:disabled { background:var(--border2,#e6e2da); border-color:var(--border2,#e6e2da); color:var(--muted); cursor:default; }
-#hc-res-cards { display:flex; flex-direction:column; gap:10px; }
 .hc-month-grid { grid-template-columns:repeat(4,1fr); }
 /* ── Trip Twin ──────────────────────────────────────────────────────── */
 #trip-twin-panel { margin:8px 0 20px; padding:20px 22px 22px; background:var(--warm); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 16px rgba(122,59,30,.08); }
@@ -1205,17 +1224,6 @@ a.land-cta:hover:visited {
 #tt-go:disabled { background:var(--border2,#e6e2da); border-color:var(--border2,#e6e2da); color:var(--muted); cursor:default; }
 #tt-err { font-size:12px; color:#b85c2a; margin:8px 0 0; }
 .tt-res-head { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 14px; }
-#tt-res-cards { display:flex; flex-direction:column; gap:10px; }
-.tt-res-card { display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--surface,#fff); border:1px solid var(--border); border-radius:10px; text-decoration:none; transition:border-color .15s,box-shadow .15s; }
-.tt-res-card:hover { border-color:#b85c2a; box-shadow:0 3px 10px rgba(184,92,42,.15); }
-.tt-res-flag { font-size:26px; flex-shrink:0; line-height:1; }
-.tt-res-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; }
-.tt-res-name { font-size:14px; font-weight:600; color:var(--text,#1a1917); }
-.tt-res-reasons { display:flex; flex-wrap:wrap; gap:5px; }
-.tt-res-pill { font-size:11px; font-weight:500; padding:2px 8px; border-radius:12px; background:#f0ede8; color:#7a3b1e; border:1px solid rgba(122,59,30,.2); }
-.tt-res-score { flex-shrink:0; text-align:right; }
-.tt-res-pct { display:block; font-size:20px; font-weight:700; color:#b85c2a; font-variant-numeric:tabular-nums; line-height:1.1; }
-.tt-res-pct-lbl { font-size:10px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; }
 .tt-back-btn { display:inline-block; margin-top:16px; font-family:inherit; font-size:12px; background:none; border:none; color:#8a6c1a; cursor:pointer; padding:0; text-decoration:underline; }
 .tt-back-btn:hover { color:#7a3b1e; }
 #tt-city { width:100%; }
@@ -1479,6 +1487,43 @@ a.land-cta:hover:visited {
 <div id="toolbar-mount" data-depth="0" data-maxwidth="1600" data-toolbar-theme="guide"></div>
 <script src="./assets/toolbar.js?v=100"></script>
 
+<script>
+/* ══ lpGuideCard — the ONE result card for every search on this page ══════════
+   Owner, 2026-08-15: "make sure the results from search are guides not this
+   nonsense" · "for any search. this was done wrong!"
+
+   Three tools on this page each searched the same 237 guides and each drew its
+   own answer: the finder had `.rescard` (a bordered tile with a country line,
+   temperature/length/flight chips and an "Open the guide ›" footer), Help Me
+   Choose and Trip Escape shared `.tt-res-card` (flag, name, theme pills, a
+   contrast percentage). None of the three looked like a guide, and no two
+   looked like each other.
+
+   The site already has a guide card and has had one all along: `.dest-card` on
+   the guides index — terracotta left edge, flag, name — laid out in `.flt-grid`,
+   which is that page's own results grid. This page loads
+   guides-index-style.css for the mosaic, so both arrive styled with nothing
+   added here. Every search now renders THIS, and a result looks the same
+   whichever tool produced it and the same as the guides index it came from.
+
+   `extra` is house markup only — today the `.flt` flight row the guides index
+   puts on a card in flight view. It is not a hook for a new chip family; a
+   result that needs to say something new says it with a component the guides
+   index already has, or it does not say it. */
+window.lpGuideCard = function (href, flag, name, extra) {
+  function esc(t) {
+    return String(t == null ? '' : t)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+  return '<a class="dest-card" href="' + esc(href) + '">' +
+         (flag ? '<span class="dest-flag">' + esc(flag) + '</span>' : '') +
+         '<span class="dest-name">' + esc(name) + '</span>' +
+         (extra || '') +
+         '</a>';
+};
+</script>
+
 <!-- 2026-08-14: the uppercase .header title and the .page-intro-card were removed
      from the landing page. toolbar.js already injects the Guide My Days wordmark
      directly above the bar, so the h1 was a second title for the same name, and
@@ -1596,11 +1641,15 @@ a.land-cta:hover:visited {
     </div>
 
     <div class="fnd-field">
-      <!-- "from Seattle" is not decoration. Every route in FMAP starts at SEA —
-           all 237 of them — so this filter cannot mean "from you", and unlabelled
-           it silently claims to. The compare table has always said "Flight from
-           SEA"; this now matches it. -->
-      <label for="fnd-far">How far do you want to travel? <span class="fnd-hint">from Seattle</span></label>
+      <!-- The origin is not decoration and it is no longer fixed. Every route in
+           FMAP starts at SEA — all 237 of them — so unlabelled this filter
+           silently claimed to measure from wherever the reader happens to be.
+           Naming Seattle fixed the lie; naming it and letting the reader change
+           it fixes the filter. Seattle keeps the exact routings, any other home
+           gets a labelled estimate — see TVE.home in toolbar.js § 43. -->
+      <label for="fnd-far">How far do you want to travel?
+        <span class="fnd-home-wrap"><button type="button" id="fnd-home" class="fnd-home"
+          aria-haspopup="dialog" aria-expanded="false">from Seattle</button></span></label>
       <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span><select id="fnd-far">
         <option value="">Any distance</option>
         <option value="u5">Under 5 hours</option>
@@ -2061,8 +2110,11 @@ a.land-cta:hover:visited {
        #view-compare is hidden and holds no label: the engine binds its
        enter/exit toggle to it, and the card above is what the reader sees. -->
   <div class="tl-panel" id="tp-compare" hidden>
+    <!-- "flight time" without an origin, because the origin is now the
+         reader's own and is named in the table's row header. Naming Seattle
+         here would contradict the column it introduces. -->
     <p class="cmpx-lede">Pick <strong>2 to 5 cities</strong> and see them side by
-    side &mdash; flight time from Seattle, visa, climate month by month, best season,
+    side &mdash; flight time, visa, climate month by month, best season,
     languages, what a day costs and how safe it is.</p>
 
     <div class="cmpx-pick">
@@ -3423,28 +3475,15 @@ function render() {
       container.innerHTML = '<p style="font-size:13px;color:var(--muted)">No strong matches — try different settings.</p>';
       return;
     }
-    var td = window._THEME_DATA || {};
-    var dd = window._DAYS_DATA || {};
-    top.forEach(function (item) {
-      var tags = td[item.city] || [];
-      var days = dd[item.city] || null;
-      var a = document.createElement('a');
-      a.className = 'tt-res-card';
-      a.href = item.href;
-      var tagHtml = tags.slice(0, 3).map(function (t) {
-        return '<span class="tt-res-pill">' + (THEME_LABELS[t] || t) + '</span>';
-      }).join('');
-      var daysHtml = days ? '<span class="tt-res-pill">' + days + ' day' + (days === 1 ? '' : 's') + '</span>' : '';
-      a.innerHTML =
-        '<span class="tt-res-flag">' + item.flag + '</span>' +
-        '<span class="tt-res-body">' +
-          '<span class="tt-res-name">' + item.city + '</span>' +
-          '<span style="font-size:11px;color:var(--muted)">' + item.country + '</span>' +
-          '<span class="tt-res-reasons">' + daysHtml + tagHtml + '</span>' +
-        '</span>' +
-        '<span class="tt-res-score" style="font-size:13px;color:#b85c2a;font-weight:600">Open ›</span>';
-      container.appendChild(a);
-    });
+    /* One card for every search on this page — see lpGuideCard (owner,
+       2026-08-15). The theme pills, the days pill, the country line and the
+       "Open ›" footer went with the bespoke card: this panel already states
+       what it ranked on in the question the reader just answered, and a result
+       here is the same guide the guides index lists. */
+    container.className = 'flt-grid';
+    container.innerHTML = top.map(function (item) {
+      return window.lpGuideCard(item.href, item.flag, item.city, '');
+    }).join('');
   }
 
   /* ── Go ── */
@@ -3723,30 +3762,15 @@ function render() {
       errP.hidden = false;
       return;
     }
-    cards.innerHTML = '';
-    top.forEach(function (item) {
-      var pct  = Math.round(item.score * 100);
-      var name = cityName(item.card);
-      var flag = flagOf(item.card);
-      var href = item.card.getAttribute('href');
-      var rsns = whyReasons(ref, item.card);
-      var a = document.createElement('a');
-      a.className = 'tt-res-card';
-      a.href = href;
-      a.innerHTML =
-        '<span class="tt-res-flag">' + flag + '</span>' +
-        '<span class="tt-res-body">' +
-          '<span class="tt-res-name">' + name + '</span>' +
-          '<span class="tt-res-reasons">' +
-            rsns.map(function (r) { return '<span class="tt-res-pill">' + r + '</span>'; }).join('') +
-          '</span>' +
-        '</span>' +
-        '<span class="tt-res-score">' +
-          '<span class="tt-res-pct">' + pct + '%</span>' +
-          '<span class="tt-res-pct-lbl">contrast</span>' +
-        '</span>';
-      cards.appendChild(a);
-    });
+    /* Same one card as every other search on this page — see lpGuideCard
+       (owner, 2026-08-15). The contrast percentage and the reason pills were
+       the bespoke card's, not the guide's; the ranking still decides WHICH
+       three guides appear and in what order, which is what the tool is for. */
+    cards.className = 'flt-grid';
+    cards.innerHTML = top.map(function (item) {
+      return window.lpGuideCard(item.card.getAttribute('href'),
+                                flagOf(item.card), cityName(item.card), '');
+    }).join('');
     inner.hidden = true;
     results.hidden = false;
   });
@@ -4055,18 +4079,44 @@ function render() {
       });
       out += '</tr>';
 
-      /* Flight row */
-      out += '<tr><td class="cmp-row-label">Flight<br>from SEA</td>';
+      /* Flight row — from the reader's own airport, not from mine (owner,
+         2026-08-15). The row header names the origin because the number is
+         meaningless without it, and the two cases are kept visibly apart:
+         Seattle gets FMAP's measured routing and its "1 connection" subtitle,
+         anyone else gets "~10h 8m · flying time, estimated" and no routing at
+         all. Inventing a connection count for a journey nobody has planned
+         would be the one genuinely misleading thing this row could do — see the
+         note on TVE.home for why flying time is what gets estimated. */
+      var HOME = window.TVE && window.TVE.home;
+      var homeDefault = !HOME || HOME.isDefault();
+      var homeCode = homeDefault ? 'SEA' : HOME.get().code;
+      var AIRXY = (window._lpAirports && window._lpAirports.xy) || null;
+      var AIRBY = (window._lpAirports && window._lpAirports._by_slug) || null;
+      out += '<tr><td class="cmp-row-label">Flight<br>from ' + esc(homeCode) + '</td>';
       sel.forEach(function(c) {
         /* FMAP is keyed relative to /guides/ ('Athens/athens.html'). The landing
            page grafts these same cards in with './guides/' prepended, so strip
            that segment too or every city's flight time is a dash there. */
         var key = c.href.replace(/^\.\//, '').replace(/^guides\//, '');
         var f = FMAP[key];
-        if (f && f.r !== 'home') {
-          out += '<td class="cmp-col"><span class="cmp-v">' + f.t + '</span>' +
-            '<span class="cmp-sub">' + (fltLabels[f.r]||f.r) + (f.o ? ' · ' + esc(stripIcons(f.o)) : '') + '</span>' +
-            '</td>';
+        if (homeDefault) {
+          if (f && f.r !== 'home') {
+            out += '<td class="cmp-col"><span class="cmp-v">' + f.t + '</span>' +
+              '<span class="cmp-sub">' + (fltLabels[f.r]||f.r) + (f.o ? ' · ' + esc(stripIcons(f.o)) : '') + '</span>' +
+              '</td>';
+          } else {
+            out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
+          }
+          return;
+        }
+        var code = AIRBY ? (AIRBY[key.split('/').pop()] || '') : '';
+        var pos = (code && AIRXY) ? AIRXY[code] : null;
+        var mins = (pos && code !== homeCode) ? HOME.estimate(pos[0], pos[1]) : null;
+        if (mins !== null) {
+          out += '<td class="cmp-col"><span class="cmp-v">~' + HOME.fmt(mins) + '</span>' +
+            '<span class="cmp-sub">flying time, estimated</span></td>';
+        } else if (code && code === homeCode) {
+          out += '<td class="cmp-col"><span class="cmp-sub">Home city</span></td>';
         } else {
           out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
         }
@@ -4235,9 +4285,24 @@ function render() {
         .trim();
     }
 
+    /* The Flight row needs destination positions the moment the reader's home
+       is not Seattle, and the table renders synchronously — so the positions
+       are fetched before the panel opens rather than leaving a column of
+       dashes that quietly repairs itself on the next open. A Seattle reader
+       never fetches it: FMAP already has the answer. */
+    function loadAirports(then) {
+      var H = window.TVE && window.TVE.home;
+      if (!H || H.isDefault() || window._lpAirports) { then(); return; }
+      fetch('./assets/airports.json')
+        .then(function (r) { return r.json(); })
+        .then(function (a) { window._lpAirports = a || {}; then(); })
+        .catch(function () { window._lpAirports = {}; then(); });
+    }
+
     /* ── Show compare panel ───────────────────────────────────────────── */
     function showPanel() {
       if (!compareView || sel.length < 2) return;
+      loadAirports(function () {
       loadClimate(function() {
         compareView.hidden = false;
         compareView.innerHTML = buildTable();
@@ -4250,6 +4315,7 @@ function render() {
         });
         /* scroll table into view */
         compareView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
       });
     }
 
@@ -4561,6 +4627,66 @@ function render() {
              : (f.r === '1stop' ? 90 : f.r === '2stop' ? 180 : 0);
     return f.m + legs;
   }
+
+  /* ── Home city ────────────────────────────────────────────────────────────
+     TVE.home holds the reader's airport; airports.json holds the destination
+     positions. With the default home the two are never consulted at all and
+     every number below comes from FMAP exactly as it always did.
+
+     AIR is fetched once, lazily, and only when a non-default home actually
+     needs it — a Seattle reader never pays the 29 KB. Until it lands, a
+     distance-filtered run reports that it is still loading rather than
+     silently returning the guides it happens to be able to measure. */
+  var HOME = (window.TVE && window.TVE.home) || null;
+  var AIR = null, airPending = false;
+  function loadAir(then) {
+    if (!AIR && window._lpAirports) AIR = window._lpAirports;
+    if (AIR || airPending) { if (AIR) then(); return; }
+    airPending = true;
+    fetch('./assets/airports.json')
+      .then(function (r) { return r.json(); })
+      /* Parked on window because the compare table needs the same positions and
+         lives in its own IIFE — one fetch answers both. */
+      .then(function (a) { AIR = window._lpAirports = a || {}; airPending = false; then(); })
+      .catch(function () { AIR = window._lpAirports = {}; airPending = false; then(); });
+  }
+  function homeIsDefault() { return !HOME || HOME.isDefault(); }
+
+  /* The guide's own destination airport, from the same _by_slug map the
+     in-guide Flights pill uses — keyed by filename, e.g. "athens.html". */
+  function destCode(g) {
+    var by = AIR && AIR._by_slug;
+    return by ? (by[g.rel.split('/').pop()] || '') : '';
+  }
+  function destPos(g) {
+    var c = destCode(g);
+    return (c && AIR && AIR.xy && AIR.xy[c]) || null;
+  }
+
+  /* One number for the whole page, from wherever the reader lives. Exact from
+     FMAP for a Seattle reader — the full journey, layovers included — and an
+     estimate of FLYING time for anyone else, because whether a nonstop exists
+     between two arbitrary airports is unknowable from here (TVE.home). The
+     `exact` flag travels with the number so nothing downstream can render an
+     estimate without the "~" and the word "flying" that go with it.
+
+     The two therefore mean slightly different things — but never to the same
+     reader, and each is labelled on the card it appears on. A silent mix would
+     be the bug; two clearly-named answers are not. */
+  function farOf(d, g) {
+    var f = d.fmap[g.rel];
+    if (homeIsDefault()) {
+      var m = journeyMins(f);
+      return m === null ? null : { mins: m, exact: true, home: 'SEA',
+                                   text: f.t || '', atHome: f.r === 'home' };
+    }
+    var h = HOME.get(), p = destPos(g);
+    if (!p) return null;
+    if (destCode(g) === h.code) return { mins: 0, exact: false, home: h.code, text: '', atHome: true };
+    var mins = HOME.estimate(p[0], p[1]);
+    return mins === null ? null
+      : { mins: mins, exact: false, home: h.code, text: '~' + HOME.fmt(mins), atHome: false };
+  }
   /* Ordered, so "Moderate and above" means Very Safe + Safe + Moderate rather
      than Moderate exactly — a floor, which is what an advisory level is. */
   var SAFE_RANK = { 'Very Safe': 1, 'Safe': 2, 'Moderate': 3, 'Caution': 4, 'High Risk': 5 };
@@ -4613,13 +4739,21 @@ function render() {
         var n = Number(d.days[g.name]);
         if (!n || !LEN[s.len](n)) return false;
       }
-      if (s.fr || s.st) {
+      if (s.st) {
+        /* Routing is FMAP's alone — it is a real Delta itinerary out of SEA,
+           not a fact about the guide. With another home set, the Stops control
+           is hidden (see syncHome) and this never runs; the guard stays because
+           a stale value in the select would otherwise filter on a routing the
+           reader will never fly. */
         var f = d.fmap[g.rel];
-        if (!f) return false;
-        if (s.st && f.r !== s.st && !(s.st === 'nonstop' && f.r === 'seasonal')) return false;
-        var mins = journeyMins(f);
-        if (s.fr === 'o15' && !(mins >= 900)) return false;
-        if (s.fr && s.fr !== 'o15' && !(mins < FAR[s.fr])) return false;
+        if (!homeIsDefault() || !f) return false;
+        if (f.r !== s.st && !(s.st === 'nonstop' && f.r === 'seasonal')) return false;
+      }
+      if (s.fr) {
+        var far = farOf(d, g);
+        if (!far) return false;
+        if (s.fr === 'o15' && !(far.mins >= 900)) return false;
+        if (s.fr !== 'o15' && !(far.mins < FAR[s.fr])) return false;
       }
       if (s.wx) {
         var hi = hiFor(d, g, s.mo);
@@ -4635,42 +4769,39 @@ function render() {
     return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  /* The card states the facts that were actually asked about, so a result can
-     be checked rather than taken on trust: the temperature for the chosen
-     month, the guide's length, the flight time. A fact that was not asked for
-     and is not known is left off rather than shown blank. */
-  function card(d, g, s) {
-    var bits = [];
-    var hi = hiFor(d, g, s.mo);
-    if (hi !== null) {
-      bits.push('<span class="rc-fact rc-temp">' + Math.round(hi) + '&deg;' +
-                (s.mo !== null ? ' in ' + MON[s.mo].slice(0, 3) : '') + '</span>');
-    }
-    var n = Number(d.days[g.name]);
-    if (n) bits.push('<span class="rc-fact">' + n + (n === 1 ? ' day' : ' days') + '</span>');
-    /* Every FMAP route starts at SEA, so a bare "10h 25m" on a card reads as a
-       flight time from wherever the reader happens to be. Say where from —
-       except for Seattle itself, which FMAP marks r:'home' and whose t is the
-       word "Home": "Home from SEA" is nonsense. The compare table guards the
-       same case with `f.r !== 'home'`. */
-    var f = d.fmap[g.rel];
-    if (f && f.r === 'home') bits.push('<span class="rc-fact">Home city</span>');
-    else if (f && f.t) bits.push('<span class="rc-fact">' + esc(f.t) +
-                                 ' <span class="rc-from">from SEA</span></span>');
+  /* A RESULT IS A GUIDE, so it is drawn as one (owner, 2026-08-15: "make sure
+     the results from search are guides not this nonsense … for any search").
 
-    /* Each result IS a guide, and the card has to say so. Without the closing
-       row it reads as a list of place names that happen to be clickable —
-       Help Me Choose and Trip Escape both end their cards on "Open ›" for the
-       same reason, and these sit on the same page. */
-    return '<a class="rescard" href="' + g.url + '">' +
-           '<span class="rc-top">' +
-             (g.flag ? '<span class="rc-flag">' + g.flag + '</span>' : '') +
-             '<span class="rc-name">' + esc(g.name) + '</span>' +
-           '</span>' +
-           (g.countryName ? '<span class="rc-country">' + esc(g.countryName) + '</span>' : '') +
-           (bits.length ? '<span class="rc-facts">' + bits.join('') + '</span>' : '') +
-           '<span class="rc-open">Open the guide <span class="rc-chev">&rsaquo;</span></span>' +
-           '</a>';
+     What stood here was an invented card — a bordered tile with a name, a
+     country line, chips for temperature, length and flight time, and an "Open
+     the guide ›" footer. Nothing else on the site looks like it. The guides
+     index has ONE guide card, `.dest-card`: terracotta left edge, flag, name,
+     and its results grid is `.flt-grid`. Both are already styled here, because
+     this page loads guides-index-style.css for the mosaic. Every search on this
+     page now renders that card and nothing else — see lpGuideCard below, which
+     Help Me Choose and Trip Escape call too.
+
+     The one exception is the site's own flight row, `.flt` / `.ftime` /
+     `.fiata`, the same markup the guides index puts on a card in flight view.
+     It appears ONLY when the reader filtered on distance — they asked how far,
+     so the card answers, in the house component rather than a new one. */
+  function card(d, g, s) {
+    var far = s.fr ? farOf(d, g) : null;
+    var flt = '';
+    if (far && far.atHome) {
+      flt = '<span class="flt"><span class="fdot r-home"></span>' +
+            '<span class="ftime">Home</span><span class="fiata">' + esc(far.home) + '</span></span>';
+    } else if (far && far.text) {
+      /* The "~" is the whole label an estimate needs here — it is the same
+         number the list was narrowed by, and the picker's own footnote says
+         what it is measured from and that layovers are not in it. */
+      /* Destination code from FMAP first: it is present for a Seattle reader,
+         who never loads airports.json at all. */
+      var iata = (d.fmap[g.rel] && d.fmap[g.rel].i) || destCode(g);
+      flt = '<span class="flt"><span class="ftime">' + esc(far.text) + '</span>' +
+            (iata ? '<span class="fiata">' + esc(iata) + '</span>' : '') + '</span>';
+    }
+    return lpGuideCard(g.url, g.flag, g.name, flt);
   }
 
   function run() {
@@ -4680,6 +4811,11 @@ function render() {
     out.hidden = false;
     out.innerHTML = '<p class="fnd-res-head">Searching&hellip;</p>';
     syncChrome(s);
+
+    /* A non-default home cannot answer a single distance question without the
+       position table, so the run waits for it rather than reporting a list
+       measured from the wrong place. Seattle never reaches this. */
+    if (!homeIsDefault() && !AIR) { loadAir(run); return; }
 
     window._lpData().then(function (d) {
       if (!d) {
@@ -4708,7 +4844,7 @@ function render() {
           'Drop one and try again.</p>';
         return;
       }
-      out.innerHTML = head + '<div class="rescards">' +
+      out.innerHTML = head + '<div class="flt-grid">' +
                       hits.map(function (g) { return card(d, g, s); }).join('') + '</div>';
     });
   }
@@ -4752,6 +4888,157 @@ function render() {
     morePanel.hidden = !opening;
     moreBtn.setAttribute('aria-expanded', String(opening));
   });
+
+  /* ── The home-city picker ─────────────────────────────────────────────────
+     Owner, 2026-08-15: "we need to wire in the person to put their home city?
+     this is all wired from my seattle and can't be."
+
+     One control, in the label of the filter it governs. It writes to TVE.home,
+     which every other surface reads, so a reader sets this once for the site
+     rather than once per page. The rows come from the same airport list and the
+     same ranking the in-guide Flights picker uses (TVE.home.lookup) — one
+     implementation, so "seattle" cannot surface SEA in one box and Boeing Field
+     in the other.
+
+     Airports, not cities, because a flight time is a fact about airports and
+     because the site already knows 3,268 of them with positions attached. A
+     reader in Bergamo picks BGY and gets Bergamo's distances; a city list would
+     have to guess which field they fly from. */
+  var homeBtn = document.getElementById('fnd-home');
+  if (homeBtn && HOME) {
+    var pop = document.createElement('div');
+    pop.className = 'fnd-home-pop';
+    pop.hidden = true;
+    pop.setAttribute('role', 'dialog');
+    pop.setAttribute('aria-label', 'Set your home airport');
+    var input = document.createElement('input');
+    input.className = 'fnd-home-in';
+    input.type = 'text';
+    input.placeholder = 'City or airport code';
+    input.setAttribute('aria-label', 'Home city or airport code');
+    var list = document.createElement('ul');
+    list.className = 'fnd-home-list';
+    list.setAttribute('role', 'listbox');
+    var note = document.createElement('p');
+    note.className = 'fnd-home-note';
+    pop.appendChild(input); pop.appendChild(list); pop.appendChild(note);
+    homeBtn.parentNode.appendChild(pop);
+
+    var rows = [], active = -1;
+
+    function label(r) { return r[1] + ' (' + r[0] + ')' + (r[2] ? ' · ' + r[2] : ''); }
+
+    /* The button carries the answer, so the label stays a readable sentence:
+       "from Rome", never "from FCO". The code shows on the result cards, where
+       the reader is comparing numbers and the three letters are the shorter,
+       clearer tag. */
+    function syncHome() {
+      var h = HOME.get();
+      homeBtn.textContent = 'from ' + h.city;
+      note.textContent = '';
+      if (!HOME.isDefault()) {
+        note.appendChild(document.createTextNode(
+          'Flight times are estimated flying time from ' + h.code + ', layovers not included. '));
+        var undo = document.createElement('button');
+        undo.type = 'button';
+        undo.textContent = 'Back to Seattle';
+        undo.addEventListener('click', function () { HOME.clear(); syncHome(); run(); });
+        note.appendChild(undo);
+      } else {
+        note.textContent = 'Set where you fly from and every flight time on this page follows.';
+      }
+      /* Routing is a fact about the SEA itineraries and about nothing else, so
+         the Stops control leaves with them rather than filtering on a flight
+         the reader is not taking. */
+      if (fStops) {
+        var field = fStops.closest ? fStops.closest('.fnd-field') : null;
+        if (field) field.hidden = !HOME.isDefault();
+        if (!HOME.isDefault() && fStops.value) fStops.value = '';
+      }
+    }
+
+    function paint() {
+      list.textContent = '';
+      rows.forEach(function (r, i) {
+        var li = document.createElement('li');
+        li.className = 'fnd-home-opt' + (i === active ? ' fnd-home-opt-on' : '');
+        li.setAttribute('role', 'option');
+        li.textContent = label(r);
+        /* mousedown, not click: blur fires first on click and would close the
+           popover before the selection ever lands. */
+        li.addEventListener('mousedown', function (e) { e.preventDefault(); choose(r); });
+        list.appendChild(li);
+      });
+    }
+
+    function choose(r) {
+      var h = HOME.fromRow(r);
+      if (!h) return;
+      HOME.set(h);
+      close();
+      syncHome();
+      /* The picked airport's own guide, if the site has one, is now the home
+         city rather than a destination — so the list is rebuilt, not patched. */
+      AIR ? run() : loadAir(run);
+    }
+
+    /* The site's own 198 destinations and hubs, boosted in the ranking. Without
+       it "rome" offers Ciampino above Fiumicino and "paris" offers Le Bourget
+       above Charles de Gaulle: same city, same match rank, and OurAirports'
+       size tier does not know which one people actually fly from. */
+    var majorSet = null;
+    function majors() {
+      if (majorSet) return majorSet;
+      majorSet = {};
+      ((AIR && AIR.major) || []).forEach(function (c) { majorSet[c] = 1; });
+      return majorSet;
+    }
+
+    function search() {
+      var q = input.value.trim();
+      if (!q) { rows = []; active = -1; paint(); return; }
+      HOME.names(function (all) {
+        rows = HOME.lookup(q, all, majors(), 6);
+        active = rows.length ? 0 : -1;
+        paint();
+      });
+    }
+
+    function open() {
+      pop.hidden = false;
+      homeBtn.setAttribute('aria-expanded', 'true');
+      /* 29 KB, and only for a reader who has actually opened the picker: the
+         major list ranks the results, and the positions answer the first
+         search that follows without a second wait. */
+      if (!AIR) loadAir(function () { majorSet = null; if (input.value.trim()) search(); });
+      input.value = '';
+      rows = []; active = -1; paint();
+      input.focus();
+    }
+    function close() {
+      pop.hidden = true;
+      homeBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    homeBtn.addEventListener('click', function () { pop.hidden ? open() : close(); });
+    input.addEventListener('input', search);
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { close(); homeBtn.focus(); return; }
+      if (!rows.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); active = (active + 1) % rows.length; paint(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); active = (active - 1 + rows.length) % rows.length; paint(); }
+      else if (e.key === 'Enter') { e.preventDefault(); if (active >= 0) choose(rows[active]); }
+    });
+    document.addEventListener('mousedown', function (e) {
+      if (!pop.hidden && !pop.contains(e.target) && e.target !== homeBtn) close();
+    });
+
+    /* The home is site-wide, so this label follows the setting rather than the
+       button that happens to sit next to it — any other surface that sets a
+       home leaves this one correct instead of stale. */
+    HOME.onChange(syncHome);
+    syncHome();
+  }
 
   syncChrome(state());
 }());

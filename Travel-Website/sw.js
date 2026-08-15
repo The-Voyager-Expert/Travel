@@ -1191,8 +1191,17 @@
    Stay (new dropdown, 6 lodging pages) · Before You Go · Maps · Contact; landing
    page drops the Sunrise picker and the Before-you-go heading. floor -> 646,
    CACHE v887. */
-/* 2026-08-14: Day-Trips.html rebuilt around journey time — hero, time bands,
-   city chips, trip cards. Page HTML, so it needs the bump. CACHE to v888. */
+/* 2026-08-15: HOME CITY — the landing finder's "from Seattle" is now a picker.
+   New TVE.home store in toolbar.js (localStorage tve_home_city, mirrored to
+   tve_book_origin); airports.json grows an `xy` position map for the 198
+   destination/hub codes and airport_names.json grows lat/lon per row, both from
+   build_airports.py. Seattle keeps FMAP's exact routings; any other home gets a
+   flying-time estimate (44 + km/14, fitted to the 69 real nonstops, median
+   error 3 min). Same pass: every landing-page search now renders the site's
+   guide card (.dest-card in .flt-grid) instead of the two bespoke result cards
+   a look pass had invented — owner, "results from search are guides not this
+   nonsense". mobile.css exempts #fnd-home from the 40px/16px tap-target floors.
+   toolbar.js -> v647, mobile.css -> v79. CACHE to v888. */
 var CACHE = 'travel-cache-v888';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
@@ -1201,7 +1210,7 @@ var CACHE = 'travel-cache-v888';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 646, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 647, 'mobile.css': 79, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

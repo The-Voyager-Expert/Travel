@@ -47,6 +47,209 @@ window.TVE.isPhone = function () {
   return !!(window.matchMedia && window.matchMedia(window.TVE.PHONE_MQ).matches);
 };
 
+/* ══ TVE.home — the reader's HOME AIRPORT, one setting for the whole site ══
+   Owner, 2026-08-15, looking at the landing-page finder: "this is all wired
+   from my seattle and can't be."
+
+   It was, and unavoidably so: FMAP is 237 hand-built Delta routings that all
+   start at SEA — real legs, real hubs, real minutes — so every surface that
+   asks "how far is this?" was answering for one person. A reader in Rome got
+   Seattle's flight times with no way to say otherwise.
+
+   The fix is NOT to throw the routings away. They are the best data the site
+   has and they stay exact for the reader they describe. Instead:
+
+     home is SEA  ->  FMAP verbatim. Nothing changes, nothing degrades.
+     home is not  ->  a great-circle ESTIMATE from the reader's own airport,
+                      always rendered with a leading "~" and never presented
+                      as a routing. No hub is invented, no leg is claimed.
+
+   WHAT IS ESTIMATED IS FLYING TIME, and that choice is the load-bearing one.
+   Fitted against the 69 nonstop routings FMAP already holds — the ones where
+   the great-circle IS the route — the constants are measured, not guessed:
+
+       air minutes = 44 + km / 14        (14 km/min ≈ 840 km/h)
+
+   Median error 3 minutes, mean 12, over everything from 130 km to 11,000 km.
+
+   The first attempt modelled the whole JOURNEY, layovers included, by adding a
+   connection allowance past 5,000 km. It fitted the 236 totals to a median of
+   52 minutes and was still wrong in the way that matters: SEA–AMS is nonstop,
+   and the model billed it 12h27 against a real 9h45. Whether a nonstop exists
+   between two arbitrary airports is the largest single term in a journey time
+   and is precisely what this cannot know. So it does not pretend to. It
+   answers the question it can answer to within minutes and says which question
+   that was: every surface labels an estimate as flying time. A reader who sees
+   "~10h flying" and then connects has been told the truth; one shown a
+   fabricated "AMS · 1 stop" has not.
+
+   Storage is one key, and it deliberately mirrors tve_book_origin so the
+   in-guide Hotels & Flights panel and this share one answer — a reader who
+   types their home airport into a Flights search should never be asked for it
+   again by the finder, and the reverse. Spec: Toolbar.html § 46. */
+window.TVE.home = (function () {
+  var KEY = 'tve_home_city';
+  /* Seattle stays the fallback because it is the one home the site has exact
+     data for: with no choice stored, FMAP's own numbers are correct rather
+     than merely plausible. Every surface labels it, and every label is a
+     control — the default is never silent. */
+  var FALLBACK = { code: 'SEA', city: 'Seattle', country: 'US',
+                   lat: 47.45, lon: -122.31, isDefault: true };
+  var subs = [];
+
+  function read() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return null;
+      var h = JSON.parse(raw);
+      /* A stored home without coordinates cannot answer a distance question,
+         and half-answering is worse than falling back to the exact data. */
+      if (!h || !h.code || typeof h.lat !== 'number' || typeof h.lon !== 'number') return null;
+      return h;
+    } catch (e) { return null; }
+  }
+
+  function get() { return read() || FALLBACK; }
+
+  function set(h) {
+    if (!h || !h.code) return get();
+    var next = { code: String(h.code).toUpperCase(), city: h.city || h.code,
+                 country: h.country || '', lat: +h.lat, lon: +h.lon };
+    try {
+      localStorage.setItem(KEY, JSON.stringify(next));
+      /* One answer, two surfaces — see the header note on tve_book_origin. */
+      localStorage.setItem('tve_book_origin', next.code);
+    } catch (e) {}
+    subs.forEach(function (fn) { try { fn(next); } catch (e) {} });
+    return next;
+  }
+
+  function clear() {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    subs.forEach(function (fn) { try { fn(FALLBACK); } catch (e) {} });
+    return FALLBACK;
+  }
+
+  function km(aLat, aLon, bLat, bLon) {
+    var R = 6371, rad = Math.PI / 180;
+    var p1 = aLat * rad, p2 = bLat * rad;
+    var dp = (bLat - aLat) * rad, dl = (bLon - aLon) * rad;
+    var x = Math.sin(dp / 2) * Math.sin(dp / 2) +
+            Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) * Math.sin(dl / 2);
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(x)));
+  }
+
+  /* FLYING minutes from the reader's home to a destination airport position —
+     air time, no layovers, per the note above. Returns null when the
+     destination has no position: the caller drops the guide rather than
+     guessing, the same rule the finder already applies to a guide with no FMAP
+     entry and to one with no climate row. */
+  function estimate(destLat, destLon) {
+    if (typeof destLat !== 'number' || typeof destLon !== 'number') return null;
+    var h = get();
+    return Math.round(44 + km(h.lat, h.lon, destLat, destLon) / 14);
+  }
+
+  /* "9h 45m" / "45m" — the same shape FMAP.t already uses, so an estimated
+     card and an exact one read identically apart from the "~". */
+  function fmt(mins) {
+    if (mins === null || mins === undefined) return '';
+    var h = Math.floor(mins / 60), m = Math.round(mins % 60);
+    return (h ? h + 'h' + (m ? ' ' + m + 'm' : '') : m + 'm');
+  }
+
+  /* ── Airport lookup, shared with the in-guide Flights picker ──────────────
+     Accent-folded so "Malaga" finds "Málaga" and "Dusseldorf" finds
+     "Düsseldorf" — the reader is typing on a plain keyboard. */
+  function fold(s) {
+    return String(s || '').normalize ? String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+                                     : String(s || '').toLowerCase();
+  }
+
+  /* Ranked so the obvious answer is first: an exact code beats a city that
+     starts with the query, which beats a city containing it, which beats the
+     airport's formal name. Then the site's own major list, then OurAirports'
+     size tier, then city. Every tier-break below the first exists because the
+     one above it left a real case wrong — "paris" put Le Bourget first,
+     "seattle" put Boeing Field first. This is the one implementation; the
+     Flights panel calls it rather than keeping a second copy. */
+  function lookup(q, rows, majorSet, limit) {
+    q = fold(q).trim();
+    if (!q || !rows || !rows.length) return [];
+    majorSet = majorSet || {};
+    var out = [];
+    for (var i = 0; i < rows.length && out.length < 400; i++) {
+      var r = rows[i], code = fold(r[0]), city = fold(r[1]), name = fold(r[3]);
+      var rank = -1;
+      if (code === q) rank = 0;
+      else if (city.indexOf(q) === 0) rank = 1;
+      else if (code.indexOf(q) === 0) rank = 2;
+      else if (city.indexOf(q) > 0) rank = 3;
+      else if (name.indexOf(q) >= 0) rank = 4;
+      if (rank >= 0) out.push([rank, r]);
+    }
+    out.sort(function (a, b) {
+      return a[0] - b[0] ||
+             ((majorSet[b[1][0]] ? 1 : 0) - (majorSet[a[1][0]] ? 1 : 0)) ||
+             (a[1][4] || '1').localeCompare(b[1][4] || '1') ||
+             (a[1][1] < b[1][1] ? -1 : 1);
+    });
+    return out.slice(0, limit || 8).map(function (x) { return x[1]; });
+  }
+
+  /* airport_names.json is 204 KB and is fetched on the FIRST KEYSTROKE of a
+     home-city or Flights field, never on page load — most readers never open
+     either. sessionStorage key 'tveapn' is shared with the Flights panel, so a
+     reader who has used one has already paid for the other. */
+  var rows = null, pending = null;
+  function names(cb) {
+    if (rows) { setTimeout(function () { cb(rows); }, 0); return; }
+    if (pending) { pending.push(cb); return; }
+    pending = [cb];
+    function done(list) {
+      rows = list || [];
+      var waiting = pending; pending = null;
+      waiting.forEach(function (fn) { try { fn(rows); } catch (e) {} });
+    }
+    try {
+      var hit = sessionStorage.getItem('tveapn');
+      if (hit) { done((JSON.parse(hit) || {}).a); return; }
+    } catch (e) {}
+    var mount = document.getElementById('toolbar-mount');
+    var dep = mount ? parseInt(mount.getAttribute('data-depth') || '1', 10) : 0;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', new Array(dep + 1).join('../') + 'assets/airport_names.json', true);
+    xhr.timeout = 8000;
+    xhr.onload = function () {
+      if (xhr.status < 200 || xhr.status >= 300) { done([]); return; }
+      try {
+        try { sessionStorage.setItem('tveapn', xhr.responseText); } catch (e) {}
+        done((JSON.parse(xhr.responseText) || {}).a);
+      } catch (e) { done([]); }
+    };
+    xhr.onerror = xhr.ontimeout = function () { done([]); };
+    xhr.send();
+  }
+
+  /* A picker row -> a home. The row carries its own position (build_airports.py
+     appends lat/lon), so the choice is resolved once and stored complete: no
+     later surface ever has to fetch 204 KB to learn where the reader lives. */
+  function fromRow(r) {
+    return r && r.length >= 7
+      ? { code: r[0], city: r[1], country: r[2], lat: r[5], lon: r[6] }
+      : null;
+  }
+
+  return {
+    KEY: KEY, FALLBACK: FALLBACK,
+    get: get, set: set, clear: clear,
+    isDefault: function () { return !read(); },
+    km: km, estimate: estimate, fmt: fmt,
+    fold: fold, lookup: lookup, names: names, fromRow: fromRow,
+    onChange: function (fn) { if (typeof fn === 'function') subs.push(fn); }
+  };
+}());
+
 /* ── Pre-hide body immediately — prevents the page-background flash that occurs
    while the browser waits for this script to finish downloading. Injecting a
    <style> rule into <head> takes effect before the next paint; the inline
@@ -7970,45 +8173,13 @@ items.forEach(function (it) {
         });
       }
 
-      /* Accent-fold so "Malaga" finds "Málaga" and "Dusseldorf" finds
-         "Düsseldorf" — the reader is typing on a plain keyboard. */
-      function _bkFold(s) {
-        return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-      }
-
-      /* Ranked so the obvious answer is first: an exact code beats a city that
-         starts with the query, which beats a city containing it, which beats
-         the airport's formal name. Typing "sea" must surface SEA, not Seahawk
-         Regional; typing "bahia" must surface the Bahía airports rather than
-         nothing at all. */
+      /* Ranking, accent-folding and the 8-row cut all live in TVE.home.lookup
+         (top of this file) — the home-city picker on the landing page needs the
+         identical behaviour, and two copies of a ranking table drift. Typing
+         "sea" must surface SEA, not Seahawk Regional; typing "bahia" must
+         surface the Bahía airports rather than nothing at all. */
       function _bkMatches(q) {
-        q = _bkFold(q).trim();
-        if (!q || !namesRows) return [];
-        var out = [];
-        for (var i = 0; i < namesRows.length && out.length < 400; i++) {
-          var r = namesRows[i], code = r[0], city = _bkFold(r[1]), name = _bkFold(r[3]);
-          var rank = -1;
-          if (_bkFold(code) === q) rank = 0;
-          else if (city.indexOf(q) === 0) rank = 1;
-          else if (_bkFold(code).indexOf(q) === 0) rank = 2;
-          else if (city.indexOf(q) > 0) rank = 3;
-          else if (name.indexOf(q) >= 0) rank = 4;
-          if (rank >= 0) out.push([rank, r]);
-        }
-        /* rank, then SIZE TIER, then city. The tier is why "seattle" surfaces
-           SEA above Boeing Field: same city, same rank, and alphabetical order
-           alone put the regional field first. */
-        /* rank, then the site's own major list, then OurAirports' size tier,
-           then city. Each tier-break exists because the one above it left a
-           real case wrong: "paris" put Le Bourget first, "seattle" put Boeing
-           Field first. */
-        out.sort(function (a, b) {
-          return a[0] - b[0] ||
-                 ((majorSet[b[1][0]] ? 1 : 0) - (majorSet[a[1][0]] ? 1 : 0)) ||
-                 (a[1][4] || '1').localeCompare(b[1][4] || '1') ||
-                 (a[1][1] < b[1][1] ? -1 : 1);
-        });
-        return out.slice(0, 8).map(function (x) { return x[1]; });
+        return window.TVE.home.lookup(q, namesRows, majorSet);
       }
 
       /* Attach a dropdown to one field. Returns a handle carrying the resolved
