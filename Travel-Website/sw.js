@@ -1175,7 +1175,7 @@
 /* 2026-08-14: World-Map.html — visited now reads the shared tve-visited-{folder}
    keys the guides' I've Been pill writes, so map, guide and index are one list.
    CACHE to v878. */
-var CACHE = 'travel-cache-v879';
+var CACHE = 'travel-cache-v881';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
