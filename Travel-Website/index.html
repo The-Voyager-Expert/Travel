@@ -4816,7 +4816,7 @@ function render() {
      it — otherwise a visitor sees a short list and nothing on screen explaining
      why it is short. The count rides on the button. */
   function syncChrome(s) {
-    var n = [s.ty, s.lg, s.ct, s.st, s.bd, s.sf, s.co].filter(Boolean).length;
+    var n = [s.ty, s.lg, s.ct, s.bd, s.sf, s.co].filter(Boolean).length;
     var btn = document.getElementById('fnd-more');
     if (btn) {
       btn.textContent = n ? 'More ways to filter (' + n + ')' : 'More ways to filter';
@@ -4873,6 +4873,7 @@ function render() {
     var homeNote = document.getElementById('fnd-home-note');
 
     var rows = [], active = -1;
+    var defaultCode = 'SEA'; // FMAP routing data is SEA-only
 
     function label(r) { return r[1] + ' (' + r[0] + ')' + (r[2] ? ' · ' + r[2] : ''); }
 
@@ -4892,9 +4893,10 @@ function render() {
         homeIn.value = '';
       }
       if (fStops) {
-        var field = fStops.closest ? fStops.closest('.fnd-field') : null;
-        if (field) field.hidden = !HOME.isDefault();
-        if (!HOME.isDefault() && fStops.value) fStops.value = '';
+        var stopsCtl = fStops.closest ? fStops.closest('.fnd-stops-ctl') : null;
+        var seaHome = HOME.isDefault() || HOME.get().code === defaultCode;
+        if (stopsCtl) stopsCtl.hidden = !seaHome;
+        if (!seaHome && fStops.value) fStops.value = '';
       }
     }
 
@@ -4915,7 +4917,9 @@ function render() {
     function choose(r) {
       var h = HOME.fromRow(r);
       if (!h) return;
-      HOME.set(h);
+      /* Selecting the default airport (SEA) clears the explicit override so
+         homeIsDefault() stays true and the Stops/FMAP filter keeps working. */
+      if (h.code === defaultCode) { HOME.clear(); } else { HOME.set(h); }
       homeList.hidden = true;
       rows = []; active = -1;
       syncHome();
