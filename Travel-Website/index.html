@@ -460,7 +460,7 @@ a.land-cta:hover:visited {
   transition: border-color .16s ease, background .16s ease;
 }
 .contact-d > summary::-webkit-details-marker { display: none; }
-.contact-d > summary:hover { border-color: #b85c2a; background: #fbeee4; }
+.contact-d > summary:hover { border-color: var(--rust, #b85c2a); background: #fbeee4; }
 .contact-q { font-size: 0.95rem; font-weight: 700; color: #a8501f; }
 .contact-q::after { content: ' +'; }
 .contact-d[open] > summary .contact-q::after { content: ' –'; }
@@ -664,6 +664,52 @@ a.land-cta:hover:visited {
 }
 .wx-cols .lp-links a:visited { color: #a94e1c; }
 .wx-cols .lp-links a:hover { border-bottom-color: #a94e1c; }
+
+/* ── Inline filter results ──────────────────────────────────────────────────
+   A pill used to navigate to /guides with the filter applied. It now pulls the
+   matching guides into the section instead, so the reader stays on the page and
+   can try several filters in a row without a round trip.
+
+   The data is read from /guides/index.html itself — THEME_DATA, DAYS_DATA, the
+   card hrefs and their data-lang — parsed once and cached. Deliberately NOT a
+   second copy of the tags: a separate data file would drift from the listing the
+   moment a guide shipped, and this cannot. */
+.lp-results { margin-top: clamp(0.9rem, 2vw, 1.4rem); }
+.lp-results[hidden] { display: none; }
+.lp-res-head {
+  display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap;
+  font-size: 0.82rem; color: var(--muted, #6a6660);
+  margin: 0 0 0.6rem;
+}
+.lp-res-head b { color: var(--ink, #17150f); font-size: 0.92rem; }
+.lp-res-clear {
+  font: inherit; font-size: 0.78rem; font-weight: 600;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--brand, #a94e1c); text-decoration: underline;
+}
+.lp-res-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr));
+  gap: 0.3rem 0.9rem;
+  max-height: 19rem; overflow-y: auto;
+}
+.lp-res-list a {
+  font-size: 0.86rem; line-height: 1.5;
+  color: var(--ink, #17150f); text-decoration: none;
+  padding: 0.2em 0; border-bottom: 1px solid transparent;
+}
+.lp-res-list a:visited { color: #17150f; }
+.lp-res-list a:hover { color: var(--brand, #a94e1c); border-bottom-color: var(--brand, #a94e1c); }
+/* Filled selected chip — deliberately NOT the outlined treatment used by .fchip.on
+   elsewhere. Owner directive 2026-08-14 ("dont worry break convention"): the landing
+   page is an editorial front door, not a filter UI, and the selected filter has to
+   read at a glance against long prose. Do not "restore" this to outlined. */
+.lp-pills a.on {
+  background: var(--brand, #a94e1c);
+  border-color: var(--brand, #a94e1c);
+  color: #fff;
+}
+.lp-res-empty { font-size: 0.86rem; color: var(--muted, #6a6660); }
 </style>
 <link rel="stylesheet" href="./assets/mobile.css?v=53">
 </head>
@@ -1261,5 +1307,143 @@ a.land-cta:hover:visited {
 
 </div>
 
+
+<script>
+/* ── Filters pull the guides in ─────────────────────────────────────────────
+   Clicking a filter pill renders the matching guides inside the section rather
+   than navigating to /guides. The href is left intact, so with scripting off —
+   or if the fetch fails — the pill still works the way it always did.
+
+   Tags come from /guides/index.html itself: THEME_DATA, DAYS_DATA, each card's
+   href and data-lang, and the country grouping for continents. Parsed once,
+   cached for the page. Reading the listing directly means the tags can never
+   drift from it; a generated side-file would go stale the day a guide shipped. */
+(function () {
+  if (!window.fetch || !window.DOMParser) return;
+
+  var cache = null, inflight = null;
+
+  function load() {
+    if (cache) return Promise.resolve(cache);
+    if (inflight) return inflight;
+    inflight = fetch('./guides/index.html')
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        function grab(name) {
+          var m = html.match(new RegExp(name + '\\s*=\\s*(\\{[\\s\\S]*?\\});'));
+          if (!m) return {};
+          try { return JSON.parse(m[1]); } catch (e) { return {}; }
+        }
+        var themes = grab('THEME_DATA');
+        var days   = grab('DAYS_DATA');
+
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var guides = [];
+        [].forEach.call(doc.querySelectorAll('.dest-card'), function (card) {
+          if (card.hasAttribute('data-special')) return;          /* not a guide */
+          var nameEl = card.querySelector('.dest-name');
+          var href = card.getAttribute('href') || '';
+          if (!nameEl || href.indexOf('Trip-Essentials') > -1) return;
+          var country = card.closest('.country');
+          guides.push({
+            name: nameEl.textContent.trim(),
+            /* card hrefs are relative to /guides/, this page is its parent */
+            url: './guides/' + href.replace(/^\.\//, ''),
+            lang: (card.getAttribute('data-lang') || '').split(/\s+/),
+            country: country ? (country.getAttribute('data-country') || '') : ''
+          });
+        });
+        cache = { themes: themes, days: days, guides: guides, html: html };
+        return cache;
+      })
+      .catch(function () { inflight = null; return null; });
+    return inflight;
+  }
+
+  /* country -> continent, read from the listing's own CONTINENT map */
+  function continents(html) {
+    var m = html.match(/var CONTINENT = \{([\s\S]*?)\};/);
+    var out = {};
+    if (!m) return out;
+    var re = /'([^']+)'\s*:\s*'([^']+)'/g, x;
+    while ((x = re.exec(m[1]))) out[x[1]] = x[2];
+    return out;
+  }
+
+  function match(d, kind, value) {
+    return d.guides.filter(function (g) {
+      if (kind === 'type')  return (d.themes[g.name] || []).indexOf(value) > -1;
+      if (kind === 'days')  return String(d.days[g.name]) === value;
+      if (kind === 'lang')  return g.lang.indexOf(value) > -1;
+      if (kind === 'continent') {
+        d._cont = d._cont || continents(d.html);
+        return d._cont[g.country] === value;
+      }
+      return false;
+    });
+  }
+
+  function panelFor(nav) {
+    var p = nav.nextElementSibling;
+    if (!p || !p.classList.contains('lp-results')) {
+      p = document.createElement('div');
+      p.className = 'lp-results';
+      p.hidden = true;
+      nav.parentNode.insertBefore(p, nav.nextSibling);
+    }
+    return p;
+  }
+
+  document.addEventListener('click', function (ev) {
+    var pill = ev.target.closest ? ev.target.closest('.lp-pills a') : null;
+    if (!pill) return;
+    var href = pill.getAttribute('href') || '';
+    var m = href.match(/[?&](type|days|lang|continent)=([^&#]+)/);
+    if (!m) return;                       /* plain link — let it navigate */
+
+    ev.preventDefault();
+    var kind = m[1], value = decodeURIComponent(m[2]);
+    var nav = pill.parentNode, panel = panelFor(nav);
+    var already = pill.classList.contains('on');
+
+    [].forEach.call(nav.querySelectorAll('a'), function (a) { a.classList.remove('on'); });
+    if (already) { panel.hidden = true; return; }   /* second click closes */
+    pill.classList.add('on');
+
+    panel.hidden = false;
+    panel.innerHTML = '<p class="lp-res-empty">Loading…</p>';
+
+    load().then(function (d) {
+      if (!d) { location.href = href; return; }     /* fetch failed — just navigate */
+      var hits = match(d, kind, value).sort(function (a, b) { return a.name.localeCompare(b.name); });
+      if (!hits.length) {
+        panel.innerHTML = '<p class="lp-res-empty">No guides match that yet.</p>';
+        return;
+      }
+      var head = document.createElement('div');
+      head.className = 'lp-res-head';
+      head.innerHTML = '<b>' + hits.length + ' guide' + (hits.length > 1 ? 's' : '') +
+                       '</b> &middot; ' + pill.textContent.trim();
+      var clear = document.createElement('button');
+      clear.type = 'button'; clear.className = 'lp-res-clear'; clear.textContent = 'clear';
+      clear.addEventListener('click', function () {
+        panel.hidden = true; pill.classList.remove('on');
+      });
+      head.appendChild(clear);
+
+      var list = document.createElement('div');
+      list.className = 'lp-res-list';
+      hits.forEach(function (g) {
+        var a = document.createElement('a');
+        a.href = g.url; a.textContent = g.name;
+        list.appendChild(a);
+      });
+      panel.innerHTML = '';
+      panel.appendChild(head);
+      panel.appendChild(list);
+    });
+  });
+})();
+</script>
 </body>
 </html>
