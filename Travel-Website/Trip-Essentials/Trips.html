@@ -873,9 +873,13 @@ document.addEventListener('DOMContentLoaded',()=>{
 
    The .ics is built in the browser from the rows already on the page, so a
    corrected flight time or hotel date is picked up on the next click with no
-   other edit. Flight legs land on their real date and clock time with the
-   route, flight number and airports in the notes; a stay carries its hotel
-   name and address in the notes. Upcoming trips only, never an unconfirmed one.
+   other edit. Upcoming trips only, never an unconfirmed one.
+
+   Owner rule 2026-08-15: **the title is the name alone** — a route for a
+   flight, the hotel for a stay — and EVERYTHING else goes in the notes, one
+   labelled `Field · value` line each, grouped by blank lines. Nothing is
+   appended to the title to make it "informative"; the calendar month view has
+   room for a route and nothing more, and the detail is one tap away.
 
    The pre-trip-audit routine writes the same files to Trip-Exports/ on every
    run, so they are already sitting there when you want them — this page is the
@@ -912,7 +916,12 @@ document.addEventListener('DOMContentLoaded',()=>{
     var x=new Date(d.getTime()); x.setHours(h,parseInt(mm,10),0,0); return x;
   }
   function human(d){ return MS[d.getMonth()]+' '+d.getDate(); }
+  function clock(d){ var h=d.getHours(),m=d.getMinutes(),ap=h<12?'AM':'PM'; h=h%12||12; return h+':'+pad(m)+' '+ap; }
   function addDays(d,n){ var x=new Date(d.getTime()); x.setDate(x.getDate()+n); return x; }
+  /* The notes are one labelled fact per line, blank lines grouping them — the
+     title carries the name alone, so everything else has to be findable here
+     without reading a sentence (owner rule 2026-08-15). */
+  function notes(lines){ return lines.filter(function(l){ return l!=null; }).join('\n'); }
 
   /* ── ICS serialisation ── */
   function pad(n){ return (n<10?'0':'')+n; }
@@ -1006,16 +1015,27 @@ document.addEventListener('DOMContentLoaded',()=>{
         allDay=true; start=dep; end=addDays(dep,1);
       }
       var from=ap[route[1]]||route[1], to=ap[route[2]]||route[2];
+      var fromLine=route[1]+(from&&from!==route[1]?' — '+from:'');
+      var toLine=route[2]+(to&&to!==route[2]?' — '+to:'');
       evs.push({
         uid:base+'-flight-'+slug(route[1]+route[2]+num)+'-'+dDate(dep)+'-'+i+'@guidemydays.com',
-        summary:route[1]+' → '+route[2]+(num?' · '+num:''),
+        summary:route[1]+' → '+route[2],
         location:from,
         allDay:allDay, start:start, end:end,
-        desc:trip
-          +'\nDepart '+from+(dt?' at '+dt[0].replace(/\s+/g,' ').toUpperCase():'')
-          +'\nArrive '+to+(at?' at '+at[0].replace(/\s+/g,' ').toUpperCase():'')
-          +(who?'\nWho: '+who:'')
-          +'\nTimes are local to each airport.'
+        desc:notes([
+          'Flight · '+(num||'—'),
+          'Route · '+route[1]+' → '+route[2],
+          'Trip · '+trip,
+          who?'Who · '+who:null,
+          '',
+          'Depart · '+human(start)+(allDay?'':', '+clock(start)),
+          'From · '+fromLine,
+          '',
+          allDay?null:'Arrive · '+human(end)+(at?', '+clock(end):''),
+          'To · '+toLine,
+          '',
+          'Times are local to each airport.'
+        ])
       });
     });
     return evs;
@@ -1044,18 +1064,27 @@ document.addEventListener('DOMContentLoaded',()=>{
       :((addrEl&&addrEl.firstChild&&addrEl.firstChild.nodeType===3)?addrEl.firstChild.textContent.trim():'');
     var mapEl=card.querySelector('.hotel-name a');
     var siteEl=card.querySelector('p a');
+    var nights=Math.max(1,Math.round((outD-inD)/864e5));
     return {
       hotel:name, city:city,
       uid:base+'-stay-'+slug(name)+'-'+dDate(inD)+'-'+i+'@guidemydays.com',
-      summary:name+(city?' · '+city:''),
+      summary:name,
       location:addr||name,
       allDay:true, start:inD, end:addDays(outD,1),
-      desc:trip
-        +'\nCheck-in '+human(inD)+' · Check-out '+human(outD)
-        +(who?'\nWho: '+who:'')
-        +(addr?'\n'+addr:'')
-        +(mapEl?'\nMap: '+mapEl.href:'')
-        +(siteEl?'\n'+siteEl.href:'')
+      desc:notes([
+        'Hotel · '+name,
+        city?'City · '+city:null,
+        'Trip · '+trip,
+        who?'Who · '+who:null,
+        '',
+        'Check-in · '+human(inD),
+        'Check-out · '+human(outD),
+        'Nights · '+nights,
+        '',
+        addr?'Address · '+addr:null,
+        mapEl?'Map · '+mapEl.href:null,
+        siteEl?'Booking · '+siteEl.href:null
+      ])
     };
   }
 

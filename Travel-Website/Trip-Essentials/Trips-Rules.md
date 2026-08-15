@@ -516,6 +516,42 @@ Rules:
 - The `.ics` is built in the browser from the rows already on the page — a corrected flight time or hotel date is picked up on the next click with no other edit. Never hand-maintain a parallel export.
 - Re-importing a file already added corrects the events rather than duplicating them (stable `UID` per event). Don't change the UID shape.
 
+### Event shape — title is the name alone, notes carry everything
+
+Per owner 2026-08-15 (*"i need a organized thing title only and the rest in the notes with ALL the info"*):
+
+| Field | Flight | Hotel |
+|---|---|---|
+| **Title** (`SUMMARY`) | `SEA → MSP` — the route, nothing else | `Sofitel Munich Bayerpost` — the hotel name, nothing else |
+| **Location** | departure airport, full name | street address |
+| **Notes** (`DESCRIPTION`) | everything below | everything below |
+
+**Never append detail to the title.** No flight number, no ` · City` suffix, no who-tag. A month view has room for a route and nothing more; the detail is one tap away in the notes.
+
+**Notes format — one labelled fact per line, `Field · value`, groups separated by a blank line.** No prose, no sentences (matching the file's own no-prose rule), so the eye finds a field by its label.
+
+```
+Flight · DL298                    Hotel · NH Collection Salzburg City
+Route · MSP → FCO                 City · Salzburg
+Trip · 🇮🇹 Rome, Italy             Trip · 🇮🇹 Rome, Italy
+Who · Both                        Who · Wifey
+
+Depart · Aug 15, 8:20 PM          Check-in · Aug 17
+From · MSP — Minneapolis-Sain…    Check-out · Aug 22
+                                  Nights · 5
+Arrive · Aug 16, 12:40 PM
+To · FCO — Rome–Fiumicino Int…    Address · Franz-Josef-Strasse 26, 5020 Salzburg, Austria
+                                  Map · https://www.google.com/maps/…
+Times are local to each airport.   Booking · https://www.nh-hotels.com/…
+```
+
+Rules:
+- A missing value keeps its line only when the label still means something (`Flight · —` when a leg has no number); an absent city, who, address, map or booking link **drops the line entirely** rather than printing an empty one.
+- **Nights** is computed from the dates, never typed.
+- Airport lines are `CODE — Full Airport Name`, read from the `.airport-row` block on the card. If the card has no row for a code, the line is the bare code.
+- An all-day flight leg (no clock time on the card) prints `Depart · {date}` with no time and no `Arrive` line — never a fabricated time.
+- The closing `Times are local to each airport.` stays on flights; it is the one non-field line and it prevents the recurring "is this arrival in my timezone" question.
+
 Implementation lives in the export `<script>` at the bottom of `Trips.html`. The `save()` helper is copied verbatim from the guide export in `toolbar.js` (`_injectICSExport`) and has been through several rounds of fixes on real devices — **do not "improve" it**, especially the iOS navigation path and the 1500 ms `revokeObjectURL` delay.
 
 ---
