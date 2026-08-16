@@ -363,6 +363,10 @@ a.trip-jump-pill:visited { color: #3d3a32; }
 .cal-ic { display: inline-flex; vertical-align: -2px; margin-right: 6px; }
 .cal-ic svg { display: block; }
 .cal-row-meta { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+/* The whole-trip subscribe row is the offer — it is the only one that finishes
+   the job in a single click, so it carries the terracotta the eye goes to. */
+.cal-row-primary { background: #f5f0e6; border: 1.5px solid var(--rust); }
+.cal-row-primary .cal-row-name { color: #5a3c0e; }
 /* The file row is the fallback, not the offer — plain ground, no warm fill, so
    the rows that open a calendar are the ones the eye lands on. */
 .cal-row-file { background: transparent; border-style: dashed; }
@@ -1259,12 +1263,24 @@ document.addEventListener('DOMContentLoaded',()=>{
     listEl.innerHTML='';
     items.forEach(function(item){
       var b=document.createElement('button');
-      b.type='button'; b.className='cal-row'+(item.file_only?' cal-row-file':'');
+      b.type='button'; b.className='cal-row'+(item.file_only?' cal-row-file':'')+(item.primary?' cal-row-primary':'');
       var n=document.createElement('div'); n.className='cal-row-name';
       n.innerHTML='<span class="cal-ic">'+icon(item.icon)+'</span>'+escHTML(item.name);
       var m=document.createElement('div'); m.className='cal-row-meta'; m.textContent=item.meta;
       b.appendChild(n); b.appendChild(m);
       b.addEventListener('click',function(){
+        /* Subscribe — the whole trip, one click, no file and no per-event Save.
+           iOS gets webcal:// straight, which Calendar owns; everywhere else
+           goes through Google's own add-by-URL screen, which takes webcal://
+           as its cid and adds every event in the feed at once. */
+        if(item.feed){
+          if(isIOS){ closePanel(); window.location.href='webcal://'+item.feed; return; }
+          var s=window.open('https://calendar.google.com/calendar/r?cid='+
+            encodeURIComponent('webcal://'+item.feed),'_blank');
+          if(s){ try { s.opener=null; } catch(x){} closePanel(); return; }
+          window.location.href='webcal://'+item.feed;
+          return;
+        }
         var evs=item.build();
         if(!evs.length) return;
         /* One event, not iOS, not the file row → open it in Google Calendar and
@@ -1363,6 +1379,25 @@ document.addEventListener('DOMContentLoaded',()=>{
         meta:allEvs.length+' event'+(allEvs.length===1?'':'s')+' · downloads one .ics',
         file:base+'-trip.ics',
         build:function(){ return allEvs; }
+      });
+
+      /* ── The whole trip in ONE action ─────────────────────────────────────
+         Owner rule 2026-08-16: "do it right, like any decent export." A
+         pre-filled event link takes one event and still wants a Save; a file
+         has to be imported by hand. The only thing that puts EVERY event in a
+         calendar from a single click is a SUBSCRIBE URL — Google Calendar
+         will add an https .ics feed wholesale, and webcal:// hands the same
+         file to Calendar on Mac and iPhone. That is why the feed is published
+         at /trips/feed/{slug}.ics by build_trip_exports.py: the file has to
+         live at a real https address, so a blob built here could never do it.
+         Always the live host — the feed is not served from localhost, and a
+         relative URL would hand Google a link it cannot fetch. Re-adding a
+         trip corrects it rather than duplicating: the events carry stable
+         UIDs and the feed refreshes itself when a booking changes. ── */
+      items.unshift({
+        name:'Add the whole trip', icon:'calendar', primary:true,
+        meta:allEvs.length+' event'+(allEvs.length===1?'':'s')+' · one click, nothing to download',
+        feed:'guidemydays.com/trips/feed/'+base+'.ics'
       });
     }
 
