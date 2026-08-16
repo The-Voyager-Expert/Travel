@@ -1268,12 +1268,20 @@ document.addEventListener('DOMContentLoaded',()=>{
         var evs=item.build();
         if(!evs.length) return;
         /* One event, not iOS, not the file row → open it in Google Calendar and
-           we are done; the panel closes with the tab. window.open runs inside
-           this click handler, so no blocker fires — but if one somehow returns
-           null we still fall through to the file rather than doing nothing. */
+           we are done; the panel closes with the tab.
+
+           ⚠ NEVER pass 'noopener' here. window.open(url,'_blank','noopener')
+           returns null BY SPEC — the whole point of noopener is that the caller
+           gets no handle back — so testing the return value read every
+           successful open as a failure and fell through to save(), which is how
+           this shipped opening the calendar AND downloading the file in the same
+           click (owner, 2026-08-16: "this also asking to download"). The tab was
+           opening the entire time; only the check was wrong. Open plain, then
+           sever the opener link on the handle we got, which buys the same
+           protection without lying about the result. */
         if(evs.length===1 && !item.file_only && !isIOS){
-          var w=window.open(gcalURL(evs[0]),'_blank','noopener');
-          if(w){ closePanel(); return; }
+          var w=window.open(gcalURL(evs[0]),'_blank');
+          if(w){ try { w.opener=null; } catch(x){} closePanel(); return; }
         }
         var ics=calendar(evs);
         if(!ics) return;
