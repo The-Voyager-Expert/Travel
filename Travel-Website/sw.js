@@ -1,3 +1,4 @@
+/* 2026-08-15: index.html — train day filter; always show home airport; input vertical centering; CACHE to v918. */
 /* 2026-08-15: Zhangjiajie HOTEL_ALT_DATA — the Avic Hotel entry pulled in the
    2026-08-12 hotel swap left the city with three alternatives, one under the
    floor of four, and the FINAL GATE hard-failed the guide. Hilton Garden Inn
@@ -1244,7 +1245,8 @@
 /* 2026-08-15: index.html finder — Stops filter + badge count fixes; routing pill hidden for non-SEA airports. CACHE to v909. */
 /* 2026-08-15: lounge chip hover only on linked (<a>) chips; SHOW ONLY chips anchor after toggle btn. guide-style.css -> v212, toolbar.js -> v660. CACHE to v916. */
 /* 2026-08-15: index.html — Plugs & voltage card redesigned with real plug photo strip. CACHE to v917. */
-var CACHE = 'travel-cache-v917';
+/* 2026-08-15: toolbar — action pill row moved below info chips (after .overview-extras). toolbar.js -> v661. CACHE to v919. */
+var CACHE = 'travel-cache-v919';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1252,7 +1254,7 @@ var CACHE = 'travel-cache-v917';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 212,'toolbar.js': 660, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 212,'toolbar.js': 661, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -3236,7 +3236,7 @@ window.TVE.home = (function () {
       }
       _addTvePress(trigBtn);
       if (mapPill) _addTvePress(mapPill);
-      extras.parentNode.insertBefore(pillRow, extras);
+      extras.insertAdjacentElement('afterend', pillRow);
     } else {
       lastDay.parentNode.appendChild(trigBtn);
     }
