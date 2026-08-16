@@ -3145,14 +3145,9 @@ window.TVE.home = (function () {
 
     var dlBtn = document.createElement('button');
     dlBtn.type = 'button'; dlBtn.textContent = '↓ Download .ics';
-    /* Lighter terracotta, owner 2026-08-16. #d4784a is the site's existing
-       lighter step (the dark-mode terracotta ink), one stop up from #b85c2a —
-       not a new colour invented for this button. The label stays #7a3b1e:
-       dark brown on the lighter fill is the pair that reads, and lightening
-       the ground is what widens the gap. */
     dlBtn.style.cssText =
       'flex:1;padding:8px 16px;border:none;border-radius:6px;' +
-      'background:#d4784a;' +
+      'background:#b85c2a;' +
       'font-size:13px;font-weight:700;color:#7a3b1e;cursor:pointer;font-family:inherit;';
 
     function _closeICS() { overlay.style.display = 'none'; document.body.style.overflow = ''; }
