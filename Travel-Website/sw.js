@@ -1,3 +1,4 @@
+/* 2026-08-16: ROOT-ABSOLUTE LINKS. Every internal href/src and every URL string in page JS is now '/...'; toolbar.js builds from base='/' instead of a '../'-per-data-depth string. A link can no longer break because a page changed depth — the bug class behind /guides/athens/when-to-go/guides/when-to-go/before-you-go/. Guide photos moved out of _build/assets to /guides/<city>/photos/ (no underscore, no build-artifact name in a public URL). 230 read-about back-links pointed at the site root instead of their own guide; repointed. toolbar.js floor +1. CACHE to v943. */
 /* 2026-08-16: essentials slugs shortened to the owner's pattern — one concept, no "guide", no filler: /essentials/plugs, /currency, /budget, /visa, /safety and 28 more; plug-adapter/plug-adapter-guide collapsed to plugs/. toolbar.js floor +1. CACHE to v942. */
 /* 2026-08-16: every asset filename slugified — no spaces, no underscores, lowercase ASCII (4,752 files across guides photos, plug-adapter imgs and assets/*.json); all references repointed. toolbar.js floor +1. CACHE to v941. */
 /* 2026-08-16: section-page JS data (CITIES, GUIDE_LINKS, search_index, best-of data) repointed at the new URLs; stale duplicate essentials/when-to-go deleted; 71 asset filenames with spaces slugified to hyphens. CACHE to v940. */
@@ -1267,7 +1268,7 @@
 /* 2026-08-15: toolbar: replace Where to Stay dropdown with Best Of tab → /best-of/. toolbar.js -> v670. CACHE to v935. */
 /* 2026-08-15: toolbar: swap Before You Go and Best Of order. toolbar.js -> v671. CACHE to v936. */
 /* 2026-08-16: toolbar: Best Of → dropdown with all 34 categories (was plain tab to /best-of/). toolbar.js -> v672. CACHE to v937. */
-var CACHE = 'travel-cache-v942';
+var CACHE = 'travel-cache-v943';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1275,7 +1276,7 @@ var CACHE = 'travel-cache-v942';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 217,'toolbar.js': 677, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 17, 'weather.js': 7 };
+var MIN_VERSIONS = { 'guide-style.css': 218,'toolbar.js': 678, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 17, 'weather.js': 7 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

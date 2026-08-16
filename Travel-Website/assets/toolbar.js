@@ -218,7 +218,7 @@ window.TVE.home = (function () {
     var mount = document.getElementById('toolbar-mount');
     var dep = mount ? parseInt(mount.getAttribute('data-depth') || '1', 10) : 0;
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', new Array(dep + 1).join('../') + 'assets/airport-names.json', true);
+    xhr.open('GET', '/assets/airport-names.json', true);
     xhr.timeout = 8000;
     xhr.onload = function () {
       if (xhr.status < 200 || xhr.status >= 300) { done([]); return; }
@@ -361,7 +361,7 @@ window.TVE.home = (function () {
     if (!head) return;
     var m = d.getElementById('toolbar-mount');
     var dep = m ? parseInt(m.dataset.depth || '1', 10) : 1;
-    var b = new Array(dep + 1).join('../');
+    var b = '/';
     function link(rel, href, attrs) {
       if (d.querySelector('link[rel="' + rel + '"]')) return;
       var l = d.createElement('link'); l.rel = rel; l.href = href;
@@ -445,7 +445,7 @@ window.TVE.home = (function () {
     function _base() {
       var m = document.getElementById('toolbar-mount');
       var dep = m ? parseInt(m.dataset.depth || '1', 10) : 1;
-      return new Array(dep + 1).join('../');
+      return '/';
     }
 
     function _showBanner(isIOS) {
@@ -555,7 +555,15 @@ window.TVE.home = (function () {
   // centering twice (left-pack-with-right-gap, then hidden Trips). See Toolbar.html
   // § 7 Centering; brain_check.py check_toolbar_centering enforces it.
   var maxWidth   = mount ? parseInt(mount.dataset.maxwidth || '760', 10) : 760;
-  var base       = new Array(depth + 1).join('../');   // e.g. depth=2 → '../../'
+  /* Every URL the toolbar builds is ROOT-ABSOLUTE. The site is served from the
+     apex (guidemydays.com), so '/' IS the site root on every page, at every
+     depth. This replaced a '../'-per-data-depth base: when guides were
+     flattened to /guides/<city>.html their depth changed and every stale
+     data-depth produced compounding paths like
+     /guides/athens/when-to-go/guides/when-to-go/before-you-go/. A root-absolute
+     base cannot express that bug. data-depth is retained on the mount for the
+     validators and for page-local CSS, but it no longer drives any URL. */
+  var base       = '/';
   var curr     = location.pathname.split('/').pop() || 'index.html';
   var prevHref = mount ? (mount.dataset.prev || '') : '';
   var nextHref = mount ? (mount.dataset.next || '') : '';
@@ -10476,7 +10484,7 @@ window.TVE.home = (function () {
 
       var mountEl = document.getElementById('toolbar-mount');
       var dep = mountEl ? parseInt(mountEl.dataset.depth || '2', 10) : 2;
-      var base = new Array(dep + 1).join('../');
+      var base = '/';
       var href = null;
       if (US_IATAS.indexOf(info.iata) >= 0) {
         href = base + 'essentials/lounges-us/#' + info.iata.toLowerCase();
