@@ -1132,11 +1132,12 @@ window.TVE.home = (function () {
      removed the weather strip, the info pills, the Trip Overview carousel and the
      SHOW ONLY chips. Never re-pin these to one capitalisation. */
   var ITEMS = [
-    /* "Where to Go", not "Guides" (owner 2026-08-14). The four planning tabs now
-       read as one set — Where to Go · When to Go · Where to Stay · Before You Go
-       — naming the question the reader has rather than the kind of document they
-       will get. The href is unchanged; only the label moved. */
-    { href: base + 'guides/index.html', text: 'Where to Go', icon: 'orbited-globe' },
+    /* "Guides", not "Where to Go" (owner 2026-08-16, reversing the 2026-08-14
+       label). The question-shaped set it belonged to no longer exists — Where to
+       Stay was removed on 2026-08-16 — so the label was naming a set of one
+       while hiding what the tab actually opens: the 237-guide index. The href
+       has never moved through either rename; only the label. */
+    { href: base + 'guides/index.html', text: 'Guides', icon: 'orbited-globe' },
     /* OWNER-DIRECTED 2026-08-14, order: Guides · When to Go · Where to Stay ·
        Before You Go · Maps · Contact. It follows the order a trip is actually
        decided in — when to travel, then where to sleep, then what to sort out
