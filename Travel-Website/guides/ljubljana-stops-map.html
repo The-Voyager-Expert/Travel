@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../assets/stops-map-style.css">
+<title>Ljubljana — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="1" data-maxwidth="1400" data-title="Ljubljana — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../essentials/maps/vendor/leaflet.min.js"></script>
+<script src="../essentials/maps/vendor/markercluster.min.js"></script>
+<script src="../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+    {
+        "day": 3,
+        "name": "Dragon Bridge",
+        "query": "Dragon Bridge, Ljubljana",
+        "lat": 46.0519324,
+        "lng": 14.5104135
+    },
+    {
+        "day": 1,
+        "name": "Ljubljana Castle",
+        "query": "Grajska planota 1, Ljubljana",
+        "lat": 46.0486272,
+        "lng": 14.5086029
+    },
+    {
+        "day": 3,
+        "name": "Ljubljana Botanical Garden",
+        "query": "Izanska cesta 15 Ljubljana",
+        "lat": 46.0398102,
+        "lng": 14.5143644
+    },
+    {
+        "day": 4,
+        "name": "Metelkova",
+        "query": "Metelkova ulica, Ljubljana",
+        "lat": 46.0569956,
+        "lng": 14.5159513
+    },
+    {
+        "day": 1,
+        "name": "Congress Square",
+        "query": "Kongresni trg, Ljubljana",
+        "lat": 46.0501723,
+        "lng": 14.5048934
+    },
+    {
+        "day": 1,
+        "name": "Triple Bridge",
+        "query": "Triple Bridge, Ljubljana",
+        "lat": 46.0511325,
+        "lng": 14.5062101
+    },
+    {
+        "day": 1,
+        "name": "Ljubljana Town Hall",
+        "query": "Mestni trg 1, Ljubljana",
+        "lat": 46.0498091,
+        "lng": 14.5070796
+    },
+    {
+        "day": 3,
+        "name": "National &amp; University Library",
+        "query": "Turjaška ulica 1, Ljubljana",
+        "lat": 46.0475326,
+        "lng": 14.5037167
+    },
+    {
+        "day": 3,
+        "name": "City Museum of Ljubljana",
+        "query": "Gosposka ulica 15 Ljubljana",
+        "lat": 46.0469744,
+        "lng": 14.5040625
+    },
+    {
+        "day": 2,
+        "name": "National Museum of Slovenia",
+        "query": "Muzejska ulica 1, Ljubljana",
+        "lat": 46.0519688,
+        "lng": 14.4998846
+    },
+    {
+        "day": 2,
+        "name": "Slovenian National Gallery",
+        "query": "Prešernova cesta 24, Ljubljana",
+        "lat": 46.0541435,
+        "lng": 14.5003266
+    },
+    {
+        "day": 2,
+        "name": "Tivoli Park",
+        "query": "Tivoli Park, Ljubljana",
+        "lat": 46.0551457,
+        "lng": 14.4957283
+    },
+    {
+        "day": 2,
+        "name": "Plečnik House",
+        "query": "Karunova ulica 4, Ljubljana",
+        "lat": 46.0424024,
+        "lng": 14.502404
+    },
+    {
+        "day": 4,
+        "name": "Rožnik Hill",
+        "query": "Rožnik, Ljubljana",
+        "lat": 46.0510811,
+        "lng": 14.4762585
+    },
+    {
+        "day": 4,
+        "name": "Fužine Castle",
+        "query": "Rusjanov trg 7 Ljubljana",
+        "lat": 46.0506169,
+        "lng": 14.563467
+    },
+    {
+        "day": 5,
+        "name": "Mount Saint Mary",
+        "query": "Smarna Gora Ljubljana",
+        "lat": 46.1298335,
+        "lng": 14.4639447
+    },
+    {
+        "day": 6,
+        "name": "Lake Bled",
+        "query": "Lake Bled Slovenia",
+        "lat": 46.3639132,
+        "lng": 14.0938069
+    },
+    {
+        "day": 6,
+        "name": "Bled Castle",
+        "query": "Bled Castle Slovenia",
+        "lat": 46.3697035,
+        "lng": 14.1005205
+    }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
