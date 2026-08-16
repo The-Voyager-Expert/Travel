@@ -1323,7 +1323,15 @@
    still runs on every guide. Enforced by brain_check.check_updated_stamp_stats_only
    (Cleanliness rule 862). weather/index.html also dropped its own #wx-updated stamp.
    toolbar.js -> v691. CACHE to v967. */
-var CACHE = 'travel-cache-v968';
+
+/* 2026-08-16: time-zones — the TIME ZONES banner + intro card were swapped for the
+   essentials Hero D treatment (owner): terracotta .hero-band with a white Georgia
+   .hero-title and .hero-sub, and the search moved into .hero-ground on warm ground,
+   matching Tipping, Budget, Neighborhoods and the rest. Both classes already live in
+   web-travel-style.css and mobile.css, so no shared asset changed and no MIN_VERSIONS
+   floor moves — but the PAGE is precached, so without this bump a returning browser
+   or installed PWA keeps serving the old banner. CACHE to v969. */
+var CACHE = 'travel-cache-v969';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
