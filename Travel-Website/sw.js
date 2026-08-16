@@ -1285,7 +1285,8 @@
 /* 2026-08-16: Hotels & Flights search removed from all guides — pill, panel, airport picker, and all CSS deleted. toolbar.js floor +1, guide-style.css floor +1. CACHE to v958. */
 /* 2026-08-16: toolbar: add Plug Adaptor, Currency, Time Zones after Maps; remove Where to Stay from lock (owner). toolbar.js floor +1. CACHE to v960. */
 /* 2026-08-16: guide-style.css — add missing pointer:coarse grid for #ics-pill-row; without it the pill row is a horizontal flex on phones and pills after the first row are not visible (Currency, Save for Offline). guide-style.css floor +1. CACHE to v959. */
-var CACHE = 'travel-cache-v960';
+/* 2026-08-16: toolbar: motion banners (🚕) now render the red car; swap 🚕→delivery-car, 🚗→ride in MARKS. toolbar.js floor +1. CACHE to v961. */
+var CACHE = 'travel-cache-v961';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1293,7 +1294,7 @@ var CACHE = 'travel-cache-v960';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 221,'toolbar.js': 685, 'mobile.css': 81, 'web-travel-style.css': 49, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 7 };
+var MIN_VERSIONS = { 'guide-style.css': 221,'toolbar.js': 686, 'mobile.css': 81, 'web-travel-style.css': 49, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 7 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

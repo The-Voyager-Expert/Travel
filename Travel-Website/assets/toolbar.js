@@ -7938,8 +7938,8 @@ window.TVE.home = (function () {
       '💳': 'card',
       '📍': 'pin',
       '🚶': 'walk',
-      '🚕': 'ride',
-      '🚗': 'delivery-car',       /* a few guides author the car — same mark */
+      '🚕': 'delivery-car',
+      '🚗': 'ride',               /* a few guides author the car — same mark */
       '🚐': 'van',        /* tour hotel-pickup row, 548 fleet-wide */
       '🏨': 'hotel',      /* the other half of that row */
       /* extras-sub rows. The survey is closed: across the fleet these rows
