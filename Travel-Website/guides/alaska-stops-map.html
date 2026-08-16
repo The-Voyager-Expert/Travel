@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/MarkerCluster.min.css">
+<title>Alaska — All Stops Map</title>
+<link rel="stylesheet" href="../assets/stops-map-style.css">
+</head>
+<body>
+<div data-toolbar data-depth="1" data-maxwidth="1400" data-title="Alaska — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../essentials/maps/vendor/leaflet.min.js"></script>
+<script src="../essentials/maps/vendor/markercluster.min.js"></script>
+<script src="../assets/toolbar.js?v=126"></script>
+<script>
+const STOPS = [
+    {
+        "day": 1,
+        "name": "Anchorage Museum",
+        "query": "625 C Street Downtown Anchorage",
+        "lat": 61.21901,
+        "lng": -149.89414
+    },
+    {
+        "day": 2,
+        "name": "Alaska Native Heritage Center",
+        "query": "8800 Heritage Center Drive Anchorage",
+        "lat": 61.21202,
+        "lng": -149.73948
+    },
+    {
+        "day": 2,
+        "name": "Flattop Mountain",
+        "query": "Glen Alps Trailhead Chugach State Park Anchorage",
+        "lat": 61.09702,
+        "lng": -149.72689
+    },
+    {
+        "day": 3,
+        "name": "Alaska Wildlife Conservation Center",
+        "query": "43520 Seward Highway Portage AK",
+        "lat": 60.8539,
+        "lng": -149.02814
+    },
+    {
+        "day": 3,
+        "name": "Portage Glacier",
+        "query": "401 Portage Lake Loop Portage Valley AK",
+        "lat": 60.77945,
+        "lng": -148.83489
+    },
+    {
+        "day": 3,
+        "name": "Knik Glacier Helicopter Tour",
+        "query": "29979 East Knik River Road Palmer AK",
+        "lat": 61.46601,
+        "lng": -148.92353
+    },
+    {
+        "day": 4,
+        "name": "Matanuska Glacier",
+        "query": "66500 S Glacier Park Road Sutton AK",
+        "lat": 61.7693,
+        "lng": -147.75851
+    },
+    {
+        "day": 1,
+        "name": "Resolution Park",
+        "query": "300 L Street Downtown Anchorage",
+        "lat": 61.21935,
+        "lng": -149.90413
+    },
+    {
+        "day": 1,
+        "name": "Tony Knowles Coastal Trail",
+        "query": "900 West 2nd Avenue Anchorage",
+        "lat": 61.21733,
+        "lng": -149.90009
+    },
+    {
+        "day": 4,
+        "name": "Earthquake Park",
+        "query": "5101 Point Woronzof Road Anchorage",
+        "lat": 61.19814,
+        "lng": -149.97182
+    },
+    {
+        "day": 5,
+        "name": "Exit Glacier",
+        "query": "Exit Glacier Road Seward AK",
+        "lat": 60.18731,
+        "lng": -149.6283
+    },
+    {
+        "day": 5,
+        "name": "Kenai Fjords Wildlife Cruise",
+        "query": "Seward Small Boat Harbor Seward AK",
+        "lat": 60.10718,
+        "lng": -149.44054
+    }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
