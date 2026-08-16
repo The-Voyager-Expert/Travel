@@ -1340,7 +1340,8 @@
    home" sort stay off until a base exists. Page-only change, no shared asset and
    no MIN_VERSIONS floor moves — but the PAGE is precached, so without this bump a
    returning browser or installed PWA keeps serving the old base. CACHE to v973. */
-var CACHE = 'travel-cache-v973';
+/* 2026-08-16: also-on-this-site pills: one icon per meaning, guide pills draw a mark, and a shape repeated 3+ down a strip is not drawn toolbar.js -> v696. CACHE to v974. */
+var CACHE = 'travel-cache-v974';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1348,7 +1349,7 @@ var CACHE = 'travel-cache-v973';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 223,'toolbar.js': 695, 'mobile.css': 81, 'web-travel-style.css': 51, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
+var MIN_VERSIONS = { 'guide-style.css': 223,'toolbar.js': 696, 'mobile.css': 81, 'web-travel-style.css': 51, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

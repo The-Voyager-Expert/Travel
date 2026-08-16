@@ -133,14 +133,22 @@ a.cf-spill-pill:visited { color: #3d3a32; }  /* literal: var() is inert in :visi
     color: var(--text, #3d3a32); background: var(--surface, #fff);
     border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0;
   }
-  /* Layout only — the FILL is not overridden here (owner, 2026-08-15: "goes
-     white when fills terracotta so we can read the text"). This rule used to
-     set background:var(--bg,#f5f4f0) and color:inherit, which cancelled the
+  /* Layout only — no fill, no colour. History, because the note that stood here
+     was wrong in a way that kept the bug alive: on 2026-08-15 this rule set
+     background:var(--bg,#f5f4f0) and color:inherit, which cancelled the then-
      canonical terracotta gradient but could NOT cancel the shared rule's
-     color:#fff !important — so every pill in these two rows rendered white
-     text on a near-white fill and vanished under the pointer. The gradient is
-     a locked value (check_guide_pill_css_canonical, 2026-07-25); the white
-     label is correct ON it. Never re-add a background or color here. */
+     color:#fff !important — white text on a near-white fill, vanishing under
+     the pointer. The fix at the time was to restore the gradient, and this
+     comment was left saying "the white label is correct ON it."
+
+     IT IS NOT, AND THERE IS NO GRADIENT ANY MORE. The owner hit the same
+     disappearing label again the next day on the "Also on this site" strip; the
+     cause was the theme override in toolbar.js, injected into <head>, painting
+     the pill white while the !important label stayed white. Hover is now
+     OUTLINED site-wide — resting fill kept, terracotta border and terracotta
+     label — and color:#fff is a hard-fail on these classes
+     (check_guide_pill_css_canonical). This rule keeps only what it is for:
+     border, shadow, transform. Do not add a background or a colour here. */
   .cf-sibling-row a.sibling-pill:hover, .cf-research-row a.sibling-pill:hover {
     border-color: var(--rust);
     box-shadow: none; transform: none;}

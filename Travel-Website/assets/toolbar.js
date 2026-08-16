@@ -8473,27 +8473,39 @@ window.TVE.home = (function () {
        last non-empty path segment, `.html` stripped. Both this table and the
        ITEMS walk go through it, so they cannot drift apart again, and an empty
        key is refused rather than stored. */
+    /* ONE ICON PER MEANING, not one per category (2026-08-16). Every air page
+       used to map to `plane`, so the airlines strip drew FIVE identical planes
+       in a row — a weaker version of the all-clocks bug above, and it reads to a
+       owner as the same defect: a row stamped with one shape. Distinct meanings
+       now get distinct shapes from the catalogue (`Site-Icons.html`, the
+       Twenty-eighth non-negotiable): connection times is about time between
+       flights, a lounge is somewhere to sit, a carrier route map is a map.
+       Pages that genuinely ARE the same thing still match on purpose — the
+       three carrier route maps, the two lounge pages — because inventing a
+       difference where there is none is the opposite fix. */
     var PAGE_ICON = {
       /* Air */
-      'connections': 'plane', 'lounges-us': 'plane', 'lounges-europe': 'plane',
-      'delta-routes': 'plane', 'united-routes': 'plane', 'american-routes': 'plane',
-      'airlines': 'plane',
+      'connections': 'hourglass', 'lounges-us': 'coffee', 'lounges-europe': 'coffee',
+      'delta-routes': 'flight-nav', 'united-routes': 'flight-nav',
+      'american-routes': 'flight-nav', 'airlines': 'plane',
       /* Stats — every regional page plus the overview and the records page */
       'stats': 'chart', 'africa': 'chart', 'asia': 'chart', 'canada': 'chart',
       'caribbean': 'chart', 'europe': 'chart', 'oceania': 'chart',
       'south-america': 'chart', 'us': 'chart', 'travel-stats': 'chart',
       'records': 'trophy',
-      /* Bags */
-      'baggage': 'luggage', 'storage': 'luggage', 'packing': 'packing',
-      /* Stays */
-      'hotels': 'neighborhoods', 'neighborhoods': 'neighborhoods',
-      'most-luxurious-hotels': 'neighborhoods', 'ultra-luxurious-resorts': 'neighborhoods',
-      'unique-hotels': 'neighborhoods', 'resorts': 'neighborhoods',
+      /* Bags — `before-you-go` also draws `luggage`, but its icon comes from
+         ITEMS (the nav owns it), so the checked-bag page takes the variant. */
+      'baggage': 'luggage-hardcase', 'storage': 'luggage', 'packing': 'packing',
+      /* Stays — six pages all drew `neighborhoods`, which put five identical
+         house marks down the Hotels & Stays strip. */
+      'hotels': 'hotel', 'neighborhoods': 'neighborhoods',
+      'most-luxurious-hotels': 'gem-yellow', 'ultra-luxurious-resorts': 'palm',
+      'unique-hotels': 'boutique', 'resorts': 'tropical-bay',
       /* Rail */
-      'european-trains': 'train', 'scenic-trains': 'train', 'train-passes': 'train',
-      'transit-cards': 'transit',
+      'european-trains': 'high-speed-train', 'scenic-trains': 'train',
+      'train-passes': 'ticket', 'transit-cards': 'transit',
       /* Documents */
-      'visa': 'visas', 'visa-times': 'visas', 'nomad-visas': 'laptop',
+      'visa': 'visas', 'visa-times': 'clock-hourglass', 'nomad-visas': 'laptop',
       'entry': 'entry-req', 'passport': 'passport', 'trusted': 'trusted',
       'trusted-traveler': 'trusted', 'vaccines': 'vaccines',
       /* Timing and weather */
@@ -8512,9 +8524,17 @@ window.TVE.home = (function () {
       'tap-water': 'tap-water', 'mistakes': 'first-timer',
       'before-you-go': 'luggage',
       /* Best Of */
-      'amusement-parks': 'ferris', 'kids-friendly-places': 'ferris',
+      'amusement-parks': 'ferris', 'kids-friendly-places': 'kids',
       'islands': 'island'
     };
+    /* A pill pointing at a GUIDE is not in the table and never can be — there
+       are 237 of them and they arrive by slug (`/guides/athens.html`), or built
+       in page script (`${c.guide}` on Neighborhoods). They drew NOTHING, which
+       looks like a rendering failure when they sit in a strip where every
+       neighbour has a mark: Disney's "Orlando guide" / "Los Angeles guide", and
+       every per-city guide pill on Neighborhoods. One shape for the whole
+       class, resolved from the path rather than a slug. */
+    var GUIDE_ICON = 'guidebook-globe';
     /* The ONE href reader. Last non-empty segment, `.html` off, lowercased —
        so `/essentials/visa/`, `/essentials/visa`, `/essentials/visa/index.html`
        and an old `Visas.html#eu` all land on a comparable key. Returns '' for
@@ -8541,9 +8561,49 @@ window.TVE.home = (function () {
       });
     })(ITEMS);
 
+    function _iconKey(a) {
+      var href = (a.getAttribute('href') || '').split('#')[0];
+      return /^\/guides\//.test(href)
+        ? GUIDE_ICON
+        : PAGE_ICON[_pageKey(a.getAttribute('href'))];
+    }
+
+    /* A SHAPE REPEATED DOWN A WHOLE STRIP IS NOISE, SO IT IS NOT DRAWN.
+       The regional stats pages cross-link the other seven regions, and every one
+       of them is a stats page — so the row came out as seven identical charts,
+       which is the picture the owner objected to in the first place, only this
+       time the icons were CORRECT. An icon that is the same on every pill in a
+       row tells the reader nothing the labels do not; the labels are the
+       information. Same reasoning `_injectRowMarks` already applies to an
+       .extras-sub repeating its own section header's mark.
+
+       Threshold is 3, and per STRIP rather than per page: a PAIR is kept,
+       because two lounge pages or two carrier route maps genuinely are the same
+       kind of thing and the shared shape reads as a grouping rather than as a
+       stamp. Three or more and it stops carrying meaning. */
+    var REPEAT_LIMIT = 3;
+    var strips = [];
+    [].forEach.call(pills, function (a) {
+      if (a.parentNode && strips.indexOf(a.parentNode) === -1) strips.push(a.parentNode);
+    });
+    strips.forEach(function (box) {
+      var tally = {}, muted = {}, any = false;
+      [].forEach.call(box.querySelectorAll('.also-on-this-site-pill,.sibling-pill'),
+        function (el) {
+          var k = _iconKey(el);
+          if (k) tally[k] = (tally[k] || 0) + 1;
+        });
+      Object.keys(tally).forEach(function (k) {
+        if (tally[k] >= REPEAT_LIMIT) { muted[k] = true; any = true; }
+      });
+      if (any) box._gmMutedIcons = muted;
+    });
+
     [].forEach.call(pills, function (a) {
       if (a.querySelector('svg')) return;                 /* already drawn */
-      var key = PAGE_ICON[_pageKey(a.getAttribute('href'))];
+      var key = _iconKey(a);
+      var mute = a.parentNode && a.parentNode._gmMutedIcons;
+      if (key && mute && mute[key]) return;               /* repeated down the strip */
       if (!navIcon(key)) return;
       /* THE PILL MAY ALREADY CARRY A DRAWN MARK — take it out before inserting.
          The guard above only catches an <svg>, and a .gm-mk is a CSS mask on a
@@ -8579,6 +8639,13 @@ window.TVE.home = (function () {
   } else {
     _injectAlsoOnSiteIcons();
   }
+  /* SECOND PASS ON LOAD — for pills a PAGE SCRIPT renders. Neighborhoods builds
+     a "{City} guide" pill per city inside cityBlockHTML(), and those elements do
+     not exist yet when the pass above runs, so they shipped bare next to a strip
+     where everything else had a mark. The pass is idempotent (`already drawn`
+     returns on the first line) and cheap, so re-running costs one querySelectorAll
+     on pages that gained nothing. */
+  window.addEventListener('load', _injectAlsoOnSiteIcons);
 
   /* ── Stop wishlist — cross-guide bookmark feature ────────────────────────
      Injects a ★ star button into each .stop-header (appended after the share
