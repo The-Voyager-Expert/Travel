@@ -14,6 +14,12 @@
    <head>, no JS download needed). toolbar.js's 2 s safety always restores it. */
 body { opacity: 0; transition: none; }
 
+/* The full-bleed hero measures its bleed in 100vw, which includes the classic
+   scrollbar on platforms that reserve one — a few px wider than the document.
+   `clip` absorbs that overshoot. It is NOT `hidden`: clip does not create a
+   scroll container, so position:sticky keeps working. */
+html { overflow-x: clip; }
+
 :root {
   /* ── Colors ── */
   --bg:       #f5f4f0;
@@ -59,6 +65,17 @@ body { opacity: 0; transition: none; }
   --transition-normal: 0.2s;
   --border-thin:       0.5px;
   --border-normal:     1px;
+
+  /* ── Page rail ── the one place the content column's width and gutter are
+     defined. Every surface that sits directly on the page reads these two
+     tokens (.wrap, .also-strip, body > .title-updated) so they stay aligned
+     with each other at every viewport. Before 2026-08-16 .wrap was
+     `max-width: none` with a flat 32px gutter, so on a wide desktop the whole
+     page ran edge to edge and the content sat 32px off the left — owner:
+     "glued to the left side ... body can't be like that". The full-bleed hero
+     band is the deliberate exception and is handled at .hero-band below. */
+  --rail:   1180px;
+  --gutter: 32px;
 
   /* ── Delta routing tier colors (nonstop=green / 1-stop=blue / 2-stop=amber) ── */
   --c0: #1a5a1a; --c0bg: #e8f5e8; --c0bd: #a0d8a0;
@@ -199,7 +216,7 @@ body {
 }
 
 /* ── Layout ── */
-.wrap { max-width: none; margin: 0 auto; padding: 0 32px; }
+.wrap { max-width: var(--rail); margin: 0 auto; padding: 0 var(--gutter); }
 .reading-col { max-width: 720px; margin-left: auto; margin-right: auto; }
 
 /* ── Heading scale — wired to CSS vars so the 3-step hierarchy is consistent.
@@ -208,8 +225,9 @@ body {
 h2 { font-size: var(--fs-h2); font-weight: 700; }
 h3 { font-size: var(--fs-h3); font-weight: 600; }
 /* Non-guide pages: JS injects .title-updated as a direct body child so the stamp
-   always lands at the true visual bottom. padding-left matches .wrap gutter. */
-body > .title-updated { padding-left: 32px; }
+   always lands at the true visual bottom. It sits OUTSIDE .wrap, so it has to
+   repeat the rail itself or it drifts left of the content on a wide screen. */
+body > .title-updated { max-width: var(--rail); margin-left: auto; margin-right: auto; padding-left: var(--gutter); padding-right: var(--gutter); }
 
 /* ── Page banner (desktop only) — gradient block with centered title.
    Mobile overrides live in mobile.css (text-only left-accent strip).
@@ -362,7 +380,9 @@ a.apply-btn, a.apply-btn:hover, .apply-btn, .apply-btn:hover,
 a.sibling-pill:visited { color: #6a6660; }  /* literal hex — Chrome doesn't resolve var() in :visited */
 
 /* ── Also-on-this-site strip (Trip-Essentials cross-link cluster) ── */
-.also-strip { margin-top: 30px; padding: 16px 32px 0; border-top: 1px solid var(--border2,#e6e2da); }
+/* Also-strip is a direct body child, outside .wrap — same rail, or its rule and
+   its pills sit wider than the page content above them. */
+.also-strip { max-width: var(--rail); margin: 30px auto 0; padding: 16px var(--gutter) 0; border-top: 1px solid var(--border2,#e6e2da); }
 .also-strip-head { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .also-links { display: flex; flex-wrap: wrap; gap: 6px; }
 a.also-on-this-site-pill {
@@ -663,7 +683,13 @@ input[type="text"]::placeholder,
 
 /* ── Mobile ── */
 @media (max-width: 600px) and (pointer: coarse) {
-  .wrap { padding: 0 14px; }
+  /* Phone gutter, defined ONCE as the token. It used to be 14px here while
+     mobile.css rule 5 forced .wrap to 16px !important — two numbers for one
+     edge, which is what left the hero band 2px short of both sides. Everything
+     that reads --gutter (.wrap, .also-strip, the stamp, the body-level hero)
+     now moves together. */
+  :root { --gutter: 16px; }
+  .wrap { padding: 0 var(--gutter); }
   body  { --pb: 40px; padding-bottom: var(--pb); }
   /* Source links inside page-header must not inherit the 40px tap-target min-height */
   .page-header .src-link,
@@ -1563,12 +1589,45 @@ body.is-searching .hub-top { display:none!important; }
   .page-intro-card { gap: 14px; padding: 14px 15px; }
 }
 
-/* ── Trip-Essentials Hero D ── */
-.hero-band { background: var(--brand,#C04E1A); margin: 0 -32px; padding: 44px 32px 36px; }
+/* ── Trip-Essentials Hero D ──
+   The hero is the ONE deliberate full-bleed surface: it runs to the window edge
+   while everything above and below it stays on the rail (--rail / --gutter).
+   `100%` inside these calcs is the .wrap content width, so (100vw - 100%)/2 is
+   exactly the distance from the hero's own edge out to the window edge — the
+   bleed follows the rail at every viewport instead of hardcoding -32px, which
+   is what silently drifted 2px on phone when mobile.css forced a 16px gutter
+   against a -14px bleed. Do not put a number back here. */
+.hero-band {
+  background: var(--brand,#C04E1A);
+  margin-left: calc((100% - 100vw) / 2); margin-right: calc((100% - 100vw) / 2);
+  padding: 44px calc((100vw - 100%) / 2) 36px;
+}
 .hero-title { font-family: Georgia,Cambria,serif; font-size: 48px; font-weight: 700; color: #fff; letter-spacing: -.03em; line-height: 1.05; text-wrap: balance; margin-bottom: 10px; }
 .hero-sub { font-size: 14px; color: rgba(255,255,255,.78); line-height: 1.7; max-width: 520px; margin: 0; }
-.hero-ground { background: var(--ground,#F2EFE8); margin: 0 -32px; padding: 22px 32px 28px; margin-bottom: 20px; }
+.hero-ground {
+  background: var(--ground,#F2EFE8);
+  margin-left: calc((100% - 100vw) / 2); margin-right: calc((100% - 100vw) / 2);
+  padding: 22px calc((100vw - 100%) / 2) 28px;
+  margin-bottom: 20px;
+}
+/* Why (100vw - 100%)/2 and NOT that plus the gutter: `100%` is the CONTENT box
+   of the container the hero sits in, so that half-difference is already the auto
+   margin PLUS the container's own padding — the whole distance out to the window
+   edge. Adding --gutter on top pushed the hero title one gutter right of every
+   line of content below it. Under the old `max-width: none` .wrap both forms
+   happened to land on 32px, which is why this only surfaced with a rail. */
 .hero-ground .search-input { max-width: 440px; margin: 0 auto; display: block; }
+/* Some pages mount the hero as a direct body child, ABOVE .wrap rather than
+   inside it (the 24 essentials pages whose stray </div> orphaned the wrap until
+   2026-08-16). There the band is already the full window, so it needs no bleed —
+   what it needs is the rail's own inset, or its title sits at the gutter while
+   the content below it sits on the rail. `100%` is the body width here. */
+body > .hero-band,
+body > .hero-ground {
+  margin-left: 0; margin-right: 0;
+  padding-left:  max(var(--gutter), calc((100% - var(--rail)) / 2 + var(--gutter)));
+  padding-right: max(var(--gutter), calc((100% - var(--rail)) / 2 + var(--gutter)));
+}
 
 /* ── Best-Of Features (best-of-features.js) ── 2026-08-03 ── */
 .showcase-card { position: relative; }

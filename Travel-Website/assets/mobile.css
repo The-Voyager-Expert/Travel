@@ -151,10 +151,13 @@ pre { white-space: pre-wrap; }
     white-space: nowrap;
   }
 
-  /* Non-guide updated stamp — match .wrap mobile gutter (14px). */
-  body > .title-updated { padding-left: 14px !important; }
-  /* Also-strip — match .wrap mobile gutter (14px). Desktop sets 32px. */
-  .also-strip { padding-left: 14px !important; padding-right: 14px !important; }
+  /* Both of these sit OUTSIDE .wrap, so they carry the gutter themselves. They
+     used to hardcode 14px "to match .wrap" while rule 5 above forced .wrap to
+     16px — the stamp and the strip have been 2px left of the content they align
+     to ever since. --gutter is the single value now (16px on phone), so they
+     cannot drift again; the !important is only here to outrank rule 5's own. */
+  body > .title-updated { padding-left: var(--gutter) !important; padding-right: var(--gutter) !important; }
+  .also-strip { padding-left: var(--gutter) !important; padding-right: var(--gutter) !important; }
 
   /* Legend containers keep their layout on mobile; per-page inline @media
      handles pill sizing (Form B grid on Safety-Guide/Tap-Water, single-
@@ -616,10 +619,15 @@ pre { white-space: pre-wrap; }
 }
 
 @media (max-width: 600px) and (pointer: coarse) {
-  /* Trip-Essentials Hero D — negative margin collapses to match mobile padding */
-  .hero-band { margin: 0 -14px; padding: 32px 14px 28px; }
+  /* Trip-Essentials Hero D — the horizontal bleed is NOT restated here. The
+     shared rule measures it as (100vw - 100%)/2 off the .wrap content width, so
+     it already lands on this file's 16px phone gutter on its own. The old
+     `margin: 0 -14px` was a second copy of the number, and rule 5 above forces
+     .wrap to 16px !important — so the band stopped 2px short of both edges on
+     every phone. Only the vertical rhythm and the title size belong here. */
+  .hero-band { padding-top: 32px; padding-bottom: 28px; }
   .hero-title { font-size: 32px; }
-  .hero-ground { margin: 0 -14px; padding: 18px 14px 20px; }
+  .hero-ground { padding-top: 18px; padding-bottom: 20px; margin-bottom: 0; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

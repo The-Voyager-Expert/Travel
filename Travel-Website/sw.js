@@ -1361,7 +1361,24 @@
    passes behavior:'instant'. Two pages, no shared asset and no MIN_VERSIONS floor moves;
    both pages are precached, so without this bump a returning browser keeps the dead
    paths. CACHE to v977. */
-var CACHE = 'travel-cache-v977';
+
+/* 2026-08-16: the page rail is back. `.wrap` had been sitting on
+   `max-width: none` with a flat 32px gutter, so on any wide display every
+   non-guide page ran the full window with its content 32px off the left edge —
+   owner: "all the desktop and mobile lost their left margin ... it is glued to
+   the left side ... I understand here for effect body, body can't be like
+   that." Two tokens now carry it (--rail 1180px, --gutter 32px / 16px on
+   phone) and everything that sits directly on the page reads them: .wrap, the
+   also-strip and the updated stamp. The full-bleed hero stays full-bleed, but
+   measures its own bleed as calc((100vw - 100%) / 2) off whatever container it
+   is in, so it follows the rail instead of a hardcoded -32px that had already
+   drifted 2px against mobile's 16px gutter. Structural half of the same fix: 24
+   essentials pages carried a stray </div> immediately after <div class="wrap">,
+   which orphaned the container and left the entire page as direct body children
+   — those pages had no gutter at all and were the worst of what the owner saw.
+   Both shared sheets changed: web-travel-style.css -> v52, mobile.css -> v82.
+   CACHE to v978. */
+var CACHE = 'travel-cache-v978';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1369,7 +1386,7 @@ var CACHE = 'travel-cache-v977';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 223,'toolbar.js': 697, 'mobile.css': 81, 'web-travel-style.css': 51, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
+var MIN_VERSIONS = { 'guide-style.css': 223,'toolbar.js': 697, 'mobile.css': 82, 'web-travel-style.css': 52, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
