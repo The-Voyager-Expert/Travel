@@ -21,7 +21,12 @@
   margin-bottom: 16px;
 }
 .home-label { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
-.home-city  { font-size: 30px; font-weight: 400; color: var(--text); }
+.home-city  { font-size: 30px; font-weight: 400; color: var(--text); margin-bottom: 10px; }
+/* The picker is the SHARED search — no size, icon or border overrides here, or
+   it stops looking like every other search on the site. Only the dropdown is
+   pinned left, because this one is not centred in a hero. */
+.home-left { min-width: 0; position: relative; }
+.home-left .sa-suggest { left: 0; right: auto; text-align: left; }
 .home-right { text-align: right; }
 .home-time  { font-size: 42px; font-weight: 700; color: var(--rust); font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1; }
 .home-day   { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 3px; }
@@ -44,6 +49,10 @@ input.search:focus { border-color: var(--c-search-focus-border); box-shadow: non
   cursor: pointer; transition: all .15s; white-space: nowrap;
 }
 .pill:hover, .pill.active { font-family: inherit; background: var(--bg, #f5f4f0); border-color: var(--rust, #b85c2a); color: var(--text, #3d3a32); }
+/* "Closest to home" is dead until a home base exists — it stays visible so the
+   reader can see what setting a base unlocks, but it does not respond. */
+.pill:disabled { opacity: .45; cursor: default; }
+.pill:disabled:hover { background: var(--surface, #fff); border-color: var(--border2, #e6e2da); color: #6a6660; }
 a.pill:visited { color: #6a6660; }
 
 /* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Formatting/Formatting.html#src-desktoppill.
@@ -112,7 +121,7 @@ a.pill:visited { color: #6a6660; }
   .card { padding: 10px 11px; gap: 5px; }
   .card-time { font-size: 19px; }
   /* Shorten the "Same" label so it fits the chip */
-  /* (handled in JS — see vsSeattle short labels for mobile) */
+  /* (handled in JS — see vsHome short labels for mobile) */
   /* Search input: keep font-size 16px (from mobile.css) to prevent iOS zoom — don't override */
 }
 @media (max-width: 359px) {
@@ -158,16 +167,23 @@ a.pill:visited { color: #6a6660; }
     </div>
     <div class="pills" id="sort-pills">
       <button class="pill sort-pill active" data-sort="alpha" aria-label="Sort alphabetically">A–Z</button>
-      <button class="pill sort-pill" data-sort="time">Closest to Seattle</button>
+      <button class="pill sort-pill" data-sort="time" disabled>Closest to home</button>
     </div>
   </div>
 
-  <div class="home-row">
-    <div>
+  <!-- No starting home base (owner 2026-08-16). The row opens as a search and
+       stays that way until the reader names their own city — nothing is assumed,
+       not a hardcoded city and not the browser's zone. The input is the SAME
+       component as every other search on the site: class="search search-input",
+       standard 360px pill, standard magnifier, TVESearch typeahead wired at the
+       foot of the page exactly like the hero search. -->
+  <div class="home-row" id="home-row">
+    <div class="home-left">
       <div class="home-label">Home base</div>
-      <div class="home-city">🇺🇸 Seattle</div>
+      <div class="home-city" id="home-city" hidden></div>
+      <input class="search search-input" id="home-search" type="search" placeholder="City or country" aria-label="Set your home base" autocomplete="off">
     </div>
-    <div class="home-right">
+    <div class="home-right" id="home-right" hidden>
       <div class="home-time" id="sea-time">--:--</div>
       <div class="home-day"  id="sea-day"></div>
     </div>
@@ -434,7 +450,45 @@ var CITIES = [
   {name:'Cape Town',       country:'South Africa',         tz:'Africa/Johannesburg',            region:'other',     flag:'🇿🇦', url:'/guides/cape-town.html'},
 ];
 
-var SEA_TZ = 'America/Los_Angeles';
+/* HOME_TZ — null until the reader searches for their own city. There is no
+   starting base (owner 2026-08-16): not the owner's city, and not the browser's
+   own zone either. Everything measured AGAINST home — the ± chip on each card
+   and the "Closest to home" sort — stays off the page until a base exists, so
+   the grid never shows a difference from a place the reader never chose. Each
+   card's own local time and UTC offset are absolute and always render. */
+var HOME_KEY = 'gmd_tz_home';
+var HOME_TZ = null, HOME_LABEL = '';
+
+function _deviceTZ() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; }
+  catch (e) { return 'UTC'; }
+}
+
+function setHome(city) {
+  HOME_TZ    = city ? city.tz : null;
+  HOME_LABEL = city ? ((city.flag ? city.flag + ' ' : '') + city.name) : '';
+  try {
+    if (city) localStorage.setItem(HOME_KEY, city.name);
+    else      localStorage.removeItem(HOME_KEY);
+  } catch (e) {}
+
+  var cityEl = document.getElementById('home-city');
+  var rightEl = document.getElementById('home-right');
+  if (cityEl)  { cityEl.textContent = HOME_LABEL; cityEl.hidden = !city; }
+  if (rightEl) { rightEl.hidden = !city; }
+
+  /* Sorting by distance from home is meaningless with no home. */
+  var timePill = document.querySelector('.sort-pill[data-sort="time"]');
+  if (timePill) {
+    timePill.disabled = !city;
+    if (!city && activeSort === 'time') {
+      activeSort = 'alpha';
+      document.querySelectorAll('.sort-pill').forEach(function (p) { p.classList.remove('active'); });
+      var alphaPill = document.querySelector('.sort-pill[data-sort="alpha"]');
+      if (alphaPill) alphaPill.classList.add('active');
+    }
+  }
+}
 
 function getOffsetMinutes(tz, date) {
   var d   = new Date(date.toLocaleString('en-US', {timeZone: tz}));
@@ -467,7 +521,9 @@ function relativeDay(tz, date) {
     return f.format(d);
   }
   var cityDay = ymd(date, tz);
-  var seaDay  = ymd(date, SEA_TZ);
+  /* With no home base, "today" is the reader's own calendar day — the device
+     zone is fine as a REFERENCE for the word, and is never shown as a base. */
+  var seaDay  = ymd(date, HOME_TZ || _deviceTZ());
   if (cityDay === seaDay)   return 'today';
   var seaDate = new Date(seaDay + 'T12:00:00Z');
   var cityDate= new Date(cityDay + 'T12:00:00Z');
@@ -485,8 +541,10 @@ function formatUTCOffset(tz, date) {
   return 'UTC' + sign + h + (m ? ':' + String(m).padStart(2, '0') : '');
 }
 
-function vsSeattle(tz, date) {
-  var seaMins  = getOffsetMinutes(SEA_TZ, date);
+/* null when no home base is set — the caller omits the chip entirely. */
+function vsHome(tz, date) {
+  if (!HOME_TZ) return null;
+  var seaMins  = getOffsetMinutes(HOME_TZ, date);
   var cityMins = getOffsetMinutes(tz, date);
   var diffH = (cityMins - seaMins) / 60;
   if (diffH === 0) return {label: 'Same', cls: 'same'};
@@ -505,8 +563,10 @@ function render() {
   var now  = new Date();
   var grid = document.getElementById('grid');
 
-  document.getElementById('sea-time').textContent = formatTime(SEA_TZ, now);
-  document.getElementById('sea-day').textContent  = formatFullDay(SEA_TZ, now);
+  if (HOME_TZ) {
+    document.getElementById('sea-time').textContent = formatTime(HOME_TZ, now);
+    document.getElementById('sea-day').textContent  = formatFullDay(HOME_TZ, now);
+  }
   document.querySelector('.home-row').style.display = searchVal ? 'none' : '';
 
   var filtered = CITIES.filter(function(c) {
@@ -523,8 +583,8 @@ function render() {
     return true;
   });
 
-  var seaMins = getOffsetMinutes(SEA_TZ, now);
-  if (activeSort === 'time') {
+  var seaMins = HOME_TZ ? getOffsetMinutes(HOME_TZ, now) : 0;
+  if (activeSort === 'time' && HOME_TZ) {
     filtered.sort(function(a, b) {
       var da = Math.abs(getOffsetMinutes(a.tz, now) - seaMins);
       var db = Math.abs(getOffsetMinutes(b.tz, now) - seaMins);
@@ -554,7 +614,7 @@ function render() {
     var time = formatTime(c.tz, now);
     var day  = relativeDay(c.tz, now);
     var utc  = formatUTCOffset(c.tz, now);
-    var vs   = vsSeattle(c.tz, now);
+    var vs   = vsHome(c.tz, now);   /* null until a home base is set */
     var hour = parseInt(time.split(':')[0], 10);
     var sleeping = hour >= 22 || hour < 7;
     var sleepMark = sleeping ? '' : '';
@@ -573,7 +633,7 @@ function render() {
       '</div>' +
       '<div class="card-meta">' +
         '<span class="utc-offset">' + utc + '</span>' +
-        '<span class="vs-sea ' + vs.cls + '">' + vs.label + '</span>' +
+        (vs ? '<span class="vs-sea ' + vs.cls + '">' + vs.label + '</span>' : '') +
       '</div>';
     return c.url
       ? '<a class="' + cardCls + ' card-link" href="' + c.url + '">' + inner + '</a>'
@@ -650,6 +710,14 @@ document.getElementById('grid').addEventListener('click', function(e) {
   if (!match) return;
   searchVal = match.name.toLowerCase();
   document.getElementById('search').value = match.name;
+})();
+
+/* Restore a base the reader set on a previous visit. Nothing is assumed when
+   there is no saved choice — setHome(null) is the empty, search-only state. */
+(function initHome() {
+  var saved = null;
+  try { saved = localStorage.getItem(HOME_KEY); } catch (e) {}
+  setHome(saved ? CITIES.filter(function (c) { return c.name === saved; })[0] || null : null);
 })();
 
 render();
@@ -789,10 +857,25 @@ function renderSun() {
 <script>(function(){
   if(!window.TVESearch) return;
   var src=window.CITIES||[];
+  var items=src.map(function(c){ return { name:c.name, sub:c.country }; });
   var input=document.getElementById('search');
   if(input){
-    var items=src.map(function(c){ return { name:c.name, sub:c.country }; });
     TVESearch.attach(input,{items:items});
+  }
+  /* Home base — same component, same items, same typeahead as the search above;
+     the only difference is what picking does. */
+  var homeInp=document.getElementById('home-search');
+  if(homeInp){
+    TVESearch.attach(homeInp,{
+      items:items,
+      onPick:function(it){
+        var city=src.filter(function(c){ return c.name===it.name; })[0];
+        if(!city) return;
+        setHome(city);
+        homeInp.value='';
+        render();
+      }
+    });
   }
   var sunInp=document.getElementById('sun-city-input');
   if(sunInp){
