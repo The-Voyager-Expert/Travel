@@ -33,10 +33,6 @@ input.wx-city { flex: 1; width: 100%; min-width: 0; font-family: inherit; font-s
    of the input's 36px icon inset. Weight only is dropped to regular to match
    the de-bolded input text per owner request. */
 #wx-panel .sa-row { padding: 12px 16px; font-size: 13px; font-weight: 400; }
-/* Explicit, and #id-scoped: the [hidden] attribute is display:none only from
-   the UA sheet, so ANY later rule setting display on .wx-panel would beat it
-   and paint an empty card. Scoped high enough that it cannot be outranked. */
-#wx-panel[hidden] { display: none !important; }
 .wx-month { margin-top: 16px; text-align: center; font-size: 13px; color: var(--muted); }
 .wx-bignums { display: flex; justify-content: center; gap: 28px; margin-top: 6px; }
 .wx-bignums .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
@@ -133,7 +129,7 @@ input.wx-city { flex: 1; width: 100%; min-width: 0; font-family: inherit; font-s
 </div>
 
 <div class="wx-wrap">
-  <div class="wx-panel" id="wx-panel" hidden></div>
+  <div class="wx-panel" id="wx-panel"></div>
   <!-- The two glued strips that sat here are gone (owner 2026-08-14: "these
        should all be removed — it is ugly and repetitive"). The top pair read as
        one offer twice over (Climate finder IS the When to Go tab), and the
@@ -229,20 +225,6 @@ input.wx-city { flex: 1; width: 100%; min-width: 0; font-family: inherit; font-s
   }
 
   function render() {
-    /* With no city chosen the panel is REMOVED, not filled with a placeholder.
-       .wx-panel is a raised card — cream fill, border, 26px shadow — sized by
-       its content, so a one-line "search above" message rendered inside it as a
-       large empty banner floating under the search box. The card is the result;
-       until there is a result there is nothing to raise off the page, and the
-       hero search stands on its own. */
-    if (!DB[curKey]) {
-      panel.innerHTML = '';
-      panel.hidden = true;
-      paintHero();
-      paintUnit();
-      return;
-    }
-    panel.hidden = false;
     panel.innerHTML = body();
     paintHero();
     paintUnit();
@@ -278,17 +260,14 @@ input.wx-city { flex: 1; width: 100%; min-width: 0; font-family: inherit; font-s
     return { name: DB[k].city || k, sub: DB[k].co || '', key: k };
   });
   if (cityKeys.length) {
-    /* Only the #City hash selects a city — the 237 guides deep-link that way.
-       With no hash the page opens EMPTY and waits for the search.
-
-       It used to fall back to Seattle, then to the alphabetically first city.
-       Seattle is the owner's home airport, not the reader's, and every reader
-       arrived at a page already answering a question they had not asked — the
-       city name in the headline, its temperatures in the panel, its name filled
-       into the search box they then had to clear. A search page with a
-       pre-filled answer reads as broken data, not as a default. */
+    /* Opens on a city, exactly as it always did — the widget has to look like a
+       widget on arrival, not an empty page. The ONLY change from the original is
+       which city: it preferred 'Seattle' (the owner's own, meaningless to every
+       reader) and fell back to the first key alphabetically. That fallback is now
+       the rule, with no Seattle special case. A #City hash still wins — the 237
+       guides deep-link that way. */
     var hashKey = decodeURIComponent(location.hash.slice(1));
-    if (hashKey && cityKeys.indexOf(hashKey) >= 0) curKey = hashKey;
+    curKey = (hashKey && cityKeys.indexOf(hashKey) >= 0) ? hashKey : cityKeys[0];
     var inp0 = document.getElementById('wx-city-search');
     if (inp0) inp0.value = DB[curKey] ? (DB[curKey].city || curKey) : '';
     if (window.TVESearch && inp0) {
