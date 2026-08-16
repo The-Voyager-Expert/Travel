@@ -7213,7 +7213,7 @@ window.TVE.home = (function () {
       ));
       var more = document.createElement('a');
       more.className = 'tve-cur-more';
-      more.href = base + 'essentials/currency/#' + c.id;
+      more.href = base + 'currencies/#' + c.id;
       more.textContent = 'Currency Guide ›';
       note.appendChild(more);
       panel.appendChild(note);
