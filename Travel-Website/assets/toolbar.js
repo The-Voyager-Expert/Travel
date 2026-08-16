@@ -1191,8 +1191,10 @@ window.TVE.home = (function () {
       { href: base + 'best-of/wonders-of-the-world/', text: 'Wonders of the World' }
     ] },
     { href: base + 'maps/world/', text: 'Maps', icon: 'folded-map' },
-    { href: 'mailto:contact@guidemydays.com?subject=Guide%20My%20Days', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
-     to the form. NOT base + ... — a mailto must not be depth-prefixed. */
+    { href: 'mailto:contact@guidemydays.com', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
+     to the form. NOT base + ... — a mailto must not be depth-prefixed.
+     Owner 2026-08-16: no ?subject= — the mail app opens with an empty subject
+     line and the reader writes their own. */
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
   // Guide pages now share the #f5f4f0 warm background with essentials — colour detection
