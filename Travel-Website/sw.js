@@ -1394,7 +1394,11 @@
    ✓ ring keeps its 22px circle (padding it out paints a 40px disc) and takes
    its hit area from a transparent ::after. guide-style.css -> v224. CACHE to
    v979. */
-var CACHE = 'travel-cache-v979';
+/* 2026-08-17: salzburg.html full content audit — every from-hotel motion time
+   re-measured against NH Collection Salzburg City, four stops added, days
+   re-cut. Guide HTML only, no asset ?v= change, so CACHE to v980 is what
+   carries it to returning readers. */
+var CACHE = 'travel-cache-v980';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
