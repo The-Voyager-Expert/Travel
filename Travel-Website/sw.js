@@ -1296,7 +1296,14 @@
    "Trip Resources" heading above the essentials block is gone (owner) — index.html
    is served network-first and needs no floor of its own. toolbar.js -> v689.
    CACHE to v964. */
-var CACHE = 'travel-cache-v964';
+/* 2026-08-16: toolbar — the Best Of dropdown is replaced by a plain Packing
+   Checklist tab pointing at essentials/packing/ (owner: promote the packing page
+   to a more visible place). The strip now carries no dropdown at all. Best Of is
+   still reachable: index.html #best-of lists all 34 categories, and the Best Of
+   pages keep their prev/next carousel. Same pass: essentials/packing/ removed
+   from the index Trip Resources block, since a toolbar tab reaches it from every
+   page and the block would be a second copy. toolbar.js -> v690. CACHE to v965. */
+var CACHE = 'travel-cache-v965';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1304,7 +1311,7 @@ var CACHE = 'travel-cache-v964';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 221,'toolbar.js': 689, 'mobile.css': 81, 'web-travel-style.css': 49, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 7 };
+var MIN_VERSIONS = { 'guide-style.css': 221,'toolbar.js': 690, 'mobile.css': 81, 'web-travel-style.css': 49, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 7 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -1155,42 +1155,21 @@ window.TVE.home = (function () {
        item.group.replace(...), and the whole toolbar renders as the no-JS
        fallback on every page. */
     { href: base + 'before-you-go/', text: 'Before You Go', icon: 'luggage' },
-    { group: 'Best Of', groupIcon: 'trophy', children: [
-      { href: base + 'best-of/amusement-parks/', text: 'Amusement Parks' },
-      { href: base + 'best-of/animal-encounters/', text: 'Animal Encounters' },
-      { href: base + 'best-of/aquariums/', text: 'Aquariums' },
-      { href: base + 'best-of/architecture/', text: 'Architecture' },
-      { href: base + 'best-of/art-museums/', text: 'Art Museums' },
-      { href: base + 'best-of/beaches/', text: 'Beaches' },
-      { href: base + 'best-of/castles/', text: 'Castles' },
-      { href: base + 'best-of/cathedrals/', text: 'Cathedrals' },
-      { href: base + 'best-of/caves/', text: 'Caves' },
-      { href: base + 'best-of/gardens/', text: 'Gardens' },
-      { href: base + 'best-of/hard-to-reach-places/', text: 'Hard to Reach Places' },
-      { href: base + 'best-of/hot-springs/', text: 'Hot Springs' },
-      { href: base + 'best-of/islands/', text: 'Islands' },
-      { href: base + 'best-of/kids-friendly-places/', text: 'Kids Friendly Places' },
-      { href: base + 'best-of/kids-museums/', text: 'Kids Museums' },
-      { href: base + 'best-of/lakes/', text: 'Lakes' },
-      { href: base + 'best-of/most-luxurious-hotels/', text: 'Luxurious Hotels' },
-      { href: base + 'best-of/mountains-and-rock-formations/', text: 'Mountains & Rock Formations' },
-      { href: base + 'best-of/museums/', text: 'Museums' },
-      { href: base + 'best-of/national-parks-by-country/', text: 'National Parks' },
-      { href: base + 'best-of/natural-phenomena/', text: 'Natural Phenomena' },
-      { href: base + 'best-of/observation-decks/', text: 'Observation Decks' },
-      { href: base + 'best-of/resorts/', text: 'Resorts' },
-      { href: base + 'best-of/safari/', text: 'Safari' },
-      { href: base + 'best-of/scuba-diving/', text: 'Scuba Diving' },
-      { href: base + 'best-of/ski-resorts/', text: 'Ski Resorts' },
-      { href: base + 'best-of/surfing/', text: 'Surfing' },
-      { href: base + 'best-of/ultra-luxurious-resorts/', text: 'Ultra Luxurious Resorts' },
-      { href: base + 'best-of/unesco-sites/', text: 'UNESCO Sites' },
-      { href: base + 'best-of/unique-hotels/', text: 'Unique Hotels' },
-      { href: base + 'best-of/unique-museums/', text: 'Unique Museums' },
-      { href: base + 'best-of/volcanoes/', text: 'Volcanoes' },
-      { href: base + 'best-of/wine-regions/', text: 'Wine Regions' },
-      { href: base + 'best-of/wonders-of-the-world/', text: 'Wonders of the World' }
-    ] },
+    /* OWNER-DIRECTED 2026-08-16: the Best Of dropdown is replaced by a plain
+       Packing Checklist tab. The owner wanted the packing page promoted to a
+       more visible place, and it now has the only slot that reaches it from
+       every page of the site.
+
+       Best Of is NOT orphaned by this: the landing page carries the whole
+       34-category list as its own section (index.html #best-of), which is where
+       it was promoted to on 2026-08-14, and every Best Of page keeps its
+       prev/next carousel. What is gone is the nav copy of that list.
+
+       This also leaves ITEMS with no `group` entry at all — the dropdown tier
+       is empty for the first time. The group-rendering code stays where it is;
+       it simply has nothing to iterate, and the next dropdown the owner asks
+       for needs no code to come back. */
+    { href: base + 'essentials/packing/', text: 'Packing Checklist', icon: 'packing' },
     { href: base + 'maps/world/', text: 'Maps', icon: 'folded-map' },
     /* OWNER-DIRECTED 2026-08-16: three essentials pages added after Maps. */
     { href: base + 'plugs/', text: 'Plug Adaptor', icon: 'plug' },
