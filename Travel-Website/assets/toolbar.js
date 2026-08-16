@@ -1133,7 +1133,7 @@ window.TVE.home = (function () {
        Before You Go · Maps · Contact. It follows the order a trip is actually
        decided in — when to travel, then where to sleep, then what to sort out
        before leaving — rather than the order the tabs happened to be added. */
-    { href: base + 'When-to-Go.html', text: 'When to Go', icon: 'sun-clear' },
+    { href: base + 'when-to-go/', text: 'When to Go', icon: 'sun-clear' },
     /* OWNER-DIRECTED 2026-08-14: Where to Stay, a dropdown of the six lodging
        pages previously reachable only from the landing page's Where to Stay
        column. SIXTH top-strip entry and the first dropdown since the bar was cut
@@ -1146,15 +1146,15 @@ window.TVE.home = (function () {
        item.group.replace(...), and the whole toolbar renders as the no-JS
        fallback on every page. */
     { group: 'Where to Stay', groupIcon: 'building', children: [
-      { href: base + 'Trip-Essentials/Neighborhoods.html', text: 'Neighbourhoods' },
-      { href: base + 'Trip-Essentials/Hotels-Stays.html', text: 'Hotels & stays' },
-      { href: base + 'Trip-Essentials/Best-Unique-Hotels.html', text: 'Unique hotels' },
-      { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html', text: 'Most luxurious' },
-      { href: base + 'Trip-Essentials/Best-Resorts.html', text: 'Resorts' },
-      { href: base + 'Trip-Essentials/Best-Ultra-Luxurious-Resorts.html', text: 'Ultra-luxurious resorts' }
+      { href: base + 'trip-essentials/neighborhoods/', text: 'Neighbourhoods' },
+      { href: base + 'trip-essentials/hotels-stays/', text: 'Hotels & stays' },
+      { href: base + 'trip-essentials/best-unique-hotels/', text: 'Unique hotels' },
+      { href: base + 'trip-essentials/best-most-luxurious-hotels/', text: 'Most luxurious' },
+      { href: base + 'trip-essentials/best-resorts/', text: 'Resorts' },
+      { href: base + 'trip-essentials/best-ultra-luxurious-resorts/', text: 'Ultra-luxurious resorts' }
     ] },
-    { href: base + 'Trip-Essentials/Before-You-Go.html', text: 'Before You Go', icon: 'luggage' },
-    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', icon: 'folded-map' },
+    { href: base + 'trip-essentials/before-you-go/', text: 'Before You Go', icon: 'luggage' },
+    { href: base + 'trip-essentials/maps/world-map/', text: 'Maps', icon: 'folded-map' },
     { href: 'mailto:contact@guidemydays.com?subject=Guide%20My%20Days', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
      to the form. NOT base + ... — a mailto must not be depth-prefixed. */
   ];
@@ -8917,9 +8917,9 @@ window.TVE.home = (function () {
       'European-Train-Guide.html': 'train', 'Scenic-Train-Journeys.html': 'train',
       'Train-Passes.html': 'train',
       'Visas.html': 'visas', 'Visa-Processing-Times.html': 'visas',
-      'Weather.html': 'sun', 'When-to-Go.html': 'sun',
-      'When-to-Go.html': 'calendar', 'Sports-Calendar.html': 'calendar',
-      'Sunrise-Sunset.html': 'sunset', 'Time-Zones.html': 'clock',
+      'Weather.html': 'sun', 'when-to-go/': 'sun',
+      'when-to-go/': 'calendar', 'Sports-Calendar.html': 'calendar',
+      'sunrise-sunset/': 'sunset', 'Time-Zones.html': 'clock',
       'Best-Amusement-Parks.html': 'ferris', 'Best-Kids-Friendly-Places.html': 'ferris',
       'Best-Islands.html': 'island', 'Budget-Guide.html': 'budget',
       'Cards-ATM.html': 'card', 'City-Transit-Cards.html': 'transit',
