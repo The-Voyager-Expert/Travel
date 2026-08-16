@@ -305,86 +305,44 @@ a.nu-chip:visited { color: #6a6660; }
 .trip-jump-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: var(--text); padding: 5px 13px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); text-decoration: none; white-space: nowrap; transition: border-color .15s, color .15s, background .15s; }
 a.trip-jump-pill:visited { color: #3d3a32; }
 .trip-jump-pill:hover { color: var(--accent); border-color: var(--accent); background: rgba(138,108,26,0.04); }
-/* ── Export to Calendar ──────────────────────────────────────────────────
-   The pill is the guide's action-bar pill, rebuilt here with literal values:
-   guide-style.css owns --c-next-bg / --c-next-border / --c-action-text and
-   this page does not load it. Keep these three hexes in step with that file
-   (#f5f0e6 fill · #bba070 border · #5a3c0e ink · 700 weight · 6px radius)
-   — see Brain/Reference/Page-Specs/Trips-Page-Structure.html § 5. ── */
-.cal-pill-row { padding: 14px 0 0; }
-.cal-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  color: #5a3c0e;
-  background: #f5f0e6;
-  border: 1px solid #bba070;
-  border-radius: 6px;
-  padding: 6px 12px;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-  transition: background .15s, border-color .15s;
+/* ── The calendar icon on each part of the trip ──────────────────────────
+   Owner rule 2026-08-16: one icon per part, and NO page in between. The
+   chooser panel that used to stand between the click and the calendar is gone
+   — owner: *"i did not ask for this middle page … i ask one icon by each part
+   of it"* and *"we need to get rid of it, this is the problem."* There is also
+   no whole-trip control: the two of them export different parts, so an
+   "everything" button is one neither would press.
+
+   Each icon is an <a href="webcal://…"> straight to Calendar. Nothing here
+   writes a file, which is the whole fix: a control with no URL of its own has
+   to fall back to building a blob, and the blob is what the reader was then
+   asked to save.
+
+   The .added state is remembered in localStorage, because the real cost of
+   per-part exporting is losing track — owner: *"i would get lost which one i
+   did."* ── */
+.cal-add {
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-left: 8px; padding: 3px 5px; border-radius: 5px;
+  border: 1px solid transparent; vertical-align: -3px;
+  text-decoration: none; line-height: 1;
+  opacity: .5; transition: opacity .15s, border-color .15s, background .15s;
 }
-@media (hover: hover) { .cal-pill:hover { border-color: var(--rust); } }
-.cal-pill:active { border-color: var(--rust); }
-.cal-pill:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
-/* ── The chooser panel ── */
-.cal-overlay {
-  display: none; position: fixed; inset: 0; z-index: 2000;
-  background: rgba(0,0,0,.42); align-items: center; justify-content: center; padding: 16px;
+.cal-add svg { display: block; width: 15px; height: 15px; }
+@media (hover: hover) {
+  .cal-add:hover { opacity: 1; border-color: var(--rust); background: #f5f0e6; }
 }
-.cal-overlay.open { display: flex; }
-.cal-box {
-  position: relative; background: #fff; border-radius: 12px; padding: 24px 24px 18px;
-  max-width: 420px; width: 100%; max-height: 86vh; overflow-y: auto;
-  box-shadow: 0 12px 40px rgba(0,0,0,.22);
+.cal-add:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; opacity: 1; }
+/* Already added — the mark that stops you losing your place. */
+.cal-add.added { opacity: 1; border-color: #2e7d32; background: rgba(46,125,50,.09); }
+.cal-add.added svg { color: #2e7d32; }
+@media (max-width: 600px) and (pointer: coarse) {
+  /* A 15px glyph is not a tap target — pad it out without moving the row. */
+  .cal-add { padding: 9px 10px; margin-left: 4px; opacity: .75; }
 }
-.cal-x {
-  position: absolute; top: 12px; right: 14px; background: none; border: none;
-  font-size: 13px; color: #7a7068; cursor: pointer; line-height: 1; padding: 4px; font-family: inherit;
-}
-.cal-x:hover { color: #3d3a32; }
-.cal-title { font-size: 15px; font-weight: 700; color: #1b2531; padding-right: 28px; }
-.cal-sub { font-size: 13px; color: #5b636f; margin: 5px 0 16px; line-height: 1.45; }
-.cal-row {
-  display: block; width: 100%; text-align: left; font-family: inherit; cursor: pointer;
-  background: var(--warm); border: 1px solid rgba(138,108,26,.25); border-radius: 8px;
-  padding: 10px 13px; margin-bottom: 8px; min-height: 44px;
-  transition: background .15s, border-color .15s;
-}
-@media (hover: hover) { .cal-row:hover { border-color: var(--rust); } }
-.cal-row:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
-.cal-row-name { font-size: 14px; font-weight: 700; color: #3d3a32; }
-.cal-ic { display: inline-flex; vertical-align: -2px; margin-right: 6px; }
-.cal-ic svg { display: block; }
-.cal-row-meta { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
-/* The whole-trip subscribe row is the offer — it is the only one that finishes
-   the job in a single click, so it carries the terracotta the eye goes to. */
-/* The subscribe row is an <a> (see the anchor note in the script) — strip the
-   link treatment so it reads as the same row as its button siblings, and pin
-   the visited colour: no font on this site changes colour after visiting. */
-a.cal-row, a.cal-row:visited, a.cal-row:hover { text-decoration: none; color: inherit; }
-a.cal-row .cal-row-name, a.cal-row:visited .cal-row-name { color: #5a3c0e; }
-.cal-row-primary { background: #f5f0e6; border: 1.5px solid var(--rust); }
-.cal-row-primary .cal-row-name { color: #5a3c0e; }
-/* The file row is the fallback, not the offer — plain ground, no warm fill, so
-   the rows that open a calendar are the ones the eye lands on. */
-.cal-row-file { background: transparent; border-style: dashed; }
-.cal-row-file .cal-row-name { font-weight: 500; color: var(--muted); }
-.cal-row.cal-done { background: rgba(46,125,50,0.07); border-color: #2e7d32; }
-.cal-row.cal-done .cal-row-name { color: #2e7d32; }
-.cal-foot { font-size: 12px; color: var(--muted); line-height: 1.45; margin-top: 10px; }
 @media (max-width: 600px) and (pointer: coarse) {
   .nu-wx { margin-left: 0; width: 100%; }
   .nu-city { font-size: 15px; }
-  .cal-pill { width: 100%; justify-content: center; min-height: 44px; }
-  .cal-box { padding: 20px 16px 14px; max-height: 90vh; }
-  .cal-row-name { font-size: 15px; }
 }
 @media (prefers-color-scheme: dark) {
   :root { --hubby: #4aaa4a; }
@@ -1124,6 +1082,9 @@ document.addEventListener('DOMContentLoaded',()=>{
            where the flight number and Who live in the notes (owner rule
            2026-08-15: the title is the name alone). */
         num:num, who:who,
+        /* The row this leg came from — the calendar icon is injected into it,
+           so the event and the line the reader is looking at stay together. */
+        row:row,
         location:from,
         allDay:allDay, start:start, end:end,
         desc:notes([
@@ -1206,113 +1167,47 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
   }
 
-  /* ── The chooser panel — one overlay, reused by every trip's pill ── */
-  var overlay=null, titleEl=null, subEl=null, listEl=null, opener=null;
+  /* ── One calendar icon on each part of the trip ─────────────────────────
+     Owner rule 2026-08-16. The chooser panel is GONE — owner: *"i did not ask
+     for this middle page … i ask one icon by each part of it"* · *"we need to
+     get rid of it, this is the problem."* Each flight row and each stay carries
+     its own icon, right where the booking is written. There is no whole-trip
+     control: the two of them export different parts, so an "everything" button
+     is one neither would press.
 
-  function closePanel(){
-    if(!overlay) return;
-    overlay.classList.remove('open');
-    document.body.style.overflow='';
-    if(opener) opener.focus();
-  }
-  function buildOverlay(){
-    if(overlay) return;
-    overlay=document.createElement('div');
-    overlay.className='cal-overlay';
-    overlay.setAttribute('role','dialog');
-    overlay.setAttribute('aria-modal','true');
-    overlay.setAttribute('aria-label','Export to calendar');
-    var box=document.createElement('div'); box.className='cal-box';
-    var xBtn=document.createElement('button');
-    xBtn.type='button'; xBtn.className='cal-x'; xBtn.textContent='✕';
-    xBtn.setAttribute('aria-label','Close');
-    titleEl=document.createElement('div'); titleEl.className='cal-title';
-    titleEl.innerHTML='<span class="cal-ic">'+icon('calendar')+'</span>Export to Calendar';
-    subEl=document.createElement('div'); subEl.className='cal-sub';
-    listEl=document.createElement('div');
-    var foot=document.createElement('div'); foot.className='cal-foot';
-    foot.textContent='The top row hands the whole trip to Calendar in one go. '
-      +'The rows under it are for taking a single flight or stay on its own. '
-      +'Adding something you already have corrects it rather than duplicating it, '
-      +'and a changed booking reaches the calendar on its own.';
-    box.appendChild(xBtn); box.appendChild(titleEl); box.appendChild(subEl);
-    box.appendChild(listEl); box.appendChild(foot);
-    overlay.appendChild(box);
-    document.body.appendChild(overlay);
-    xBtn.addEventListener('click',closePanel);
-    overlay.addEventListener('click',function(e){ if(e.target===overlay) closePanel(); });
-    document.addEventListener('keydown',function(e){
-      if(e.key==='Escape' && overlay.classList.contains('open')) closePanel();
-    });
-  }
-  function openPanel(pill,trip,items){
-    buildOverlay();
-    opener=pill;
-    subEl.textContent=trip+' — every flight and every stay on its own row, '
-      +'so you can take just the ones you need.';
-    listEl.innerHTML='';
-    items.forEach(function(item){
-      /* ── The subscribe row is a real ANCHOR, not a button ──────────────────
-         This is how every "Subscribe to calendar" control on the web is built,
-         and it is not decoration: a browser hands an EXTERNAL scheme to the OS
-         when it is following a link the reader clicked. Assigning
-         `window.location.href = 'webcal://…'` from a script is not that — Chrome
-         drops it on the floor with no prompt and no error, which is exactly what
-         happened here: the click did nothing at all and the reader was left
-         reaching for the file row instead (owner, 2026-08-16: "SAME SHIT asks me
-         to save"). An <a href="webcal://…"> is followed. ── */
-      var b=document.createElement(item.feed?'a':'button');
-      if(item.feed){ b.href='webcal://'+item.feed; }
-      else { b.type='button'; }
-      b.className='cal-row'+(item.file_only?' cal-row-file':'')+(item.primary?' cal-row-primary':'');
-      var n=document.createElement('div'); n.className='cal-row-name';
-      n.innerHTML='<span class="cal-ic">'+icon(item.icon)+'</span>'+escHTML(item.name);
-      var m=document.createElement('div'); m.className='cal-row-meta'; m.textContent=item.meta;
-      b.appendChild(n); b.appendChild(m);
-      b.addEventListener('click',function(){
-        /* Subscribe — the whole trip, no file, no Save, no Google. The href on
-           the anchor does the work; the browser follows it to Calendar. All this
-           handler does is get the panel out of the way. Never preventDefault
-           here, and never re-assign location: both kill the navigation. */
-        if(item.feed){ closePanel(); return; }
-        var evs=item.build();
-        if(!evs.length) return;
-        /* One event, not iOS, not the file row → open it in Google Calendar and
-           we are done; the panel closes with the tab.
+     Every icon is an <a href="webcal://…"> straight to Calendar, and NOTHING
+     here writes a file. That is the fix, not a detail: a control with no URL of
+     its own has to fall back to building a blob, and the blob is what the
+     reader was then asked to save. The per-event feeds are published by
+     build_trip_exports.py and addressed by the event's own UID, so neither side
+     keeps a list of filenames.
 
-           ⚠ NEVER pass 'noopener' here. window.open(url,'_blank','noopener')
-           returns null BY SPEC — the whole point of noopener is that the caller
-           gets no handle back — so testing the return value read every
-           successful open as a failure and fell through to save(), which is how
-           this shipped opening the calendar AND downloading the file in the same
-           click (owner, 2026-08-16: "this also asking to download"). The tab was
-           opening the entire time; only the check was wrong. Open plain, then
-           sever the opener link on the handle we got, which buys the same
-           protection without lying about the result. */
-        /* A single flight or stay stays on the .ics path — on the phone that
-           navigation IS the Add-to-Calendar prompt, which is the behaviour
-           that took the longest to get right. Nothing here goes to Google:
-           the owner is on Apple Calendar (owner, 2026-08-16: "i use iOS no
-           google and you should know that by now"). The whole-trip row above
-           is the one-click path for everything at once. */
-        var ics=calendar(evs);
-        if(!ics) return;
-        save(item.file,ics);
-        b.classList.add('cal-done');
-        n.innerHTML='<span class="cal-ic">'+icon('check')+'</span>'+escHTML(item.name);
-        setTimeout(function(){
-          b.classList.remove('cal-done');
-          n.innerHTML='<span class="cal-ic">'+icon(item.icon)+'</span>'+escHTML(item.name);
-        },2200);
-      });
-      listEl.appendChild(b);
-    });
-    overlay.classList.add('open');
-    document.body.style.overflow='hidden';
-    var first=listEl.querySelector('.cal-row'); if(first) first.focus();
+     Clicking marks the icon added, remembered across visits — the real cost of
+     exporting part by part is losing your place (owner: *"i would get lost
+     which one i did"*). It is a reminder, not a lock: the icon still works
+     every time, because re-adding a feed corrects it rather than duplicating. ── */
+  var ADDED_KEY='tve_cal_added';
+  function addedSet(){
+    try { return JSON.parse(localStorage.getItem(ADDED_KEY)||'[]'); } catch(e){ return []; }
+  }
+  function markAdded(uid){
+    try {
+      var a=addedSet();
+      if(a.indexOf(uid)<0){ a.push(uid); localStorage.setItem(ADDED_KEY,JSON.stringify(a)); }
+    } catch(e){}
+  }
+  function calIcon(uid,label){
+    var a=document.createElement('a');
+    a.className='cal-add'+(addedSet().indexOf(uid)>-1?' added':'');
+    a.href='webcal://guidemydays.com/trips/feed/'+uid.replace('@guidemydays.com','')+'.ics';
+    a.title=label; a.setAttribute('aria-label',label);
+    a.innerHTML=icon('calendar')||'';
+    /* Never preventDefault and never re-assign location here — both kill the
+       navigation. The href does the work; this only records that it happened. */
+    a.addEventListener('click',function(){ markAdded(uid); a.className='cal-add added'; a.title=label+' (already added)'; });
+    return a;
   }
 
-  /* ── One pill per upcoming trip, at the top of its card ── */
   [].slice.call(document.querySelectorAll('.trip')).forEach(function(card){
     if(card.querySelector('.unconfirmed')) return;
     var datesEl=card.querySelector('.trip-dates');
@@ -1335,76 +1230,26 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
     });
 
-    /* One row per leg, not one row for all of them: a row is what a click adds,
-       and the direct path adds exactly one event (owner rule 2026-08-16). The
-       whole set stays available as the file row appended at the end. */
-    var items=[], flightEvs=[];
-    flightBlocks.forEach(function(f){ flightEvs=flightEvs.concat(flightEvents(f.el,trip,f.who,base)); });
-    flightEvs.forEach(function(ev,i){
-      items.push({
-        name:ev.summary, icon:'plane',
-        meta:[ev.num, human(ev.start)+(ev.allDay?'':', '+clock(ev.start)), ev.who]
-          .filter(Boolean).join(' · '),
-        file:base+'-'+slug(ev.summary+'-'+(ev.num||''))+'-'+dDate(ev.start)+'-'+i+'.ics',
-        build:function(){ return [ev]; }
+    /* One icon per flight leg, at the end of its own row. */
+    flightBlocks.forEach(function(f){
+      flightEvents(f.el,trip,f.who,base).forEach(function(ev){
+        if(!ev.row) return;
+        /* Into the LAST CELL, never onto the row itself: .ftable is a grid, so
+           an appended child becomes a new cell and drops to a second line,
+           making every flight row twice as tall. */
+        var cells=ev.row.querySelectorAll('.fc');
+        (cells.length?cells[cells.length-1]:ev.row)
+          .appendChild(calIcon(ev.uid,'Add '+ev.summary+' to Calendar'));
       });
     });
+
+    /* One icon per stay, beside the hotel name. */
     stays.forEach(function(s,i){
       var ev=hotelEvent(s.el,trip,s.who,base,i);
       if(!ev) return;
-      var metaEl=s.el.querySelector('.hotel-meta');
-      items.push({
-        name:ev.hotel, icon:'neighborhoods',
-        meta:(s.who?s.who+' · ':'')+(metaEl?metaEl.textContent.replace(/\s+/g,' ').trim():''),
-        /* The check-in date is part of the name because the same hotel can be
-           booked twice on one trip (out and back) — without it they collide. */
-        file:base+'-'+slug((s.who||'')+'-'+ev.hotel)+'-'+dDate(ev.start)+'.ics',
-        build:function(){ return [ev]; }
-      });
+      var nameEl=s.el.querySelector('.hotel-name');
+      (nameEl||s.el).appendChild(calIcon(ev.uid,'Add '+ev.hotel+' to Calendar'));
     });
-    if(!items.length) return;
-
-    /* The file path, kept as one row at the end: the whole trip in a single
-       .ics, for a calendar the direct path does not reach and for the times you
-       want the file itself. Pointless when there is only one event — that row
-       and this one would produce the same thing. */
-    if(items.length>1){
-      var allEvs=items.map(function(it){ return it.build()[0]; }).filter(Boolean);
-      items.push({
-        name:'Everything, as a file', icon:'calendar', file_only:true,
-        meta:allEvs.length+' event'+(allEvs.length===1?'':'s')+' · downloads one .ics',
-        file:base+'-trip.ics',
-        build:function(){ return allEvs; }
-      });
-
-      /* ── The whole trip in ONE action ─────────────────────────────────────
-         Owner rule 2026-08-16: "do it right, like any decent export." A
-         pre-filled event link takes one event and still wants a Save; a file
-         has to be imported by hand. The only thing that puts EVERY event in a
-         calendar from a single click is a SUBSCRIBE URL — Google Calendar
-         will add an https .ics feed wholesale, and webcal:// hands the same
-         file to Calendar on Mac and iPhone. That is why the feed is published
-         at /trips/feed/{slug}.ics by build_trip_exports.py: the file has to
-         live at a real https address, so a blob built here could never do it.
-         Always the live host — the feed is not served from localhost, and a
-         relative URL would hand Google a link it cannot fetch. Re-adding a
-         trip corrects it rather than duplicating: the events carry stable
-         UIDs and the feed refreshes itself when a booking changes. ── */
-      items.unshift({
-        name:'Add the whole trip', icon:'calendar', primary:true,
-        meta:allEvs.length+' event'+(allEvs.length===1?'':'s')+' · opens in Calendar, nothing to download',
-        feed:'guidemydays.com/trips/feed/'+base+'.ics'
-      });
-    }
-
-    var row=document.createElement('div'); row.className='cal-pill-row';
-    var pill=document.createElement('button');
-    pill.type='button'; pill.className='cal-pill';
-    pill.innerHTML='<span class="cal-ic">'+icon('calendar')+'</span><span>Export to Calendar</span>';
-    pill.setAttribute('aria-label','Export this trip’s flights and stays to your calendar');
-    pill.addEventListener('click',function(){ openPanel(pill,trip,items); });
-    row.appendChild(pill);
-    body.insertBefore(row,body.firstChild);
   });
 })();
 </script>
