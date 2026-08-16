@@ -1246,7 +1246,7 @@
 /* 2026-08-15: lounge chip hover only on linked (<a>) chips; SHOW ONLY chips anchor after toggle btn. guide-style.css -> v212, toolbar.js -> v660. CACHE to v916. */
 /* 2026-08-15: index.html — Plugs & voltage card redesigned with real plug photo strip. CACHE to v917. */
 /* 2026-08-15: toolbar — action pill row moved below info chips (after .overview-extras). toolbar.js -> v661. CACHE to v919. */
-var CACHE = 'travel-cache-v919';
+var CACHE = 'travel-cache-v920';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
