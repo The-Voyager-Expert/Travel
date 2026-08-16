@@ -1,3 +1,4 @@
+/* 2026-08-16: git still tracked assets/Read-About.css and Website-Digram-Tree.html under their OLD capitalised names — macOS is case-insensitive so the local rename never reached the index. On the live Linux server every one of the 237 read-about pages was loading a 404 stylesheet. Both forced through the index. CACHE to v953. */
 /* 2026-08-16: Time Zones promoted out of essentials to the site root (owner): /time-zones/. toolbar.js floor +1. CACHE to v952. */
 /* 2026-08-16: Plugs and Currencies promoted out of essentials to the site root (owner): /plugs/ and /currencies/. CACHE to v951. */
 /* 2026-08-16: RETIRED (owner) — Delta Routes from Seattle and Travel Stats moved to /retired/. That folder is excluded from search and from the page-format validators, and its pages are not rebuilt as part of any flow. The regional stats pages (/stats/europe, /us, /records …) are unaffected. CACHE to v950. */
@@ -1277,7 +1278,7 @@
 /* 2026-08-15: toolbar: replace Where to Stay dropdown with Best Of tab → /best-of/. toolbar.js -> v670. CACHE to v935. */
 /* 2026-08-15: toolbar: swap Before You Go and Best Of order. toolbar.js -> v671. CACHE to v936. */
 /* 2026-08-16: toolbar: Best Of → dropdown with all 34 categories (was plain tab to /best-of/). toolbar.js -> v672. CACHE to v937. */
-var CACHE = 'travel-cache-v952';
+var CACHE = 'travel-cache-v953';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
