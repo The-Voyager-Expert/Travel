@@ -8,7 +8,7 @@
 <style>/* .wrap — fluid width from web-travel-style.css */
 /* ── Page header — from web-travel-style.css ── */
 .page-desc { font-size: 12px; color: var(--muted); margin: -8px 0 14px; }
-/* ── Home row (reader's own home base) ── */
+/* ── Seattle home row ── */
 .home-row {
   background-color: var(--surface);
   border: 1px solid var(--border);
@@ -23,16 +23,6 @@
 .home-label { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
 .home-city  { font-size: 30px; font-weight: 400; color: var(--text); }
 .home-right { text-align: right; }
-.home-left { min-width: 0; }
-/* The picker sits UNDER the city name, not beside it: the row is a flex pair and
-   a third inline item collapsed the time column on narrow screens. */
-.home-pick { position: relative; display: flex; align-items: center; gap: 8px; margin-top: 8px; max-width: 260px; }
-.home-pick-icon { line-height: 0; flex-shrink: 0; color: var(--rust, #b85c2a); }
-/* Overrides the shared 360px .search-input width so the field fits the card; the
-   border, radius, focus colour and dropdown all stay the site standard. */
-.home-pick .search-input { flex: 1; min-width: 0; width: auto; margin: 0; font-size: 14px; padding: 7px 10px; background-image: none; }
-.home-pick .sa-suggest { left: 0; right: 0; top: calc(100% + 6px); text-align: left; }
-@media (max-width: 600px) and (pointer: coarse) { .home-pick { max-width: none; } }
 .home-time  { font-size: 42px; font-weight: 700; color: var(--rust); font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1; }
 .home-day   { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 3px; }
 /* ── Controls ── */
@@ -122,7 +112,7 @@ a.pill:visited { color: #6a6660; }
   .card { padding: 10px 11px; gap: 5px; }
   .card-time { font-size: 19px; }
   /* Shorten the "Same" label so it fits the chip */
-  /* (handled in JS — see vsHome short labels for mobile) */
+  /* (handled in JS — see vsSeattle short labels for mobile) */
   /* Search input: keep font-size 16px (from mobile.css) to prevent iOS zoom — don't override */
 }
 @media (max-width: 359px) {
@@ -168,25 +158,14 @@ a.pill:visited { color: #6a6660; }
     </div>
     <div class="pills" id="sort-pills">
       <button class="pill sort-pill active" data-sort="alpha" aria-label="Sort alphabetically">A–Z</button>
-      <button class="pill sort-pill" data-sort="time">Closest to home</button>
+      <button class="pill sort-pill" data-sort="time">Closest to Seattle</button>
     </div>
   </div>
 
-  <!-- Home base is the READER'S, not the owner's. It was hardcoded to Seattle —
-       the site owner's own city — so every visitor was told the hour difference
-       from a place they have no connection to, and the "Closest to Seattle" sort
-       ranked the world by distance from it (owner 2026-08-16: "remove any mention
-       of Seattle as home or Seattle period"). It now defaults to whatever the
-       reader's own browser reports and can be changed with the same search
-       component every other page uses. -->
   <div class="home-row">
-    <div class="home-left">
+    <div>
       <div class="home-label">Home base</div>
-      <div class="home-city" id="home-city">Your time</div>
-      <div class="home-pick">
-        <span class="home-pick-icon" aria-hidden="true"><svg viewBox="0 0 13 13" width="15" height="15" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><line x1="9.35" y1="9.35" x2="12" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-        <input class="search-input" id="home-search" type="search" placeholder="City or country" aria-label="Set your home base" autocomplete="off">
-      </div>
+      <div class="home-city">🇺🇸 Seattle</div>
     </div>
     <div class="home-right">
       <div class="home-time" id="sea-time">--:--</div>
@@ -455,48 +434,7 @@ var CITIES = [
   {name:'Cape Town',       country:'South Africa',         tz:'Africa/Johannesburg',            region:'other',     flag:'🇿🇦', url:'/guides/cape-town.html'},
 ];
 
-/* HOME_TZ — the reader's own zone, not a hardcoded city. Was
-   `var SEA_TZ = 'America/Los_Angeles'` (owner 2026-08-16: no Seattle anywhere).
-
-   Resolution order: a city the reader picked (localStorage) → the browser's own
-   IANA zone → UTC if the browser will not say. The browser's zone is the right
-   default because it needs no input and is right for almost everyone; the picker
-   exists for the traveller who wants the grid measured from somewhere else. */
-var HOME_KEY = 'gmd_tz_home';
-var HOME_TZ, HOME_LABEL;
-
-function deviceTZ() {
-  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; }
-  catch (e) { return 'UTC'; }
-}
-
-/* "America/Argentina/Buenos_Aires" -> "Buenos Aires". Only ever a fallback label:
-   when the reader picks a city we show that city's real name and flag. */
-function tzLabel(tz) {
-  var last = String(tz).split('/').pop() || tz;
-  return last.replace(/_/g, ' ');
-}
-
-function setHome(city) {
-  if (city && city.tz) {
-    HOME_TZ = city.tz;
-    HOME_LABEL = (city.flag ? city.flag + ' ' : '') + city.name;
-    try { localStorage.setItem(HOME_KEY, city.name); } catch (e) {}
-  } else {
-    HOME_TZ = deviceTZ();
-    HOME_LABEL = tzLabel(HOME_TZ);
-    try { localStorage.removeItem(HOME_KEY); } catch (e) {}
-  }
-  var el = document.getElementById('home-city');
-  if (el) el.textContent = HOME_LABEL;
-}
-
-(function initHome() {
-  var saved = null;
-  try { saved = localStorage.getItem(HOME_KEY); } catch (e) {}
-  var city = saved ? CITIES.filter(function (c) { return c.name === saved; })[0] : null;
-  setHome(city || null);
-})();
+var SEA_TZ = 'America/Los_Angeles';
 
 function getOffsetMinutes(tz, date) {
   var d   = new Date(date.toLocaleString('en-US', {timeZone: tz}));
@@ -529,11 +467,11 @@ function relativeDay(tz, date) {
     return f.format(d);
   }
   var cityDay = ymd(date, tz);
-  var homeDay = ymd(date, HOME_TZ);
-  if (cityDay === homeDay)  return 'today';
-  var homeDate = new Date(homeDay + 'T12:00:00Z');
-  var cityDate = new Date(cityDay + 'T12:00:00Z');
-  var diff = Math.round((cityDate - homeDate) / 86400000);
+  var seaDay  = ymd(date, SEA_TZ);
+  if (cityDay === seaDay)   return 'today';
+  var seaDate = new Date(seaDay + 'T12:00:00Z');
+  var cityDate= new Date(cityDay + 'T12:00:00Z');
+  var diff = Math.round((cityDate - seaDate) / 86400000);
   if (diff === 1)  return 'tomorrow';
   if (diff === -1) return 'yesterday';
   return formatShortDay(tz, date);
@@ -547,10 +485,10 @@ function formatUTCOffset(tz, date) {
   return 'UTC' + sign + h + (m ? ':' + String(m).padStart(2, '0') : '');
 }
 
-function vsHome(tz, date) {
-  var homeMins = getOffsetMinutes(HOME_TZ, date);
+function vsSeattle(tz, date) {
+  var seaMins  = getOffsetMinutes(SEA_TZ, date);
   var cityMins = getOffsetMinutes(tz, date);
-  var diffH = (cityMins - homeMins) / 60;
+  var diffH = (cityMins - seaMins) / 60;
   if (diffH === 0) return {label: 'Same', cls: 'same'};
   var abs  = Math.abs(diffH);
   var sign = diffH > 0 ? '+' : '−';
@@ -567,8 +505,8 @@ function render() {
   var now  = new Date();
   var grid = document.getElementById('grid');
 
-  document.getElementById('sea-time').textContent = formatTime(HOME_TZ, now);
-  document.getElementById('sea-day').textContent  = formatFullDay(HOME_TZ, now);
+  document.getElementById('sea-time').textContent = formatTime(SEA_TZ, now);
+  document.getElementById('sea-day').textContent  = formatFullDay(SEA_TZ, now);
   document.querySelector('.home-row').style.display = searchVal ? 'none' : '';
 
   var filtered = CITIES.filter(function(c) {
@@ -585,11 +523,11 @@ function render() {
     return true;
   });
 
-  var homeMins = getOffsetMinutes(HOME_TZ, now);
+  var seaMins = getOffsetMinutes(SEA_TZ, now);
   if (activeSort === 'time') {
     filtered.sort(function(a, b) {
-      var da = Math.abs(getOffsetMinutes(a.tz, now) - homeMins);
-      var db = Math.abs(getOffsetMinutes(b.tz, now) - homeMins);
+      var da = Math.abs(getOffsetMinutes(a.tz, now) - seaMins);
+      var db = Math.abs(getOffsetMinutes(b.tz, now) - seaMins);
       return da !== db ? da - db : a.name.localeCompare(b.name);
     });
   } else {
@@ -616,7 +554,7 @@ function render() {
     var time = formatTime(c.tz, now);
     var day  = relativeDay(c.tz, now);
     var utc  = formatUTCOffset(c.tz, now);
-    var vs   = vsHome(c.tz, now);
+    var vs   = vsSeattle(c.tz, now);
     var hour = parseInt(time.split(':')[0], 10);
     var sleeping = hour >= 22 || hour < 7;
     var sleepMark = sleeping ? '' : '';
@@ -855,26 +793,6 @@ function renderSun() {
   if(input){
     var items=src.map(function(c){ return { name:c.name, sub:c.country }; });
     TVESearch.attach(input,{items:items});
-  }
-  /* Home-base picker — same component, same look and keyboard behaviour as the
-     filter search above it and as every other search on the site. onPick sets
-     the zone the whole grid is measured against and re-renders; clearing the
-     field hands the page back to the reader's own browser zone. */
-  var homeInp=document.getElementById('home-search');
-  if(homeInp){
-    var homeItems=src.map(function(c,i){ return { name:c.name, sub:c.country, _idx:i }; });
-    TVESearch.attach(homeInp,{
-      items: homeItems,
-      onPick: function(it){
-        setHome(src[it._idx]);
-        homeInp.value = '';
-        homeInp.blur();
-        render();
-      }
-    });
-    homeInp.addEventListener('search', function(){
-      if (!homeInp.value) { setHome(null); render(); }
-    });
   }
   var sunInp=document.getElementById('sun-city-input');
   if(sunInp){
