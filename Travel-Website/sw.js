@@ -1,3 +1,4 @@
+/* 2026-08-16: stats moved out of essentials to their own top-level section, shaped like maps/: /stats/ (overview) plus /stats/europe, /asia, /africa, /caribbean, /oceania, /south-america, /us, /canada and /stats/records. CACHE to v947. */
 /* 2026-08-16: maps fixed — the map pages fetched their GeoJSON as 'data/x.json' relative to the page, which after the move resolved to /maps/world/data/ and 404'd, so every map rendered empty. vendor/ and data/ now live under /maps/ with root-absolute references. Reports page and its mock-up links repointed. CACHE to v946. */
 /* 2026-08-16: guide-style.css — a.title-hotel-request:visited used var(--c-brand); a browser never resolves a custom property inside :visited (history-sniffing defence), so the rule was a silent no-op. Literal hex now, light and dark. Day Trips page restored: regenerating it from a drifted builder template replaced 211KB of real content with a 9KB stub. guide-style.css floor +1. CACHE to v945. */
 /* 2026-08-16: data files rebuilt against the new layout — quick-facts and country-guides were writing EMPTY (the old per-city-folder glob matched nothing after the flatten and no builder errored); search-index now resolves folder hrefs; FMAP rekeyed by city slug; Travel Stats and Day Trips emit root-absolute paths. CACHE to v944. */
@@ -1271,7 +1272,7 @@
 /* 2026-08-15: toolbar: replace Where to Stay dropdown with Best Of tab → /best-of/. toolbar.js -> v670. CACHE to v935. */
 /* 2026-08-15: toolbar: swap Before You Go and Best Of order. toolbar.js -> v671. CACHE to v936. */
 /* 2026-08-16: toolbar: Best Of → dropdown with all 34 categories (was plain tab to /best-of/). toolbar.js -> v672. CACHE to v937. */
-var CACHE = 'travel-cache-v946';
+var CACHE = 'travel-cache-v947';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
