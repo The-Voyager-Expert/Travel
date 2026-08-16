@@ -1334,7 +1334,13 @@
    or installed PWA keeps serving the old banner. CACHE to v969. */
 /* 2026-08-16: toolbar.js active-tab match goes through a page-slug key — directory URLs no longer resolve to 'index.html' and light the Guides pill on every page toolbar.js -> v693. CACHE to v970. */
 /* 2026-08-16: guide calendar dialog — the Download .ics button's fill lightened #b85c2a -> #d4784a (owner). Colour only; the export mechanism is untouched. toolbar.js -> v695. CACHE to v972. */
-var CACHE = 'travel-cache-v972';
+/* 2026-08-16: time-zones — no starting home base (owner). The row opens as the
+   standard site search and stays that way until the reader names their city; no
+   hardcoded city and no browser-zone default. The ± chip and the "Closest to
+   home" sort stay off until a base exists. Page-only change, no shared asset and
+   no MIN_VERSIONS floor moves — but the PAGE is precached, so without this bump a
+   returning browser or installed PWA keeps serving the old base. CACHE to v973. */
+var CACHE = 'travel-cache-v973';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
