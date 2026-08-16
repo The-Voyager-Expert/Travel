@@ -3233,11 +3233,7 @@ window.TVE.home = (function () {
       }
       _addTvePress(trigBtn);
       if (mapPill) _addTvePress(mapPill);
-      /* Insert BEFORE .overview-section so the row lives above Trip Overview,
-         below the Quick Facts strip (QF inserts before this row). */
-      var ovSecForRow = document.querySelector('.overview-section');
-      if (ovSecForRow) ovSecForRow.parentNode.insertBefore(pillRow, ovSecForRow);
-      else extras.insertAdjacentElement('afterend', pillRow);
+      extras.insertAdjacentElement('afterend', pillRow);
     } else {
       lastDay.parentNode.appendChild(trigBtn);
     }
@@ -6994,12 +6990,7 @@ window.TVE.home = (function () {
         strip.appendChild(pill);
       });
 
-      /* QF sits above the action pill row (#ics-pill-row). ICS always runs
-         before QF so the row is already in the DOM here — insert QF before it.
-         Fallback: before .overview-section, then after .title-page. */
-      var icsRow = document.getElementById('ics-pill-row');
-      if (icsRow) icsRow.parentNode.insertBefore(strip, icsRow);
-      else if (anchor) anchor.parentNode.insertBefore(strip, anchor);
+      if (anchor) anchor.parentNode.insertBefore(strip, anchor);
       else titlePage.insertAdjacentElement('afterend', strip);
     }
 
@@ -10499,8 +10490,9 @@ window.TVE.home = (function () {
     }
   }());
 
-  /* ── Move .overview-extras (and #ics-pill-row) out of the white Trip Overview
-     card so they render on the beige page background between the card and day blocks.
+  /* ── Move #ics-pill-row and .overview-extras out of the white Trip Overview card.
+     #ics-pill-row goes ABOVE the card (before .overview-section).
+     .overview-extras goes BELOW the card (after .overview-section).
      Runs last on DOMContentLoaded so all chip injection is already complete. ── */
   (function _extrasOutOfCard() {
     function _move() {
@@ -10510,8 +10502,10 @@ window.TVE.home = (function () {
       var after = ovSec.nextSibling;
       var children = Array.prototype.slice.call(ovSec.children);
       children.forEach(function(child) {
-        if (child.classList.contains('overview-extras') || child.id === 'ics-pill-row') {
-          parent.insertBefore(child, after);
+        if (child.id === 'ics-pill-row') {
+          parent.insertBefore(child, ovSec);   /* ABOVE Trip Overview */
+        } else if (child.classList.contains('overview-extras')) {
+          parent.insertBefore(child, after);   /* BELOW Trip Overview */
           after = child.nextSibling;
         }
       });
