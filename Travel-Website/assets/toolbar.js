@@ -7939,7 +7939,7 @@ window.TVE.home = (function () {
       '📍': 'pin',
       '🚶': 'walk',
       '🚕': 'delivery-car',
-      '🚗': 'food-delivery',       /* Food Delivery section overview link */
+      '🚗': 'app-car',             /* Food Delivery section overview link */
       '🚐': 'van',        /* tour hotel-pickup row, 548 fleet-wide */
       '🏨': 'hotel',      /* the other half of that row */
       /* extras-sub rows. The survey is closed: across the fleet these rows
