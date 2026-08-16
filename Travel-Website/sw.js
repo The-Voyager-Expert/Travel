@@ -1349,7 +1349,19 @@
    by the v974 commit, whose worktree copy of this file predated them. Restored
    verbatim; CACHE moves to v975 because v974 was already spent. */
 /* 2026-08-16: guide calendar dialog reverted to its state of the whole preceding week — the Download .ics button is #b85c2a again and the export region is byte-identical to 7737e8e0 (owner: "revert my guides calendar"). Working beats a lighter button. toolbar.js -> v697. CACHE to v976. */
-var CACHE = 'travel-cache-v976';
+/* 2026-08-16: Before-You-Go's plug card pointed at the pre-move essentials path — the
+   images were built as 'Plug-Adapter/' + 'imgs/...' and the "All plugs →" link as
+   'Plug-Adapter/Plug-Adapter-Guide.html', both relative and both dead since the page
+   moved to the root as /plugs/. Now root-absolute: /plugs/imgs/{file} and /plugs/#{Country}.
+   Same pass, the landing half of that link: /plugs/ strips the incoming hash into
+   window.__tveDeep and re-scrolls with a settle loop, but html{scroll-behavior:smooth}
+   made the default scrollIntoView() animate, so each 120ms tick restarted the animation
+   from a position that had barely moved — |y-last| fell under 2 on the second tick and
+   the loop exited with the reader on the banner instead of their country. The loop now
+   passes behavior:'instant'. Two pages, no shared asset and no MIN_VERSIONS floor moves;
+   both pages are precached, so without this bump a returning browser keeps the dead
+   paths. CACHE to v977. */
+var CACHE = 'travel-cache-v977';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy

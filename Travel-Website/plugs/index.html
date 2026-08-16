@@ -5971,11 +5971,16 @@ html{scroll-behavior:smooth;}
      ~580 lazy flag images with no reserved height, so the target keeps sinking as
      they load. On a deep-link arrival only, force those images eager so the layout
      is final before we scroll (normal browsing keeps lazy-loading); then a short
-     settle loop lands the country. scrollIntoView only (never touches the hash). */
+     settle loop lands the country. scrollIntoView only (never touches the hash).
+     behavior:'instant' is REQUIRED: html{scroll-behavior:smooth} above makes the
+     default scrollIntoView animate, so each 120ms tick restarts the animation from
+     a position that has barely moved — |y-last| falls under 2 on the second tick and
+     the loop exits with the page still at the top. That is exactly the bug where a
+     Before-You-Go "All plugs →" deep link landed on the banner instead of the country. */
   if(window.__tveDeep){[].forEach.call(document.querySelectorAll('img[loading="lazy"]'),function(im){im.loading='eager';});}
   window.addEventListener('load',function(){
     if(!window.__tveDeep)return;var el=document.getElementById(window.__tveDeep);if(!el)return;
-    var last=-1,tries=0;(function settle(){el.scrollIntoView();var y=Math.round(el.getBoundingClientRect().top);
+    var last=-1,tries=0;(function settle(){el.scrollIntoView({behavior:'instant',block:'start'});var y=Math.round(el.getBoundingClientRect().top);
       if(Math.abs(y-last)>2&&++tries<12){last=y;setTimeout(settle,120);}}());
   });
   input.addEventListener('input',function(){
