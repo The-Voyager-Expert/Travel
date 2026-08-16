@@ -3236,7 +3236,11 @@ window.TVE.home = (function () {
       }
       _addTvePress(trigBtn);
       if (mapPill) _addTvePress(mapPill);
-      extras.insertAdjacentElement('afterend', pillRow);
+      /* Insert BEFORE .overview-section so the row lives above Trip Overview,
+         below the Quick Facts strip (QF inserts before this row). */
+      var ovSecForRow = document.querySelector('.overview-section');
+      if (ovSecForRow) ovSecForRow.parentNode.insertBefore(pillRow, ovSecForRow);
+      else extras.insertAdjacentElement('afterend', pillRow);
     } else {
       lastDay.parentNode.appendChild(trigBtn);
     }
@@ -6993,7 +6997,12 @@ window.TVE.home = (function () {
         strip.appendChild(pill);
       });
 
-      if (anchor) anchor.parentNode.insertBefore(strip, anchor);
+      /* QF sits above the action pill row (#ics-pill-row). ICS always runs
+         before QF so the row is already in the DOM here — insert QF before it.
+         Fallback: before .overview-section, then after .title-page. */
+      var icsRow = document.getElementById('ics-pill-row');
+      if (icsRow) icsRow.parentNode.insertBefore(strip, icsRow);
+      else if (anchor) anchor.parentNode.insertBefore(strip, anchor);
       else titlePage.insertAdjacentElement('afterend', strip);
     }
 
