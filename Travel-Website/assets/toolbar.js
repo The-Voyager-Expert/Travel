@@ -1148,13 +1148,13 @@ window.TVE.home = (function () {
     { group: 'Where to Stay', groupIcon: 'building', children: [
       { href: base + 'trip-essentials/neighborhoods/', text: 'Neighbourhoods' },
       { href: base + 'trip-essentials/hotels-stays/', text: 'Hotels & stays' },
-      { href: base + 'trip-essentials/best-unique-hotels/', text: 'Unique hotels' },
-      { href: base + 'trip-essentials/best-most-luxurious-hotels/', text: 'Most luxurious' },
-      { href: base + 'trip-essentials/best-resorts/', text: 'Resorts' },
-      { href: base + 'trip-essentials/best-ultra-luxurious-resorts/', text: 'Ultra-luxurious resorts' }
+      { href: base + 'best-of/best-unique-hotels/', text: 'Unique hotels' },
+      { href: base + 'best-of/best-most-luxurious-hotels/', text: 'Most luxurious' },
+      { href: base + 'best-of/best-resorts/', text: 'Resorts' },
+      { href: base + 'best-of/best-ultra-luxurious-resorts/', text: 'Ultra-luxurious resorts' }
     ] },
-    { href: base + 'trip-essentials/before-you-go/', text: 'Before You Go', icon: 'luggage' },
-    { href: base + 'trip-essentials/maps/world-map/', text: 'Maps', icon: 'folded-map' },
+    { href: base + 'before-you-go/', text: 'Before You Go', icon: 'luggage' },
+    { href: base + 'maps/world/', text: 'Maps', icon: 'folded-map' },
     { href: 'mailto:contact@guidemydays.com?subject=Guide%20My%20Days', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
      to the form. NOT base + ... — a mailto must not be depth-prefixed. */
   ];
@@ -2720,7 +2720,7 @@ window.TVE.home = (function () {
   }
 
   /* ── Best Of pages: prev/next arrows below the terracotta line ───────────── */
-  var isBestOf = /\/Trip-Essentials\/Best-/.test(location.pathname) && (prevHref || nextHref);
+  var isBestOf = /\/best-of\/best-/.test(location.pathname) && (prevHref || nextHref);
   if (isBestOf) {
     function injectBestOfArrows() {
       var header = document.querySelector('.page-header');
