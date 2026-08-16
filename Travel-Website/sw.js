@@ -1,3 +1,4 @@
+/* 2026-08-16: RETIRED (owner) — Delta Routes from Seattle and Travel Stats moved to /retired/. That folder is excluded from search and from the page-format validators, and its pages are not rebuilt as part of any flow. The regional stats pages (/stats/europe, /us, /records …) are unaffected. CACHE to v950. */
 /* 2026-08-16: the READ ABOUT button on 237 guides was built in JS (a.href='read-about/') so the markup link fixer never saw it — every guide's read-about page was unreachable from the guide. Now /guides/<city>-read-about.html. CACHE to v949. */
 /* 2026-08-16: guides index — CLIMATE_INLINE / COST_DATA / SAFETY_DATA rekeyed to the city slug, and the three lookups that parsed the key out of './<Folder>/' fixed. That regex stopped matching at the flatten, so folder came back null and no card got a climate, cost or safety chip. CACHE to v948. */
 /* 2026-08-16: stats moved out of essentials to their own top-level section, shaped like maps/: /stats/ (overview) plus /stats/europe, /asia, /africa, /caribbean, /oceania, /south-america, /us, /canada and /stats/records. CACHE to v947. */
@@ -1274,7 +1275,7 @@
 /* 2026-08-15: toolbar: replace Where to Stay dropdown with Best Of tab → /best-of/. toolbar.js -> v670. CACHE to v935. */
 /* 2026-08-15: toolbar: swap Before You Go and Best Of order. toolbar.js -> v671. CACHE to v936. */
 /* 2026-08-16: toolbar: Best Of → dropdown with all 34 categories (was plain tab to /best-of/). toolbar.js -> v672. CACHE to v937. */
-var CACHE = 'travel-cache-v949';
+var CACHE = 'travel-cache-v950';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
