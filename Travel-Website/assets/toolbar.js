@@ -564,7 +564,35 @@ window.TVE.home = (function () {
      base cannot express that bug. data-depth is retained on the mount for the
      validators and for page-local CSS, but it no longer drives any URL. */
   var base       = '/';
-  var curr     = location.pathname.split('/').pop() || 'index.html';
+
+  /* Active tab. A nav href is a DIRECTORY now ('/time-zones/'), so the old
+     `location.pathname.split('/').pop() || 'index.html'` popped an EMPTY
+     segment off every directory URL and fell through to the literal
+     'index.html' — which is exactly what the Guides entry
+     ('/guides/index.html') pops to. Every directory page therefore lit the
+     Guides pill instead of its own: Time Zones, Weather, Before You Go, When
+     to Go, Currency, Plug Adaptor, and the site root as well.
+
+     `_pageKey` is the rule that replaces it: last non-empty path segment,
+     `.html` stripped, so '/time-zones/' and '/guides/index.html' key to
+     'time-zones' and 'guides' rather than both collapsing to 'index.html'.
+     The PAGE_ICON table further down has the identical bug from the same URL
+     migration — `.pop()` on a directory href stored every nav icon under ''
+     and drew the whole pill strip as one repeated shape. Whoever fixes that
+     one should key it here too rather than carry a second copy of the rule.
+
+     Guide pages are unchanged: '/guides/athens.html' keys to 'athens', which
+     no toolbar entry claims, so a guide still lights no tab. */
+  function _pageKey(href) {
+    var s = String(href || '').split('#')[0].split('?')[0];
+    s = s.replace(/\/index\.html$/i, '/').replace(/\.html$/i, '');
+    var parts = s.split('/').filter(function (p) { return p; });
+    return parts.length ? parts[parts.length - 1].toLowerCase() : '';
+  }
+  /* '' on the site root — the guard keeps a keyless page from matching. */
+  function _isCurrent(href) { return !!curr && _pageKey(href) === curr; }
+
+  var curr       = _pageKey(location.pathname);
   var prevHref = mount ? (mount.dataset.prev || '') : '';
   var nextHref = mount ? (mount.dataset.next || '') : '';
 
@@ -1768,7 +1796,7 @@ window.TVE.home = (function () {
         var ca = document.createElement('a');
         ca.href = ch.href;
         setEntryLabel(ca, ch.text, ch, 'tb-new');
-        if (ch.href.split('/').pop() === curr) { ca.classList.add('tb-active'); groupActive = true; }
+        if (_isCurrent(ch.href)) { ca.classList.add('tb-active'); groupActive = true; }
         menu.appendChild(ca);
       });
       if (groupActive) btn.classList.add('tb-active');
@@ -1841,7 +1869,7 @@ window.TVE.home = (function () {
     }
     var cls = [];
     if (item.guides) cls.push('tb-guides');
-    if (item.href.split('/').pop() === curr) cls.push('tb-active');
+    if (_isCurrent(item.href)) cls.push('tb-active');
     /* add, never assign — a.className would wipe tb-has-ico set above and
        the icon would lose its flex+gap on exactly the ACTIVE tab */
     cls.forEach(function (c) { a.classList.add(c); });
@@ -2082,7 +2110,7 @@ window.TVE.home = (function () {
         var a = document.createElement('a');
         a.href = ch.href;
         setEntryLabel(a, ch.full || ch.text, ch, 'tb-ham-new');
-        if (ch.href.split('/').pop() === curr) a.classList.add('tb-active');
+        if (_isCurrent(ch.href)) a.classList.add('tb-active');
         hamMenu.appendChild(a);
       });
       firstItem = false;
@@ -2095,7 +2123,7 @@ window.TVE.home = (function () {
       var a2 = document.createElement('a');
       a2.href = item.href;
       a2.textContent = item.full || item.text;
-      if (item.href.split('/').pop() === curr) a2.classList.add('tb-active');
+      if (_isCurrent(item.href)) a2.classList.add('tb-active');
       hamMenu.appendChild(a2);
       firstItem = false;
     }
