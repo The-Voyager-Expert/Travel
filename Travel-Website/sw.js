@@ -1348,7 +1348,8 @@
 /* 2026-08-16: repair — the entry above and the toolbar.js 696 floor were dropped
    by the v974 commit, whose worktree copy of this file predated them. Restored
    verbatim; CACHE moves to v975 because v974 was already spent. */
-var CACHE = 'travel-cache-v975';
+/* 2026-08-16: guide calendar dialog reverted to its state of the whole preceding week — the Download .ics button is #b85c2a again and the export region is byte-identical to 7737e8e0 (owner: "revert my guides calendar"). Working beats a lighter button. toolbar.js -> v697. CACHE to v976. */
+var CACHE = 'travel-cache-v976';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1356,7 +1357,7 @@ var CACHE = 'travel-cache-v975';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 223,'toolbar.js': 696, 'mobile.css': 81, 'web-travel-style.css': 51, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
+var MIN_VERSIONS = { 'guide-style.css': 223,'toolbar.js': 697, 'mobile.css': 81, 'web-travel-style.css': 51, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
