@@ -1,3 +1,4 @@
+/* 2026-08-16: Trip Essentials redesign — Hero D (terracotta band + Georgia title + warm ground + search) applied to all ~45 essentials pages; hero CSS moved to shared web-travel-style.css + mobile.css; per-page page-header/page-intro-card removed. web-travel-style.css floor +1, mobile.css floor +1. CACHE to v957. */
 /* 2026-08-16: the Day 1 airport chip was gone from all 237 guides. It looks the city slug up in CHIP_DATA off location.pathname, and the URL flatten changed that segment from 'Athens' to 'athens.html' — so the lookup missed on every guide and the chip silently never rendered (no error: a miss is an early return). Slug now strips .html and lowercases; CHIP_DATA rekeyed to the flat de-accented slugs, and Busan and Rotterdam gained the rows they never had. Link only where a lounge page covers the airport (jumps to its row); everywhere else a plain div, no hover. toolbar.js floor +1. CACHE to v956. */
 /* 2026-08-16: Contact — the mailto no longer prefills a subject (owner). The toolbar Contact link and the "Prefer your own mail app?" line on the homepage both opened the reader's mail app with Subject: Guide My Days already typed in, which the reader then had to clear before writing their own. Both are now a bare mailto:contact@guidemydays.com. toolbar.js floor +1. CACHE to v955. */
 /* 2026-08-16: Trips promoted out of essentials to the site root (owner): /trips/. Still deliberately unlinked from the nav. toolbar.js floor +1. CACHE to v954. */
@@ -1281,7 +1282,7 @@
 /* 2026-08-15: toolbar: replace Where to Stay dropdown with Best Of tab → /best-of/. toolbar.js -> v670. CACHE to v935. */
 /* 2026-08-15: toolbar: swap Before You Go and Best Of order. toolbar.js -> v671. CACHE to v936. */
 /* 2026-08-16: toolbar: Best Of → dropdown with all 34 categories (was plain tab to /best-of/). toolbar.js -> v672. CACHE to v937. */
-var CACHE = 'travel-cache-v956';
+var CACHE = 'travel-cache-v957';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1289,7 +1290,7 @@ var CACHE = 'travel-cache-v956';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 219,'toolbar.js': 683, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 7 };
+var MIN_VERSIONS = { 'guide-style.css': 219,'toolbar.js': 683, 'mobile.css': 81, 'web-travel-style.css': 49, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 7 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
