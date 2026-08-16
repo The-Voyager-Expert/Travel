@@ -363,6 +363,10 @@ a.trip-jump-pill:visited { color: #3d3a32; }
 .cal-ic { display: inline-flex; vertical-align: -2px; margin-right: 6px; }
 .cal-ic svg { display: block; }
 .cal-row-meta { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+/* The file row is the fallback, not the offer — plain ground, no warm fill, so
+   the rows that open a calendar are the ones the eye lands on. */
+.cal-row-file { background: transparent; border-style: dashed; }
+.cal-row-file .cal-row-name { font-weight: 500; color: var(--muted); }
 .cal-row.cal-done { background: rgba(46,125,50,0.07); border-color: #2e7d32; }
 .cal-row.cal-done .cal-row-name { color: #2e7d32; }
 .cal-foot { font-size: 12px; color: var(--muted); line-height: 1.45; margin-top: 10px; }
@@ -948,6 +952,16 @@ document.addEventListener('DOMContentLoaded',()=>{
    appended to the title to make it "informative"; the calendar month view has
    room for a route and nothing more, and the detail is one tap away.
 
+   Owner rule 2026-08-16: **a row opens the calendar — it never hands over a
+   file to save and open by hand.** The old desktop path was an `<a download>`
+   click, so every add was three steps: save to Downloads, find it, double-click
+   it. Now every row is exactly ONE event (each flight leg is its own row, as
+   each stay already was) and a click opens that event pre-filled in Google
+   Calendar — one tab, one Save. iOS keeps the blob navigation, which already
+   opens the Add-to-Calendar prompt with no save step. The .ics file path
+   survives as the last row only, labelled as a file, for the whole set at once
+   and for anything the direct path cannot reach.
+
    The pre-trip-audit routine writes the same files to Trip-Exports/ on every
    run, so they are already sitting there when you want them — this page is the
    on-demand path to the identical exports.
@@ -1028,8 +1042,26 @@ document.addEventListener('DOMContentLoaded',()=>{
          blocked outright by WebKit's navigation policy.
        · The object URL is revoked after 1500ms, not immediately — revoking at
          once can cancel the download that was just started. */
+  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+  /* ── Direct add — Google Calendar's pre-filled event editor ──────────────
+     The one path that opens a calendar instead of producing a file. Takes a
+     single event only; a row with more than one falls back to the .ics.
+     Times are floating local (no TZID) exactly as the .ics writes them, so
+     `ctz` carries the reader's own zone to keep Google's reading identical to
+     the file's — without it Google reads a bare stamp as UTC. All-day spans use
+     the plain YYYYMMDD form and the same exclusive end date. ── */
+  function gStamp(d){ return dDate(d)+'T'+pad(d.getHours())+pad(d.getMinutes())+'00'; }
+  function gcalURL(e){
+    var tz=''; try { tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; } catch(x){}
+    var p=['action=TEMPLATE','text='+encodeURIComponent(e.summary)];
+    p.push('dates='+(e.allDay?dDate(e.start)+'/'+dDate(e.end):gStamp(e.start)+'/'+gStamp(e.end)));
+    if(e.desc) p.push('details='+encodeURIComponent(e.desc));
+    if(e.location) p.push('location='+encodeURIComponent(e.location));
+    if(!e.allDay && tz) p.push('ctz='+encodeURIComponent(tz));
+    return 'https://calendar.google.com/calendar/render?'+p.join('&');
+  }
   function save(name,ics){
-    var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     var url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));
     /* Close the panel instantly — mirrors _closeICS() in toolbar.js.
        closePanel() removes .open which fires a CSS fade transition; any async
@@ -1092,6 +1124,10 @@ document.addEventListener('DOMContentLoaded',()=>{
       evs.push({
         uid:base+'-flight-'+slug(route[1]+route[2]+num)+'-'+dDate(dep)+'-'+i+'@guidemydays.com',
         summary:route[1]+' → '+route[2],
+        /* Carried for the chooser row's label only — never written to the .ics,
+           where the flight number and Who live in the notes (owner rule
+           2026-08-15: the title is the name alone). */
+        num:num, who:who,
         location:from,
         allDay:allDay, start:start, end:end,
         desc:notes([
@@ -1199,9 +1235,12 @@ document.addEventListener('DOMContentLoaded',()=>{
     subEl=document.createElement('div'); subEl.className='cal-sub';
     listEl=document.createElement('div');
     var foot=document.createElement('div'); foot.className='cal-foot';
-    foot.textContent='Each one downloads its own file — open it to add those events. '
-      +'Re-importing a file you already added corrects it rather than duplicating it. '
-      +'The same files are waiting in Trip-Exports/.';
+    foot.textContent=isIOS
+      ? 'Each one opens the Add to Calendar prompt. Adding one you already have '
+        +'corrects it rather than duplicating it. The same files are waiting in Trip-Exports/.'
+      : 'Each one opens pre-filled in Google Calendar — check it and press Save. '
+        +'The last row is the file version of the whole set, for any other calendar. '
+        +'The same files are waiting in Trip-Exports/.';
     box.appendChild(xBtn); box.appendChild(titleEl); box.appendChild(subEl);
     box.appendChild(listEl); box.appendChild(foot);
     overlay.appendChild(box);
@@ -1215,18 +1254,28 @@ document.addEventListener('DOMContentLoaded',()=>{
   function openPanel(pill,trip,items){
     buildOverlay();
     opener=pill;
-    subEl.textContent=trip+' — flights come as one file, each stay as its own, '
+    subEl.textContent=trip+' — every flight and every stay on its own row, '
       +'so you can take just the ones you need.';
     listEl.innerHTML='';
     items.forEach(function(item){
       var b=document.createElement('button');
-      b.type='button'; b.className='cal-row';
+      b.type='button'; b.className='cal-row'+(item.file_only?' cal-row-file':'');
       var n=document.createElement('div'); n.className='cal-row-name';
       n.innerHTML='<span class="cal-ic">'+icon(item.icon)+'</span>'+escHTML(item.name);
       var m=document.createElement('div'); m.className='cal-row-meta'; m.textContent=item.meta;
       b.appendChild(n); b.appendChild(m);
       b.addEventListener('click',function(){
-        var ics=calendar(item.build());
+        var evs=item.build();
+        if(!evs.length) return;
+        /* One event, not iOS, not the file row → open it in Google Calendar and
+           we are done; the panel closes with the tab. window.open runs inside
+           this click handler, so no blocker fires — but if one somehow returns
+           null we still fall through to the file rather than doing nothing. */
+        if(evs.length===1 && !item.file_only && !isIOS){
+          var w=window.open(gcalURL(evs[0]),'_blank','noopener');
+          if(w){ closePanel(); return; }
+        }
+        var ics=calendar(evs);
         if(!ics) return;
         save(item.file,ics);
         b.classList.add('cal-done');
@@ -1266,21 +1315,20 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
     });
 
-    var items=[];
-    if(flightBlocks.length){
-      var legs=0;
-      flightBlocks.forEach(function(f){ legs+=f.el.querySelectorAll('.ftable').length; });
+    /* One row per leg, not one row for all of them: a row is what a click adds,
+       and the direct path adds exactly one event (owner rule 2026-08-16). The
+       whole set stays available as the file row appended at the end. */
+    var items=[], flightEvs=[];
+    flightBlocks.forEach(function(f){ flightEvs=flightEvs.concat(flightEvents(f.el,trip,f.who,base)); });
+    flightEvs.forEach(function(ev,i){
       items.push({
-        name:'All flights', icon:'plane',
-        meta:legs+' leg'+(legs===1?'':'s')+' · '+human(ds[0])+' → '+human(ds[ds.length-1]),
-        file:base+'-flights.ics',
-        build:function(){
-          var out=[];
-          flightBlocks.forEach(function(f){ out=out.concat(flightEvents(f.el,trip,f.who,base)); });
-          return out;
-        }
+        name:ev.summary, icon:'plane',
+        meta:[ev.num, human(ev.start)+(ev.allDay?'':', '+clock(ev.start)), ev.who]
+          .filter(Boolean).join(' · '),
+        file:base+'-'+slug(ev.summary+'-'+(ev.num||''))+'-'+dDate(ev.start)+'-'+i+'.ics',
+        build:function(){ return [ev]; }
       });
-    }
+    });
     stays.forEach(function(s,i){
       var ev=hotelEvent(s.el,trip,s.who,base,i);
       if(!ev) return;
@@ -1295,6 +1343,20 @@ document.addEventListener('DOMContentLoaded',()=>{
       });
     });
     if(!items.length) return;
+
+    /* The file path, kept as one row at the end: the whole trip in a single
+       .ics, for a calendar the direct path does not reach and for the times you
+       want the file itself. Pointless when there is only one event — that row
+       and this one would produce the same thing. */
+    if(items.length>1){
+      var allEvs=items.map(function(it){ return it.build()[0]; }).filter(Boolean);
+      items.push({
+        name:'Everything, as a file', icon:'calendar', file_only:true,
+        meta:allEvs.length+' event'+(allEvs.length===1?'':'s')+' · downloads one .ics',
+        file:base+'-trip.ics',
+        build:function(){ return allEvs; }
+      });
+    }
 
     var row=document.createElement('div'); row.className='cal-pill-row';
     var pill=document.createElement('button');
