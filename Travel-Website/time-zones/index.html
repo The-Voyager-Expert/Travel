@@ -21,12 +21,13 @@
   margin-bottom: 16px;
 }
 .home-label { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
-.home-city  { font-size: 30px; font-weight: 400; color: var(--text); margin-bottom: 10px; }
-/* The picker is the SHARED search — no size, icon or border overrides here, or
-   it stops looking like every other search on the site. Only the dropdown is
-   pinned left, because this one is not centred in a hero. */
-.home-left { min-width: 0; position: relative; }
-.home-left .sa-suggest { left: 0; right: auto; text-align: left; }
+.home-city  { font-size: 30px; font-weight: 400; color: var(--text); }
+/* ONE search on this page — the hero's. Picking a city there sets the home base;
+   this row never had a second box and must not grow one back (owner 2026-08-16:
+   "why do i have 2 searches"). Two identical "City or country" pills, one to
+   filter and one to set home, is the confusion that caused it. */
+.home-left { min-width: 0; }
+.home-hint { font-size: 15px; color: var(--muted); }
 .home-right { text-align: right; }
 .home-time  { font-size: 42px; font-weight: 700; color: var(--rust); font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1; }
 .home-day   { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 3px; }
@@ -181,7 +182,7 @@ a.pill:visited { color: #6a6660; }
     <div class="home-left">
       <div class="home-label">Home base</div>
       <div class="home-city" id="home-city" hidden></div>
-      <input class="search search-input" id="home-search" type="search" placeholder="City or country" aria-label="Set your home base" autocomplete="off">
+      <div class="home-hint" id="home-hint">Pick a city in the search above</div>
     </div>
     <div class="home-right" id="home-right" hidden>
       <div class="home-time" id="sea-time">--:--</div>
@@ -471,9 +472,11 @@ function setHome(city) {
     else      localStorage.removeItem(HOME_KEY);
   } catch (e) {}
 
-  var cityEl = document.getElementById('home-city');
+  var cityEl  = document.getElementById('home-city');
+  var hintEl  = document.getElementById('home-hint');
   var rightEl = document.getElementById('home-right');
   if (cityEl)  { cityEl.textContent = HOME_LABEL; cityEl.hidden = !city; }
+  if (hintEl)  { hintEl.hidden = !!city; }
   if (rightEl) { rightEl.hidden = !city; }
 
   /* Sorting by distance from home is meaningless with no home. */
@@ -859,19 +862,18 @@ function renderSun() {
   var items=src.map(function(c){ return { name:c.name, sub:c.country }; });
   var input=document.getElementById('search');
   if(input){
-    TVESearch.attach(input,{items:items});
-  }
-  /* Home base — same component, same items, same typeahead as the search above;
-     the only difference is what picking does. */
-  var homeInp=document.getElementById('home-search');
-  if(homeInp){
-    TVESearch.attach(homeInp,{
+    /* The page's ONLY search. Typing filters the grid as it always has; PICKING a
+       city off the typeahead commits it as the home base and clears the filter,
+       so the grid comes back whole and measured from where you actually are.
+       There is deliberately no second search box in the Home base row. */
+    TVESearch.attach(input,{
       items:items,
       onPick:function(it){
         var city=src.filter(function(c){ return c.name===it.name; })[0];
         if(!city) return;
         setHome(city);
-        homeInp.value='';
+        input.value='';
+        searchVal='';
         render();
       }
     });
