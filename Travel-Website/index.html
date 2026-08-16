@@ -1161,10 +1161,23 @@ a.land-cta:hover:visited {
    there is nothing to stretch — align-items:start lets each group end where its
    last link ends, and the uneven group sizes stop costing anything. */
 .lp-res { max-width: var(--lp-max, 1180px); margin: clamp(2.2rem, 5vw, 3.6rem) auto 0; }
-.res-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted, #7a7470); margin: 0 0 0.9rem; }
-.res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); align-items: start; column-gap: clamp(1rem, 2.4vw, 1.8rem); row-gap: clamp(1.1rem, 2.4vw, 1.6rem); }
-.res-cell { min-width: 0; }
-.res-head { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rust, #b85c2a); margin: 0 0 0.15rem; }
+.res-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted, #7a7470); margin: 0 0 0.2rem; }
+/* Multi-column, NOT grid. A grid puts one group per cell and every cell in a
+   row stretches to the tallest, so a 3-link group beside an 8-link one left
+   five rows of dead page. Multicol flows the groups as one stream and balances
+   the columns by height, which stacks the short groups on top of each other and
+   packs the block to roughly its own content. break-inside keeps a group whole
+   rather than splitting its links across a column boundary.
+
+   Column height is balanced by the browser, so the reading order is down a
+   column and then across — the same way the Best Of categories above read. */
+.res-grid { columns: 13rem 3; column-gap: clamp(1rem, 2.4vw, 1.8rem); }
+.res-cell { min-width: 0; break-inside: avoid; -webkit-column-break-inside: avoid; }
+/* A group landing at the top of a column keeps its heading's padding-top, which
+   would sit it lower than its neighbours. Only the very first group is pinned;
+   the rest are left, since which group starts a column changes with width. */
+.res-cell:first-child .res-head { padding-top: 0; }
+.res-head { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rust, #b85c2a); margin: 0 0 0.15rem; padding-top: 0.7rem; }
 .res-links { display: flex; flex-direction: column; }
 /* Type and rhythm are the site's list standard (.lp-links, used by the Best Of
    block directly above): 0.875rem / 500 / 0.34rem rows, chevron at .45. Set
