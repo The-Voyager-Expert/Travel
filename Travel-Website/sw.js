@@ -1,3 +1,4 @@
+/* 2026-08-16: best-of slugs drop the redundant best- prefix (/best-of/aquariums); homepage Best Of block rebuilt to the 34 real categories (Pickleball + Festival Finder drift removed); every remaining internal link repaired. toolbar.js floor +1, best-of-cross-data.js +1. CACHE to v939. */
 /* 2026-08-16: URL migration — guides flattened to /guides/<city>.html (+ -read-about/-stops-map); Trip-Essentials -> essentials; Images -> images; all paths lowercased and de-accented; every guide link repaired. toolbar.js floor +1, weather.js floor +1. CACHE to v938. */
 /* 2026-08-15: toolbar: mobile bar position:relative — no longer fixed on top. toolbar.js floor +1. CACHE to v927. */
 /* 2026-08-15: title-hotel-request: var(--c-brand) gold; guide-style.css floor +1, toolbar.js floor +1. CACHE to v923. */
@@ -1263,7 +1264,7 @@
 /* 2026-08-15: toolbar: replace Where to Stay dropdown with Best Of tab → /best-of/. toolbar.js -> v670. CACHE to v935. */
 /* 2026-08-15: toolbar: swap Before You Go and Best Of order. toolbar.js -> v671. CACHE to v936. */
 /* 2026-08-16: toolbar: Best Of → dropdown with all 34 categories (was plain tab to /best-of/). toolbar.js -> v672. CACHE to v937. */
-var CACHE = 'travel-cache-v938';
+var CACHE = 'travel-cache-v939';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1271,7 +1272,7 @@ var CACHE = 'travel-cache-v938';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 216,'toolbar.js': 673, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 16, 'weather.js': 7 };
+var MIN_VERSIONS = { 'guide-style.css': 216,'toolbar.js': 674, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 17, 'weather.js': 7 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
