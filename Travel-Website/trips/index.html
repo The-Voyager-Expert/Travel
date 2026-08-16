@@ -1048,23 +1048,10 @@ document.addEventListener('DOMContentLoaded',()=>{
          once can cancel the download that was just started. */
   var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-  /* ── Direct add — Google Calendar's pre-filled event editor ──────────────
-     The one path that opens a calendar instead of producing a file. Takes a
-     single event only; a row with more than one falls back to the .ics.
-     Times are floating local (no TZID) exactly as the .ics writes them, so
-     `ctz` carries the reader's own zone to keep Google's reading identical to
-     the file's — without it Google reads a bare stamp as UTC. All-day spans use
-     the plain YYYYMMDD form and the same exclusive end date. ── */
-  function gStamp(d){ return dDate(d)+'T'+pad(d.getHours())+pad(d.getMinutes())+'00'; }
-  function gcalURL(e){
-    var tz=''; try { tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; } catch(x){}
-    var p=['action=TEMPLATE','text='+encodeURIComponent(e.summary)];
-    p.push('dates='+(e.allDay?dDate(e.start)+'/'+dDate(e.end):gStamp(e.start)+'/'+gStamp(e.end)));
-    if(e.desc) p.push('details='+encodeURIComponent(e.desc));
-    if(e.location) p.push('location='+encodeURIComponent(e.location));
-    if(!e.allDay && tz) p.push('ctz='+encodeURIComponent(tz));
-    return 'https://calendar.google.com/calendar/render?'+p.join('&');
-  }
+  /* No Google anywhere in this file, by owner rule (2026-08-16): the calendar
+     here is Apple Calendar, on a Mac and on an iPhone. The whole-trip row goes
+     to it through webcal://, and a single flight or stay goes through the .ics
+     below. A Google Calendar template link was tried and removed the same day. */
   function save(name,ics){
     var url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));
     /* Close the panel instantly — mirrors _closeICS() in toolbar.js.
@@ -1239,12 +1226,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     subEl=document.createElement('div'); subEl.className='cal-sub';
     listEl=document.createElement('div');
     var foot=document.createElement('div'); foot.className='cal-foot';
-    foot.textContent=isIOS
-      ? 'Each one opens the Add to Calendar prompt. Adding one you already have '
-        +'corrects it rather than duplicating it. The same files are waiting in Trip-Exports/.'
-      : 'Each one opens pre-filled in Google Calendar — check it and press Save. '
-        +'The last row is the file version of the whole set, for any other calendar. '
-        +'The same files are waiting in Trip-Exports/.';
+    foot.textContent='The top row hands the whole trip to Calendar in one go. '
+      +'The rows under it are for taking a single flight or stay on its own. '
+      +'Adding something you already have corrects it rather than duplicating it, '
+      +'and a changed booking reaches the calendar on its own.';
     box.appendChild(xBtn); box.appendChild(titleEl); box.appendChild(subEl);
     box.appendChild(listEl); box.appendChild(foot);
     overlay.appendChild(box);
@@ -1269,15 +1254,13 @@ document.addEventListener('DOMContentLoaded',()=>{
       var m=document.createElement('div'); m.className='cal-row-meta'; m.textContent=item.meta;
       b.appendChild(n); b.appendChild(m);
       b.addEventListener('click',function(){
-        /* Subscribe — the whole trip, one click, no file and no per-event Save.
-           iOS gets webcal:// straight, which Calendar owns; everywhere else
-           goes through Google's own add-by-URL screen, which takes webcal://
-           as its cid and adds every event in the feed at once. */
+        /* Subscribe — the whole trip, one click, no file, no Save, no Google.
+           webcal:// is Apple Calendar's own scheme: macOS and iOS hand the URL
+           straight to Calendar, which opens its Subscribe sheet with every
+           event of the trip already in it. The owner is on Apple, so this is
+           the path on EVERY platform — never route this through Google. */
         if(item.feed){
-          if(isIOS){ closePanel(); window.location.href='webcal://'+item.feed; return; }
-          var s=window.open('https://calendar.google.com/calendar/r?cid='+
-            encodeURIComponent('webcal://'+item.feed),'_blank');
-          if(s){ try { s.opener=null; } catch(x){} closePanel(); return; }
+          closePanel();
           window.location.href='webcal://'+item.feed;
           return;
         }
@@ -1295,10 +1278,12 @@ document.addEventListener('DOMContentLoaded',()=>{
            opening the entire time; only the check was wrong. Open plain, then
            sever the opener link on the handle we got, which buys the same
            protection without lying about the result. */
-        if(evs.length===1 && !item.file_only && !isIOS){
-          var w=window.open(gcalURL(evs[0]),'_blank');
-          if(w){ try { w.opener=null; } catch(x){} closePanel(); return; }
-        }
+        /* A single flight or stay stays on the .ics path — on the phone that
+           navigation IS the Add-to-Calendar prompt, which is the behaviour
+           that took the longest to get right. Nothing here goes to Google:
+           the owner is on Apple Calendar (owner, 2026-08-16: "i use iOS no
+           google and you should know that by now"). The whole-trip row above
+           is the one-click path for everything at once. */
         var ics=calendar(evs);
         if(!ics) return;
         save(item.file,ics);
@@ -1396,7 +1381,7 @@ document.addEventListener('DOMContentLoaded',()=>{
          UIDs and the feed refreshes itself when a booking changes. ── */
       items.unshift({
         name:'Add the whole trip', icon:'calendar', primary:true,
-        meta:allEvs.length+' event'+(allEvs.length===1?'':'s')+' · one click, nothing to download',
+        meta:allEvs.length+' event'+(allEvs.length===1?'':'s')+' · opens in Calendar, nothing to download',
         feed:'guidemydays.com/trips/feed/'+base+'.ics'
       });
     }
