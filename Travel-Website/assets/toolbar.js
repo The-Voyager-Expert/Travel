@@ -11649,13 +11649,18 @@ window.TVE.home = (function () {
         }
       }
 
-      /* Between the Trip Overview card and the first Day block — day blocks are
-         siblings of .overview-section, not children, so query globally.
-         Collapses with the days (render() in injectOverviewToggle toggles
-         display on #tve-stf). */
-      var firstDay = document.querySelector('.day-block');
-      if (firstDay) firstDay.parentNode.insertBefore(wrap, firstDay);
-      else ovSec.parentNode.insertBefore(wrap, ovSec.nextSibling);
+      /* Right after the collapse/expand toggle button — chips are the first
+         item inside the expanded area, on top of Day 1. injectOverviewToggle()
+         runs before _setup() (it is higher in the same IIFE). Fallback
+         handles the unlikely case the button is absent. */
+      var toggleBtn = document.getElementById('overview-toggle-btn');
+      if (toggleBtn) {
+        toggleBtn.insertAdjacentElement('afterend', wrap);
+      } else {
+        var firstDay = document.querySelector('.day-block');
+        if (firstDay) firstDay.parentNode.insertBefore(wrap, firstDay);
+        else ovSec.parentNode.insertBefore(wrap, ovSec.nextSibling);
+      }
     }
 
     if (document.readyState === 'loading') {
