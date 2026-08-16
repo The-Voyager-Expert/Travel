@@ -11,11 +11,11 @@ ships to users:
   index card     index.html              (dest-card href + link)
   index inline   index.html              (CLIMATE_INLINE / COST_DATA / SAFETY_DATA)
   FMAP           index.html              (flight-time view entry)
-  map pin        Trip-Essentials/Maps/World-Map.html   (PINS array href + link)
-  travel stats   Trip-Essentials/Travel-Stats.html     (guide link; home/origin exempt)
-  safety         Trip-Essentials/Safety-Guide.html     (one row + link)
+  map pin        maps/world/index.html                 (PINS array href + link)
+  travel stats   stats/index.html                      (guide link; home/origin exempt)
+  safety         essentials/safety/index.html          (one row + link)
   climate        assets/climate.json + assets/weather.js (both Weather tabs)
-  search index   assets/search_index.json              (guides list)
+  search index   assets/search-index.json              (guides list)
 
 This is the repo-resident SUBSET of Brain/scripts/validate/validate_guide_coverage.py (the
 authoritative whole-fleet sweep, which additionally checks the two Brain-only
@@ -39,10 +39,11 @@ from urllib.parse import quote, unquote
 
 REPO_ROOT  = Path(__file__).resolve().parents[2]   # …/.github/scripts/ → repo root
 WEB        = REPO_ROOT / "Travel-Website"
-GUIDES_DIR = WEB / "Guides"
-ESSENTIALS = WEB / "Trip-Essentials"
+GUIDES_DIR = WEB / "guides"
+ESSENTIALS = WEB / "essentials"
 ASSETS_DIR = WEB / "assets"
-MAPS_DIR   = ESSENTIALS / "Maps"
+MAPS_DIR   = WEB / "maps" / "world"
+STATS_DIR  = WEB / "stats"
 
 STAMP = "<!-- shipped -->"
 
@@ -72,8 +73,15 @@ def _json_block(html: str, var_name: str) -> dict:
 
 def _link_ok(base_dir: Path, href: str) -> bool:
     href = unquote(href.split("#")[0].split("?")[0])
+    # Internal links are ROOT-ABSOLUTE since 2026-08-16 ('/guides/athens.html').
+    # pathlib DISCARDS base_dir when the right-hand side starts with '/', so the
+    # join silently resolved to a filesystem-absolute path that never exists and
+    # every surface reported the whole fleet as missing.
+    if href.startswith("/"):
+        base_dir, href = WEB, href.lstrip("/")
     try:
-        return (base_dir / href).resolve().is_file()
+        p = (base_dir / href).resolve()
+        return p.is_file() or (p / "index.html").is_file()
     except (OSError, ValueError):
         return False
 
@@ -89,15 +97,18 @@ def _guide_folder(path: str) -> str:
     migration on 2026-08-03; this script is not wired into any workflow, so the
     breakage went unseen until 2026-08-09.)
     """
-    p = unquote(path).lstrip("./")
-    if p.startswith("Guides/"):
-        p = p[len("Guides/"):]
-    return p.split("/")[0]
+    # Since 2026-08-16 every guide URL is /guides/<city>.html, so the identity
+    # is the filename stem. Taking the last segment and dropping the extension
+    # survives any further change to the URL shape — the two earlier rewrites of
+    # this helper both broke the moment the path changed.
+    p = unquote(path).split("?")[0].split("#")[0].rstrip("/")
+    seg = p.split("/")[-1]
+    return seg[:-5] if seg.endswith(".html") else seg
 
 
 def _find_href(text: str, prefix: str, folder: str) -> str | None:
     for f in {re.escape(folder), re.escape(quote(folder))}:
-        m = re.search(rf'href="({re.escape(prefix)}{f}/[^"]+\.html)"', text)
+        m = re.search(rf'href="({re.escape(prefix)}{f}\.html)"', text)
         if m:
             return m.group(1)
     return None
@@ -107,11 +118,18 @@ def shipped_guides() -> list[str]:
     out = []
     if not GUIDES_DIR.exists():
         return out
-    for folder in sorted(p for p in GUIDES_DIR.iterdir() if p.is_dir()):
-        for html in folder.glob("*.html"):
-            if STAMP in _read(html):
-                out.append(folder.name)
-                break
+    # Guides are FLAT since 2026-08-16: guides/<city>.html. Walking the city
+    # DIRECTORIES (which now hold only photos/ and _build/) matched nothing, so
+    # this gate passed CI while checking zero guides.
+    for html in sorted(GUIDES_DIR.glob("*.html")):
+        if html.name == "index.html" or html.name.endswith(("-read-about.html", "-stops-map.html")):
+            continue
+        if STAMP in _read(html):
+            out.append(html.stem)
+    if not out:
+        print("check_coverage: ERROR — no guides matched guides/<city>.html. "
+              "Refusing to pass a gate that checked nothing.", file=sys.stderr)
+        sys.exit(1)
     return out
 
 
@@ -129,10 +147,12 @@ def main() -> int:
         print("check_coverage: no shipped guides found — nothing to check.")
         return 0
 
-    index_html  = _read(WEB / "index.html")
-    world_html  = _read(MAPS_DIR / "World-Map.html")
-    stats_html  = _read(ESSENTIALS / "Travel-Stats.html")
-    safety_html = _read(ESSENTIALS / "Safety-Guide.html")
+    # The dest-card mosaic and FMAP moved to the guides index; the landing page
+    # grafts cards in from it and carries neither block itself.
+    index_html  = _read(GUIDES_DIR / "index.html")
+    world_html  = _read(MAPS_DIR / "index.html")
+    stats_html  = _read(STATS_DIR / "index.html")
+    safety_html = _read(ESSENTIALS / "safety" / "index.html")
     weather_js  = _read(ASSETS_DIR / "weather.js")
 
     climate_keys = set()
@@ -161,7 +181,7 @@ def main() -> int:
         # produces a false-pass set that hides real gaps.
 
     search_folders, search_names = set(), set()
-    sj = ASSETS_DIR / "search_index.json"
+    sj = ASSETS_DIR / "search-index.json"
     if sj.exists():
         try:
             for g in json.loads(_read(sj)).get("guides", []):
@@ -176,7 +196,7 @@ def main() -> int:
                      for n in ("CLIMATE_INLINE", "COST_DATA", "SAFETY_DATA")}
     fmap = _json_block(index_html, "FMAP")
     fmap_keys_lower = [unquote(k).lower() for k in fmap]
-    home_folders = {k.split("/")[0] for k, fd in fmap.items()
+    home_folders = {k for k, fd in fmap.items()
                     if isinstance(fd, dict) and fd.get("r") == "home"}
 
     folder_to_name = {}
@@ -194,7 +214,7 @@ def main() -> int:
 
         card_href = None
         for f in {re.escape(folder), re.escape(quote(folder))}:
-            cm = re.search(rf'<a class="dest-card"[^>]*href="(\./(?:Guides/)?{f}/[^"]+\.html)"', index_html)
+            cm = re.search(rf'<a class="dest-card"[^>]*href="(/guides/{f}\.html)"', index_html)
             if cm:
                 card_href = cm.group(1)
                 break
@@ -207,12 +227,12 @@ def main() -> int:
         if any(not (keys & set(blk)) for blk in inline_blocks.values()):
             missing["inline"].append(folder)
 
-        if not any(folder.lower() in k for k in fmap_keys_lower):
+        if folder.lower() not in fmap_keys_lower:
             missing["fmap"].append(folder)
 
         pin_href = None
         for f in {re.escape(folder), re.escape(quote(folder))}:
-            pm = re.search(rf"['\"](\.\./\.\./Guides/{f}/[^'\"]+\.html)['\"]", world_html)
+            pm = re.search(rf"['\"](/guides/{f}\.html)['\"]", world_html)
             if pm:
                 pin_href = pm.group(1)
                 break
@@ -220,12 +240,12 @@ def main() -> int:
             missing["pin"].append(folder)
 
         if folder not in home_folders:
-            sh = _find_href(stats_html, "../Guides/", folder)
-            if not sh or not _link_ok(ESSENTIALS, sh):
+            sh = _find_href(stats_html, "/guides/", folder)
+            if not sh or not _link_ok(WEB, sh):
                 missing["stats"].append(folder)
 
-        fh = _find_href(safety_html, "../Guides/", folder)
-        if not fh or not _link_ok(ESSENTIALS, fh):
+        fh = _find_href(safety_html, "/guides/", folder)
+        if not fh or not _link_ok(WEB, fh):
             missing["safety"].append(folder)
 
         if not (cand & climate_keys) or not (cand & weather_keys):
@@ -235,11 +255,7 @@ def main() -> int:
             missing["search"].append(folder)
 
         # also-on-this-site: block must exist
-        guide_html = ""
-        for html in (GUIDES_DIR / folder).glob("*.html"):
-            if STAMP in _read(html):
-                guide_html = _read(html).lower()
-                break
+        guide_html = _read(GUIDES_DIR / f"{folder}.html").lower()
         if "<!-- also-on-this-site -->" not in guide_html:
             missing["resources"].append(folder)
 
