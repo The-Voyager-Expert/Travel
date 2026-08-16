@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/MarkerCluster.min.css">
+<title>Glacier-National-Park — All Stops Map</title>
+<link rel="stylesheet" href="../assets/stops-map-style.css">
+</head>
+<body>
+<div data-toolbar data-depth="1" data-maxwidth="1400" data-title="Glacier-National-Park — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#27ae60">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#8e44ad">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../essentials/maps/vendor/leaflet.min.js"></script>
+<script src="../essentials/maps/vendor/markercluster.min.js"></script>
+<script src="../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+    {
+        "day": 2,
+        "name": "Lake McDonald",
+        "query": "Lake McDonald West Glacier Montana",
+        "lat": 48.5839698,
+        "lng": -113.9190606
+    },
+    {
+        "day": 3,
+        "name": "Logan Pass",
+        "query": "Logan Pass Continental Divide Montana",
+        "lat": 48.6965042,
+        "lng": -113.7183512
+    },
+    {
+        "day": 1,
+        "name": "Trail of Cedars",
+        "query": "Trail of the Cedars Glacier National Park",
+        "lat": 48.6807121,
+        "lng": -113.8189331
+    },
+    {
+        "day": 1,
+        "name": "Avalanche Lake",
+        "query": "Avalanche Lake Trailhead Glacier National Park",
+        "lat": 48.6764615,
+        "lng": -113.8137748
+    },
+    {
+        "day": 1,
+        "name": "Hidden Lake",
+        "query": "Hidden Lake Overlook Logan Pass Glacier National Park",
+        "lat": 48.6912553,
+        "lng": -113.730293
+    },
+    {
+        "day": 2,
+        "name": "Swiftcurrent Lake",
+        "query": "Swiftcurrent Lake Many Glacier Glacier National Park",
+        "lat": 48.7955901,
+        "lng": -113.6615319
+    },
+    {
+        "day": 2,
+        "name": "Grinnell Glacier",
+        "query": "Grinnell Glacier Many Glacier",
+        "lat": 48.7524373,
+        "lng": -113.7285332
+    },
+    {
+        "day": 2,
+        "name": "Iceberg Lake",
+        "query": "Iceberg Lake Many Glacier",
+        "lat": 48.8120134,
+        "lng": -113.7480259
+    },
+    {
+        "day": 2,
+        "name": "Cracker Lake",
+        "query": "Cracker Lake Many Glacier",
+        "lat": 48.7438278,
+        "lng": -113.6444149
+    },
+    {
+        "day": 3,
+        "name": "Running Eagle Falls",
+        "query": "Running Eagle Falls Two Medicine Glacier National Park Montana",
+        "lat": 48.4981275,
+        "lng": -113.3520571
+    },
+    {
+        "day": 3,
+        "name": "Two Medicine Lake",
+        "query": "Two Medicine Lake Boat Dock Glacier National Park Montana",
+        "lat": 48.4837191,
+        "lng": -113.3695208
+    },
+    {
+        "day": 3,
+        "name": "Scenic Point",
+        "query": "Scenic Point Trailhead Two Medicine Glacier National Park Montana",
+        "lat": 48.4849676,
+        "lng": -113.3369572
+    },
+    {
+        "day": 4,
+        "name": "Wild Goose Island",
+        "query": "Wild Goose Island Overlook St Mary Lake Glacier National Park Montana",
+        "lat": 48.6922216,
+        "lng": -113.5316673
+    },
+    {
+        "day": 4,
+        "name": "Sun Point",
+        "query": "Sun Point St Mary Lake Glacier National Park Montana",
+        "lat": 48.6758251,
+        "lng": -113.580355
+    },
+    {
+        "day": 4,
+        "name": "St. Mary Falls",
+        "query": "St Mary Falls Trailhead Going to Sun Road Glacier National Park Montana",
+        "lat": 48.6742854,
+        "lng": -113.6085248
+    },
+    {
+        "day": 4,
+        "name": "Jackson Glacier Overlook",
+        "query": "Jackson Glacier Overlook Going to Sun Road Glacier National Park Montana",
+        "lat": 48.6776863,
+        "lng": -113.6525018
+    },
+    {
+        "day": 5,
+        "name": "Highline Trail",
+        "query": "Highline Trail Logan Pass Glacier National Park Montana",
+        "lat": 48.6965859,
+        "lng": -113.7181478
+    },
+    {
+        "day": 5,
+        "name": "Weeping Wall",
+        "query": "Weeping Wall Going-to-the-Sun Road Glacier National Park Montana",
+        "lat": 48.7269198,
+        "lng": -113.7284489
+    }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#27ae60", "4": "#8e44ad", "5": "#e67e22"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
