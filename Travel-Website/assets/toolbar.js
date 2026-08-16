@@ -1609,10 +1609,7 @@ window.TVE.home = (function () {
       '--c-warn-text:#e0c080;--c-warn-link:#d4a030;' +
       '--c-tastes-text:#e0d0a0;--c-headsup-text:#e0a0a0;--c-headsup-link:#d06040}' +
     'html[data-theme="dark"] ::selection{background:rgba(200,160,64,.35)}' +
-    /* Mirrors the guide-style.css dark block — that one is a prefers-color-scheme
-       media query, so without this line a reader who toggles dark on a light OS
-       keeps the light-mode terracotta on a dark ground. */
-    'html[data-theme="dark"] .title-hotel-request{color:#d4874a}' +
+    /* .title-hotel-request uses var(--c-brand) which resolves automatically in dark mode. */
     'html[data-theme="dark"] .also-on-this-site-pill,' +
     'html[data-theme="dark"] .nearby-guide-pill{background:var(--c-card-bg);color:#b8962a;border-color:#8a7a40}' +
     /* ── Light-mode override — forces light tokens even when OS is dark ───── */
