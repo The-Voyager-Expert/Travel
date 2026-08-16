@@ -33,7 +33,10 @@ input.wx-city { flex: 1; width: 100%; min-width: 0; font-family: inherit; font-s
    of the input's 36px icon inset. Weight only is dropped to regular to match
    the de-bolded input text per owner request. */
 #wx-panel .sa-row { padding: 12px 16px; font-size: 13px; font-weight: 400; }
-.wx-empty { margin: 0; padding: 26px 8px; text-align: center; font-size: 14px; line-height: 1.6; color: var(--muted, #6a6660); }
+/* Explicit, and #id-scoped: the [hidden] attribute is display:none only from
+   the UA sheet, so ANY later rule setting display on .wx-panel would beat it
+   and paint an empty card. Scoped high enough that it cannot be outranked. */
+#wx-panel[hidden] { display: none !important; }
 .wx-month { margin-top: 16px; text-align: center; font-size: 13px; color: var(--muted); }
 .wx-bignums { display: flex; justify-content: center; gap: 28px; margin-top: 6px; }
 .wx-bignums .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
@@ -130,7 +133,7 @@ input.wx-city { flex: 1; width: 100%; min-width: 0; font-family: inherit; font-s
 </div>
 
 <div class="wx-wrap">
-  <div class="wx-panel" id="wx-panel"></div>
+  <div class="wx-panel" id="wx-panel" hidden></div>
   <!-- The two glued strips that sat here are gone (owner 2026-08-14: "these
        should all be removed — it is ugly and repetitive"). The top pair read as
        one offer twice over (Climate finder IS the When to Go tab), and the
@@ -179,12 +182,6 @@ input.wx-city { flex: 1; width: 100%; min-width: 0; font-family: inherit; font-s
 
   function body() {
     var rec = DB[curKey];
-    /* No city chosen yet. Every read below is rec.hi[...], so without this the
-       page throws on load and the panel stays blank with no message at all. */
-    if (!rec) {
-      return '<p class="wx-empty">Search for any of the ' + cityKeys.length +
-             ' cities above to see its year.</p>';
-    }
     var hi = conv(rec.hi[selMonth]) + '°' + unit();
     var lo = conv(rec.lo[selMonth]) + '°' + unit();
 
@@ -232,6 +229,20 @@ input.wx-city { flex: 1; width: 100%; min-width: 0; font-family: inherit; font-s
   }
 
   function render() {
+    /* With no city chosen the panel is REMOVED, not filled with a placeholder.
+       .wx-panel is a raised card — cream fill, border, 26px shadow — sized by
+       its content, so a one-line "search above" message rendered inside it as a
+       large empty banner floating under the search box. The card is the result;
+       until there is a result there is nothing to raise off the page, and the
+       hero search stands on its own. */
+    if (!DB[curKey]) {
+      panel.innerHTML = '';
+      panel.hidden = true;
+      paintHero();
+      paintUnit();
+      return;
+    }
+    panel.hidden = false;
     panel.innerHTML = body();
     paintHero();
     paintUnit();
