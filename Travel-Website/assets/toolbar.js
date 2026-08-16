@@ -10035,7 +10035,7 @@ window.TVE.home = (function () {
 
     /* ── Destination time ── */
     function _destInfo() {
-      /* Derive slug from URL path: …/guides/Geneva/geneva.html → "geneva" */
+      /* Derive slug from URL path: …/guides/geneva.html → "geneva" */
       var parts = location.pathname.split('/');
       var gi = parts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
       var slug = gi >= 0 && parts[gi + 1] ? parts[gi + 1].toLowerCase() : '';
