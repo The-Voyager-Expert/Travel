@@ -1145,8 +1145,8 @@ window.TVE.home = (function () {
        carries them instead throws in the hamburger loop, which reads
        item.group.replace(...), and the whole toolbar renders as the no-JS
        fallback on every page. */
-    { href: base + 'best-of/', text: 'Best Of', icon: 'trophy' },
     { href: base + 'before-you-go/', text: 'Before You Go', icon: 'luggage' },
+    { href: base + 'best-of/', text: 'Best Of', icon: 'trophy' },
     { href: base + 'maps/world/', text: 'Maps', icon: 'folded-map' },
     { href: 'mailto:contact@guidemydays.com?subject=Guide%20My%20Days', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
      to the form. NOT base + ... — a mailto must not be depth-prefixed. */
