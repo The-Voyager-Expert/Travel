@@ -1254,7 +1254,8 @@
 /* 2026-08-15: toolbar — action pill row above Trip Overview, below Quick Facts strip. toolbar.js -> v662. CACHE to v921. */
 /* 2026-08-15: Climate-Finder.html moved to root and renamed Before-You-Go.html; toolbar href updated. toolbar.js -> v666. CACHE to v928. */
 /* 2026-08-15: Before-You-Go.html renamed to When-to-Go.html; toolbar href + icon map updated. toolbar.js -> v667. CACHE to v929. */
-var CACHE = 'travel-cache-v929';
+/* 2026-08-15: Sunrise-Sunset.html moved to root. CACHE to v930. */
+var CACHE = 'travel-cache-v930';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
