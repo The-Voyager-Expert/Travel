@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../assets/stops-map-style.css">
+<title>Shanghai — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="1" data-maxwidth="1400" data-title="Shanghai — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../essentials/maps/vendor/leaflet.min.js"></script>
+<script src="../essentials/maps/vendor/markercluster.min.js"></script>
+<script src="../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Nanjing Road Pedestrian Street",
+    "query": "Nanjing Road East, Huangpu, Shanghai",
+    "lat": 31.2289307,
+    "lng": 121.4733169
+  },
+  {
+    "day": 1,
+    "name": "Shanghai Museum",
+    "query": "Shanghai Museum, 201 Renmin Avenue, Huangpu, Shanghai",
+    "lat": 31.2301577,
+    "lng": 121.4709998
+  },
+  {
+    "day": 1,
+    "name": "Xintiandi",
+    "query": "Xintiandi, 181 Taicang Rd, Huangpu, Shanghai",
+    "lat": 31.2219311,
+    "lng": 121.4704371
+  },
+  {
+    "day": 1,
+    "name": "Shanghai Tower",
+    "query": "Shanghai Tower, 479 Lujiazui Ring Rd, Pudong, Shanghai",
+    "lat": 31.2356449,
+    "lng": 121.5012495
+  },
+  {
+    "day": 2,
+    "name": "Jing'an Temple",
+    "query": "Jing'an Temple, 1686 Nanjing West Rd, Jing'an, Shanghai",
+    "lat": 31.225215,
+    "lng": 121.4407923
+  },
+  {
+    "day": 2,
+    "name": "French Concession",
+    "query": "Wukang Road, Xuhui, Shanghai",
+    "lat": 31.2079627,
+    "lng": 121.4345823
+  },
+  {
+    "day": 2,
+    "name": "Jade Buddha Temple",
+    "query": "Jade Buddha Temple, 170 Anyuan Rd, Jing'an, Shanghai",
+    "lat": 31.2436872,
+    "lng": 121.4397844
+  },
+  {
+    "day": 3,
+    "name": "The Bund",
+    "query": "The Bund, Zhongshan Dong Yi Lu, Huangpu, Shanghai",
+    "lat": 31.2353356,
+    "lng": 121.487632
+  },
+  {
+    "day": 3,
+    "name": "Yuyuan Garden",
+    "query": "Yu Garden, 218 Anren Jie, Huangpu, Shanghai",
+    "lat": 31.2314139,
+    "lng": 121.4842589
+  },
+  {
+    "day": 3,
+    "name": "Old Town",
+    "query": "City God Temple, 249 Fangbang Zhong Lu, Huangpu, Shanghai",
+    "lat": 31.2278786,
+    "lng": 121.4881914
+  },
+  {
+    "day": 3,
+    "name": "Oriental Pearl Tower",
+    "query": "Oriental Pearl Tower, 1 Century Avenue, Pudong, Shanghai",
+    "lat": 31.2419464,
+    "lng": 121.4952604
+  },
+  {
+    "day": 4,
+    "name": "Tianzifang",
+    "query": "Tianzifang, 210 Taikang Rd, Xuhui, Shanghai",
+    "lat": 31.21034,
+    "lng": 121.4641036
+  },
+  {
+    "day": 4,
+    "name": "Power Station of Art",
+    "query": "Power Station of Art, 200 Huayuangang Rd, Huangpu, Shanghai",
+    "lat": 31.2030587,
+    "lng": 121.4938965
+  },
+  {
+    "day": 4,
+    "name": "M50 Art District",
+    "query": "M50 Art District, 50 Moganshan Rd, Putuo, Shanghai",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 5,
+    "name": "Humble Administrator's Garden",
+    "query": "Humble Administrator's Garden, 178 Dongbei St, Gusu, Suzhou",
+    "lat": 31.3252175,
+    "lng": 120.6254148
+  },
+  {
+    "day": 5,
+    "name": "Suzhou Museum",
+    "query": "Suzhou Museum, 204 Dongbei St, Gusu, Suzhou",
+    "lat": 31.2515163,
+    "lng": 121.4353402
+  },
+  {
+    "day": 5,
+    "name": "Tiger Hill",
+    "query": "Tiger Hill, 8 Shanmen Rd, Gusu, Suzhou",
+    "lat": null,
+    "lng": null
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
