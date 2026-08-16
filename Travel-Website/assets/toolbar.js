@@ -1133,7 +1133,7 @@ window.TVE.home = (function () {
        Before You Go · Maps · Contact. It follows the order a trip is actually
        decided in — when to travel, then where to sleep, then what to sort out
        before leaving — rather than the order the tabs happened to be added. */
-    { href: base + 'Trip-Essentials/Climate-Finder.html', text: 'When to Go', icon: 'sun-clear' },
+    { href: base + 'Before-You-Go.html', text: 'When to Go', icon: 'sun-clear' },
     /* OWNER-DIRECTED 2026-08-14: Where to Stay, a dropdown of the six lodging
        pages previously reachable only from the landing page's Where to Stay
        column. SIXTH top-strip entry and the first dropdown since the bar was cut
@@ -8917,7 +8917,7 @@ window.TVE.home = (function () {
       'European-Train-Guide.html': 'train', 'Scenic-Train-Journeys.html': 'train',
       'Train-Passes.html': 'train',
       'Visas.html': 'visas', 'Visa-Processing-Times.html': 'visas',
-      'Weather.html': 'sun', 'Climate-Finder.html': 'sun',
+      'Weather.html': 'sun', 'Before-You-Go.html': 'sun',
       'When-to-Go.html': 'calendar', 'Sports-Calendar.html': 'calendar',
       'Sunrise-Sunset.html': 'sunset', 'Time-Zones.html': 'clock',
       'Best-Amusement-Parks.html': 'ferris', 'Best-Kids-Friendly-Places.html': 'ferris',

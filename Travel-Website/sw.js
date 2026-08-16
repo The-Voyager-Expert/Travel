@@ -1252,7 +1252,8 @@
 /* 2026-08-15: action pills — neutral color/border/weight to match QF info chips. guide-style.css -> v216. CACHE to v926. */
 /* 2026-08-15: toolbar — action pills above Trip Overview via extrasOutOfCard; QF simple. toolbar.js -> v664. CACHE to v924. */
 /* 2026-08-15: toolbar — action pill row above Trip Overview, below Quick Facts strip. toolbar.js -> v662. CACHE to v921. */
-var CACHE = 'travel-cache-v927';
+/* 2026-08-15: Climate-Finder.html moved to root and renamed Before-You-Go.html; toolbar href updated. toolbar.js -> v666. CACHE to v928. */
+var CACHE = 'travel-cache-v928';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1260,7 +1261,7 @@ var CACHE = 'travel-cache-v927';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 216,'toolbar.js': 665, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 216,'toolbar.js': 666, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
