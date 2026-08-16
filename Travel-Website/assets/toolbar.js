@@ -1652,8 +1652,17 @@ window.TVE.home = (function () {
       '--c-tastes-text:#e0d0a0;--c-headsup-text:#e0a0a0;--c-headsup-link:#d06040}' +
     'html[data-theme="dark"] ::selection{background:rgba(200,160,64,.35)}' +
     /* .title-hotel-request uses var(--c-brand) which resolves automatically in dark mode. */
-    'html[data-theme="dark"] .also-on-this-site-pill,' +
-    'html[data-theme="dark"] .nearby-guide-pill{background:var(--c-card-bg);color:#b8962a;border-color:#8a7a40}' +
+    /* :not(:hover):not(:active):not(:focus-visible) — THE REST STATE ONLY.
+       This block is injected into <head>, so it lands AFTER the stylesheets at
+       equal specificity and wins every property it names. Unscoped, it beat the
+       pill's own :hover fill while the !important white label survived, and the
+       word vanished on a white pill (owner 2026-08-16, reported repeatedly).
+       The white label is gone from the CSS now, but the scoping stays: a theme
+       rule has no business overriding an interaction state, and this is what
+       stops the next palette edit from silently flattening hover again. */
+    'html[data-theme="dark"] .also-on-this-site-pill:not(:hover):not(:active):not(:focus-visible),' +
+    'html[data-theme="dark"] .nearby-guide-pill:not(:hover):not(:active):not(:focus-visible)' +
+      '{background:var(--c-card-bg);color:#b8962a;border-color:#8a7a40}' +
     /* ── Light-mode override — forces light tokens even when OS is dark ───── */
     'html[data-theme="light"]{' +
       '--bg:#f5f4f0;--warm:#fdf8f0;--surface:#ffffff;--surface2:#f0ede8;' +
@@ -1698,8 +1707,13 @@ window.TVE.home = (function () {
       '--c-warn-text:#5a3a05;--c-warn-link:#a36009;' +
       '--c-tastes-text:#3a2a05;--c-headsup-text:#3a1a1a;--c-headsup-link:#a61c00}' +
     'html[data-theme="light"] ::selection{background:rgba(122,59,30,.35);color:inherit}' +
-    'html[data-theme="light"] .also-on-this-site-pill,' +
-    'html[data-theme="light"] .nearby-guide-pill{background:#ffffff;color:#8a6c1a;border-color:#c8a44a}' +
+    /* Rest state only — see the note on the dark twin above. This is the exact
+       rule that produced the white-on-white pill: `background:#ffffff` here beat
+       the hover fill, `color:#fff !important` in the stylesheet outranked the
+       gold, and the label disappeared for anyone who had used the theme toggle. */
+    'html[data-theme="light"] .also-on-this-site-pill:not(:hover):not(:active):not(:focus-visible),' +
+    'html[data-theme="light"] .nearby-guide-pill:not(:hover):not(:active):not(:focus-visible)' +
+      '{background:#ffffff;color:#8a6c1a;border-color:#c8a44a}' +
     /* ── Dark-mode nav-link override — #7a3b1e (dark rust) is low-contrast on dark bg; shift to brand gold ── */
     '@media (prefers-color-scheme:dark){' +
       '.tb a,.tb a:visited,.tb a:hover,.tb a.tb-active{color:#c8a060!important}' +
@@ -8435,64 +8449,96 @@ window.TVE.home = (function () {
     var pills = document.querySelectorAll('.also-on-this-site-pill,.sibling-pill');
     if (!pills.length) return;
 
-    /* ITEMS is the first source, but most of its entries carry no `icon` field
-       at all — only the ones that needed one for the nav. These are the
-       remaining pill targets, mapped to shapes that already exist in
-       NAV_ICONS. Survey of every distinct target across the 286 pages that
-       carry this strip; anything not listed simply stays text. */
+    /* KEYED ON THE PAGE SLUG, NOT THE FILENAME (rewritten 2026-08-16 for the
+       Thirtieth non-negotiable's URL shape). Every key here used to be a
+       CamelCase `.html` filename — `Time-Zones.html`, `Weather.html` — and the
+       lookup was `href.split('/').pop()`. The URL migration turned every target
+       into a directory (`/time-zones/`, `/essentials/visa/`), so `.pop()`
+       returned the EMPTY STRING after the trailing slash and not one key in
+       this table could ever match again.
+
+       It failed far worse than "no icons", which is why the owner saw it: the
+       ITEMS walk below writes `PAGE_ICON[key] = it.icon` using the same broken
+       expression, so every nav entry in turn wrote to `PAGE_ICON['']` and the
+       LAST one won. Every pill then resolved '' → that one icon and the whole
+       strip rendered as a row of identical clocks (Time Zones being last in
+       ITEMS). A pill that should have drawn nothing drew a clock too.
+
+       `_pageKey` below is the fix and is the only thing that reads an href:
+       last non-empty path segment, `.html` stripped. Both this table and the
+       ITEMS walk go through it, so they cannot drift apart again, and an empty
+       key is refused rather than stored. */
     var PAGE_ICON = {
-      'Airport-Connection-Times.html': 'plane', 'Lounges-US.html': 'plane',
-      'Lounges-Europe.html': 'plane', 'Delta-Routes-Full.html': 'plane',
-      'United-Routes-Full.html': 'plane', 'American-Routes-Full.html': 'plane',
-      'Asia-Stats.html': 'chart', 'Caribbean-Stats.html': 'chart',
-      'Europe-Stats.html': 'chart', 'South-America-Stats.html': 'chart',
-      'Stats-Across-Canada.html': 'chart', 'Stats-Across-US.html': 'chart',
-      'Travel-Stats.html': 'chart',
-      'Baggage.html': 'luggage', 'Luggage-Storage.html': 'luggage',
-      'Best-Most-Luxurious-Hotels.html': 'neighborhoods',
-      'Best-Ultra-Luxurious-Resorts.html': 'neighborhoods',
-      'Best-Unique-Hotels.html': 'neighborhoods', 'Best-Resorts.html': 'neighborhoods',
-      'Hotels-Stays.html': 'neighborhoods', 'Neighborhoods.html': 'neighborhoods',
-      'European-Train-Guide.html': 'train', 'Scenic-Train-Journeys.html': 'train',
-      'Train-Passes.html': 'train',
-      'Visas.html': 'visas', 'Visa-Processing-Times.html': 'visas',
-      'Weather.html': 'sun', 'when-to-go/': 'sun',
-      'when-to-go/': 'calendar', 'Sports-Calendar.html': 'calendar',
-      'sunrise-sunset/': 'sunset', 'Time-Zones.html': 'clock',
-      'Best-Amusement-Parks.html': 'ferris', 'Best-Kids-Friendly-Places.html': 'ferris',
-      'Best-Islands.html': 'island', 'Budget-Guide.html': 'budget',
-      'Cards-ATM.html': 'card', 'City-Transit-Cards.html': 'transit',
-      'Cruise-Ships.html': 'ship', 'Currency-Guide.html': 'money',
-      'Day-Trips.html': 'compass', 'Destination-Records.html': 'trophy',
-      'Digital-Nomad-Visas.html': 'laptop', 'Entry-Requirements.html': 'entry-req',
-      'Festival-Finder.html': 'pennant', 'First-Timer-Mistakes.html': 'first-timer',
-      'Passport.html': 'passport', 'Plug-Adapter-Guide.html': 'plug',
-      'Rental-Cars.html': 'rental-cars', 'Restaurants.html': 'restaurants',
-      'SIM-Cards.html': 'sim', 'Safety-Guide.html': 'safety-guide',
-      'Scams-By-City.html': 'scams', 'Tap-Water.html': 'tap-water',
-      'Tipping-Guide.html': 'tipping', 'Tours-Tickets.html': 'tours-tickets',
-      'Travel-Apps.html': 'travel-apps', 'Travel-Insurance.html': 'insurance',
-      'Travel-Packing.html': 'packing', 'Trusted-Traveler.html': 'trusted',
-      'Vaccines.html': 'vaccines', 'World-Map.html': 'globe',
-      'Africa-Stats.html': 'chart',
-      'Oceania-Stats.html': 'chart',
-      'Before-You-Go.html': 'luggage'
+      /* Air */
+      'connections': 'plane', 'lounges-us': 'plane', 'lounges-europe': 'plane',
+      'delta-routes': 'plane', 'united-routes': 'plane', 'american-routes': 'plane',
+      'airlines': 'plane',
+      /* Stats — every regional page plus the overview and the records page */
+      'stats': 'chart', 'africa': 'chart', 'asia': 'chart', 'canada': 'chart',
+      'caribbean': 'chart', 'europe': 'chart', 'oceania': 'chart',
+      'south-america': 'chart', 'us': 'chart', 'travel-stats': 'chart',
+      'records': 'trophy',
+      /* Bags */
+      'baggage': 'luggage', 'storage': 'luggage', 'packing': 'packing',
+      /* Stays */
+      'hotels': 'neighborhoods', 'neighborhoods': 'neighborhoods',
+      'most-luxurious-hotels': 'neighborhoods', 'ultra-luxurious-resorts': 'neighborhoods',
+      'unique-hotels': 'neighborhoods', 'resorts': 'neighborhoods',
+      /* Rail */
+      'european-trains': 'train', 'scenic-trains': 'train', 'train-passes': 'train',
+      'transit-cards': 'transit',
+      /* Documents */
+      'visa': 'visas', 'visa-times': 'visas', 'nomad-visas': 'laptop',
+      'entry': 'entry-req', 'passport': 'passport', 'trusted': 'trusted',
+      'trusted-traveler': 'trusted', 'vaccines': 'vaccines',
+      /* Timing and weather */
+      'weather': 'sun', 'when-to-go': 'calendar', 'sports-calendar': 'calendar',
+      'sunrise-sunset': 'sunset', 'time-zones': 'clock',
+      'festival-finder': 'pennant',
+      /* Money */
+      'currencies': 'money', 'budget': 'budget', 'cards-atm': 'card',
+      'tipping': 'tipping',
+      /* On the ground */
+      'cars': 'rental-cars', 'restaurants': 'restaurants', 'tours': 'tours-tickets',
+      'day-trips': 'compass', 'cruises': 'ship', 'maps': 'globe', 'world': 'globe',
+      /* Practical */
+      'plugs': 'plug', 'sims': 'sim', 'apps': 'travel-apps',
+      'insurance': 'insurance', 'safety': 'safety-guide', 'scams': 'scams',
+      'tap-water': 'tap-water', 'mistakes': 'first-timer',
+      'before-you-go': 'luggage',
+      /* Best Of */
+      'amusement-parks': 'ferris', 'kids-friendly-places': 'ferris',
+      'islands': 'island'
     };
+    /* The ONE href reader. Last non-empty segment, `.html` off, lowercased —
+       so `/essentials/visa/`, `/essentials/visa`, `/essentials/visa/index.html`
+       and an old `Visas.html#eu` all land on a comparable key. Returns '' for
+       an href with nothing usable (a bare '/', a mailto:, an external site),
+       and every caller treats '' as "no icon" rather than storing it. */
+    function _pageKey(href) {
+      var s = String(href || '').split('#')[0].split('?')[0];
+      s = s.replace(/\/index\.html$/i, '/').replace(/\.html$/i, '');
+      var parts = s.split('/').filter(function (p) { return p; });
+      return parts.length ? parts[parts.length - 1].toLowerCase() : '';
+    }
     /* ITEMS wins where it has an opinion, so a nav icon change follows here. */
     (function walk(list) {
       [].forEach.call(list || [], function (it) {
         if (!it) return;
         if (it.children) walk(it.children);
         if (it.href && it.icon) {
-          PAGE_ICON[it.href.split('/').pop().split('#')[0]] = it.icon;
+          /* The `if (k)` is load-bearing: a nav href is a directory now, and
+             before _pageKey existed this line stored every nav icon under ''
+             and turned the whole strip into one repeated shape. */
+          var k = _pageKey(it.href);
+          if (k) PAGE_ICON[k] = it.icon;
         }
       });
     })(ITEMS);
 
     [].forEach.call(pills, function (a) {
       if (a.querySelector('svg')) return;                 /* already drawn */
-      var file = (a.getAttribute('href') || '').split('/').pop().split('#')[0];
-      var key  = PAGE_ICON[file];
+      var key = PAGE_ICON[_pageKey(a.getAttribute('href'))];
       if (!navIcon(key)) return;
       /* THE PILL MAY ALREADY CARRY A DRAWN MARK — take it out before inserting.
          The guard above only catches an <svg>, and a .gm-mk is a CSS mask on a

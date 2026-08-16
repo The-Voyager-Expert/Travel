@@ -372,18 +372,39 @@ a.also-on-this-site-pill {
   padding: 6px 12px; text-decoration: none;
   transition: background .15s, box-shadow .15s, border-color .15s, color .15s, transform .08s;
 }
+/* HOVER IS OUTLINED, AND THE LABEL IS NEVER WHITE (owner 2026-08-16).
+   This rule used to fill the pill with the terracotta gradient and set
+   `color:#fff !important`. Two things then went wrong at once, and the second
+   is why the owner has reported this repeatedly:
+
+   1. Filled is not the chip treatment. The Twenty-fourth non-negotiable put
+      every hovered/selected chip on an OUTLINE — resting fill kept, terracotta
+      border, terracotta label — and reserved the gradient for true CTAs. This
+      pill family was simply missed by that pass.
+   2. The white label was !important and the fill was not. toolbar.js injects
+      `html[data-theme="light"] .also-on-this-site-pill{background:#ffffff …}`
+      into <head>, i.e. AFTER this stylesheet at equal specificity — so the
+      moment a reader has ever touched the theme toggle, the background
+      reverted to white while the !important label stayed white. White on
+      white: the pill kept its icon and lost its word entirely. Every previous
+      fix restored the fill; none removed the white label, so the next
+      theme-rule edit brought the bug straight back.
+
+   The fix deletes the white label as a state that exists at all. No
+   combination of theme rule and hover rule can hide the text now, because the
+   label and the border move together and both are terracotta. Never
+   reintroduce `color:#fff` here — check_pill_label_never_white hard-fails. */
 @media (hover:hover) {
   a.also-on-this-site-pill:hover, a.sibling-pill:hover {
-    background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
-    color: #fff !important;
-    border-color: #b85c2a;
+    color: var(--rust, #b85c2a);
+    border-color: var(--rust, #b85c2a);
     box-shadow: 0 3px 10px rgba(184,92,42,.18);
+    transform: translateY(-1px);
   }
-  a.also-on-this-site-pill:hover svg, a.sibling-pill:hover svg { fill: #b85c2a; }
+  a.also-on-this-site-pill:hover svg, a.sibling-pill:hover svg { fill: var(--rust, #b85c2a); }
 }
 a.also-on-this-site-pill:active {
-  background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%);
-  color: #fff !important; border-color: #b85c2a;
+  color: #7a3b1e; border-color: #7a3b1e;
   box-shadow: 0 1px 3px rgba(184,92,42,.12); transform: scale(.97) translateY(1px);
 }
 
