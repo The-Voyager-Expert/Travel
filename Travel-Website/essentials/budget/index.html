@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<title>Budget Guide</title>
+<style>.hero-band { background: var(--brand,#C04E1A); margin: 0 -32px; padding: 44px 32px 36px; }
+.hero-title { font-family: Georgia,Cambria,serif; font-size: 48px; font-weight: 700; color: #fff; letter-spacing: -.03em; line-height: 1.05; text-wrap: balance; margin-bottom: 10px; }
+.hero-sub { font-size: 14px; color: rgba(255,255,255,.78); line-height: 1.7; max-width: 520px; margin: 0; }
+.hero-ground { background: var(--ground,#F2EFE8); margin: 0 -32px; padding: 22px 32px 28px; margin-bottom: 20px; }
+.hero-ground .search-input { max-width: 440px; margin: 0 auto; display: block; }
+.index-section { max-width: none; margin: 0 auto; padding: 0 32px; }
+.sort-controls { margin: 12px 0; display: flex; gap: 8px; }
+.sort-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: inherit; font-size: var(--fs-sub,12px); font-weight: 400;
+  padding: 5px 12px; border-radius: 6px; border: 1.5px solid var(--border2, #e6e2da);
+  background: var(--surface,#ffffff); color: var(--muted); cursor: pointer;
+  transition: all .15s;
+}
+.sort-btn:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+.sort-btn.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); }
+@media (min-width: 601px), (pointer: fine) {
+  /* Only 3 buttons — flex:1 1 auto (Cards-ATM's 8-pill treatment) stretched
+     each one to ~1/3 of the full page width, looking oversized. Natural width
+     + centered container (owner report 2026-07-29) reads right with this few. */
+  .sort-controls { gap: 0 !important; justify-content: center; }
+  .sort-btn { height: 36px !important; padding: 0 14px !important; font-size: 13px !important; font-weight: 500;
+    color: #3d3a32 !important; border: 1.5px solid var(--border2, #e6e2da) !important;
+    border-radius: 0 !important; background: var(--surface, #ffffff) !important;
+    margin-left: 0; flex: 0 1 auto; line-height: 1; }
+  .sort-btn:hover { background: var(--bg, #f5f4f0) !important;
+    border-color: var(--rust) !important; }
+  .sort-btn.active,
+  .sort-btn.active:hover,
+  .sort-btn.active:focus { background: #f0ede8 !important;
+    border: 1.5px solid var(--border) !important; color: var(--muted) !important; }
+}
+.index-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border,#d8d4cc); border-radius: 8px; overflow: hidden; }
+.index-table thead th {
+  background: var(--surface2, #f0ede8); border-bottom: 2px solid var(--border, #d8d4cc);
+  padding: 8px 12px; text-align: left; font-size: var(--fs-body,14px); font-weight: 700;
+  color: var(--muted);
+}
+.index-table th:last-child, .index-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.index-table tbody td { font-size: var(--fs-body,14px); box-shadow: inset 0 -1px 0 var(--border2,#e6e2da); transition: box-shadow .1s ease; }
+.index-table tbody tr:last-child td { box-shadow: none; }
+.index-table tbody tr { cursor: pointer; background: var(--surface,#fff); }
+.index-table tbody tr:hover td { background: #FAE8DE; box-shadow: inset 0 1px 0 rgba(192,78,26,.15), inset 0 -1px 0 rgba(192,78,26,.15); }
+.index-table tbody tr:active td { background: #f2d0bb; box-shadow: inset 0 2px 0 #C04E1A, inset 0 -2px 0 #C04E1A; }
+.index-table tbody td a { color: var(--text); display: block; }
+.index-table tbody td a:visited { color: #3d3a32; }
+.index-table tbody td a:hover { color: var(--accent,#8a6c1a); text-decoration: none; }
+.index-table tbody tr.idx-hide { display: none; }
+#budget-search { margin-bottom: 0; }
+.content-wrap { max-width: none; margin: 0 auto; padding: 0 32px; }
+#budget-noresult { display: none; padding: 12px 4px; font-size: var(--fs-body,14px); color: var(--muted,#6a6660); }
+html { scroll-behavior: smooth; }
+.note { font-size: var(--fs-sub,12px); color: var(--muted,#6a6660); margin-top: 12px; }
+@media (max-width: 600px) and (pointer: coarse) {
+  .index-section { padding: 0 12px; }
+  .index-table td, .index-table th { font-size: var(--fs-sub,12px) !important; padding: 4px 8px !important; }
+  /* Form B glued 3-across grid on mobile. */
+  .sort-controls { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; width: 100% !important; margin: 12px 0 !important; }
+  .sort-btn { height: 40px !important; padding: 4px 6px !important; border-radius: 0 !important; font-size: 12px !important; white-space: normal !important; line-height: 1.12 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
+  /* Base .sort-btn.active (unguarded, above) carries the strong terracotta-gradient
+     fill — desktop already overrides it to the muted-grey pushed-down look; mobile
+     never did (owner report 2026-07-29). */
+  .sort-btn.active,
+  .sort-btn.active:hover,
+  .sort-btn.active:focus { background: #f0ede8 !important; color: var(--muted) !important; border-color: var(--border) !important; }
+}
+@media (prefers-color-scheme: dark) {
+  .sort-btn { color: var(--text) !important; }
+  .sort-btn.active,
+  .sort-btn.active:hover,
+  .sort-btn.active:focus { background: var(--surface) !important; color: var(--rust,#b85c2a) !important; border-color: var(--rust,#b85c2a) !important; }
+  .index-table tbody tr:hover td { background: rgba(212,102,58,.16); box-shadow: inset 0 1px 0 rgba(212,102,58,.25), inset 0 -1px 0 rgba(212,102,58,.25); }
+  .index-table tbody tr:active td { background: rgba(212,102,58,.28); }
+}
+:root[data-theme="dark"] .sort-btn { color: var(--text) !important; }
+:root[data-theme="dark"] .sort-btn.active,
+:root[data-theme="dark"] .sort-btn.active:hover,
+:root[data-theme="dark"] .sort-btn.active:focus { background: var(--surface) !important; color: var(--rust,#b85c2a) !important; border-color: var(--rust,#b85c2a) !important; }
+:root[data-theme="dark"] .index-table tbody tr:hover td { background: rgba(212,102,58,.16); box-shadow: inset 0 1px 0 rgba(212,102,58,.25), inset 0 -1px 0 rgba(212,102,58,.25); }
+:root[data-theme="dark"] .index-table tbody tr:active td { background: rgba(212,102,58,.28); }
+</style>
+<link rel="stylesheet" href="../../assets/mobile.css?v=53">
+</head>
+<body>
+
+<div id="toolbar-mount" data-depth="2" data-maxwidth="940" data-updated="2026-08-08"></div>
+<script src="../../assets/toolbar.js?v=127"></script>
+
+<div class="index-section">
+  <div class="hero-band">
+    <h1 class="hero-title">Budget Guide</h1>
+    <p class="hero-sub">What a day costs per person in each city — hotel plus food. Sort cheapest to most expensive to see where your money goes furthest.</p>
+  </div>
+  <div class="hero-ground">
+    <input id="budget-search" type="search" placeholder="City or country" aria-label="Search by city" autocomplete="off" spellcheck="false" class="search-input">
+  </div>
+  <div id="budget-noresult">No city matches that search.</div>
+  <div class="sort-controls">
+    <button class="sort-btn" id="sort-asc" title="Sort by total cost: cheapest first">Cheapest First</button>
+    <button class="sort-btn" id="sort-desc" title="Sort by total cost: most expensive first">Most Expensive First</button>
+    <button class="sort-btn" id="sort-reset" title="Reset to alphabetical order">Reset</button>
+  </div>
+  <table class="index-table">
+    <colgroup><col style="width:30%"><col style="width:23%"><col style="width:23%"><col style="width:24%"></colgroup>
+    <thead><tr><th>City</th><th>Hotel (mid-range/night)</th><th>Food (per person/day)</th><th>Total (daily)</th></tr></thead>
+    <tbody id="budget-tbody">
+    </tbody>
+  </table>
+  <p class="note">Prices are estimated daily costs per person for mid-range travel. Hotel prices are for one night in a mid-range hotel; food estimates include meals at casual restaurants. Total is the sum of hotel and food costs. Costs vary by season and specific venue choices.</p>
+</div>
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="../currency/">Currency</a>
+    <a class="also-on-this-site-pill" href="../cards-atm/">Cards &amp; ATM</a>
+    <a class="also-on-this-site-pill" href="../tipping/">Tipping</a>
+    <a class="also-on-this-site-pill" href="../hotels/">Hotels &amp; stays</a>
+    <a class="also-on-this-site-pill" href="../tours/">Tours &amp; tickets</a>
+  </div>
+</div>
+
+<script>
+const CITIES = [
+  { name: "Abu Dhabi", hotel: "120-180", food: "40-70" },
+  { name: "Aix-en-Provence", hotel: "70-110", food: "30-50" },
+  { name: "Alaska", hotel: "100-160", food: "35-60" },
+  { name: "Alesund", hotel: "90-140", food: "35-55" },
+  { name: "Amalfi", hotel: "100-150", food: "35-55" },
+  { name: "Amsterdam", hotel: "100-150", food: "30-50" },
+  { name: "Annecy", hotel: "80-120", food: "30-50" },
+  { name: "Aracaju", hotel: "40-70", food: "15-28" },
+  { name: "Arenal", hotel: "60-100", food: "20-38" },
+  { name: "Aruba", hotel: "130-180", food: "45-70" },
+  { name: "Athens", hotel: "60-100", food: "25-45" },
+  { name: "Atlanta", hotel: "80-120", food: "30-50" },
+  { name: "Austin", hotel: "90-140", food: "30-50" },
+  { name: "Azores", hotel: "70-110", food: "30-50" },
+  { name: "Bahamas", hotel: "150-200", food: "50-80" },
+  { name: "Bali", hotel: "30-60", food: "12-25" },
+  { name: "Bangkok", hotel: "40-70", food: "12-25" },
+  { name: "Barbados", hotel: "140-190", food: "45-70" },
+  { name: "Barcelona", hotel: "80-130", food: "30-50" },
+  { name: "Beijing", hotel: "70-110", food: "20-40" },
+  { name: "Bend", hotel: "100-150", food: "30-50" },
+  { name: "Bergen", hotel: "110-160", food: "40-65" },
+  { name: "Berlin", hotel: "70-110", food: "25-45" },
+  { name: "Big Island", hotel: "120-170", food: "40-65" },
+  { name: "Bologna", hotel: "70-110", food: "30-50" },
+  { name: "Bora Bora", hotel: "350-500", food: "60-90" },
+  { name: "Bordeaux", hotel: "75-115", food: "30-50" },
+  { name: "Boston", hotel: "100-150", food: "35-55" },
+  { name: "Boulder", hotel: "100-150", food: "30-50" },
+  { name: "Bruges", hotel: "80-130", food: "30-50" },
+  { name: "Brussels", hotel: "80-130", food: "30-50" },
+  { name: "Budapest", hotel: "50-90", food: "20-40" },
+  { name: "Buenos Aires", hotel: "60-100", food: "25-45" },
+  { name: "Cairo", hotel: "40-70", food: "15-28" },
+  { name: "Cambridge", hotel: "90-140", food: "30-50" },
+  { name: "Cannes", hotel: "100-150", food: "35-55" },
+  { name: "Cape Cod", hotel: "100-160", food: "35-55" },
+  { name: "Capri", hotel: "120-170", food: "40-65" },
+  { name: "Carmel-by-the-Sea", hotel: "120-170", food: "40-65" },
+  { name: "Cascais", hotel: "70-110", food: "28-48" },
+  { name: "Cayman Islands", hotel: "160-220", food: "50-80" },
+  { name: "Charlotte", hotel: "80-120", food: "30-50" },
+  { name: "Chiang Mai", hotel: "25-50", food: "8-18" },
+  { name: "Chicago", hotel: "90-140", food: "30-50" },
+  { name: "Chongqing", hotel: "50-80", food: "15-30" },
+  { name: "Cinque Terre", hotel: "90-140", food: "30-50" },
+  { name: "Colmar", hotel: "75-115", food: "30-50" },
+  { name: "Colombo", hotel: "50-85", food: "15-28" },
+  { name: "Columbia", hotel: "70-110", food: "25-45" },
+  { name: "Copenhagen", hotel: "100-150", food: "35-55" },
+  { name: "Corfu", hotel: "60-100", food: "25-45" },
+  { name: "Curacao", hotel: "120-170", food: "40-65" },
+  { name: "Curitiba", hotel: "45-75", food: "18-32" },
+  { name: "Cusco", hotel: "40-70", food: "15-30" },
+  { name: "Dallas", hotel: "80-120", food: "30-50" },
+  { name: "Denver", hotel: "90-140", food: "30-50" },
+  { name: "Doha", hotel: "100-150", food: "35-60" },
+  { name: "Dubai", hotel: "100-150", food: "35-60" },
+  { name: "Dublin", hotel: "100-150", food: "35-55" },
+  { name: "Dubrovnik", hotel: "80-130", food: "30-50" },
+  { name: "Edinburgh", hotel: "80-130", food: "30-50" },
+  { name: "Florence", hotel: "80-130", food: "30-50" },
+  { name: "Florida Keys", hotel: "130-190", food: "40-65" },
+  { name: "Florianopolis", hotel: "50-85", food: "18-35" },
+  { name: "Fortaleza", hotel: "40-70", food: "15-28" },
+  { name: "Geneva", hotel: "120-180", food: "40-70" },
+  { name: "Glacier National Park", hotel: "100-160", food: "30-50" },
+  { name: "Glasgow", hotel: "70-110", food: "28-48" },
+  { name: "Gothenburg", hotel: "90-140", food: "35-55" },
+  { name: "Hamburg", hotel: "80-130", food: "30-50" },
+  { name: "Hanoi", hotel: "25-50", food: "8-18" },
+  { name: "Helsinki", hotel: "90-140", food: "35-55" },
+  { name: "Hoi An", hotel: "30-55", food: "10-22" },
+  { name: "Hong Kong", hotel: "100-160", food: "25-45" },
+  { name: "Istanbul", hotel: "50-90", food: "20-40" },
+  { name: "Joao Pessoa", hotel: "35-65", food: "12-25" },
+  { name: "Kauai", hotel: "120-170", food: "40-65" },
+  { name: "Key West", hotel: "130-190", food: "40-65" },
+  { name: "Krakow", hotel: "45-80", food: "18-35" },
+  { name: "Kyoto", hotel: "80-120", food: "25-45" },
+  { name: "La Jolla", hotel: "130-190", food: "40-65" },
+  { name: "Lagos", hotel: "60-100", food: "20-35" },
+  { name: "Lake Como", hotel: "100-150", food: "30-50" },
+  { name: "Lake Tahoe", hotel: "100-160", food: "35-55" },
+  { name: "Las Vegas", hotel: "70-120", food: "30-50" },
+  { name: "Lecce", hotel: "60-100", food: "25-42" },
+  { name: "Lille", hotel: "70-110", food: "28-48" },
+  { name: "Lima", hotel: "70-110", food: "25-45" },
+  { name: "Lisbon", hotel: "70-110", food: "25-45" },
+  { name: "Ljubljana", hotel: "60-100", food: "22-40" },
+  { name: "London", hotel: "100-150", food: "35-55" },
+  { name: "Los Angeles", hotel: "90-140", food: "30-50" },
+  { name: "Lucerne", hotel: "130-190", food: "40-70" },
+  { name: "Luxembourg", hotel: "100-150", food: "35-55" },
+  { name: "Lyon", hotel: "80-120", food: "30-50" },
+  { name: "Maceio", hotel: "40-70", food: "14-26" },
+  { name: "Machu Picchu", hotel: "50-90", food: "20-35" },
+  { name: "Madeira", hotel: "70-110", food: "28-48" },
+  { name: "Madrid", hotel: "75-115", food: "28-48" },
+  { name: "Malaga", hotel: "65-105", food: "25-45" },
+  { name: "Maldives", hotel: "350-500", food: "60-90" },
+  { name: "Malibu", hotel: "130-190", food: "40-65" },
+  { name: "Manuel Antonio", hotel: "70-120", food: "25-45" },
+  { name: "Marktoberdorf", hotel: "70-110", food: "28-48" },
+  { name: "Marrakech", hotel: "50-90", food: "18-35" },
+  { name: "Marseille", hotel: "80-120", food: "30-50" },
+  { name: "Maui", hotel: "130-180", food: "40-65" },
+  { name: "Melbourne", hotel: "90-140", food: "30-50" },
+  { name: "Miami", hotel: "100-150", food: "35-55" },
+  { name: "Milan", hotel: "90-140", food: "30-50" },
+  { name: "Monaco", hotel: "180-250", food: "50-85" },
+  { name: "Montevideo", hotel: "70-110", food: "28-48" },
+  { name: "Montreal", hotel: "80-130", food: "30-50" },
+  { name: "Munich", hotel: "90-140", food: "30-50" },
+  { name: "Mykonos", hotel: "120-180", food: "35-60" },
+  { name: "Napa", hotel: "120-170", food: "40-65" },
+  { name: "Naples", hotel: "70-110", food: "28-48" },
+  { name: "Naples Florida", hotel: "100-160", food: "35-60" },
+  { name: "Nashville", hotel: "80-120", food: "30-50" },
+  { name: "Natal", hotel: "38-65", food: "12-25" },
+  { name: "New Orleans", hotel: "100-150", food: "30-50" },
+  { name: "New York", hotel: "130-190", food: "40-65" },
+  { name: "Nice", hotel: "90-140", food: "30-50" },
+  { name: "Oahu", hotel: "120-170", food: "40-65" },
+  { name: "Orcas Island", hotel: "120-180", food: "35-55" },
+  { name: "Orlando", hotel: "80-130", food: "30-50" },
+  { name: "Osaka", hotel: "70-110", food: "20-40" },
+  { name: "Oslo", hotel: "110-160", food: "40-65" },
+  { name: "Oxford", hotel: "80-130", food: "30-50" },
+  { name: "Palawan", hotel: "40-80", food: "15-28" },
+  { name: "Palm Desert", hotel: "100-150", food: "30-50" },
+  { name: "Palo Alto", hotel: "110-170", food: "35-55" },
+  { name: "Paris", hotel: "100-150", food: "35-55" },
+  { name: "Pasadena", hotel: "100-150", food: "35-55" },
+  { name: "Pensacola", hotel: "80-130", food: "28-48" },
+  { name: "Petra", hotel: "60-100", food: "22-40" },
+  { name: "Philadelphia", hotel: "90-140", food: "30-50" },
+  { name: "Phoenix", hotel: "80-120", food: "30-50" },
+  { name: "Phuket", hotel: "40-80", food: "15-30" },
+  { name: "Pisa", hotel: "70-110", food: "28-48" },
+  { name: "Portland", hotel: "90-140", food: "30-50" },
+  { name: "Porto", hotel: "70-110", food: "25-45" },
+  { name: "Porto Alegre", hotel: "50-80", food: "18-32" },
+  { name: "Prague", hotel: "60-100", food: "22-40" },
+  { name: "Puerto Rico", hotel: "100-150", food: "35-55" },
+  { name: "Quebec City", hotel: "80-130", food: "30-50" },
+  { name: "Queenstown", hotel: "100-150", food: "35-55" },
+  { name: "Recife", hotel: "40-70", food: "15-28" },
+  { name: "Reykjavik", hotel: "120-170", food: "45-70" },
+  { name: "Rio de Janeiro", hotel: "70-110", food: "28-48" },
+  { name: "Rome", hotel: "80-130", food: "30-50" },
+  { name: "Salvador", hotel: "40-75", food: "15-30" },
+  { name: "Salzburg", hotel: "80-130", food: "30-50" },
+  { name: "San Diego", hotel: "100-150", food: "35-55" },
+  { name: "San Francisco", hotel: "120-180", food: "40-65" },
+  { name: "San Jose", hotel: "100-150", food: "35-55" },
+  { name: "San Jose Costa Rica", hotel: "55-90", food: "18-35" },
+  { name: "San Juan Island", hotel: "120-180", food: "35-55" },
+  { name: "San Sebastian", hotel: "90-140", food: "35-55" },
+  { name: "Santa Barbara", hotel: "120-170", food: "40-65" },
+  { name: "Santa Cruz", hotel: "100-150", food: "35-55" },
+  { name: "Santa Monica", hotel: "120-180", food: "40-65" },
+  { name: "Santiago", hotel: "70-110", food: "28-48" },
+  { name: "Santorini", hotel: "120-180", food: "35-60" },
+  { name: "Sao Luis", hotel: "38-65", food: "12-22" },
+  { name: "Sao Paulo", hotel: "60-100", food: "20-38" },
+  { name: "Sarasota", hotel: "90-140", food: "30-50" },
+  { name: "Sardinia", hotel: "80-130", food: "28-48" },
+  { name: "Scottsdale", hotel: "100-150", food: "35-55" },
+  { name: "Seattle", hotel: "100-150", food: "35-55" },
+  { name: "Sedona", hotel: "110-170", food: "35-55" },
+  { name: "Seoul", hotel: "70-110", food: "20-40" },
+  { name: "Seville", hotel: "70-110", food: "25-45" },
+  { name: "Shanghai", hotel: "80-130", food: "22-40" },
+  { name: "Sicily", hotel: "70-110", food: "25-45" },
+  { name: "Siena", hotel: "80-120", food: "28-48" },
+  { name: "Singapore", hotel: "100-150", food: "25-45" },
+  { name: "Sint Maarten", hotel: "130-190", food: "45-70" },
+  { name: "Sintra", hotel: "70-110", food: "25-45" },
+  { name: "Sorrento", hotel: "90-140", food: "30-50" },
+  { name: "Split", hotel: "70-110", food: "28-48" },
+  { name: "Stockholm", hotel: "100-150", food: "35-55" },
+  { name: "Strasbourg", hotel: "75-115", food: "30-50" },
+  { name: "Stuttgart", hotel: "80-130", food: "30-50" },
+  { name: "Sydney", hotel: "100-150", food: "35-55" },
+  { name: "Taipei", hotel: "60-100", food: "18-35" },
+  { name: "Tallinn", hotel: "60-100", food: "22-40" },
+  { name: "Tokyo", hotel: "90-140", food: "30-55" },
+  { name: "Toledo", hotel: "70-110", food: "25-45" },
+  { name: "Toronto", hotel: "90-140", food: "30-50" },
+  { name: "Tromso", hotel: "100-150", food: "40-65" },
+  { name: "Turin", hotel: "80-120", food: "28-48" },
+  { name: "Turks and Caicos", hotel: "160-220", food: "50-80" },
+  { name: "Vancouver", hotel: "100-150", food: "35-55" },
+  { name: "Venice", hotel: "100-150", food: "35-55" },
+  { name: "Verona", hotel: "80-120", food: "28-48" },
+  { name: "Victoria", hotel: "90-140", food: "30-50" },
+  { name: "Vienna", hotel: "80-130", food: "30-50" },
+  { name: "Virgin Islands", hotel: "130-190", food: "45-70" },
+  { name: "Washington DC", hotel: "100-150", food: "35-55" },
+  { name: "Wellington", hotel: "90-140", food: "32-52" },
+  { name: "Whistler", hotel: "130-200", food: "40-65" },
+  { name: "Yellowstone", hotel: "100-160", food: "30-50" },
+  { name: "Zhangjiajie", hotel: "40-70", food: "15-30" },
+  { name: "Zurich", hotel: "140-200", food: "45-75" }
+];
+
+var GUIDES={"abu-dhabi":"../../guides/abu-dhabi.html","aix-en-provence":"../../guides/aix-en-provence.html","alaska":"../../guides/alaska.html","alesund":"../../guides/alesund.html","amalfi":"../../guides/amalfi.html","amsterdam":"../../guides/amsterdam.html","annecy":"../../guides/annecy.html","aracaju":"../../guides/aracaju.html","arenal":"../../guides/arenal.html","aruba":"../../guides/aruba.html","athens":"../../guides/athens.html","atlanta":"../../guides/atlanta.html","austin":"../../guides/austin.html","azores":"../../guides/azores.html","bahamas":"../../guides/bahamas.html","bali":"../../guides/bali.html","bangkok":"../../guides/bangkok.html","barbados":"../../guides/barbados.html","barcelona":"../../guides/barcelona.html","beijing":"../../guides/beijing.html","bend":"../../guides/bend.html","bergen":"../../guides/bergen.html","berlin":"../../guides/berlin.html","big-island":"../../guides/big-island.html","bologna":"../../guides/bologna.html","bora-bora":"../../guides/bora-bora.html","bordeaux":"../../guides/bordeaux.html","boston":"../../guides/boston.html","boulder":"../../guides/boulder.html","bruges":"../../guides/bruges.html","brussels":"../../guides/brussels.html","budapest":"../../guides/budapest.html","buenos-aires":"../../guides/buenos-aires.html","cairo":"../../guides/cairo.html","cambridge":"../../guides/cambridge.html","cannes":"../../guides/cannes.html","cape-cod":"../../guides/cape-cod.html","capri":"../../guides/capri.html","carmel-by-the-sea":"../../guides/carmel-by-the-sea.html","cascais":"../../guides/cascais.html","cayman-islands":"../../guides/cayman-islands.html","charlotte":"../../guides/charlotte.html","chiang-mai":"../../guides/chiang-mai.html","chicago":"../../guides/chicago.html","chongqing":"../../guides/chongqing.html","cinque-terre":"../../guides/cinque-terre.html","colmar":"../../guides/colmar.html","colombo":"../../guides/colombo.html","columbia":"../../guides/columbia.html","copenhagen":"../../guides/copenhagen.html","corfu":"../../guides/corfu.html","curacao":"../../guides/curacao.html","curitiba":"../../guides/curitiba.html","cusco":"../../guides/cusco.html","dallas":"../../guides/dallas.html","denver":"../../guides/denver.html","doha":"../../guides/doha.html","dubai":"../../guides/dubai.html","dublin":"../../guides/dublin.html","dubrovnik":"../../guides/dubrovnik.html","edinburgh":"../../guides/edinburgh.html","florence":"../../guides/florence.html","florianopolis":"../../guides/florianopolis.html","florida-keys":"../../guides/florida-keys.html","fortaleza":"../../guides/fortaleza.html","foz-do-iguacu":"../../guides/foz-do-iguacu.html","geneva":"../../guides/geneva.html","glacier-national-park":"../../guides/glacier-national-park.html","glasgow":"../../guides/glasgow.html","gothenburg":"../../guides/gothenburg.html","hamburg":"../../guides/hamburg.html","hanoi":"../../guides/hanoi.html","helsinki":"../../guides/helsinki.html","hoi-an":"../../guides/hoi-an.html","hong-kong":"../../guides/hong-kong.html","istanbul":"../../guides/istanbul.html","joao-pessoa":"../../guides/joao-pessoa.html","kauai":"../../guides/kauai.html","keywest":"../../guides/keywest.html","krakow":"../../guides/krakow.html","kyoto":"../../guides/kyoto.html","la-jolla":"../../guides/la-jolla.html","lagos":"../../guides/lagos.html","lake-como":"../../guides/lake-como.html","lake-tahoe":"../../guides/lake-tahoe.html","las-vegas":"../../guides/las-vegas.html","lecce":"../../guides/lecce.html","lille":"../../guides/lille.html","lima":"../../guides/lima.html","lisbon":"../../guides/lisbon.html","ljubljana":"../../guides/ljubljana.html","london":"../../guides/london.html","los-angeles":"../../guides/los-angeles.html","lucerne":"../../guides/lucerne.html","luxembourg":"../../guides/luxembourg.html","lyon":"../../guides/lyon.html","maceio":"../../guides/maceio.html","machupicchu":"../../guides/machupicchu.html","madeira":"../../guides/madeira.html","madrid":"../../guides/madrid.html","malaga":"../../guides/malaga.html","maldives":"../../guides/maldives.html","malibu":"../../guides/malibu.html","manuel-antonio":"../../guides/manuel-antonio.html","marktoberdorf":"../../guides/marktoberdorf.html","marrakech":"../../guides/marrakech.html","marseille":"../../guides/marseille.html","maui":"../../guides/maui.html","melbourne":"../../guides/melbourne.html","miami":"../../guides/miami.html","milan":"../../guides/milan.html","monaco":"../../guides/monaco.html","montevideo":"../../guides/montevideo.html","montreal":"../../guides/montreal.html","munich":"../../guides/munich.html","mykonos":"../../guides/mykonos.html","napa":"../../guides/napa.html","naples":"../../guides/naples.html","naples-florida":"../../guides/naples-florida.html","nashville":"../../guides/nashville.html","natal":"../../guides/natal.html","new-orleans":"../../guides/new-orleans.html","new-york":"../../guides/new-york.html","nice":"../../guides/nice.html","oahu":"../../guides/oahu.html","olinda":"../../guides/olinda.html","orcas-island":"../../guides/orcas-island.html","orlando":"../../guides/orlando.html","osaka":"../../guides/osaka.html","oslo":"../../guides/oslo.html","oxford":"../../guides/oxford.html","palawan":"../../guides/palawan.html","palm-desert":"../../guides/palm-desert.html","palo-alto":"../../guides/palo-alto.html","paris":"../../guides/paris.html","pasadena":"../../guides/pasadena.html","pensacola":"../../guides/pensacola.html","petra":"../../guides/petra.html","philadelphia":"../../guides/philadelphia.html","phoenix":"../../guides/phoenix.html","phuket":"../../guides/phuket.html","pisa":"../../guides/pisa.html","portland":"../../guides/portland.html","porto":"../../guides/porto.html","porto-alegre":"../../guides/porto-alegre.html","prague":"../../guides/prague.html","puerto-rico":"../../guides/puerto-rico.html","quebec-city":"../../guides/quebec-city.html","queenstown":"../../guides/queenstown.html","recife":"../../guides/recife.html","reykjavik":"../../guides/reykjavik.html","rio-de-janeiro":"../../guides/rio-de-janeiro.html","rome":"../../guides/rome.html","salvador":"../../guides/salvador.html","salzburg":"../../guides/salzburg.html","san-diego":"../../guides/san-diego.html","san-francisco":"../../guides/san-francisco.html","san-jose":"../../guides/san-jose.html","san-jose-costa-rica":"../../guides/san-jose-costa-rica.html","san-juan-island":"../../guides/san-juan-island.html","san-sebastian":"../../guides/san-sebastian.html","santa-barbara":"../../guides/santa-barbara.html","santa-cruz":"../../guides/santa-cruz.html","santa-monica":"../../guides/santa-monica.html","santiago":"../../guides/santiago.html","santorini":"../../guides/santorini.html","sao-luis":"../../guides/sao-luis.html","sao-paulo":"../../guides/sao-paulo.html","sarasota":"../../guides/sarasota.html","sardinia":"../../guides/sardinia.html","scottsdale":"../../guides/scottsdale.html","seattle":"../../guides/seattle.html","sedona":"../../guides/sedona.html","seoul":"../../guides/seoul.html","seville":"../../guides/seville.html","shanghai":"../../guides/shanghai.html","sicily":"../../guides/sicily.html","siena":"../../guides/siena.html","singapore":"../../guides/singapore.html","sint-maarten":"../../guides/sint-maarten.html","sintra":"../../guides/sintra.html","sorrento":"../../guides/sorrento.html","split":"../../guides/split.html","stockholm":"../../guides/stockholm.html","strasbourg":"../../guides/strasbourg.html","stuttgart":"../../guides/stuttgart.html","sydney":"../../guides/sydney.html","taipei":"../../guides/taipei.html","tallinn":"../../guides/tallinn.html","tokyo":"../../guides/tokyo.html","toledo":"../../guides/toledo.html","toronto":"../../guides/toronto.html","tromso":"../../guides/tromso.html","turin":"../../guides/turin.html","turks-and-caicos":"../../guides/turks-and-caicos.html","vancouver":"../../guides/vancouver.html","venice":"../../guides/venice.html","verona":"../../guides/verona.html","victoria":"../../guides/victoria.html","vienna":"../../guides/vienna.html","virgin-islands":"../../guides/virgin-islands.html","washington-dc":"../../guides/washington-dc.html","wellington":"../../guides/wellington.html","whistler":"../../guides/whistler.html","yellowstone":"../../guides/yellowstone.html","zhangjiajie":"../../guides/zhangjiajie.html","zurich":"../../guides/zurich.html"};
+
+function toGuideSlug(name) {
+  var s = name.toLowerCase()
+    .replace(/[àáâãä]/g,'a').replace(/[èéêë]/g,'e')
+    .replace(/[ìíîï]/g,'i').replace(/[òóôõö]/g,'o')
+    .replace(/[ùúûü]/g,'u').replace(/ç/g,'c').replace(/ñ/g,'n')
+    .replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  var overrides = {'machu-picchu':'machupicchu','key-west':'keywest'};
+  return overrides[s] || s;
+}
+
+function parseRange(range) {
+  const [low, high] = range.split('-').map(x => parseInt(x, 10));
+  return { low, high, mid: Math.round((low + high) / 2) };
+}
+
+function calculateTotal(city) {
+  const hotelMid = parseRange(city.hotel).mid;
+  const foodMid = parseRange(city.food).mid;
+  return hotelMid + foodMid;
+}
+
+function initBudgetTable(cities) {
+  const tbody = document.getElementById('budget-tbody');
+  tbody.innerHTML = '';
+  cities.forEach((city, idx) => {
+    const total = calculateTotal(city);
+    const guideUrl = GUIDES[toGuideSlug(city.name)];
+    const cityCell = guideUrl ? `<a href="${guideUrl}">${city.name}</a>` : city.name;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);">${cityCell}</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">$${city.hotel}</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">$${city.food}</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;font-weight:600;">$${total}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function initSearch() {
+  const searchInput = document.getElementById('budget-search');
+  const tbody = document.getElementById('budget-tbody');
+  const noresult = document.getElementById('budget-noresult');
+
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    const rows = tbody.querySelectorAll('tr');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+      const cityName = row.textContent.toLowerCase();
+      if (query === '' || cityName.includes(query)) {
+        row.classList.remove('idx-hide');
+        visibleCount++;
+      } else {
+        row.classList.add('idx-hide');
+      }
+    });
+
+    noresult.style.display = visibleCount === 0 ? 'block' : 'none';
+  });
+}
+
+function initSorting() {
+  let currentSort = 'original';
+  const sortAsc = document.getElementById('sort-asc');
+  const sortDesc = document.getElementById('sort-desc');
+  const sortReset = document.getElementById('sort-reset');
+
+  function updateButtons() {
+    sortAsc.classList.remove('active');
+    sortDesc.classList.remove('active');
+    sortReset.classList.remove('active');
+    if (currentSort === 'asc') sortAsc.classList.add('active');
+    else if (currentSort === 'desc') sortDesc.classList.add('active');
+    else sortReset.classList.add('active');
+  }
+
+  sortAsc.addEventListener('click', () => {
+    if (currentSort !== 'asc') {
+      currentSort = 'asc';
+      const sorted = [...CITIES].sort((a, b) => calculateTotal(a) - calculateTotal(b));
+      initBudgetTable(sorted);
+    }
+    updateButtons();
+  });
+
+  sortDesc.addEventListener('click', () => {
+    if (currentSort !== 'desc') {
+      currentSort = 'desc';
+      const sorted = [...CITIES].sort((a, b) => calculateTotal(b) - calculateTotal(a));
+      initBudgetTable(sorted);
+    }
+    updateButtons();
+  });
+
+  sortReset.addEventListener('click', () => {
+    if (currentSort !== 'original') {
+      currentSort = 'original';
+      initBudgetTable(CITIES);
+    }
+    updateButtons();
+  });
+
+  updateButtons();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initBudgetTable(CITIES);
+  initSearch();
+  initSorting();
+});
+</script>
+
+<script src="../../assets/search-autocomplete.js?v=8"></script>
+<script>document.addEventListener('DOMContentLoaded', function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('budget-search');
+  if(!input) return;
+  var items=[].slice.call(document.querySelectorAll('#budget-tbody tr')).map(function(tr){
+    var cell=tr.querySelector('td');
+    return { name:(cell?cell.textContent:'').trim() };
+  }).filter(function(it){ return it.name; });
+  TVESearch.attach(input,{items:items});
+});</script>
+</body>
+</html>

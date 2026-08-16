@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<title>Tipping Guide</title>
+<style>/* ── Tipping norm palette ── */
+:root {
+  --c-expected:    #5eb833;
+  --c-appreciated: #4a90e2;
+  --c-check:       #f5c518;
+  --c-skip:        #c8c0b4;
+}
+/* ── Stat bar ── */
+.stat-bar {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 16px 0 18px;
+}
+.stat-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 14px; border-radius: 6px;
+  background: var(--surface); border: 1px solid var(--border2);
+  font-size: 12.5px; color: var(--text); white-space: nowrap;
+}
+.stat-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.stat-dot.expected    { background: var(--c-expected); }
+.stat-dot.appreciated { background: var(--c-appreciated); }
+.stat-dot.check       { background: var(--c-check); }
+.stat-dot.skip        { background: var(--c-skip); }
+.stat-label { color: inherit; opacity: 0.75; }
+.stat-count { font-weight: 700; }
+/* Colored stat pills — match norm-chip badge families */
+.stat-pill-expected    { background:#e8f5e8; border-color:rgba(26,90,26,0.4);     color:#1a5a1a; }
+.stat-pill-appreciated { background:#e8f0fb; border-color:rgba(26,58,139,0.4);    color:var(--navy,#2a3a5a); }
+.stat-pill-check       { background:#fff8e0; border-color:rgba(122,88,0,0.4);     color:#7a5800; }
+.stat-pill-skip        { background:rgba(138,108,26,0.07); border-color:var(--border2, #e6e2da);  color:var(--muted); }
+/* ── Controls ── */
+.controls {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; margin-bottom: 18px;
+}
+.controls input[type="search"] { order: -1; width: 360px; }
+.pills { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 6px 12px; border-radius: 6px; border: 1.5px solid var(--border2, #e6e2da);
+  background: #fff; font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; color: var(--muted, #6a6660);
+  cursor: pointer; transition: background .15s, border-color .15s, color .15s; white-space: nowrap;
+}
+a.pill:visited { color: #6a6660; }
+.pill:hover {
+  background: var(--bg,#f5f4f0); border-color: var(--rust);
+}
+.pill.active {
+  background: var(--surface,#ffffff);
+  color: var(--rust,#b85c2a); border-color: var(--rust);
+}
+
+/* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Formatting/Formatting.html#src-desktoppill.
+   6 region filter pills — full-width proportional stretch, squared corners,
+   touching borders, black text, terracotta hover, muted-grey #f0ede8 .active
+   (chained with .active:hover/:focus). Mobile grid untouched. */
+@media (min-width: 601px), (pointer: fine) {
+  #region-pills.pills { gap: 0; }
+  #region-pills.pills .pill { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); }
+  #region-pills.pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+  #region-pills.pills .pill.active,
+  #region-pills.pills .pill.active:hover,
+  #region-pills.pills .pill.active:focus { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); }
+}
+/* ── Region headers ── */
+/* Neutral muted-grey band — the previous terracotta gradient (#7a3b1e →
+   #b85c2a → #d4874a) clashed with the toolbar's active-state accent. Uses
+   the canonical pushed-down bg #f0ede8 + border so section dividers read
+   as calm structural markers, not competing controls. */
+.region-header {
+  background: var(--surface2);
+  color: #3d3a32; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 9px 16px; border-radius: 6px;
+  border: 1.5px solid var(--border, #d8d5ce);
+  margin: 20px 0 10px;
+}
+.region-header:first-child { margin-top: 0; }
+/* ── Country list ── */
+.country-list { display: flex; flex-direction: column; gap: 0; }
+/* ── Country cards ── */
+.country-row {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  padding: 14px 16px 14px 20px;
+  display: grid;
+  grid-template-columns: 210px auto;
+  gap: 0 24px;
+  position: relative;
+  box-shadow: 0 1px 4px rgba(26,25,23,.04);
+  transition: box-shadow .15s;
+}
+.country-row::before {
+  content: '';
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: 4px; border-radius: 8px 0 0 8px;
+}
+.country-row.norm-expected::before    { background: var(--c-expected); }
+.country-row.norm-appreciated::before { background: var(--c-appreciated); }
+.country-row.norm-check::before       { background: var(--c-check); }
+.country-row.norm-skip::before        { background: var(--c-skip); }
+.country-row:hover { box-shadow: 0 2px 10px rgba(26,25,23,.09); }
+.country-left { display: flex; flex-direction: column; justify-content: flex-start; }
+/* .country-name canonical place+color+size+font now shared in web-travel-style.css + mobile.css (owner rule 2026-07-29) */
+.country-name { display: flex; align-items: center; gap: 7px; line-height: 1.2; }
+.country-flag { font-size: 18px; line-height: 1; }
+.country-cities { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.55; }
+.country-right { }
+.tip-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.norm-chip {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 6px; letter-spacing: .04em;
+  text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+}
+.norm-chip.expected    { background: #e8f5e8; color: #1a5a1a; border: 1px solid rgba(26,90,26,0.4); }
+.norm-chip.appreciated { background: #e8f0fb; color: var(--navy); border: 1px solid rgba(26,58,139,0.4); }
+.norm-chip.check       { background: #fff8e0; color: #7a5800; border: 1px solid rgba(122,88,0,0.4); }
+.norm-chip.skip        { background: rgba(138,108,26,0.07); color: var(--muted); border: 1px solid var(--border2, #e6e2da); }
+.tip-rows { display: flex; flex-direction: column; gap: 4px; }
+.tip-row  {
+  font-size: 12.5px; color: var(--text);
+  display: flex; gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px solid #f0ede8;
+}
+.tip-row:last-child { border-bottom: none; }
+.tip-label { color: var(--muted); flex-shrink: 0; width: 140px; }
+.tip-value { color: var(--text); font-weight: 500; }
+.tip-note  { font-size: 11.5px; color: var(--muted); margin-top: 7px; line-height: 1.45; }
+/* .empty-state lives in web-travel-style.css (shared) */
+/* ── Mobile ── */
+@media (max-width: 600px) and (pointer: coarse) {
+  .controls { align-items: center; }
+  .controls input[type="search"] { width: 100%; }
+  /* Form B glued grid (owner report 2026-07-29): touching borders, squared
+     corners, muted-grey .active (matches Guides-Index pushed-down state)
+     instead of the strong terracotta-gradient fill the base .pill.active
+     rule uses — that gradient is desktop-canonical-only (see the
+     min-width:601px block above), never meant to apply on mobile too. */
+  .pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .pill { white-space: normal; text-align: center; height: 40px; font-size: 11.5px; padding: 4px 6px; border-radius: 0; line-height: 1.12; margin-left: 0; }
+  .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+  #region-pills.pills .pill.active,
+  #region-pills.pills .pill.active:hover,
+  #region-pills.pills .pill.active:focus { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); }
+  /* Stat bar (Expected/Appreciated/Check Bill/Not Customary counts) — same
+     glued treatment, 2-col since only 4 items. */
+  .stat-bar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; }
+  .stat-pill { font-size: 11.5px; padding: 4px 6px; height: 40px; border-radius: 0; justify-content: center; }
+  .country-row { grid-template-columns: 1fr; gap: 12px; padding: 13px 14px 13px 18px; }
+  .tip-label { width: 120px; }
+}
+@media (max-width: 359px) {
+  .wrap { padding: 0 14px; }
+}
+@media (prefers-color-scheme: dark) {
+  #region-pills.pills .pill { color: var(--text); }
+  .region-header { color: var(--text); }
+  #region-pills.pills .pill.active,
+  #region-pills.pills .pill.active:hover,
+  #region-pills.pills .pill.active:focus { background: var(--surface2, #1e1c1a); }
+  .stat-pill-expected    { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,0.4); }
+  .stat-pill-appreciated { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,0.4); }
+  .stat-pill-check       { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,0.4); }
+  .norm-chip.expected    { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,0.4); }
+  .norm-chip.appreciated { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,0.4); }
+  .norm-chip.check       { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,0.4); }
+}
+:root[data-theme="dark"] #region-pills.pills .pill.active,
+:root[data-theme="dark"] #region-pills.pills .pill.active:hover,
+:root[data-theme="dark"] #region-pills.pills .pill.active:focus { background: var(--surface2, #1e1c1a); }
+:root[data-theme="dark"] .stat-pill-expected    { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,0.4); }
+:root[data-theme="dark"] .stat-pill-appreciated { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,0.4); }
+:root[data-theme="dark"] .stat-pill-check       { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,0.4); }
+:root[data-theme="dark"] .norm-chip.expected    { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,0.4); }
+:root[data-theme="dark"] .norm-chip.appreciated { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,0.4); }
+:root[data-theme="dark"] .norm-chip.check       { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,0.4); }
+</style>
+<link rel="stylesheet" href="../../assets/mobile.css?v=53">
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="2" data-maxwidth="760" data-updated="2026-08-08"></div>
+<script src="../../assets/toolbar.js?v=127"></script>
+
+  <div class="page-header">
+    <h1>TIPPING GUIDE</h1>
+  </div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-tipping"/></svg></div>
+    <div>
+      <div class="page-intro-head">What to tip in each country — and where it isn't expected at all</div>
+      <div class="page-intro-sub">What to tip in restaurants, taxis, hotels and on tours, country by country and grouped by region. It separates the three situations that matter: where a service charge is already on the bill, where a tip is genuinely expected on top, and where — Japan and South Korea among them — offering one is awkward rather than generous. The point is knowing which of the three you are in before the bill arrives.</div>
+    </div>
+  </div>
+
+
+  <div class="stat-bar" id="stat-bar"></div>
+
+  <div class="controls">
+    <input type="search" class="search-input" id="search" placeholder="Country or city" aria-label="Search by country or city" autocomplete="off">
+    <div class="pills" id="region-pills">
+      <button class="pill active" data-region="all">All</button>
+      <button class="pill" data-region="americas">Americas</button>
+      <button class="pill" data-region="caribbean">Caribbean</button>
+      <button class="pill" data-region="europe">Europe</button>
+      <button class="pill" data-region="asiapac">Asia · Pacific</button>
+      <button class="pill" data-region="other">M.E. &amp; Africa</button>
+    </div>
+  </div>
+
+  <div class="country-list" id="list"></div>
+
+</div>
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="../currency/">Currency</a>
+    <a class="also-on-this-site-pill" href="../cards-atm/">Cards &amp; ATM</a>
+    <a class="also-on-this-site-pill" href="../budget/">Budget guide</a>
+    <a class="also-on-this-site-pill" href="../restaurants/">Restaurants</a>
+  </div>
+</div>
+
+<script>
+var COUNTRIES = [
+  // Americas
+  {
+    name: 'United States', flag: '🇺🇸', region: 'americas',
+    cities: 'Seattle · Los Angeles · San Francisco · New York · Chicago · Miami · Boston · Atlanta · Austin · Dallas · Nashville · New Orleans · Philadelphia · Phoenix · Portland · Denver · Las Vegas · Washington DC · San Diego · San Jose · Palm Desert · Palo Alto · Pasadena · Scottsdale · La Jolla · Malibu · Marco Island · Santa Monica · Santa Barbara · Santa Cruz · Napa · Carmel-by-the-Sea · Bend · Boulder · Charlotte · Coeur d\'Alene · Columbia · Alaska · Big Island · Hilton Head Island · Kauai · Maui · Oahu · Santa Fe · Cape Cod · Florida Keys · Key West · Glacier National Park · Lake Tahoe · Naples FL · Orcas Island · Orlando · Pensacola · Sarasota · San Juan Island · Sedona · Yellowstone',
+    norm: 'expected',
+    tips: [
+      {label: 'Restaurants', value: '18–20% pre-tax'},
+      {label: 'Bars', value: '$1–2 per drink'},
+      {label: 'Taxis / Rides', value: '15–20%'},
+      {label: 'Hotel (Housekeeper)', value: '$3–5 per night'},
+      {label: 'Tour guides', value: '$10–20 per person'},
+    ],
+    note: 'Calculate on pre-tax amount.'
+  },
+  {
+    name: 'Canada', flag: '🇨🇦', region: 'americas',
+    cities: 'Montreal · Quebec City · Toronto · Vancouver · Victoria · Whistler',
+    norm: 'expected',
+    tips: [
+      {label: 'Restaurants', value: '15–20%'},
+      {label: 'Bars', value: '$1–2 per drink'},
+      {label: 'Taxis / Rides', value: '15%'},
+      {label: 'Hotel (Housekeeper)', value: '$2–5 per night'},
+      {label: 'Tour guides', value: '$10–15 per person'},
+    ],
+    note: null
+  },
+  {
+    name: 'Mexico', flag: '🇲🇽', region: 'americas',
+    cities: 'Cancun · Oaxaca · Los Cabos · Puerto Vallarta',
+    norm: 'expected',
+    tips: [
+      {label: 'Restaurants', value: '10–15%'},
+      {label: 'Bars', value: 'Round up or 10%'},
+      {label: 'Taxis / Rides', value: 'Round up or 10%'},
+      {label: 'Hotel (Housekeeper)', value: '$1–2 USD per night'},
+      {label: 'Tour guides', value: '$5–10 USD per person'},
+    ],
+    note: 'Cash preferred. USD tips accepted at most tourist spots.'
+  },
+  {
+    name: 'Brazil', flag: '🇧🇷', region: 'americas',
+    cities: 'Rio de Janeiro · São Paulo · Salvador · Recife · Fortaleza · Porto Alegre · Curitiba · Florianópolis · Natal · Maceió · João Pessoa · Aracaju · Olinda · São Luís · Foz do Iguaçu',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10% serviço usually included'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: 'R$5–10 per night'},
+      {label: 'Tour guides', value: '10–15%'},
+    ],
+    note: 'Cash preferred. Check bill — serviço often included.'
+  },
+  {
+    name: 'Argentina', flag: '🇦🇷', region: 'americas',
+    cities: 'Buenos Aires',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10–15%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: 'USD $1–2 per night'},
+      {label: 'Tour guides', value: '10–15%'},
+    ],
+    note: 'Cash preferred — pesos or USD.'
+  },
+  {
+    name: 'Peru', flag: '🇵🇪', region: 'americas',
+    cities: 'Lima · Cusco · Machu Picchu',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Tour guides', value: 'USD $5–10 per person'},
+    ],
+    note: 'Not automatic. Tip porters separately.'
+  },
+  {
+    name: 'Chile', flag: '🇨🇱', region: 'americas',
+    cities: 'Santiago',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Tour guides', value: '10%'},
+    ],
+    note: 'Cubierto (cover charge) may appear on the bill and goes to the house — still tip the server.'
+  },
+  {
+    name: 'Costa Rica', flag: '🇨🇷', region: 'americas',
+    cities: 'Arenal · Manuel Antonio · San José',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10%'},
+      {label: 'Taxis / Uber', value: 'Round up'},
+      {label: 'Tour guides', value: '10–15%'},
+    ],
+    note: '10% service charge (propina) is mandatory by law at all restaurants — check before adding more.'
+  },
+  {
+    name: 'Uruguay', flag: '🇺🇾', region: 'americas',
+    cities: 'Montevideo',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10%'},
+      {label: 'Taxis', value: 'Round up'},
+    ],
+    note: null
+  },
+  // Caribbean
+  {
+    name: 'Aruba', flag: '🇦🇼', region: 'caribbean',
+    cities: 'Aruba',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '15–18% often added'},
+      {label: 'Taxis', value: 'Fixed rates — round up'},
+      {label: 'Hotel (Housekeeper)', value: '$2–3 per night'},
+    ],
+    note: 'Check bill before adding more.'
+  },
+  {
+    name: 'Bahamas', flag: '🇧🇸', region: 'caribbean',
+    cities: 'Bahamas',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '15% often included'},
+      {label: 'Taxis', value: '15%'},
+      {label: 'Hotel (Housekeeper)', value: '$2–3 per night'},
+    ],
+    note: 'Resorts often auto-add gratuity — verify before tipping extra.'
+  },
+  {
+    name: 'Barbados', flag: '🇧🇧', region: 'caribbean',
+    cities: 'Barbados',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10–15% often included'},
+      {label: 'Taxis', value: '10–15%'},
+      {label: 'Hotel (Housekeeper)', value: '$2 per night'},
+    ],
+    note: null
+  },
+  {
+    name: 'Cayman Islands', flag: '🇰🇾', region: 'caribbean',
+    cities: 'Cayman Islands',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '15% often included'},
+      {label: 'Taxis', value: '10–15%'},
+      {label: 'Hotel (Housekeeper)', value: '$2–3 per night'},
+    ],
+    note: 'Check bill — double-tipping common.'
+  },
+  {
+    name: 'Curaçao', flag: '🇨🇼', region: 'caribbean',
+    cities: 'Curacao',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10–15%'},
+      {label: 'Taxis', value: 'Fixed rates — round up'},
+    ],
+    note: 'Check if service included.'
+  },
+  {
+    name: 'Puerto Rico (US)', flag: '🇵🇷', region: 'caribbean',
+    cities: 'Puerto Rico',
+    norm: 'expected',
+    tips: [
+      {label: 'Restaurants', value: '18–20%'},
+      {label: 'Taxis', value: '15–18%'},
+      {label: 'Hotel (Housekeeper)', value: '$3–5 per night'},
+    ],
+    note: null
+  },
+  {
+    name: 'Sint Maarten', flag: '🇸🇽', region: 'caribbean',
+    cities: 'Sint Maarten',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '15% often included'},
+      {label: 'Taxis', value: '10–15%'},
+    ],
+    note: 'Service charge common on the French side.'
+  },
+  {
+    name: 'Turks and Caicos', flag: '🇹🇨', region: 'caribbean',
+    cities: 'Turks and Caicos',
+    norm: 'expected',
+    tips: [
+      {label: 'Restaurants', value: '15–18% (often added)'},
+      {label: 'Taxis', value: '10–15%'},
+      {label: 'Hotel (Housekeeper)', value: '$3–5 per night'},
+    ],
+    note: 'Many restaurants add a service charge — check the bill before tipping.'
+  },
+  {
+    name: 'US Virgin Islands', flag: '🇻🇮', region: 'caribbean',
+    cities: 'Virgin Islands',
+    norm: 'expected',
+    tips: [
+      {label: 'Restaurants', value: '18–20%'},
+      {label: 'Taxis', value: '15%'},
+      {label: 'Hotel (Housekeeper)', value: '$3–5 per night'},
+    ],
+    note: null
+  },
+  // Europe
+  {
+    name: 'France', flag: '🇫🇷', region: 'europe',
+    cities: 'Paris · Lyon · Nice · Bordeaux · Marseille · Cannes · Strasbourg · Colmar · Lille · Annecy · Aix-en-Provence',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: 'Service compris (15%) included'},
+      {label: 'Bars', value: 'Round up or leave small change'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '1–2€ per night'},
+      {label: 'Tour guides', value: '5–10€ per person'},
+    ],
+    note: 'Service legally included. Extra not expected.'
+  },
+  {
+    name: 'Italy', flag: '🇮🇹', region: 'europe',
+    cities: 'Rome · Florence · Venice · Milan · Naples · Amalfi · Capri · Cinque Terre · Bologna · Siena · Pisa · Sorrento · Lake Como · Verona · Turin · Sardinia · Lecce · Sicily',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: 'Leave 1–3€ · coperto already charged'},
+      {label: 'Bars', value: 'Small change on counter'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '1–2€ per night'},
+      {label: 'Tour guides', value: '5–10€ per person'},
+    ],
+    note: 'Coperto already on the bill. Leave cash on table.'
+  },
+  {
+    name: 'Spain', flag: '🇪🇸', region: 'europe',
+    cities: 'Barcelona · Bilbao · Madrid · Seville · San Sebastian · Tenerife · Toledo · Malaga',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '5–10% or round up'},
+      {label: 'Bars', value: 'Leave small coins'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Tour guides', value: '5–10€ per person'},
+    ],
+    note: null
+  },
+  {
+    name: 'Portugal', flag: '🇵🇹', region: 'europe',
+    cities: 'Lisbon · Porto · Cascais · Sintra · Madeira · Azores',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '5–10%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '1–2€ per night'},
+      {label: 'Tour guides', value: '5–10€ per person'},
+    ],
+    note: 'Leave cash on table.'
+  },
+  {
+    name: 'United Kingdom', flag: '🇬🇧', region: 'europe',
+    cities: 'London · Edinburgh · Glasgow · Oxford · Cambridge',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10–12.5% if no service charge'},
+      {label: 'Bars', value: 'Not customary'},
+      {label: 'Taxis', value: 'Round up or 10%'},
+      {label: 'Hotel (Housekeeper)', value: '£1–2 per night'},
+      {label: 'Tour guides', value: '£5–10 per person'},
+    ],
+    note: 'Check bill — 12.5–15% service charge common in London; 15% increasingly standard at upscale restaurants.'
+  },
+  {
+    name: 'Germany', flag: '🇩🇪', region: 'europe',
+    cities: 'Berlin · Cologne · Frankfurt · Munich · Hamburg · Stuttgart · Marktoberdorf',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: 'Round up or 5–10%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '1–2€ per night'},
+      {label: 'Tour guides', value: '5–10€ per person'},
+    ],
+    note: '"Stimmt so" = keep the change. Hand tip to server directly.'
+  },
+  {
+    name: 'Switzerland', flag: '🇨🇭', region: 'europe',
+    cities: 'Zurich · Geneva · Lucerne',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: 'Service included · round up appreciated'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '2–3 CHF per night'},
+    ],
+    note: 'Service legally included.'
+  },
+  {
+    name: 'Austria', flag: '🇦🇹', region: 'europe',
+    cities: 'Vienna · Salzburg',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '5–10%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '1–2€ per night'},
+      {label: 'Tour guides', value: '5€ per person'},
+    ],
+    note: 'Hand tip to server directly.'
+  },
+  {
+    name: 'Netherlands', flag: '🇳🇱', region: 'europe',
+    cities: 'Amsterdam',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '5–10% if satisfied'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '1–2€ per night'},
+    ],
+    note: 'Cash preferred. Check bill for service charge.'
+  },
+  {
+    name: 'Belgium', flag: '🇧🇪', region: 'europe',
+    cities: 'Brussels · Bruges',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: 'Service usually included'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Tour guides', value: '5€ per person'},
+    ],
+    note: null
+  },
+  {
+    name: 'Ireland', flag: '🇮🇪', region: 'europe',
+    cities: 'Dublin',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10–15% if not included'},
+      {label: 'Bars', value: 'Not customary'},
+      {label: 'Taxis', value: 'Round up'},
+    ],
+    note: 'Check bill for service charge. No tipping at bars.'
+  },
+  {
+    name: 'Czech Republic', flag: '🇨🇿', region: 'europe',
+    cities: 'Prague',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Tour guides', value: '100–200 CZK per person'},
+    ],
+    note: 'State total including tip when paying — don\'t leave cash on table.'
+  },
+  {
+    name: 'Hungary', flag: '🇭🇺', region: 'europe',
+    cities: 'Budapest',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10–15%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Tour guides', value: '10%'},
+    ],
+    note: 'State total including tip when paying — card readers often can\'t add tip separately. Cash preferred.'
+  },
+  {
+    name: 'Poland', flag: '🇵🇱', region: 'europe',
+    cities: 'Kraków',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Tour guides', value: '20–50 PLN per person'},
+    ],
+    note: 'Rounding up is the norm; 10% is generous. Cash preferred for tips.'
+  },
+  {
+    name: 'Croatia', flag: '🇭🇷', region: 'europe',
+    cities: 'Dubrovnik · Split',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10–15%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Tour guides', value: '10€ per person'},
+    ],
+    note: 'Cash preferred.'
+  },
+  {
+    name: 'Montenegro', flag: '🇲🇪', region: 'europe',
+    cities: 'Kotor',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10% appreciated'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Tour guides', value: '5-10€ per person'},
+    ],
+    note: 'Cash widely used.'
+  },
+  {
+    name: 'Slovenia', flag: '🇸🇮', region: 'europe',
+    cities: 'Ljubljana',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10% appreciated'},
+      {label: 'Taxis', value: 'Round up'},
+    ],
+    note: null
+  },
+  {
+    name: 'Greece', flag: '🇬🇷', region: 'europe',
+    cities: 'Athens · Corfu · Crete · Mykonos · Rhodes · Santorini · Zakynthos',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '1–2€ per night'},
+      {label: 'Tour guides', value: '5–10€ per person'},
+    ],
+    note: 'Leave cash on table. Check bill for service charge.'
+  },
+  {
+    name: 'Turkey', flag: '🇹🇷', region: 'europe',
+    cities: 'Istanbul',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10–15%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '100–200 TRY per night'},
+      {label: 'Tour guides', value: '$10–15 USD per person'},
+    ],
+    note: 'Cash — USD/EUR also accepted.'
+  },
+  {
+    name: 'Norway', flag: '🇳🇴', region: 'europe',
+    cities: 'Oslo · Bergen · Alesund · Tromsø',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not expected · round up if pleased'},
+      {label: 'Taxis', value: 'Round up'},
+    ],
+    note: null
+  },
+  {
+    name: 'Sweden', flag: '🇸🇪', region: 'europe',
+    cities: 'Stockholm · Gothenburg',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not expected · 5–10% in nicer restaurants'},
+      {label: 'Taxis', value: 'Round up'},
+    ],
+    note: null
+  },
+  {
+    name: 'Denmark', flag: '🇩🇰', region: 'europe',
+    cities: 'Copenhagen',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not expected · service included'},
+      {label: 'Taxis', value: 'Round up'},
+    ],
+    note: 'Service included by law.'
+  },
+  {
+    name: 'Finland', flag: '🇫🇮', region: 'europe',
+    cities: 'Helsinki',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not expected'},
+      {label: 'Taxis', value: 'Round up'},
+    ],
+    note: null
+  },
+  {
+    name: 'Georgia', flag: '🇬🇪', region: 'europe',
+    cities: 'Tbilisi',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10–15%'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Tour guides', value: '10–15%'},
+    ],
+    note: 'Tipping is appreciated but not obligatory. Service charge now common at tourist restaurants — check before adding more.'
+  },
+  {
+    name: 'Estonia', flag: '🇪🇪', region: 'europe',
+    cities: 'Tallinn',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10%'},
+      {label: 'Taxis', value: 'Round up'},
+    ],
+    note: null
+  },
+  {
+    name: 'Iceland', flag: '🇮🇸', region: 'europe',
+    cities: 'Reykjavik',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not expected'},
+      {label: 'Taxis', value: 'Not expected'},
+      {label: 'Tour guides', value: 'Tip appreciated — ISK or USD/EUR'},
+    ],
+    note: 'Tip tour guides — they are the exception. A small tip for exceptional restaurant service is welcomed.'
+  },
+  {
+    name: 'Luxembourg', flag: '🇱🇺', region: 'europe',
+    cities: 'Luxembourg',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: 'Service often included · round up'},
+      {label: 'Taxis', value: 'Round up'},
+    ],
+    note: null
+  },
+  {
+    name: 'Malta', flag: '🇲🇹', region: 'europe',
+    cities: 'Valletta',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10–15% if service not included'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '1–2€ per night'},
+    ],
+    note: 'Service charge sometimes added. Tip only on top if service was excellent.'
+  },
+  {
+    name: 'Monaco', flag: '🇲🇨', region: 'europe',
+    cities: 'Monaco',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: 'Service compris included · 5–10% extra at high end'},
+      {label: 'Taxis', value: '10–15%'},
+      {label: 'Hotel (Housekeeper)', value: '2–5€ per night'},
+    ],
+    note: 'Service included. Extra common in luxury venues.'
+  },
+  // Asia-Pacific
+  {
+    name: 'Japan', flag: '🇯🇵', region: 'asiapac',
+    cities: 'Tokyo · Kyoto · Osaka',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Do not tip — it is rude'},
+      {label: 'Taxis', value: 'Do not tip'},
+      {label: 'Hotels', value: 'Do not tip staff'},
+      {label: 'Tour guides', value: 'Do not tip'},
+    ],
+    note: 'Do not tip anywhere.'
+  },
+  {
+    name: 'China', flag: '🇨🇳', region: 'asiapac',
+    cities: 'Beijing · Shanghai · Chongqing · Zhangjiajie',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not customary'},
+      {label: 'Taxis', value: 'Not expected'},
+      {label: 'Tour guides', value: '¥50–100 per day'},
+    ],
+    note: 'Tip guides in cash. Luxury hotels may expect a tip.'
+  },
+  {
+    name: 'Bhutan', flag: '🇧🇹', region: 'asiapac',
+    cities: 'Paro',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: '10% appreciated at hotels and tourist restaurants'},
+      {label: 'Taxis', value: 'Not expected; round up for longer rides'},
+      {label: 'Guides', value: 'Nu 1,000–1,300 per day for guides; Nu 500–700 for drivers'},
+      {label: 'Hotel', value: 'Nu 100–200 per bag for porters'},
+    ],
+    note: 'Tipping is not customary in Bhutan but is appreciated for guides and hotel staff at tourist-oriented establishments.'
+  },
+  {
+    name: 'Nepal', flag: '🇳🇵', region: 'asiapac',
+    cities: 'Pokhara',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: '10% appreciated at tourist-oriented venues; not expected elsewhere'},
+      {label: 'Taxis', value: 'Not expected; round up for good service'},
+      {label: 'Trekking guides', value: 'NPR 1,500–2,000 per day per guide is customary'},
+      {label: 'Hotel', value: 'NPR 100–200 per bag for porters'},
+    ],
+    note: 'Tipping is not customary in everyday Nepal, but welcomed in tourist areas and always expected for trekking guides and porters.'
+  },
+  {
+    name: 'Sri Lanka', flag: '🇱🇰', region: 'asiapac',
+    cities: 'Colombo',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: '10% appreciated at upscale venues; not expected elsewhere'},
+      {label: 'Taxis', value: 'Round up the fare'},
+      {label: 'Hotel', value: 'LKR 100–200 per bag for porters'},
+    ],
+    note: 'Tipping is not obligatory but is welcomed at tourist-oriented restaurants.'
+  },
+  {
+    name: 'South Korea', flag: '🇰🇷', region: 'asiapac',
+    cities: 'Seoul',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not customary'},
+      {label: 'Taxis', value: 'Not expected'},
+    ],
+    note: null
+  },
+  {
+    name: 'Taiwan', flag: '🇹🇼', region: 'asiapac',
+    cities: 'Taipei',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not customary · 10% added in some upscale venues'},
+      {label: 'Taxis', value: 'Not expected'},
+    ],
+    note: 'High-end venues may add a service charge.'
+  },
+  {
+    name: 'Hong Kong', flag: '🇭🇰', region: 'asiapac',
+    cities: 'Hong Kong',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10% service charge often added'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: 'HKD 10–20 per night'},
+    ],
+    note: 'Check bill — 10% service charge common.'
+  },
+  {
+    name: 'Singapore', flag: '🇸🇬', region: 'asiapac',
+    cities: 'Singapore',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10% + 9% GST already added'},
+      {label: 'Taxis', value: 'Round up'},
+    ],
+    note: '10% service + 9% GST on every bill. No additional tip needed.'
+  },
+  {
+    name: 'Thailand', flag: '🇹🇭', region: 'asiapac',
+    cities: 'Bangkok · Phuket · Chiang Mai',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '20–50 THB casual · 10% upscale (check bill)'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '20–50 THB per night'},
+      {label: 'Tour guides', value: '100–200 THB per person'},
+      {label: 'Massage / Spa', value: '50–100 THB per session'},
+    ],
+    note: 'Tip in cash directly — pooled tips may not reach staff. Upscale and tourist-area restaurants often add 10% service charge — check before tipping extra.'
+  },
+  {
+    name: 'Laos', flag: '🇱🇦', region: 'asiapac',
+    cities: 'Luang Prabang',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: 'Not expected — leave small change if you liked the meal'},
+      {label: 'Hotel (Housekeeper)', value: '10,000–20,000 LAK per night'},
+      {label: 'Tour guides', value: '50,000–100,000 LAK per day'},
+      {label: 'Tuk-tuk / Taxi', value: 'Round up the fare'},
+    ],
+    note: 'Tipping is not traditional but appreciated by local service staff in tourist areas.'
+  },
+  {
+    name: 'Vietnam', flag: '🇻🇳', region: 'asiapac',
+    cities: 'Hanoi · Hoi An',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '5–10% appreciated at tourist-area restaurants — check bill first'},
+      {label: 'Hotels', value: '20,000–50,000 VND per service'},
+      {label: 'Tour guides', value: '100,000–200,000 VND per day'},
+      {label: 'Taxi / Grab', value: 'Round up the fare'},
+      {label: 'Spa', value: '10–15% if satisfied'},
+    ],
+    note: 'Tipping is not traditionally expected but increasingly appreciated in tourist areas.'
+  },
+  {
+    name: 'Philippines', flag: '🇵🇭', region: 'asiapac',
+    cities: 'Palawan',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10% if service charge not included'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: '50–100 PHP per night'},
+      {label: 'Tour guides', value: '200–500 PHP per day'},
+      {label: 'Massage / Spa', value: '50–100 PHP'},
+    ],
+    note: 'Check bill — most restaurants add a 10% service charge automatically.'
+  },
+  {
+    name: 'Indonesia', flag: '🇮🇩', region: 'asiapac',
+    cities: 'Bali',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10% if not included'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: 'IDR 20,000–50,000 per night'},
+      {label: 'Tour guides', value: 'IDR 50,000–100,000 per day'},
+      {label: 'Massage / Spa', value: 'IDR 20,000–50,000'},
+    ],
+    note: 'Check bill — service charge often included.'
+  },
+  {
+    name: 'French Polynesia', flag: '🇵🇫', region: 'asiapac',
+    cities: 'Bora Bora',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not expected · service often included'},
+      {label: 'Hotels', value: 'Not expected'},
+      {label: 'Tour guides', value: 'XPF 1,000–2,000 appreciated'},
+    ],
+    note: 'Tipping is not a local custom. Leave if you wish to recognize exceptional service.'
+  },
+  {
+    name: 'Australia', flag: '🇦🇺', region: 'asiapac',
+    cities: 'Sydney · Melbourne',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not expected · 10% appreciated for great service'},
+      {label: 'Taxis', value: 'Round up optional'},
+      {label: 'Hotels', value: 'Not expected'},
+    ],
+    note: 'Check bill at upscale restaurants — automatic service charges are increasingly common.'
+  },
+  {
+    name: 'New Zealand', flag: '🇳🇿', region: 'asiapac',
+    cities: 'Queenstown · Wellington',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Not expected'},
+      {label: 'Taxis', value: 'Not expected'},
+    ],
+    note: null
+  },
+  // Middle East & Africa
+  {
+    name: 'Maldives', flag: '🇲🇻', region: 'other',
+    cities: 'Maldives',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10% service charge typically included'},
+      {label: 'Hotel (Housekeeper)', value: '$2–5 per day'},
+      {label: 'Spa', value: '10% if not included'},
+      {label: 'Boat crew / Excursion', value: '$5–10 per person'},
+    ],
+    note: 'Most resorts add a 10% service charge and 16% GST. Additional tipping is appreciated but not expected.'
+  },
+  {
+    name: 'Oman', flag: '🇴🇲', region: 'other',
+    cities: 'Muscat',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10% · often included upscale'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: 'OMR 1–2 per night'},
+      {label: 'Tour guides', value: 'OMR 2–5 per person'},
+    ],
+    note: 'Cash preferred. Check bill — 10% service charge common at hotels and resorts.'
+  },
+  {
+    name: 'Qatar', flag: '🇶🇦', region: 'other',
+    cities: 'Doha',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10–15% · often included upscale'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: 'QAR 5–10 per night'},
+      {label: 'Tour guides', value: 'QAR 20–50 per person'},
+    ],
+    note: 'Cash preferred. Check bill — 10% service charge common.'
+  },
+  {
+    name: 'UAE', flag: '🇦🇪', region: 'other',
+    cities: 'Dubai · Abu Dhabi',
+    norm: 'check',
+    tips: [
+      {label: 'Restaurants', value: '10–15% · often included upscale'},
+      {label: 'Taxis', value: 'Round up'},
+      {label: 'Hotel (Housekeeper)', value: 'AED 5–10 per night'},
+      {label: 'Tour guides', value: 'AED 20–50 per person'},
+    ],
+    note: 'Cash preferred. Check bill — 10% service charge common.'
+  },
+  {
+    name: 'Egypt', flag: '🇪🇬', region: 'other',
+    cities: 'Cairo',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10–15% for good service'},
+      {label: 'Taxis', value: 'Small amount or round up'},
+      {label: 'Hotel (Housekeeper)', value: 'EGP 50–150 per night'},
+      {label: 'Tour guides', value: 'EGP 100–200 per person'},
+    ],
+    note: 'Cash (Egyptian pounds) preferred. Service charges often not included in bills.'
+  },
+  {
+    name: 'Jordan', flag: '🇯🇴', region: 'other',
+    cities: 'Petra',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10% if no service charge added'},
+      {label: 'Taxis', value: 'Round up or small tip'},
+      {label: 'Hotel (Housekeeper)', value: 'JOD 1–2 per night'},
+      {label: 'Tour guides', value: 'JOD 3–5 per person per day'},
+    ],
+    note: 'Tipping is appreciated but not mandatory. Jordanian dinars preferred; smaller bills are useful for tips.'
+  },
+  {
+    name: 'Morocco', flag: '🇲🇦', region: 'other',
+    cities: 'Marrakech',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10–15%'},
+      {label: 'Taxis', value: 'Round up or small amount'},
+      {label: 'Hotel (Housekeeper)', value: '10–20 MAD per night'},
+      {label: 'Tour guides', value: '100–150 MAD per half-day'},
+      {label: 'Hammam', value: '20–50 MAD'},
+    ],
+    note: 'Negotiate guide prices in advance.'
+  },
+  {
+    name: 'Seychelles', flag: '🇸🇨', region: 'other',
+    cities: 'Seychelles',
+    norm: 'skip',
+    tips: [
+      {label: 'Restaurants', value: 'Service charge often included; not expected otherwise'},
+      {label: 'Taxis', value: 'Round up if helpful'},
+      {label: 'Hotel (Housekeeper)', value: 'SCR 50–100 per night (optional)'},
+      {label: 'Tour guides', value: 'SCR 200–400 per tour (appreciated)'},
+    ],
+    note: 'Tipping is not a strong tradition in Seychelles.'
+  },
+  {
+    name: 'Nigeria', flag: '🇳🇬', region: 'other',
+    cities: 'Lagos',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10%'},
+      {label: 'Taxis', value: 'Negotiate fare upfront · round up'},
+      {label: 'Hotel (Housekeeper)', value: '₦500–1,000 per night'},
+    ],
+    note: 'Negotiate taxi fares upfront. Cash only.'
+  },
+  {
+    name: 'South Africa', flag: '🇿🇦', region: 'other',
+    cities: 'Cape Town',
+    norm: 'appreciated',
+    tips: [
+      {label: 'Restaurants', value: '10–15%'},
+      {label: 'Taxis', value: '10% or round up'},
+      {label: 'Hotel (Housekeeper)', value: 'ZAR 20–30 per night'},
+      {label: 'Tour guides', value: 'ZAR 100–200 per tour'},
+      {label: 'Car guards', value: 'ZAR 5–10'},
+    ],
+    note: 'Car guards (informal parking attendants) are common — tip ZAR 5–10.'
+  },
+];
+
+var activeRegion = 'all';
+var searchVal    = '';
+
+var REGION_LABELS = {
+  americas: 'Americas',
+  caribbean: 'Caribbean',
+  europe: 'Europe',
+  asiapac: 'Asia · Pacific',
+  other: 'Middle East & Africa'
+};
+var REGION_ORDER = ['americas','caribbean','europe','asiapac','other'];
+
+function norm(n) {
+  var map = {expected:'Expected', appreciated:'Appreciated', check:'Check Bill', skip:'Not Customary'};
+  return map[n] || n;
+}
+
+function buildStatBar() {
+  var counts = {expected:0, appreciated:0, check:0, skip:0};
+  COUNTRIES.forEach(function(c) { if (counts[c.norm] !== undefined) counts[c.norm]++; });
+  var labels = {expected:'Expected', appreciated:'Appreciated', check:'Check Bill', skip:'Not Customary'};
+  var html = '';
+  ['expected','appreciated','check','skip'].forEach(function(k) {
+    html += '<div class="stat-pill stat-pill-' + k + '">' +
+      '<span class="stat-dot ' + k + '"></span>' +
+      '<span class="stat-label">' + labels[k] + '</span>' +
+      '<span class="stat-count">' + counts[k] + '</span>' +
+    '</div>';
+  });
+  document.getElementById('stat-bar').innerHTML = html;
+}
+
+function renderCard(c) {
+  var tipRows = c.tips.map(function(t) {
+    return '<div class="tip-row"><span class="tip-label">' + t.label + '</span><span class="tip-value">' + t.value + '</span></div>';
+  }).join('');
+  return '<div class="country-row norm-' + c.norm + '">' +
+    '<div class="country-left">' +
+      '<div class="country-name"><span class="country-flag">' + c.flag + '</span>' + c.name + '</div>' +
+      '<div class="country-cities">' + c.cities + '</div>' +
+    '</div>' +
+    '<div class="country-right">' +
+      '<div class="tip-header"><span class="norm-chip ' + c.norm + '">' + norm(c.norm) + '</span></div>' +
+      '<div class="tip-rows">' + tipRows + '</div>' +
+      (c.note ? '<div class="tip-note">' + c.note + '</div>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+function render() {
+  var list = document.getElementById('list');
+  var filtered = COUNTRIES.filter(function(c) {
+    if (activeRegion !== 'all' && c.region !== activeRegion) return false;
+    if (searchVal && (c.name + ' ' + c.cities).toLowerCase().indexOf(searchVal) === -1) return false;
+    return true;
+  });
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state">No results for "' + searchVal + '"</div>';
+    return;
+  }
+
+  // Group by region in canonical order (only regions that appear in filtered set)
+  var grouped = {};
+  filtered.forEach(function(c) {
+    if (!grouped[c.region]) grouped[c.region] = [];
+    grouped[c.region].push(c);
+  });
+
+  var html = '';
+  var regions = activeRegion === 'all'
+    ? REGION_ORDER.filter(function(r) { return grouped[r]; })
+    : [activeRegion];
+
+  regions.forEach(function(r) {
+    if (!grouped[r]) return;
+    // Only show region headers when "All" is active or when searching
+    if (activeRegion === 'all' || searchVal) {
+      html += '<div class="region-header">' + REGION_LABELS[r] + '</div>';
+    }
+    html += grouped[r].map(renderCard).join('');
+  });
+
+  list.innerHTML = html;
+}
+
+document.getElementById('region-pills').addEventListener('click', function(e) {
+  var btn = e.target.closest('.pill');
+  if (!btn) return;
+  activeRegion = btn.dataset.region;
+  document.querySelectorAll('.pill').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  render();
+});
+
+document.getElementById('search').addEventListener('input', function(e) {
+  searchVal = e.target.value.toLowerCase().trim();
+  render();
+});
+
+buildStatBar();
+render();
+</script>
+
+<script src="../../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('search'); if(!input) return;
+  var list=window.COUNTRIES||[];
+  var items=list.map(function(c){ return {name:c.name, text:c.cities||''}; });
+  TVESearch.attach(input,{items:items});
+}());</script>
+</body>
+</html>

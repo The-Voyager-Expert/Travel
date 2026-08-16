@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<title>Best Cruise Lines</title>
+<style>
+  footer, .tb-footnote { display: none !important; }
+
+  /* ── Filter bar ── */
+  .controls {
+    max-width: none;
+    margin: 0 auto;
+    padding: 10px 32px;
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .filter-label {
+    font-size: var(--fs-sub,12px);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border: 1px solid var(--border2, #e6e2da);
+    color: var(--muted, #6a6660);
+    font-weight: 400;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+.filter-btn:hover {
+    background: var(--bg,#f5f4f0);
+    border-color: var(--rust);
+  }
+.filter-btn.active {
+    background: var(--surface,#ffffff);
+    color: var(--rust,#b85c2a);
+    border-color: var(--rust);
+  }
+  @media (min-width: 601px), (pointer: fine) {
+    .controls { gap: 0; }
+    .filter-btn { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); }
+    .filter-btn:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); color: var(--text, #3d3a32); }
+    .filter-btn.active,
+    .filter-btn.active:hover,
+    .filter-btn.active:focus { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); }
+  }
+
+  /* ── Cruise cards ── */
+  main { padding: 20px 32px 32px; max-width: none; }
+  .cruise-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; align-items: stretch; }
+  .cruise-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    transition: box-shadow .18s, transform .18s, border-color .15s;
+  }
+  .cruise-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(138,108,26,0.10); transform: translateY(-1px); }
+  .cruise-card.hidden { display: none; }
+  .card-top {
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--surface2);
+  }
+  .card-flag {
+    font-size: 28px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  /* .card-meta, .card-tags, .card-tag, .card-desc, .info-rows → web-travel-style.css */
+  .card-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
+    line-height: 1.2;
+  }
+  .card-name a { color: inherit; text-decoration: none; }
+  .card-name a:hover { color: var(--rust, #b85c2a); }
+  /* .card-tags, .card-tag, .card-desc, .info-rows → web-travel-style.css */
+  .tag-budget    { background: #e8f5e8; color: #1a5a1a; border-color: rgba(26,90,26,0.35); }
+  .tag-midrange  { background: #e8f0fb; color: var(--navy); border-color: rgba(26,58,139,0.35); }
+  .tag-premium   { background: #fff8e0; color: #7a5800; border-color: rgba(122,88,0,0.35); }
+  .tag-luxury    { background: #f3e8ff; color: #7c3aed; border-color: rgba(124,58,237,0.35); }
+  .tag-ultra     { background: #fef3e2; color: #8a4a10; border-color: rgba(138,74,16,0.4); }
+  .tag-ocean     { background: #e0f0ff; color: #0a4a8a; border-color: rgba(10,74,138,0.35); }
+  .tag-river     { background: #e8f8f0; color: #0a5a30; border-color: rgba(10,90,48,0.35); }
+  .tag-expedition{ background: #f0e8f8; color: #5a1a8a; border-color: rgba(90,26,138,0.35); }
+  .tag-family    { background: #ffe8f0; color: #8a1a3a; border-color: rgba(138,26,58,0.35); }
+
+  .card-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 0; flex: 1; }
+  .info-row { display: flex; gap: 8px; align-items: flex-start; }
+  .info-icon { font-size: 14px; line-height: 1.4; flex-shrink: 0; width: 18px; text-align: center; }
+  .info-content { font-size: 12.5px; color: var(--text); line-height: 1.45; }
+  .info-label {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--muted); display: block; margin-bottom: 1px;
+  }
+  .booking-section {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .booking-label {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--muted); flex-shrink: 0;
+  }
+  .booking-links { display: flex; gap: 6px; flex-wrap: wrap; }
+  .book-link {
+    display: inline-flex; align-items: center;
+    font-size: 12px; font-weight: 600;
+    padding: 4px 10px; border-radius: 4px;
+    text-decoration: none; transition: all .15s; border: 1px solid;
+  }
+  .book-link.primary {
+    background: var(--surface2); color: var(--text);
+    border-color: var(--border2);
+  }
+  .book-link.primary:hover {
+    background: #fdf0e8; border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a);
+  }
+
+  /* ── Section headers ── */
+  .type-section { margin-bottom: 32px; }
+  .type-section.all-hidden { display: none; }
+  .type-heading {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted); padding-bottom: 8px;
+    border-bottom: 1px solid var(--border2);
+    margin-bottom: 14px;
+  }
+
+  @media (max-width: 600px) and (pointer: coarse) {
+    main { padding: 16px 14px 28px; }
+    .cruise-grid { grid-template-columns: 1fr; }
+    .controls { padding: 8px 14px; }
+  }
+
+/* Colored filter buttons — match card-tag badge families */
+.filter-btn[data-type="ocean"]                                    { background:#eef6ff; border-color:rgba(10,74,138,0.3); color:#0a4a8a; }
+.filter-btn[data-type="ocean"]:hover                              { background:#e0f0ff; border-color:rgba(10,74,138,0.5); color:#0a4a8a; }
+.filter-btn[data-type="ocean"].active,
+.filter-btn[data-type="ocean"].active:hover,
+.filter-btn[data-type="ocean"].active:focus                       { background:#e0f0ff; border-color:rgba(10,74,138,0.65); color:#0a4a8a; font-weight:600; }
+
+.filter-btn[data-type="river"]                                    { background:#f1fbf5; border-color:rgba(10,90,48,0.25); color:#0a5a30; }
+.filter-btn[data-type="river"]:hover                              { background:#e8f8f0; border-color:rgba(10,90,48,0.45); color:#0a5a30; }
+.filter-btn[data-type="river"].active,
+.filter-btn[data-type="river"].active:hover,
+.filter-btn[data-type="river"].active:focus                       { background:#e8f8f0; border-color:rgba(10,90,48,0.6); color:#0a5a30; font-weight:600; }
+
+.filter-btn[data-type="expedition"]                               { background:#f7f0fc; border-color:rgba(90,26,138,0.22); color:#5a1a8a; }
+.filter-btn[data-type="expedition"]:hover                         { background:#f0e8f8; border-color:rgba(90,26,138,0.42); color:#5a1a8a; }
+.filter-btn[data-type="expedition"].active,
+.filter-btn[data-type="expedition"].active:hover,
+.filter-btn[data-type="expedition"].active:focus                  { background:#f0e8f8; border-color:rgba(90,26,138,0.58); color:#5a1a8a; font-weight:600; }
+
+@media (prefers-color-scheme: dark),
+:root[data-theme="dark"] {
+  .filter-btn { color: var(--text); }
+  .tag-midrange  { background: #1a2a4a; color: #7ab0f8; border-color: rgba(122,176,248,0.3); }
+  .tag-premium   { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,0.3); }
+  .tag-luxury    { background: #1e0e3a; color: #b08af8; border-color: rgba(176,138,248,0.3); }
+  .tag-ocean     { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,0.3); }
+  .tag-river     { background: #0a1e10; color: #3a9a60; border-color: rgba(58,154,96,0.3); }
+  .tag-expedition{ background: #200a34; color: #b070e0; border-color: rgba(176,112,224,0.3); }
+  .tag-ultra     { background: #240e00; color: #c8840a; border-color: rgba(200,132,10,0.3); }
+  .tag-family    { background: #260a14; color: #e06080; border-color: rgba(224,96,128,0.3); }
+  .tag-budget    { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,0.3); }
+  .filter-btn[data-type="ocean"]                           { background: #0a1e3a; border-color: rgba(90,154,238,0.3); color: #5a9aee; }
+  .filter-btn[data-type="ocean"]:hover,
+  .filter-btn[data-type="ocean"].active,
+  .filter-btn[data-type="ocean"].active:hover,
+  .filter-btn[data-type="ocean"].active:focus               { background: #122848; border-color: rgba(90,154,238,0.5); color: #7ab0f8; }
+  .filter-btn[data-type="river"]                           { background: #0a1e10; border-color: rgba(58,154,96,0.3); color: #3a9a60; }
+  .filter-btn[data-type="river"]:hover,
+  .filter-btn[data-type="river"].active,
+  .filter-btn[data-type="river"].active:hover,
+  .filter-btn[data-type="river"].active:focus               { background: #102818; border-color: rgba(58,154,96,0.5); color: #4aaa70; }
+  .filter-btn[data-type="expedition"]                      { background: #200a34; border-color: rgba(176,112,224,0.3); color: #b070e0; }
+  .filter-btn[data-type="expedition"]:hover,
+  .filter-btn[data-type="expedition"].active,
+  .filter-btn[data-type="expedition"].active:hover,
+  .filter-btn[data-type="expedition"].active:focus          { background: #2a1040; border-color: rgba(176,112,224,0.5); color: #c090f0; }
+  .book-link:hover { background: #2a1810; }
+  .filter-btn.active,
+  .filter-btn.active:hover,
+  .filter-btn.active:focus { background: var(--surface2, #2a2825); }
+}
+</style>
+<link rel="stylesheet" href="../../assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-maxwidth="940" data-updated="2026-08-07"></div>
+<script src="../../assets/toolbar.js?v=127"></script>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>BEST CRUISE LINES</h1>
+  </div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-ship"/></svg></div>
+    <div>
+      <div class="page-intro-head">Every major cruise line, and what each one is genuinely best at</div>
+      <div class="page-intro-sub">Every major ocean, river and expedition line worth booking — the regions it sails, what it is known for, the kind of traveller it suits and roughly what a week aboard costs. Filter by type to compare like with like rather than a river boat against a megaship.</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <span class="filter-label">Type:</span>
+    <button class="filter-btn active" data-type="all"        onclick="filterCruises('all',this)">All</button>
+    <button class="filter-btn"        data-type="ocean"      onclick="filterCruises('ocean',this)">Ocean</button>
+    <button class="filter-btn"        data-type="river"      onclick="filterCruises('river',this)">River</button>
+    <button class="filter-btn"        data-type="expedition" onclick="filterCruises('expedition',this)">Expedition</button>
+  </div>
+
+<main>
+
+  <!-- ===== OCEAN ===== -->
+  <div class="type-section" data-section="ocean">
+    <div class="type-heading">Ocean Cruises</div>
+    <div class="cruise-grid">
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.royalcaribbean.com" target="_blank" rel="noopener">Royal Caribbean International</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-midrange">Mid-Range</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">The world's largest cruise line by tonnage, known for record-breaking megaships packed with onboard thrills — surf simulators, sky diving, Broadway shows, and go-kart tracks. Strong balance of entertainment and destination variety.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Caribbean, Bahamas, Europe, Alaska, Asia, Australia
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Icon of the Seas (world's largest ship), CocoCay private island, entertainment variety
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$100/night per person (interior cabin)
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.royalcaribbean.com" target="_blank" rel="noopener" class="book-link primary">royalcaribbean.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.carnival.com" target="_blank" rel="noopener">Carnival Cruise Line</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-budget">Budget</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">America's most popular cruise line, built for fun-seekers and first-timers. Accessible pricing, lively atmosphere, and a wide range of short getaways from US home ports. Great for groups and families on a budget.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Caribbean, Bahamas, Mexico, Bermuda
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Affordable 3–7 night sailings, Carnival Hub app, Seuss at Sea for families
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$70/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.carnival.com" target="_blank" rel="noopener" class="book-link primary">carnival.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.ncl.com" target="_blank" rel="noopener">Norwegian Cruise Line (NCL)</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-midrange">Mid-Range</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Pioneer of Freestyle Cruising — no assigned dining times or dress codes, giving passengers the flexibility to eat when and where they want. Known for diverse specialty restaurants, The Haven (ship-within-a-ship luxury enclave), and a strong entertainment lineup.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Caribbean, Bermuda, Europe, Alaska, Hawaii, South America
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Freestyle dining, The Haven suites, Great Stirrup Cay private island
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$110/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.ncl.com" target="_blank" rel="noopener" class="book-link primary">ncl.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.msccruises.com" target="_blank" rel="noopener">MSC Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-midrange">Mid-Range</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">The world's largest privately owned cruise line, headquartered in Geneva. Offers a European-style experience with a multinational atmosphere, modern megaships, and strong value across Mediterranean, Caribbean, and world itineraries. Growing rapidly in North America.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Mediterranean, Caribbean, Northern Europe, South America, Dubai, Asia
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                MSC Yacht Club (luxury enclave), new mega-ships, strong Mediterranean network
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$90/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.msccruises.com" target="_blank" rel="noopener" class="book-link primary">msccruises.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.celebritycruises.com" target="_blank" rel="noopener">Celebrity Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-premium">Premium</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Royal Caribbean Group's upscale brand, pitched squarely between mainstream and luxury. Modern ships, outstanding culinary programs, Galapagos sailings, and the adults-only Edge Villas. Attracts travelers who want elevated service without full luxury pricing.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Caribbean, Europe, Galapagos, Alaska, Australia, Asia
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Celebrity Edge class ships, Le Voyage specialty restaurant, Galapagos expedition cruises
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$150/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.celebritycruises.com" target="_blank" rel="noopener" class="book-link primary">celebritycruises.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.princess.com" target="_blank" rel="noopener">Princess Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-premium">Premium</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">The leading Alaska specialist and beloved for its Panama Canal sailings. Known for the MedallionClass technology platform — RFID medallion wearable for keyless cabin entry, food delivery anywhere onboard, and personalized service. Strong appeal to experienced cruisers.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Alaska, Caribbean, Panama Canal, Europe, South Pacific, World Voyages
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                MedallionClass wearable tech, Alaska Denali land tours, Grand Princess class ships
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$140/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.princess.com" target="_blank" rel="noopener" class="book-link primary">princess.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.hollandamerica.com" target="_blank" rel="noopener">Holland America Line</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-premium">Premium</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">A premium line with 150+ years of maritime history, skewing to a more mature, destination-focused traveler. Well regarded for Alaska (including Denali rail), Holland's long world-voyage tradition, and the EXC (Explorations Central) enrichment program.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Alaska, Caribbean, Europe, Panama Canal, Asia, World Grand Voyage
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Alaska expertise, world voyages, EXC enrichment program, Pinnacle Grill
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$160/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.hollandamerica.com" target="_blank" rel="noopener" class="book-link primary">hollandamerica.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.cunard.com" target="_blank" rel="noopener">Cunard</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-premium">Premium</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">The original transatlantic ocean liner experience, with a heritage dating to 1839. Queen Mary 2 remains the only regularly scheduled transatlantic liner in service. Formal dress traditions, the legendary Queen's Room ballroom, and White Star service set it apart from all other lines.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Transatlantic (New York–Southampton), Mediterranean, Caribbean, World Voyages
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Queen Mary 2 transatlantic crossing, White Glove service, Grills suites
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$180/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.cunard.com" target="_blank" rel="noopener" class="book-link primary">cunard.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.disneycruise.com" target="_blank" rel="noopener">Disney Cruise Line</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-premium">Premium</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+              <span class="card-tag tag-family">Family</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Premium family cruising with Disney magic on every deck — character meets, Broadway-caliber shows, themed restaurants, and Castaway Cay (Disney's own Bahamian island). Adults get their own restaurants, bars, and spa zones. Consistently rated the top family cruise line worldwide.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Caribbean, Bahamas, Castaway Cay, Europe, Alaska
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Castaway Cay private island, character experiences, Palo adult dining, Wish class ships
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$250/night per person (premium family positioning)
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.disneycruise.com" target="_blank" rel="noopener" class="book-link primary">disneycruise.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.vikingcruises.com" target="_blank" rel="noopener">Viking Ocean Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-luxury">Luxury</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Understated Scandinavian luxury on small, adults-only ships (no casino, no kids, no formal nights). Strong emphasis on destination immersion — longer port times, included shore excursions in every port, and culturally enriching programming. Highly consistent guest satisfaction ratings.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Northern Europe, Mediterranean, Caribbean, West Africa, Americas, World Cruises
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Adults-only ships, included shore excursion per port, World Cruise itineraries
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$350/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.vikingcruises.com" target="_blank" rel="noopener" class="book-link primary">vikingcruises.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.oceaniacruises.com" target="_blank" rel="noopener">Oceania Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-luxury">Luxury</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Built around the finest cuisine at sea — three exclusive Jacques Pépin–inspired restaurants, a Culinary Center for cooking classes, and an all-included beverage package on most sailings. Smaller, R-class and O-class ships access ports larger vessels cannot. Destination-intensive itineraries.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Mediterranean, Caribbean, Asia, South America, Africa, Northern Europe
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Culinary Center, Jacques restaurant, destination-intensive itineraries
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$400/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.oceaniacruises.com" target="_blank" rel="noopener" class="book-link primary">oceaniacruises.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.azamara.com" target="_blank" rel="noopener">Azamara</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-luxury">Luxury</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Port-intensive sailings on small boutique ships — often overnighting in-port and making late-night departures to maximize time ashore. Drinks and gratuities included. No ship-as-destination approach; Azamara is for travelers who come for the places, not the vessel.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Mediterranean, Europe, Asia, South America, Caribbean
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Overnight port stays, AzAmazing Evenings private shore events, all-inclusive pricing
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$380/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.azamara.com" target="_blank" rel="noopener" class="book-link primary">azamara.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.windstarcruises.com" target="_blank" rel="noopener">Windstar Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-luxury">Luxury</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Yacht-scale ships — including true sailing vessels with billowing sails — that anchor in harbors too small for mainstream cruise ships. Intimate onboard atmosphere with just 148–342 passengers. Feels far more like private yachting than traditional cruising.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Mediterranean, Caribbean, Tahiti, Costa Rica, Alaska, Northern Europe
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Sailing ships (Star Breeze, Star Flyer), secluded anchorages, small-ship intimacy
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$400/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.windstarcruises.com" target="_blank" rel="noopener" class="book-link primary">windstarcruises.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.silversea.com" target="_blank" rel="noopener">Silversea Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-ultra">Ultra-Luxury</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">All-suite, butler-attended ultra-luxury cruising on small ships — all drinks, dining, gratuities, and excursions included. Every passenger has a dedicated butler. Silversea operates both ocean and expedition vessels, making it the only line covering the full spectrum from Caribbean to Antarctica in one brand.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Mediterranean, Caribbean, Antarctica, Arctic, Alaska, Asia, Africa, World Cruise
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                All-suite butler service, fully all-inclusive pricing, Silver Nova ultra-luxury design
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$700/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.silversea.com" target="_blank" rel="noopener" class="book-link primary">silversea.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.seabourn.com" target="_blank" rel="noopener">Seabourn</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-ultra">Ultra-Luxury</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Legendary for anticipatory service — staff remember guests' names and preferences from their first voyage. Fully all-inclusive on small ships of 300–600 passengers. The Seabourn Experience includes open-bar dining, caviar in the surf, and Thomas Keller restaurant partnerships.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Mediterranean, Caribbean, Northern Europe, Antarctica, Pacific, World Cruises
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Thomas Keller dining, Caviar in the Surf, personalized anticipatory service
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$750/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.seabourn.com" target="_blank" rel="noopener" class="book-link primary">seabourn.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.rssc.com" target="_blank" rel="noopener">Regent Seven Seas Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-ultra">Ultra-Luxury</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">The most inclusive luxury cruise line on the market — airfare, shore excursions, specialty dining, drinks, spa treatments, and gratuities all bundled in. No upcharges, no hidden costs. Seven Seas Grandeur (2023) is among the most spacious ships ever launched per passenger.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Mediterranean, Caribbean, Alaska, Asia, Australia, South America, World Voyages
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Truly all-inclusive (airfare + excursions), Seven Seas Grandeur, highest space ratio
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$900/night per person (all-inclusive)
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.rssc.com" target="_blank" rel="noopener" class="book-link primary">rssc.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="ocean">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.explorajourneys.com" target="_blank" rel="noopener">Explora Journeys</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-ultra">Ultra-Luxury</span>
+              <span class="card-tag tag-ocean">Ocean</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">MSC's ultra-luxury brand, launched 2023, with a distinctly residential, hotel-like approach to ocean travel. Designed by Sybille de Margerie, the ships feel more like floating boutique resorts — 18 restaurants and lounges, vast private terrace suites, and no rush to be anywhere.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Mediterranean, Caribbean, Northern Europe, Americas
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Residential-style design, 18 F&amp;B venues, terrace suites, no rush itineraries
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$800/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.explorajourneys.com" target="_blank" rel="noopener" class="book-link primary">explorajourneys.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== RIVER ===== -->
+  <div class="type-section" data-section="river">
+    <div class="type-heading">River Cruises</div>
+    <div class="cruise-grid">
+
+      <div class="cruise-card" data-type="river">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.vikingrivercruises.com" target="_blank" rel="noopener">Viking River Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-premium">Premium</span>
+              <span class="card-tag tag-river">River</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">The dominant force in European river cruising, operating the world's largest river fleet. Standardized Longships built specifically for Europe's waterways, included excursions, Aquavit Terrace forward-facing dining, and no casino or entertainment-heavy approach. Adults-only, destination-first philosophy.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Rivers</span>
+                Rhine, Danube, Seine, Douro, Elbe, Nile, Mekong, Mississippi
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Viking Longships, included excursions every port, Christmas Markets sailings
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$300/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.vikingrivercruises.com" target="_blank" rel="noopener" class="book-link primary">vikingrivercruises.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="river">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.amawaterways.com" target="_blank" rel="noopener">AmaWaterways</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-luxury">Luxury</span>
+              <span class="card-tag tag-river">River</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">A family-owned luxury river line with a strong culinary focus and active excursion programs — cycling tours, hiking, and wine-pairing dinners are core to the experience. Twin-balcony staterooms (French + outside) are a hallmark. Wine-themed sailings on the Rhône and Douro are particularly sought-after.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Rivers</span>
+                Rhine, Danube, Moselle, Douro, Rhône, Seine, Mekong, Chobe (Africa)
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Twin-balcony cabins, wine-themed sailings, cycling excursions
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$350/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.amawaterways.com" target="_blank" rel="noopener" class="book-link primary">amawaterways.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="river">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.avaloncruises.com" target="_blank" rel="noopener">Avalon Waterways</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-premium">Premium</span>
+              <span class="card-tag tag-river">River</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Globus family brand offering Suite Ships with panoramic staterooms where the entire wall becomes a window. Open-air balconies, flexible shore excursions with multiple options per port, and excellent value in the premium tier. Good entry point into luxury river cruising.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Rivers</span>
+                Rhine, Danube, Seine, Douro, Rhône, Nile, Mekong
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Suite Ships with panoramic windows, Active &amp; Discovery excursion options
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$280/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.avaloncruises.com" target="_blank" rel="noopener" class="book-link primary">avaloncruises.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="river">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.scenic.com" target="_blank" rel="noopener">Scenic River Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-ultra">Ultra-Luxury</span>
+              <span class="card-tag tag-river">River</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Ultra-luxury river cruising with butler service for every stateroom, e-bikes onboard for independent exploration, and a fully all-inclusive price covering drinks, dining, excursions, and gratuities. Scenic Space-Ships feature heated marble floors, Scenic Sun Lounges, and a retractable rooftop.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Rivers</span>
+                Rhine, Danube, Moselle, Seine, Douro, Rhône, Mekong, Irrawaddy, Ganges
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Butler service, all-inclusive pricing, e-bikes, retractable rooftop Space-Ships
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$600/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.scenic.com" target="_blank" rel="noopener" class="book-link primary">scenic.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="river">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.tauck.com/cruises" target="_blank" rel="noopener">Tauck River Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-luxury">Luxury</span>
+              <span class="card-tag tag-river">River</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Family-owned tour operator with an all-inclusive river cruise program built around exclusive access — private museum evenings, off-hours castle visits, and performances unavailable on other lines. Smaller ships, truly all-inclusive, and heavily guided with expert Tauck Directors on every sailing.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Rivers</span>
+                Rhine, Danube, Seine, Moselle, Douro, Rhône
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Exclusive after-hours access, Tauck Directors, fully all-inclusive, private experiences
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$500/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.tauck.com/cruises" target="_blank" rel="noopener" class="book-link primary">tauck.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="river">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.emeraldcruises.com" target="_blank" rel="noopener">Emerald Cruises</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-premium">Premium</span>
+              <span class="card-tag tag-river">River</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Contemporary-style river ships with a Wellness Studio, pool that converts to a cinema, and a younger traveler profile than traditional river lines. Emerald also operates luxury superyachts, giving it a bridge from river to open-water small-ship cruising.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Rivers</span>
+                Rhine, Danube, Seine, Douro, Rhône, and luxury yacht destinations in the Adriatic
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Indoor pool / Sky Cinema conversion, Wellness Studio, modern contemporary design
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$250/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.emeraldcruises.com" target="_blank" rel="noopener" class="book-link primary">emeraldcruises.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== EXPEDITION ===== -->
+  <div class="type-section" data-section="expedition">
+    <div class="type-heading">Expedition Cruises</div>
+    <div class="cruise-grid">
+
+      <div class="cruise-card" data-type="expedition">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.hurtigruten.com" target="_blank" rel="noopener">Hurtigruten</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-premium">Premium</span>
+              <span class="card-tag tag-expedition">Expedition</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">The original Norwegian coastal route — 34 ports between Bergen and Kirkenes, operated since 1893. Combines working ferry service with expedition-style tourism. Sailing year-round with Northern Lights sailings in winter and Midnight Sun itineraries in summer. The Coastal Express remains a bucket-list experience.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Norwegian Coast, Svalbard, Greenland
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Bergen–Kirkenes Coastal Express, Northern Lights, Midnight Sun, 130+ year heritage
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$250/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.hurtigruten.com" target="_blank" rel="noopener" class="book-link primary">hurtigruten.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="expedition">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.hxlines.com" target="_blank" rel="noopener">HX (Hurtigruten Expeditions)</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-luxury">Luxury</span>
+              <span class="card-tag tag-expedition">Expedition</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Hurtigruten's dedicated polar expedition brand, split off in 2023 under the HX name. Modern hybrid-powered ships with ice-strengthened hulls, onboard scientists and naturalists, and a science-forward approach to polar travel. Covers Antarctica, Arctic, Svalbard, and more remote territories.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Antarctica, Arctic, Svalbard, Greenland, Iceland, Canadian Arctic
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Hybrid-electric polar ships, onboard scientists, off-ship landing programs
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$500/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.hxlines.com" target="_blank" rel="noopener" class="book-link primary">hxlines.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="expedition">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.ponant.com" target="_blank" rel="noopener">Ponant</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-ultra">Ultra-Luxury</span>
+              <span class="card-tag tag-expedition">Expedition</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">French ultra-luxury expedition cruising with a fleet of distinctive blue-hulled Le Commandant Charcot (nuclear-powered icebreaker) and Le Lyrial-class ships. French art de vivre at sea — fine dining, Champagne landings, and small passenger counts (92–264) in the most remote destinations on earth.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Antarctica, Arctic, North Pole, Greenland, Patagonia, Pacific, Indian Ocean
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Le Commandant Charcot (nuclear icebreaker), French culinary program, North Pole sailings
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$700/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.ponant.com" target="_blank" rel="noopener" class="book-link primary">ponant.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="expedition">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.quarkexpeditions.com" target="_blank" rel="noopener">Quark Expeditions</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-premium">Premium</span>
+              <span class="card-tag tag-expedition">Expedition</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">The polar specialist, having operated more Antarctica voyages than any other line. Offers a range of ship sizes — from intimate boutique vessels to larger expedition ships with multiple Zodiac fleets. Adventure add-ons include mountaineering, kayaking, diving, and camping on the ice.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Antarctica, Arctic, Canadian Arctic, Greenland, North Pole
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Antarctica expertise, Zodiac landings, camping on ice, mountaineering add-ons
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$600/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.quarkexpeditions.com" target="_blank" rel="noopener" class="book-link primary">quarkexpeditions.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="expedition">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.expeditions.com" target="_blank" rel="noopener">Lindblad / National Geographic</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-luxury">Luxury</span>
+              <span class="card-tag tag-expedition">Expedition</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">A 60-year partnership between Lindblad Expeditions and National Geographic puts credentialed naturalists, photographers, and scientists on every ship. Undersea specialists dive ahead of each landing to brief passengers. Sustainability-focused, Nat Geo branded, and science-first in remote destinations worldwide.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Antarctica, Galapagos, Arctic, Alaska, Baja California, Pacific Islands, Patagonia
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                Nat Geo partnership, underwater specialists, Galapagos sailings, photo instructors
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$650/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.expeditions.com" target="_blank" rel="noopener" class="book-link primary">expeditions.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cruise-card" data-type="expedition">
+        <div class="card-top">
+          <div class="card-flag"></div>
+          <div class="card-meta">
+            <div class="card-name"><a href="https://www.auroraexpeditions.com.au" target="_blank" rel="noopener">Aurora Expeditions</a></div>
+            <div class="card-tags">
+              <span class="card-tag tag-luxury">Luxury</span>
+              <span class="card-tag tag-expedition">Expedition</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-desc">Australian-founded polar expedition specialist with a strong sustainability ethos and small-ship approach. Greg Mortimer (700 passenger capacity: 104 guests) features X-BOW hull technology for smoother polar crossings. Broad range of adventure add-ons and one of the most experienced expedition teams in the industry.</div>
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Signature Regions</span>
+                Antarctica, Arctic, Svalbard, Greenland, Sub-Antarctic Islands, Pacific
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Known For</span>
+                X-BOW hull technology, small-ship intimacy, strong sustainability practices
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-content">
+                <span class="info-label">Price Range</span>
+                From ~$550/night per person
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Book</span>
+            <div class="booking-links">
+              <a href="https://www.auroraexpeditions.com.au" target="_blank" rel="noopener" class="book-link primary">auroraexpeditions.com.au</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+</div><!-- /wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="../hotels/">Hotels &amp; stays</a>
+    <a class="also-on-this-site-pill" href="../../best-of/resorts/">Best resorts</a>
+    <a class="also-on-this-site-pill" href="../../best-of/islands/">Best islands</a>
+    <a class="also-on-this-site-pill" href="../scenic-trains/">Scenic train journeys</a>
+    <a class="also-on-this-site-pill" href="../insurance/">Travel insurance</a>
+    <a class="also-on-this-site-pill" href="../connections/">Connection times</a>
+    <a class="also-on-this-site-pill" href="../mistakes/">First-timer mistakes</a>
+    <a class="also-on-this-site-pill" href="../budget/">Budget guide</a>
+  </div>
+</div>
+
+<script>
+function filterCruises(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  var cards = document.querySelectorAll('.cruise-card');
+  var sections = document.querySelectorAll('.type-section');
+  cards.forEach(function(card) {
+    if (type === 'all' || card.dataset.type === type) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+  sections.forEach(function(sec) {
+    var visible = sec.querySelectorAll('.cruise-card:not(.hidden)').length;
+    sec.classList.toggle('all-hidden', visible === 0);
+  });
+}
+</script>
+
+</body>
+</html>
