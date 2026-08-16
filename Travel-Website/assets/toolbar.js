@@ -11649,13 +11649,13 @@ window.TVE.home = (function () {
         }
       }
 
-      /* FIRST content item inside the Trip Overview card — before Day 1
-         (owner rule 2026-08-15: "moved down inside the collapse/expand as the
-         first thing"). Collapses with the days (render() in injectOverviewToggle
-         toggles display on #tve-stf). */
-      var firstDay = ovSec.querySelector('.day-block');
-      if (firstDay) ovSec.insertBefore(wrap, firstDay);
-      else ovSec.appendChild(wrap);
+      /* Between the Trip Overview card and the first Day block — day blocks are
+         siblings of .overview-section, not children, so query globally.
+         Collapses with the days (render() in injectOverviewToggle toggles
+         display on #tve-stf). */
+      var firstDay = document.querySelector('.day-block');
+      if (firstDay) firstDay.parentNode.insertBefore(wrap, firstDay);
+      else ovSec.parentNode.insertBefore(wrap, ovSec.nextSibling);
     }
 
     if (document.readyState === 'loading') {
