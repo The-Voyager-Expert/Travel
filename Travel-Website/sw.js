@@ -1303,7 +1303,16 @@
    pages keep their prev/next carousel. Same pass: essentials/packing/ removed
    from the index Trip Resources block, since a toolbar tab reaches it from every
    page and the block would be a second copy. toolbar.js -> v690. CACHE to v965. */
-var CACHE = 'travel-cache-v965';
+/* 2026-08-16: Weather by city moved OUT of essentials/ to /weather/ (owner) and
+   is now reached only from the When to Go hero pill plus the per-city deep links
+   in the 237 guides — it is not in the index Trip Resources block. Two fixes rode
+   along, both in the baked CLIMATE block, so weather.js changes and its floor must
+   move: (a) every entry now carries "co" (country), which is what lets the page's
+   TVESearch match a country and list its cities the way every other search on the
+   site does — it was the last city-only search; (b) the page no longer defaults to
+   Seattle, so it opens empty and waits for a search instead of answering a question
+   the reader did not ask. weather.js -> v8. CACHE to v966. */
+var CACHE = 'travel-cache-v966';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1311,7 +1320,7 @@ var CACHE = 'travel-cache-v965';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 221,'toolbar.js': 690, 'mobile.css': 81, 'web-travel-style.css': 49, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 7 };
+var MIN_VERSIONS = { 'guide-style.css': 221,'toolbar.js': 690, 'mobile.css': 81, 'web-travel-style.css': 49, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
