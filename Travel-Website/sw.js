@@ -1,3 +1,4 @@
+/* 2026-08-16: maps fixed — the map pages fetched their GeoJSON as 'data/x.json' relative to the page, which after the move resolved to /maps/world/data/ and 404'd, so every map rendered empty. vendor/ and data/ now live under /maps/ with root-absolute references. Reports page and its mock-up links repointed. CACHE to v946. */
 /* 2026-08-16: guide-style.css — a.title-hotel-request:visited used var(--c-brand); a browser never resolves a custom property inside :visited (history-sniffing defence), so the rule was a silent no-op. Literal hex now, light and dark. Day Trips page restored: regenerating it from a drifted builder template replaced 211KB of real content with a 9KB stub. guide-style.css floor +1. CACHE to v945. */
 /* 2026-08-16: data files rebuilt against the new layout — quick-facts and country-guides were writing EMPTY (the old per-city-folder glob matched nothing after the flatten and no builder errored); search-index now resolves folder hrefs; FMAP rekeyed by city slug; Travel Stats and Day Trips emit root-absolute paths. CACHE to v944. */
 /* 2026-08-16: ROOT-ABSOLUTE LINKS. Every internal href/src and every URL string in page JS is now '/...'; toolbar.js builds from base='/' instead of a '../'-per-data-depth string. A link can no longer break because a page changed depth — the bug class behind /guides/athens/when-to-go/guides/when-to-go/before-you-go/. Guide photos moved out of _build/assets to /guides/<city>/photos/ (no underscore, no build-artifact name in a public URL). 230 read-about back-links pointed at the site root instead of their own guide; repointed. toolbar.js floor +1. CACHE to v943. */
@@ -1270,7 +1271,7 @@
 /* 2026-08-15: toolbar: replace Where to Stay dropdown with Best Of tab → /best-of/. toolbar.js -> v670. CACHE to v935. */
 /* 2026-08-15: toolbar: swap Before You Go and Best Of order. toolbar.js -> v671. CACHE to v936. */
 /* 2026-08-16: toolbar: Best Of → dropdown with all 34 categories (was plain tab to /best-of/). toolbar.js -> v672. CACHE to v937. */
-var CACHE = 'travel-cache-v945';
+var CACHE = 'travel-cache-v946';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="/assets/web-travel-style.css">
 <title>World Map</title>
-<link rel="stylesheet" href="/essentials/maps/vendor/leaflet.min.css">
-<link rel="stylesheet" href="/essentials/maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="/maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="/maps/vendor/MarkerCluster.min.css">
 <style>
   .tb { margin-bottom: 0 !important; }   /* maps are full-bleed — toolbar sits flush */
   html, body.map-page { height: 100vh; height: 100dvh; }
@@ -313,9 +313,9 @@ if (location.hash === '#seed-mine') {
   </div>
 </div>
 
-<script src="/essentials/maps/vendor/leaflet.min.js"></script>
-<script src="/essentials/maps/vendor/markercluster.min.js"></script>
-<script src="/essentials/maps/vendor/topojson.min.js"></script>
+<script src="/maps/vendor/leaflet.min.js"></script>
+<script src="/maps/vendor/markercluster.min.js"></script>
+<script src="/maps/vendor/topojson.min.js"></script>
 <script>
 /* ── Resilient JSON loader: retry a stumbled request instead of giving up.
    A single slow/failed fetch used to paint the "could not load map data"
@@ -773,12 +773,12 @@ const euRegionLayer = L.layerGroup().addTo(map);
 const euCanvas = L.canvas({ padding: 0.4 });
 const blankIcon = L.divIcon({ className: 'eu-region-anchor', iconSize: [0, 0] });
 const REGION_SOURCES = {
-  eu: { bbox: L.latLngBounds([34, -25], [72, 45]), file: 'data/europe-regions.json' },
-  sa: { bbox: L.latLngBounds([-56, -82], [13, -34]), file: 'data/south-america-regions.json' },
-  af: { bbox: L.latLngBounds([-36, -19], [38, 52]), file: 'data/africa-regions.json' },
-  as: { bbox: L.latLngBounds([-12, 48], [44, 146]), file: 'data/asia-regions.json' },
-  oc: { bbox: L.latLngBounds([-48, 140], [-31, 177]), file: 'data/oceania-regions.json' },
-  cb: { bbox: L.latLngBounds([11, -85], [27, -58]), file: 'data/caribbean-regions.json' },
+  eu: { bbox: L.latLngBounds([34, -25], [72, 45]), file: '/maps/data/europe-regions.json' },
+  sa: { bbox: L.latLngBounds([-56, -82], [13, -34]), file: '/maps/data/south-america-regions.json' },
+  af: { bbox: L.latLngBounds([-36, -19], [38, 52]), file: '/maps/data/africa-regions.json' },
+  as: { bbox: L.latLngBounds([-12, 48], [44, 146]), file: '/maps/data/asia-regions.json' },
+  oc: { bbox: L.latLngBounds([-48, 140], [-31, 177]), file: '/maps/data/oceania-regions.json' },
+  cb: { bbox: L.latLngBounds([11, -85], [27, -58]), file: '/maps/data/caribbean-regions.json' },
 };
 const regionState = {};
 Object.keys(REGION_SOURCES).forEach(k => { regionState[k] = { loaded: false, lines: null, regions: [] }; });
@@ -861,7 +861,7 @@ function fitOpts(animated) {
 map.fitBounds(REGIONS.world, fitOpts(false));
 
 /* ── Country polygons from world-atlas TopoJSON (GeoJSON-only, no tiles) ── */
-getJSON('data/countries-50m.json')
+getJSON('/maps/data/countries-50m.json')
   .then(world => {
     const fc = topojson.feature(world, world.objects.countries);
     // Antarctica: no guide will ever be built there, and Web Mercator smears
@@ -987,7 +987,7 @@ getJSON('data/countries-50m.json')
    Delaware/DC always overlapped because this used a permanent, unculled
    tooltip with zero collision checking. ── */
 regionState.us = { loaded: true, lines: null, regions: [] };
-getJSON('data/us-states.json')
+getJSON('/maps/data/us-states.json')
   .then(us => {
     // RE-ENABLED (2026-07-19) — Dani: US keeps state-level names + borders;
     // it's only the rest-of-world admin-1 subdivisions (Africa/Europe/etc,
@@ -1012,7 +1012,7 @@ getJSON('data/us-states.json')
    all 13 provinces + territories on top of the single Canada polygon so every one
    is visible, with names revealed at the same zoom gate. ── */
 regionState.ca = { loaded: true, lines: null, regions: [] };
-getJSON('data/canada-provinces.json')
+getJSON('/maps/data/canada-provinces.json')
   .then(ca => {
     // RE-ENABLED (2026-07-19) — grouped with US as North America; never part
     // of the admin-1 clutter complaint (that was Africa/Europe specifically).
@@ -1036,7 +1036,7 @@ getJSON('data/canada-provinces.json')
    + CDMX on top of the Mexico polygon, borders only (fillOpacity: 0), names
    revealed at the same z>=4.5 gate as US states and Canadian provinces. ── */
 regionState.mx = { loaded: true, lines: null, regions: [] };
-getJSON('data/mexico-states.json')
+getJSON('/maps/data/mexico-states.json')
   .then(mx => {
     L.geoJSON(mx, {
       interactive: false,
@@ -1152,7 +1152,7 @@ function renderRegions() {
    view, biggest-first, capped — re-running on every pan/zoom. Guide cities already
    have their own orange pins, so they're filtered out to avoid doubles.
    (CITY_DATA / cityLayer / cityIcon are declared up by the move handler.) */
-getJSON('data/world-cities.json')
+getJSON('/maps/data/world-cities.json')
   .then(cities => {
     const guideNames = new Set(PINS.map(p => p[0].toLowerCase()));
     CITY_DATA = cities.filter(c => !guideNames.has(c[0].toLowerCase()));  // pre-sorted by tier (biggest first)
