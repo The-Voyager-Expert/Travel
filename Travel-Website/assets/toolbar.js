@@ -1495,16 +1495,8 @@ window.TVE.home = (function () {
          ground token and is redefined in both theme blocks above, so the bar
          follows dark mode instead of pinning a light strip over a dark page.
          The hamburger panel is position:fixed at top:64px and clears this. */
-      /* FIXED, not sticky — measured, and the difference is not cosmetic.
-         `position:sticky` was the obvious answer and it does not work here:
-         guide-style.css sets `html, body { overflow-x: hidden }` at this same
-         breakpoint, which makes body a scroll container, and a sticky child of
-         that container scrolls away with it in Chrome. Verified at 393px — the
-         bar's own getBoundingClientRect().top read -1800 after scrolling 1800.
-         Removing the overflow-x guard instead would reopen horizontal overflow
-         across the whole site, so the bar takes the fixed route and gives back
-         the space it occupies via the body padding set by _padForFixedBar(). */
-      '.tb{position:fixed;top:0;left:0;right:0;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:var(--c-page-bg,#f5f4f0);box-shadow:none}' +
+      /* Owner rule 2026-08-15: mobile toolbar scrolls with the page (not fixed/sticky). */
+      '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:var(--c-page-bg,#f5f4f0);box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
@@ -2245,10 +2237,8 @@ window.TVE.home = (function () {
      took. Only ever applied at the fixed breakpoint; on desktop the bar is in
      normal flow and the padding is cleared. */
   function _padForFixedBar() {
-    var fixedNow = window.matchMedia('(max-width: 1260px) and (pointer: coarse)').matches;
-    if (!fixedNow) { document.body.style.paddingTop = ''; return; }
-    var h = bar.offsetHeight;
-    if (h) document.body.style.paddingTop = h + 'px';
+    /* Owner rule 2026-08-15: bar is no longer fixed on mobile — no padding needed. */
+    document.body.style.paddingTop = '';
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _padForFixedBar);
