@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../assets/stops-map-style.css">
+<title>Naples — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="1" data-maxwidth="1400" data-title="Naples — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../essentials/maps/vendor/leaflet.min.js"></script>
+<script src="../essentials/maps/vendor/markercluster.min.js"></script>
+<script src="../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Palazzo Reale di Napoli",
+    "query": "Piazza del Plebiscito 1 Napoli",
+    "lat": 40.8368476,
+    "lng": 14.250992
+  },
+  {
+    "day": 1,
+    "name": "Piazza del Plebiscito",
+    "query": "Piazza del Plebiscito Napoli",
+    "lat": 40.8358559,
+    "lng": 14.2485652
+  },
+  {
+    "day": 1,
+    "name": "Certosa e Museo di San Martino",
+    "query": "Largo San Martino 5 Napoli",
+    "lat": 40.8431636,
+    "lng": 14.2410586
+  },
+  {
+    "day": 1,
+    "name": "Castel Nuovo – Maschio Angioino",
+    "query": "Piazza Municipio 1 Napoli",
+    "lat": 40.8383171,
+    "lng": 14.2537307
+  },
+  {
+    "day": 2,
+    "name": "Castel Sant'Elmo",
+    "query": "Via Tito Angelini 22 Napoli",
+    "lat": 40.8437067,
+    "lng": 14.2392516
+  },
+  {
+    "day": 2,
+    "name": "Catacombe di San Gennaro",
+    "query": "Via Capodimonte 13 Napoli",
+    "lat": 40.8653744,
+    "lng": 14.2471455
+  },
+  {
+    "day": 2,
+    "name": "Parco Virgiliano",
+    "query": "Viale Virgilio Posillipo Napoli",
+    "lat": 40.803698,
+    "lng": 14.1866415
+  },
+  {
+    "day": 3,
+    "name": "Napoli Sotterranea",
+    "query": "Piazza San Gaetano 68 Napoli",
+    "lat": 40.8509258,
+    "lng": 14.2574356
+  },
+  {
+    "day": 3,
+    "name": "San Lorenzo Maggiore",
+    "query": "Via dei Tribunali 316 Napoli",
+    "lat": 40.8516049,
+    "lng": 14.2591266
+  },
+  {
+    "day": 3,
+    "name": "Cappella Sansevero",
+    "query": "Via Francesco De Sanctis 19 Napoli",
+    "lat": 40.8492993,
+    "lng": 14.2549332
+  },
+  {
+    "day": 3,
+    "name": "MANN – Museo Archeologico Nazionale",
+    "query": "Piazza Museo Nazionale 19 Napoli",
+    "lat": 40.8536064,
+    "lng": 14.25115
+  },
+  {
+    "day": 4,
+    "name": "Pio Monte della Misericordia",
+    "query": "Via dei Tribunali 253 Napoli",
+    "lat": 40.8517314,
+    "lng": 14.2603912
+  },
+  {
+    "day": 4,
+    "name": "Chiostro di Santa Chiara",
+    "query": "Via Santa Chiara 49c Napoli",
+    "lat": 40.8469708,
+    "lng": 14.2533483
+  },
+  {
+    "day": 4,
+    "name": "Gesù Nuovo",
+    "query": "Piazza del Gesù Nuovo Napoli",
+    "lat": 40.8470181,
+    "lng": 14.2517696
+  },
+  {
+    "day": 4,
+    "name": "Museo di Capodimonte",
+    "query": "Via Miano 2 Napoli",
+    "lat": 40.867283,
+    "lng": 14.2502573
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

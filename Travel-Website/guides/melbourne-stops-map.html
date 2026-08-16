@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../assets/stops-map-style.css">
+<title>Melbourne — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="1" data-maxwidth="1400" data-title="Melbourne — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../essentials/maps/vendor/leaflet.min.js"></script>
+<script src="../essentials/maps/vendor/markercluster.min.js"></script>
+<script src="../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Shrine of Remembrance",
+    "query": "Shrine of Remembrance Birdwood Avenue Melbourne",
+    "lat": -37.8305311,
+    "lng": 144.9734474
+  },
+  {
+    "day": 1,
+    "name": "Royal Botanic Gardens Melbourne",
+    "query": "Royal Botanic Gardens Melbourne Birdwood Avenue",
+    "lat": -37.8300134,
+    "lng": 144.9747028
+  },
+  {
+    "day": 1,
+    "name": "NGV International",
+    "query": "NGV International 180 St Kilda Road Melbourne",
+    "lat": -37.8229117,
+    "lng": 144.9686548
+  },
+  {
+    "day": 2,
+    "name": "Royal Exhibition Building",
+    "query": "Royal Exhibition Building 9 Nicholson Street Carlton Melbourne",
+    "lat": -37.8046669,
+    "lng": 144.9714669
+  },
+  {
+    "day": 2,
+    "name": "Melbourne Museum",
+    "query": "Melbourne Museum 11 Nicholson Street Carlton",
+    "lat": -37.8032298,
+    "lng": 144.9723488
+  },
+  {
+    "day": 2,
+    "name": "Old Melbourne Gaol",
+    "query": "Old Melbourne Gaol 377 Russell Street Melbourne",
+    "lat": -37.8078185,
+    "lng": 144.9652682
+  },
+  {
+    "day": 2,
+    "name": "State Library Victoria",
+    "query": "State Library Victoria 328 Swanston Street Melbourne",
+    "lat": -37.8097696,
+    "lng": 144.9655352
+  },
+  {
+    "day": 3,
+    "name": "Luna Park Melbourne",
+    "query": "Luna Park Melbourne 18 Lower Esplanade St Kilda",
+    "lat": -37.8680243,
+    "lng": 144.9769094
+  },
+  {
+    "day": 3,
+    "name": "St Kilda Beach",
+    "query": "St Kilda Beach Melbourne Victoria",
+    "lat": -37.868107,
+    "lng": 144.9742191
+  },
+  {
+    "day": 3,
+    "name": "St Kilda Pier",
+    "query": "St Kilda Pier St Kilda Melbourne",
+    "lat": -37.8634375,
+    "lng": 144.97146
+  },
+  {
+    "day": 3,
+    "name": "Acland Street",
+    "query": "Acland Street St Kilda Melbourne",
+    "lat": -37.868993,
+    "lng": 144.980153
+  },
+  {
+    "day": 4,
+    "name": "Parliament House",
+    "query": "Parliament House Spring Street Melbourne",
+    "lat": -37.8110999,
+    "lng": 144.9738657
+  },
+  {
+    "day": 4,
+    "name": "Melbourne Cricket Ground",
+    "query": "Melbourne Cricket Ground Brunton Avenue",
+    "lat": -37.819909,
+    "lng": 144.983225
+  },
+  {
+    "day": 5,
+    "name": "Melbourne Town Hall",
+    "query": "Melbourne Town Hall 90-130 Swanston Street Melbourne",
+    "lat": -37.8145302,
+    "lng": 144.9663595
+  },
+  {
+    "day": 5,
+    "name": "Chinatown Melbourne",
+    "query": "Chinatown Little Bourke Street Melbourne",
+    "lat": -37.812473,
+    "lng": 144.965396
+  },
+  {
+    "day": 5,
+    "name": "Hosier Lane",
+    "query": "Hosier Lane Melbourne CBD",
+    "lat": -37.8163585,
+    "lng": 144.9690767
+  },
+  {
+    "day": 5,
+    "name": "Federation Square",
+    "query": "Federation Square Melbourne",
+    "lat": -37.8177396,
+    "lng": 144.9691559
+  },
+  {
+    "day": 5,
+    "name": "Flinders Street Station",
+    "query": "Flinders Street Station Melbourne",
+    "lat": -37.8184161,
+    "lng": 144.9664779
+  },
+  {
+    "day": 5,
+    "name": "Fitzroy Gardens &amp; Cook's Cottage",
+    "query": "Cooks Cottage Fitzroy Gardens Wellington Parade East Melbourne",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 5,
+    "name": "St Patrick's Cathedral",
+    "query": "St Patrick's Cathedral 1 Cathedral Place East Melbourne",
+    "lat": -37.8101517,
+    "lng": 144.976404
+  },
+  {
+    "day": 5,
+    "name": "Arts Centre Melbourne",
+    "query": "Arts Centre Melbourne 100 St Kilda Road Southbank",
+    "lat": -37.8201575,
+    "lng": 144.9679835
+  },
+  {
+    "day": 5,
+    "name": "Eureka Tower",
+    "query": "Eureka Tower 7 Riverside Quay Southbank Melbourne",
+    "lat": -37.8217537,
+    "lng": 144.9646549
+  },
+  {
+    "day": 6,
+    "name": "Sovereign Hill",
+    "query": "Sovereign Hill 39 Bradshaw Street Ballarat",
+    "lat": -37.9266985,
+    "lng": 145.2374142
+  },
+  {
+    "day": 6,
+    "name": "Art Gallery of Ballarat",
+    "query": "Art Gallery of Ballarat 40 Lydiard Street North Ballarat",
+    "lat": -37.5604517,
+    "lng": 143.8584034
+  },
+  {
+    "day": 6,
+    "name": "Lake Wendouree",
+    "query": "Lake Wendouree Ballarat Victoria",
+    "lat": -37.5501895,
+    "lng": 143.8350306
+  },
+  {
+    "day": 6,
+    "name": "Ballarat Botanical Gardens",
+    "query": "Ballarat Botanical Gardens Wendouree Parade Ballarat",
+    "lat": null,
+    "lng": null
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

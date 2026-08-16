@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/MarkerCluster.min.css">
+<title>Monaco — All Stops Map</title>
+<link rel="stylesheet" href="../assets/stops-map-style.css">
+</head>
+<body>
+<div data-toolbar data-depth="1" data-maxwidth="1400" data-title="Monaco — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../essentials/maps/vendor/leaflet.min.js"></script>
+<script src="../essentials/maps/vendor/markercluster.min.js"></script>
+<script src="../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+    {
+        "day": 1,
+        "name": "Prince's Palace of Monaco",
+        "query": "Palais Princier de Monaco, Place du Palais, Monaco",
+        "lat": 43.7313052,
+        "lng": 7.4212526
+    },
+    {
+        "day": 1,
+        "name": "Saint Nicholas Cathedral",
+        "query": "Cathédrale Notre-Dame-Immaculée, Rue Colonel Bellando de Castro, Monaco",
+        "lat": 43.730247,
+        "lng": 7.4226535
+    },
+    {
+        "day": 1,
+        "name": "Jardins Saint-Martin",
+        "query": "Jardins Saint-Martin, Avenue Saint-Martin, Monaco",
+        "lat": 43.7300402,
+        "lng": 7.4242832
+    },
+    {
+        "day": 1,
+        "name": "Oceanographic Museum of Monaco",
+        "query": "Musée Océanographique de Monaco, Avenue Saint-Martin, Monaco",
+        "lat": 43.7306805,
+        "lng": 7.4255127
+    },
+    {
+        "day": 2,
+        "name": "Japanese Garden",
+        "query": "Jardin Japonais, Avenue Princesse Grace, Monaco",
+        "lat": 43.7418623,
+        "lng": 7.43055
+    },
+    {
+        "day": 1,
+        "name": "Belle Époque Monte-Carlo",
+        "query": "Place du Casino, Monte-Carlo, Monaco",
+        "lat": 43.7393583,
+        "lng": 7.4278189
+    },
+    {
+        "day": 2,
+        "name": "Jardin Exotique de Monaco",
+        "query": "Jardin Exotique de Monaco, Boulevard du Jardin Exotique, Monaco",
+        "lat": 43.7371325,
+        "lng": 7.4178018
+    },
+    {
+        "day": 3,
+        "name": "Port Hercule",
+        "query": "Quai Antoine 1er Monaco",
+        "lat": 43.7324516,
+        "lng": 7.4233217
+    },
+    {
+        "day": 3,
+        "name": "Fort Antoine",
+        "query": "Fort Antoine Theatre Monaco",
+        "lat": 43.733081,
+        "lng": 7.4279432
+    },
+    {
+        "day": 3,
+        "name": "Fontvieille Quarter",
+        "query": "Fontvieille Park Monaco",
+        "lat": 43.7266428,
+        "lng": 7.4190707
+    },
+    {
+        "day": 3,
+        "name": "Monaco Naval Museum",
+        "query": "Terrasses de Fontvieille Monaco",
+        "lat": 43.7261502,
+        "lng": 7.4170807
+    }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
