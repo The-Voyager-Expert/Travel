@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../assets/stops-map-style.css">
+<title>Cape-Town — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="1" data-maxwidth="1400" data-title="Cape-Town — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#e87d3e">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#9b5de5">Day 5</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../essentials/maps/vendor/leaflet.min.js"></script>
+<script src="../essentials/maps/vendor/markercluster.min.js"></script>
+<script src="../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+    {
+        "day": 1,
+        "name": "Cape Town City Hall",
+        "query": "Grand Parade, Darling Street, City Bowl",
+        "lat": -33.9253797,
+        "lng": 18.4236671
+    },
+    {
+        "day": 1,
+        "name": "Castle of Good Hope",
+        "query": "Buitenkant Street, Cape Town Central",
+        "lat": -33.9275118,
+        "lng": 18.4232483
+    },
+    {
+        "day": 1,
+        "name": "District Six Museum",
+        "query": "25A Buitenkant Street, Zonnebloem",
+        "lat": -33.9278161,
+        "lng": 18.4237518
+    },
+    {
+        "day": 1,
+        "name": "Company's Garden",
+        "query": "Government Avenue, City Bowl",
+        "lat": -33.9272153,
+        "lng": 18.4173344
+    },
+    {
+        "day": 1,
+        "name": "Bo-Kaap",
+        "query": "Chiappini Street, Schotsche Kloof",
+        "lat": -33.91961,
+        "lng": 18.4157621
+    },
+    {
+        "day": 2,
+        "name": "V&A Waterfront",
+        "query": "Dock Road, V&A Waterfront",
+        "lat": -33.9088984,
+        "lng": 18.4153086
+    },
+    {
+        "day": 1,
+        "name": "Signal Hill",
+        "query": "Signal Hill Road, Bo-Kaap",
+        "lat": -33.9170033,
+        "lng": 18.4039138
+    },
+    {
+        "day": 3,
+        "name": "Table Mountain",
+        "query": "Tafelberg Road, Table Mountain",
+        "lat": -33.9461094,
+        "lng": 18.4006449
+    },
+    {
+        "day": 4,
+        "name": "Kirstenbosch National Botanical Garden",
+        "query": "Rhodes Drive, Newlands",
+        "lat": -33.9856109,
+        "lng": 18.4301425
+    },
+    {
+        "day": 2,
+        "name": "Robben Island",
+        "query": "Nelson Mandela Gateway, Clock Tower Precinct, V&A Waterfront",
+        "lat": -33.8271975,
+        "lng": 18.3175153
+    },
+    {
+        "day": 4,
+        "name": "Chapman's Peak Drive",
+        "query": "Chapman's Peak Drive Toll Plaza, Hout Bay",
+        "lat": -34.0570003,
+        "lng": 18.3658452
+    },
+    {
+        "day": 4,
+        "name": "Boulders Beach",
+        "query": "Kleintuin Road, Simon's Town",
+        "lat": -34.1952945,
+        "lng": 18.4482076
+    },
+    {
+        "day": 4,
+        "name": "Cape Point",
+        "query": "Cape Point Road, Cape Point Nature Reserve",
+        "lat": -34.3573947,
+        "lng": 18.4977883
+    },
+    {
+        "day": 4,
+        "name": "Groot Constantia",
+        "query": "Groot Constantia Road, Constantia",
+        "lat": -34.0250643,
+        "lng": 18.4280242
+    },
+    {
+        "day": 3,
+        "name": "Camps Bay",
+        "query": "Victoria Road, Camps Bay",
+        "lat": -33.9519248,
+        "lng": 18.3778323
+    },
+    {
+        "day": 3,
+        "name": "Lion's Head",
+        "query": "Signal Hill Road, Signal Hill, Green Point",
+        "lat": -33.9389,
+        "lng": 18.3854
+    },
+    {
+        "day": 2,
+        "name": "Zeitz MOCAA",
+        "query": "S Arm Rd, Silo District, V&A Waterfront",
+        "lat": -33.9059,
+        "lng": 18.4214
+    },
+    {
+        "day": 2,
+        "name": "Green Point Urban Park",
+        "query": "Bay Road, Green Point",
+        "lat": -33.9023,
+        "lng": 18.4021
+    },
+    {
+        "day": 3,
+        "name": "Sea Point Promenade",
+        "query": "Beach Road, Sea Point",
+        "lat": -33.9086,
+        "lng": 18.3957
+    },
+    {
+        "day": 5,
+        "name": "Dorp Street Stellenbosch",
+        "query": "Dorp Street, Stellenbosch",
+        "lat": -33.9346,
+        "lng": 18.8629
+    },
+    {
+        "day": 5,
+        "name": "Stellenbosch Village Museum",
+        "query": "37 Ryneveld Street, Stellenbosch",
+        "lat": -33.9325,
+        "lng": 18.8607
+    },
+    {
+        "day": 5,
+        "name": "Huguenot Memorial Museum · Franschhoek",
+        "query": "Lambrecht Street, Franschhoek",
+        "lat": -33.9126,
+        "lng": 19.1218
+    },
+    {
+        "day": 5,
+        "name": "Franschhoek Main Street",
+        "query": "Huguenot Road, Franschhoek",
+        "lat": -33.9155,
+        "lng": 19.12
+    }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#e87d3e", "5": "#9b5de5"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
