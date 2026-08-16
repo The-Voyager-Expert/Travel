@@ -35,7 +35,7 @@
 
   /* Expose the baked climate normals on a global so OTHER pages can reuse the
      exact same data without a second copy. The full-page Climate Finder
-     (Trip-Essentials/Climate Finder.html) loads weather.js purely for this —
+     (when-to-go/) loads weather.js purely for this —
      weather.js renders no UI off the Guides index (the guard just below). This
      runs before the guard so the data is set wherever weather.js is loaded. */
   /* CLIMATE_GENERATED_START */
@@ -422,7 +422,7 @@
              find panel built below — a full page adds nothing on a phone. */
           if (b.dataset.m === 'find' &&
               window.matchMedia && window.matchMedia('(min-width: 760px)').matches) {
-            location.href = '../Trip-Essentials/Climate%20Finder.html' +
+            location.href = '../when-to-go/' +
               '?mon=' + fMonth + '&minc=' + Math.round(fMinC) +
               '&maxc=' + Math.round(fMaxC) + '&u=' + unit();
             return;
