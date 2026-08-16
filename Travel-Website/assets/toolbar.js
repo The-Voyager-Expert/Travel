@@ -197,7 +197,7 @@ window.TVE.home = (function () {
     return out.slice(0, limit || 8).map(function (x) { return x[1]; });
   }
 
-  /* airport_names.json is 204 KB and is fetched on the FIRST KEYSTROKE of a
+  /* airport-names.json is 204 KB and is fetched on the FIRST KEYSTROKE of a
      home-city or Flights field, never on page load — most readers never open
      either. sessionStorage key 'tveapn' is shared with the Flights panel, so a
      reader who has used one has already paid for the other. */
@@ -218,7 +218,7 @@ window.TVE.home = (function () {
     var mount = document.getElementById('toolbar-mount');
     var dep = mount ? parseInt(mount.getAttribute('data-depth') || '1', 10) : 0;
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', new Array(dep + 1).join('../') + 'assets/airport_names.json', true);
+    xhr.open('GET', new Array(dep + 1).join('../') + 'assets/airport-names.json', true);
     xhr.timeout = 8000;
     xhr.onload = function () {
       if (xhr.status < 200 || xhr.status >= 300) { done([]); return; }
@@ -6542,7 +6542,7 @@ window.TVE.home = (function () {
      Siena). That relationship already exists in the Day Trips data but was only
      ever readable in the outbound direction. This injects the inbound view.
 
-     Data: assets/day_trip_from.json — the reverse index emitted by
+     Data: assets/day-trip-from.json — the reverse index emitted by
      Brain/scripts/build/build_day_trips.py (same parse as Day-Trips.html, so
      the two can never disagree). Keyed by destination guide filename; the value
      is the departure guides, pre-sorted by city name. Destinations with no
@@ -6673,7 +6673,7 @@ window.TVE.home = (function () {
         if (hit) { _dtfBuild(JSON.parse(hit)); return; }
       } catch (e) {}
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', base + 'assets/day_trip_from.json', true);
+      xhr.open('GET', base + 'assets/day-trip-from.json', true);
       xhr.timeout = 6000;
       xhr.onload = function () {
         if (xhr.status < 200 || xhr.status >= 300) return;
@@ -6768,7 +6768,7 @@ window.TVE.home = (function () {
 
   /* ── "Also in [Country]" section — injected after #nearby-guides on
      guide pages that share a country with ≥1 other fleet guide. Fetches
-     assets/country_guides.json (built by Brain/scripts/build/build_country_guides.py
+     assets/country-guides.json (built by Brain/scripts/build/build_country_guides.py
      after each ship). Countries with only one fleet guide get no section.
      Uses sessionStorage to avoid re-fetching on same-tab navigation. */
   (function () {
@@ -6847,7 +6847,7 @@ window.TVE.home = (function () {
         if (hit) { _build(JSON.parse(hit)); return; }
       } catch (e) {}
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', base + 'assets/country_guides.json', true);
+      xhr.open('GET', base + 'assets/country-guides.json', true);
       xhr.timeout = 6000;
       xhr.onload = function () {
         if (xhr.status < 200 || xhr.status >= 300) return;
@@ -6917,7 +6917,7 @@ window.TVE.home = (function () {
      The four facts a reader checks before committing to an itinerary:
      🗣️ language · 💰 cost tier · 🔌 plug type · 🌤️ best months. Each one
      already lives on a Trip-Essentials page (Budget-Guide, Plug-Adapter-Guide,
-     When-to-Go); assets/quick_facts.json joins them per guide so reading all
+     When-to-Go); assets/quick-facts.json joins them per guide so reading all
      four no longer costs four page visits. Built by
      Brain/scripts/build/build_quick_facts.py, refreshed on every ship.
 
@@ -7018,7 +7018,7 @@ window.TVE.home = (function () {
         if (hit) { _build(JSON.parse(hit)); return; }
       } catch (e) {}
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', base + 'assets/quick_facts.json', true);
+      xhr.open('GET', base + 'assets/quick-facts.json', true);
       xhr.timeout = 6000;
       xhr.onload = function () {
         if (xhr.status < 200 || xhr.status >= 300) return;
@@ -7047,15 +7047,15 @@ window.TVE.home = (function () {
 
      Adds no data pipeline. The rate is the one Currency-Guide.html already
      carries: update_currency_rates.py refreshes that page monthly and now emits
-     assets/currency_rates.json from the same country blocks in the same pass, so
+     assets/currency-rates.json from the same country blocks in the same pass, so
      page and pill cannot quote different numbers. Reading the JSON instead of
      the page keeps the cost at ~9 KB rather than the 1,800-line guide.
 
-     Country resolution reuses assets/country_guides.json — already fetched and
+     Country resolution reuses assets/country-guides.json — already fetched and
      sessionStorage-cached under tvecg by the "Also in [Country]" section, so on
      a warm tab this feature costs one extra request, not two. Both sides of the
      join are FOLDED (lowercase, accents stripped, underscores → spaces): the
-     Currency-Guide anchors are ASCII with underscores while country_guides.json
+     Currency-Guide anchors are ASCII with underscores while country-guides.json
      holds display strings, four of them all-caps or accented (Curaçao, MALTA,
      PHILIPPINES, SOUTH AFRICA). Without the fold those four render no pill.
 
@@ -7253,8 +7253,8 @@ window.TVE.home = (function () {
     }
 
     function _run() {
-      _curJSON('tvecg', 'country_guides.json', function (cg) {
-        _curJSON('tvecur', 'currency_rates.json', function (cur) {
+      _curJSON('tvecg', 'country-guides.json', function (cg) {
+        _curJSON('tvecur', 'currency-rates.json', function (cur) {
           _build(cg, cur);
         });
       });
@@ -7501,7 +7501,7 @@ window.TVE.home = (function () {
          picker — a hotel search wants a place, and "Kyoto, Japan" is exactly
          right there; forcing it through an airport list would be worse.
 
-         airport_names.json is fetched on FIRST KEYSTROKE in one of these two
+         airport-names.json is fetched on FIRST KEYSTROKE in one of these two
          fields, never on page load: it is 152 KB against airports.json's 25 KB,
          and the overwhelming majority of readers never open the Flights tab. */
       var namesRows = null, namesPending = false;
@@ -7516,7 +7516,7 @@ window.TVE.home = (function () {
         if (namesRows) { then(); return; }
         if (namesPending) return;
         namesPending = true;
-        _bkJSON('tveapn', 'airport_names.json', function (d) {
+        _bkJSON('tveapn', 'airport-names.json', function (d) {
           namesRows = (d && d.a) || [];
           namesPending = false;
           then();
@@ -10553,7 +10553,7 @@ window.TVE.home = (function () {
 
      An anchor missing from RANK sorts to the end rather than being dropped, so
      a pill added later still appears; give it a rank here when it lands.
-     "Also in {Country}" arrives only after country_guides.json resolves, so a
+     "Also in {Country}" arrives only after country-guides.json resolves, so a
      MutationObserver re-sorts. It watches childList on the row itself, and the
      re-sort only moves existing children (appendChild of a node already in the
      row is a move, not an insertion), so it settles rather than looping. */
