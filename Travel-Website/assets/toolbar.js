@@ -1191,6 +1191,10 @@ window.TVE.home = (function () {
       { href: base + 'best-of/wonders-of-the-world/', text: 'Wonders of the World' }
     ] },
     { href: base + 'maps/world/', text: 'Maps', icon: 'folded-map' },
+    /* OWNER-DIRECTED 2026-08-16: three essentials pages added after Maps. */
+    { href: base + 'plugs/', text: 'Plug Adaptor', icon: 'plug' },
+    { href: base + 'currencies/', text: 'Currency', icon: 'money' },
+    { href: base + 'time-zones/', text: 'Time Zones', icon: 'clock' },
     { href: 'mailto:contact@guidemydays.com', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
      to the form. NOT base + ... — a mailto must not be depth-prefixed.
      Owner 2026-08-16: no ?subject= — the mail app opens with an empty subject
