@@ -557,7 +557,7 @@ function vsHome(tz, date) {
 }
 
 var activeRegion = 'all';
-var searchVal    = '';
+var _hashHome    = null;   /* #City deep link, resolved before initHome runs */
 var activeSort   = 'alpha';
 var _sunCityIdx  = null;
 
@@ -569,20 +569,12 @@ function render() {
     document.getElementById('sea-time').textContent = formatTime(HOME_TZ, now);
     document.getElementById('sea-day').textContent  = formatFullDay(HOME_TZ, now);
   }
-  document.querySelector('.home-row').style.display = searchVal ? 'none' : '';
-
+  /* THE SEARCH DOES NOT FILTER (owner 2026-08-16: "it needs to show all time
+     zone based on wherever the person searched ALL in relate to"). Searching a
+     city names the REFERENCE, not a subset — every city on the site stays on
+     screen, re-measured against it. Only the region pills subset the grid. */
   var filtered = CITIES.filter(function(c) {
-    if (activeRegion !== 'all' && c.region !== activeRegion) return false;
-    if (searchVal) {
-      var q = searchVal;
-      // Expand abbreviated countries so a full-name search matches (UK -> United Kingdom, etc.)
-      var cc = c.country.toLowerCase()
-        .replace(/\buk\b/g, 'uk united kingdom')
-        .replace(/\buae\b/g, 'uae united arab emirates')
-        .replace(/\busa?\b/g, 'us usa united states');
-      if (c.name.toLowerCase().indexOf(q) === -1 && cc.indexOf(q) === -1) return false;
-    }
-    return true;
+    return activeRegion === 'all' || c.region === activeRegion;
   });
 
   var seaMins = HOME_TZ ? getOffsetMinutes(HOME_TZ, now) : 0;
@@ -596,20 +588,17 @@ function render() {
     filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
   }
 
-  // Auto-sync Sunrise & Sunset when search narrows to one city
-  if (filtered.length === 1) {
-    var syncIdx = CITIES.indexOf(filtered[0]);
-    var sunInp = document.getElementById('sun-city-input');
-    if (sunInp && _sunCityIdx !== syncIdx) {
+  /* Sunrise & Sunset follows the home base. It used to follow the search
+     narrowing to one card; the search no longer narrows anything, so the base
+     is what it tracks. */
+  if (HOME_TZ) {
+    var syncIdx = CITIES.findIndex(function (c) { return c.tz === HOME_TZ && HOME_LABEL.indexOf(c.name) !== -1; });
+    var sunInp  = document.getElementById('sun-city-input');
+    if (syncIdx !== -1 && sunInp && _sunCityIdx !== syncIdx) {
       _sunCityIdx = syncIdx;
-      sunInp.value = filtered[0].name;
+      sunInp.value = CITIES[syncIdx].name;
       renderSun();
     }
-  }
-
-  if (filtered.length === 0) {
-    grid.innerHTML = '<div class="empty-state">No cities match “' + searchVal + '”</div>';
-    return;
   }
 
   grid.innerHTML = filtered.map(function(c) {
@@ -652,10 +641,9 @@ document.getElementById('region-pills').addEventListener('click', function(e) {
   render();
 });
 
-document.getElementById('search').addEventListener('input', function(e) {
-  searchVal = e.target.value.toLowerCase().trim();
-  render();
-});
+/* No 'input' listener on #search — typing must not filter the grid. The only
+   thing the search does is name the reference city, on pick (see the
+   TVESearch.attach onPick at the foot of the page). */
 
 document.getElementById('sort-pills').addEventListener('click', function(e) {
   var btn = e.target.closest('.sort-pill');
@@ -710,13 +698,16 @@ document.getElementById('grid').addEventListener('click', function(e) {
            normKey(c.name) === hashCity;
   });
   if (!match) return;
-  searchVal = match.name.toLowerCase();
-  document.getElementById('search').value = match.name;
+  /* #Barcelona now SETS THE BASE rather than filtering to that one card — the
+     link means "show me the world from Barcelona", which is what the page does. */
+  _hashHome = match;
 })();
 
-/* Restore a base the reader set on a previous visit. Nothing is assumed when
-   there is no saved choice — setHome(null) is the empty, search-only state. */
+/* A #City deep link wins over the saved base; otherwise restore what the reader
+   set last time. Nothing is assumed when there is neither — setHome(null) is the
+   empty, search-only state. */
 (function initHome() {
+  if (_hashHome) { setHome(_hashHome); return; }
   var saved = null;
   try { saved = localStorage.getItem(HOME_KEY); } catch (e) {}
   setHome(saved ? CITIES.filter(function (c) { return c.name === saved; })[0] || null : null);
@@ -862,10 +853,10 @@ function renderSun() {
   var items=src.map(function(c){ return { name:c.name, sub:c.country }; });
   var input=document.getElementById('search');
   if(input){
-    /* The page's ONLY search. Typing filters the grid as it always has; PICKING a
-       city off the typeahead commits it as the home base and clears the filter,
-       so the grid comes back whole and measured from where you actually are.
-       There is deliberately no second search box in the Home base row. */
+    /* The page's ONLY search, and it does ONE thing: name the city everything
+       else is measured against. It never filters — all 237 cities stay on
+       screen, re-measured against the pick. There is deliberately no second
+       search box in the Home base row. */
     TVESearch.attach(input,{
       items:items,
       onPick:function(it){
@@ -873,7 +864,6 @@ function renderSun() {
         if(!city) return;
         setHome(city);
         input.value='';
-        searchVal='';
         render();
       }
     });
