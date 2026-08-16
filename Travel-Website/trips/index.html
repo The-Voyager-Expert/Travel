@@ -365,6 +365,11 @@ a.trip-jump-pill:visited { color: #3d3a32; }
 .cal-row-meta { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
 /* The whole-trip subscribe row is the offer — it is the only one that finishes
    the job in a single click, so it carries the terracotta the eye goes to. */
+/* The subscribe row is an <a> (see the anchor note in the script) — strip the
+   link treatment so it reads as the same row as its button siblings, and pin
+   the visited colour: no font on this site changes colour after visiting. */
+a.cal-row, a.cal-row:visited, a.cal-row:hover { text-decoration: none; color: inherit; }
+a.cal-row .cal-row-name, a.cal-row:visited .cal-row-name { color: #5a3c0e; }
 .cal-row-primary { background: #f5f0e6; border: 1.5px solid var(--rust); }
 .cal-row-primary .cal-row-name { color: #5a3c0e; }
 /* The file row is the fallback, not the offer — plain ground, no warm fill, so
@@ -1247,23 +1252,29 @@ document.addEventListener('DOMContentLoaded',()=>{
       +'so you can take just the ones you need.';
     listEl.innerHTML='';
     items.forEach(function(item){
-      var b=document.createElement('button');
-      b.type='button'; b.className='cal-row'+(item.file_only?' cal-row-file':'')+(item.primary?' cal-row-primary':'');
+      /* ── The subscribe row is a real ANCHOR, not a button ──────────────────
+         This is how every "Subscribe to calendar" control on the web is built,
+         and it is not decoration: a browser hands an EXTERNAL scheme to the OS
+         when it is following a link the reader clicked. Assigning
+         `window.location.href = 'webcal://…'` from a script is not that — Chrome
+         drops it on the floor with no prompt and no error, which is exactly what
+         happened here: the click did nothing at all and the reader was left
+         reaching for the file row instead (owner, 2026-08-16: "SAME SHIT asks me
+         to save"). An <a href="webcal://…"> is followed. ── */
+      var b=document.createElement(item.feed?'a':'button');
+      if(item.feed){ b.href='webcal://'+item.feed; }
+      else { b.type='button'; }
+      b.className='cal-row'+(item.file_only?' cal-row-file':'')+(item.primary?' cal-row-primary':'');
       var n=document.createElement('div'); n.className='cal-row-name';
       n.innerHTML='<span class="cal-ic">'+icon(item.icon)+'</span>'+escHTML(item.name);
       var m=document.createElement('div'); m.className='cal-row-meta'; m.textContent=item.meta;
       b.appendChild(n); b.appendChild(m);
       b.addEventListener('click',function(){
-        /* Subscribe — the whole trip, one click, no file, no Save, no Google.
-           webcal:// is Apple Calendar's own scheme: macOS and iOS hand the URL
-           straight to Calendar, which opens its Subscribe sheet with every
-           event of the trip already in it. The owner is on Apple, so this is
-           the path on EVERY platform — never route this through Google. */
-        if(item.feed){
-          closePanel();
-          window.location.href='webcal://'+item.feed;
-          return;
-        }
+        /* Subscribe — the whole trip, no file, no Save, no Google. The href on
+           the anchor does the work; the browser follows it to Calendar. All this
+           handler does is get the panel out of the way. Never preventDefault
+           here, and never re-assign location: both kill the navigation. */
+        if(item.feed){ closePanel(); return; }
         var evs=item.build();
         if(!evs.length) return;
         /* One event, not iOS, not the file row → open it in Google Calendar and
