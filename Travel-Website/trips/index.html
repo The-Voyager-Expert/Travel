@@ -326,6 +326,9 @@ a.trip-jump-pill:visited { color: #3d3a32; }
   margin-left: 8px; padding: 3px 5px; border-radius: 5px;
   border: 1px solid transparent; vertical-align: -3px;
   text-decoration: none; line-height: 1;
+  /* It is a <button> — strip the UA chrome or it renders as a grey box. */
+  background: none; font: inherit; color: inherit; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
   opacity: .5; transition: opacity .15s, border-color .15s, background .15s;
 }
 .cal-add svg { display: block; width: 15px; height: 15px; }
@@ -1012,17 +1015,19 @@ document.addEventListener('DOMContentLoaded',()=>{
   var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
   /* No Google anywhere in this file, by owner rule (2026-08-16): the calendar
-     here is Apple Calendar, on a Mac and on an iPhone. The whole-trip row goes
-     to it through webcal://, and a single flight or stay goes through the .ics
-     below. A Google Calendar template link was tried and removed the same day. */
+     here is Apple Calendar, on a Mac and on an iPhone.
+
+     And no webcal:// either. webcal means SUBSCRIBE, and a subscription is a
+     separate read-only calendar — a different thing from the event being in
+     your own calendar (owner: "it is not subscribe, calendar is another
+     thing"). This function IS the guides' delivery, and the owner asked for it
+     by name: "go get guides calendar from last week, get the code from there."
+     It has been fixed on real devices several times and it is the path that
+     ADDS. Do not "improve" it. Nothing between the click and the navigation
+     below: any async step breaks the iOS user-gesture chain and turns the
+     Add-to-Calendar prompt back into a download. */
   function save(name,ics){
     var url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));
-    /* Close the panel instantly — mirrors _closeICS() in toolbar.js.
-       closePanel() removes .open which fires a CSS fade transition; any async
-       side-effect between the click and window.location.href breaks the iOS
-       user-gesture chain, routing the blob to a download instead of
-       the Add to Calendar prompt. Direct style write is synchronous: no transition. */
-    if(overlay){ overlay.style.display='none'; document.body.style.overflow=''; }
     if(isIOS){
       window.location.href=url;
       return;
@@ -1175,12 +1180,12 @@ document.addEventListener('DOMContentLoaded',()=>{
      control: the two of them export different parts, so an "everything" button
      is one neither would press.
 
-     Every icon is an <a href="webcal://…"> straight to Calendar, and NOTHING
-     here writes a file. That is the fix, not a detail: a control with no URL of
-     its own has to fall back to building a blob, and the blob is what the
-     reader was then asked to save. The per-event feeds are published by
-     build_trip_exports.py and addressed by the event's own UID, so neither side
-     keeps a list of filenames.
+     Every icon runs save() — the guides' own export, which the owner asked for
+     by name ("go get guides calendar from last week, get the code from there").
+     It ADDS the event: on iPhone the blob navigation opens the Add-to-Calendar
+     prompt and the event lands in their own calendar. Never webcal:// here —
+     that subscribes, which builds a separate read-only calendar per item and is
+     a different thing entirely.
 
      Clicking marks the icon added, remembered across visits — the real cost of
      exporting part by part is losing your place (owner: *"i would get lost
@@ -1196,16 +1201,25 @@ document.addEventListener('DOMContentLoaded',()=>{
       if(a.indexOf(uid)<0){ a.push(uid); localStorage.setItem(ADDED_KEY,JSON.stringify(a)); }
     } catch(e){}
   }
-  function calIcon(uid,label){
-    var a=document.createElement('a');
-    a.className='cal-add'+(addedSet().indexOf(uid)>-1?' added':'');
-    a.href='webcal://guidemydays.com/trips/feed/'+uid.replace('@guidemydays.com','')+'.ics';
-    a.title=label; a.setAttribute('aria-label',label);
-    a.innerHTML=icon('calendar')||'';
-    /* Never preventDefault and never re-assign location here — both kill the
-       navigation. The href does the work; this only records that it happened. */
-    a.addEventListener('click',function(){ markAdded(uid); a.className='cal-add added'; a.title=label+' (already added)'; });
-    return a;
+  /* The icon runs the GUIDES' export, one event at a time — the code above,
+     which the owner asked for by name. Built in the page from the row you are
+     looking at, exactly as the guide builds a day. */
+  function calIcon(ev,file,label){
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='cal-add'+(addedSet().indexOf(ev.uid)>-1?' added':'');
+    b.title=label; b.setAttribute('aria-label',label);
+    b.innerHTML=icon('calendar')||'';
+    b.addEventListener('click',function(){
+      /* save() first and synchronously — the iOS gesture chain dies if anything
+         happens between the click and the navigation, and a dead chain is a
+         download instead of the Add-to-Calendar prompt. Marking comes after. */
+      save(file,calendar([ev]));
+      markAdded(ev.uid);
+      b.className='cal-add added';
+      b.title=label+' (already added)';
+    });
+    return b;
   }
 
   [].slice.call(document.querySelectorAll('.trip')).forEach(function(card){
@@ -1239,7 +1253,9 @@ document.addEventListener('DOMContentLoaded',()=>{
            making every flight row twice as tall. */
         var cells=ev.row.querySelectorAll('.fc');
         (cells.length?cells[cells.length-1]:ev.row)
-          .appendChild(calIcon(ev.uid,'Add '+ev.summary+' to Calendar'));
+          .appendChild(calIcon(ev,
+            base+'-'+slug(ev.summary+'-'+(ev.num||''))+'-'+dDate(ev.start)+'.ics',
+            'Add '+ev.summary+' to Calendar'));
       });
     });
 
@@ -1248,7 +1264,9 @@ document.addEventListener('DOMContentLoaded',()=>{
       var ev=hotelEvent(s.el,trip,s.who,base,i);
       if(!ev) return;
       var nameEl=s.el.querySelector('.hotel-name');
-      (nameEl||s.el).appendChild(calIcon(ev.uid,'Add '+ev.hotel+' to Calendar'));
+      (nameEl||s.el).appendChild(calIcon(ev,
+        base+'-'+slug((s.who||'')+'-'+ev.hotel)+'-'+dDate(ev.start)+'.ics',
+        'Add '+ev.hotel+' to Calendar'));
     });
   });
 })();
