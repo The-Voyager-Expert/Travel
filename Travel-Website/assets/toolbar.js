@@ -10462,18 +10462,16 @@ window.TVE.home = (function () {
       var mountEl = document.getElementById('toolbar-mount');
       var dep = mountEl ? parseInt(mountEl.dataset.depth || '2', 10) : 2;
       var base = new Array(dep + 1).join('../');
-      var href;
+      var href = null;
       if (US_IATAS.indexOf(info.iata) >= 0) {
         href = base + 'Trip-Essentials/Lounges-US.html#' + info.iata.toLowerCase();
       } else if (EU_ANCHOR[info.iata]) {
         href = base + 'Trip-Essentials/Lounges-Europe.html#' + EU_ANCHOR[info.iata];
-      } else {
-        return; /* no lounge page for this airport — don't show chip */
       }
 
-      var chip = document.createElement('a');
+      var chip = document.createElement(href ? 'a' : 'div');
       chip.className = 'lounge-arrival-chip';
-      chip.href = href;
+      if (href) chip.href = href;
       chip.innerHTML =
         /* Drawn plane, glyph kept hidden — same contract as every other mark.
            This chip is built here rather than authored in a guide, so no MARKS
