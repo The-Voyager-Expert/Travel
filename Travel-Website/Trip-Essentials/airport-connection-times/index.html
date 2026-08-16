@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Airport Connection Times</title>
+<style>
+/* Intro-card CSS intentionally NOT duplicated here — it lives once in
+   web-travel-style.css (SHARED CSS ONLY). A byte-identical copy used to sit in
+   this <style> block, and after the shared rule was updated on 2026-08-12
+   (align-items center -> flex-start, sub 12.5px -> 13px) that copy silently
+   pinned this one page to the old look. Do not paste it back. */
+
+/* ── Controls ── */
+.controls {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  padding: 12px 0 14px; margin: 0 0 18px;
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg);
+}
+.search-wrap { display: flex; justify-content: center; align-self: stretch; }
+.search-wrap input { margin-bottom: 0; }
+.pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.pill {
+  font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; padding: 6px 12px;
+  border: 1px solid var(--border2); border-radius: 6px; background: var(--surface);
+  color: var(--muted, #6a6660); cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, box-shadow .15s;
+  text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+}
+a.pill:visited { color: #6a6660; }
+.pill:hover { border-color: var(--rust); background: var(--bg,#f5f4f0); }
+.pill.active { background: var(--surface,#ffffff); color: var(--rust,#b85c2a); border-color: var(--rust); }
+/* Family-colored rest state — bg + text carry the family; border stays neutral. */
+.pill[data-filter="easy"]  { background:#e8f5e8; color:#1a5a1a; }
+.pill[data-filter="mod"]   { background:#fff8e0; color:#7a5800; }
+.pill[data-filter="extra"] { background:#fdf0e8; color:#7a3a1a; }
+.pill[data-filter="easy"].active,
+.pill[data-filter="mod"].active,
+.pill[data-filter="extra"].active { background: var(--surface,#ffffff); color: var(--rust,#b85c2a); border-color: var(--rust); }
+
+/* Desktop-only formatting + behavior per Formatting.html#src-desktoppill:
+   36px height, squared touching strip, counts hidden, family bg on rest,
+   terracotta-border page-bg on .active (kills the gradient). */
+@media (min-width: 601px), (pointer: fine) {
+  .pills { gap: 0; }
+  .pills .pill { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; border-width: 1.5px; border-radius: 0; margin-left: 0; }
+  .pills .pill-count { display: none; }
+  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); box-shadow: none; color: inherit; }
+  .pills .pill.active,
+  .pills .pill[data-filter="easy"].active,
+  .pills .pill[data-filter="mod"].active,
+  .pills .pill[data-filter="extra"].active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
+}
+
+/* ── How to read ── */
+.howto {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  background: var(--warm); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 20px;
+}
+.howto-item {
+  display: flex; align-items: flex-start; gap: 6px;
+  font-size: 12.5px; color: var(--muted); line-height: 1.5; flex: 1 1 260px;
+}
+.howto-item .howto-icon { font-size: 14px; flex-shrink: 0; line-height: 1.4; }
+
+/* ── Rows ── */
+#no-results { display: none; color: var(--muted); font-size: 13px; margin-bottom: 12px; text-align: center; }
+.region-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); margin: 22px 0 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border2);
+}
+.region-label:first-of-type { margin-top: 4px; }
+.region-label.hidden { display: none; }
+.row-list { display: flex; flex-direction: column; gap: 8px; }
+.apt-row {
+  border: 1px solid var(--border2); border-left: 4px solid #ccc;
+  border-radius: 8px; padding: 12px 15px; background: var(--surface);
+  display: flex; flex-direction: column; gap: 10px;
+  scroll-margin-top: 120px;
+}
+.apt-row.hidden { display: none; }
+/* Bars use canonical family sphere mid tones per Badge spec 2026-07-29. */
+.apt-row.tier-easy  { border-left-color: #5eb833; }
+.apt-row.tier-mod   { border-left-color: #f5c518; }
+.apt-row.tier-extra { border-left-color: #e01818; }
+.ar-header { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+.ar-code {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  letter-spacing: 0.06em; font-variant-numeric: tabular-nums;
+}
+.ar-name { font-size: 13px; color: var(--text); }
+.ar-country { font-size: 12px; color: var(--muted); }
+.ar-tier {
+  display: inline-block; margin-left: auto; flex-shrink: 0;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+}
+.at-easy  { background:#e8f5e8; color:#1a5a1a; border:1px solid rgba(26,90,26,0.4); }
+.at-mod   { background:#fff8e0; color:#7a5800; border:1px solid rgba(122,88,0,0.4); }
+.at-extra { background:#fdf0e8; color:#7a3a1a; border:1px solid rgba(122,58,26,0.4); }
+.ar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.tc {
+  display: flex; flex-direction: column; gap: 3px;
+  border: 1px solid var(--border2); border-radius: 6px; padding: 7px 9px;
+  background: var(--bg);
+}
+.tc-rec { border-color: rgba(184,92,42,0.35); background: rgba(184,92,42,0.05); }
+.tl { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.tv { font-size: 13px; font-weight: 600; color: var(--text); }
+.tc-rec .tv { color: #7a3b1e; }
+.ar-note { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+/* ── Sources ── */
+.sources { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--border2); }
+.sources h2 { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.source-list { margin: 0; padding-left: 18px; }
+.source-list li { font-size: 12.5px; color: var(--muted); line-height: 1.6; margin-bottom: 3px; }
+
+@media (max-width: 600px) and (pointer: coarse) {
+  .search-wrap input { width: 100%; max-width: 100%; }
+  /* Form B glued 3-across grid — full width, no gaps, square corners, 46px.
+     1.5px neutral border + negative margin so adjacent borders overlap. */
+  .pills { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; width: 100% !important; }
+  .pill { height: 46px !important; padding: 4px 6px !important; border: 1.5px solid var(--border2, #e6e2da) !important; border-radius: 0 !important; font-size: 13px !important; white-space: normal !important; line-height: 1.12 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
+  .pill-count { display: none !important; }
+  .ar-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Tier badge always on its own line: with a long airport name it wrapped
+     anyway, so it sat inline on some rows and below on others. The zero-height
+     full-basis ::after forces the break before it on every row. */
+  .ar-header::after { content: ""; flex-basis: 100%; height: 0; order: 98; }
+  .ar-tier { margin-left: 0; order: 99; flex: 0 0 auto; }
+}
+@media (prefers-color-scheme: dark) {
+  .pill[data-filter="easy"], .at-easy  { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,0.4); }
+  .pill[data-filter="mod"],  .at-mod   { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,0.4); }
+  .pill[data-filter="extra"],.at-extra { background: #240e00; color: #c8840a; border-color: rgba(200,132,10,0.4); }
+  .tc-rec .tv { color: #c8a060; }
+  .src-link, a.src-link { color: #c8a060; }
+}
+:root[data-theme="dark"] .pill[data-filter="easy"],
+:root[data-theme="dark"] .at-easy  { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,0.4); }
+:root[data-theme="dark"] .pill[data-filter="mod"],
+:root[data-theme="dark"] .at-mod   { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,0.4); }
+:root[data-theme="dark"] .pill[data-filter="extra"],
+:root[data-theme="dark"] .at-extra { background: #240e00; color: #c8840a; border-color: rgba(200,132,10,0.4); }
+:root[data-theme="dark"] .tc-rec .tv { color: #c8a060; }
+:root[data-theme="dark"] .src-link, :root[data-theme="dark"] a.src-link { color: #c8a060; }
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="900" data-updated="2026-08-07"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+  <div class="page-header"><h1>AIRPORT CONNECTION TIMES</h1></div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-wristwatch"/></svg></div>
+    <div>
+      <div class="page-intro-head">How long you actually need between flights at the big hubs</div>
+      <div class="page-intro-sub">Minimum connection times at 45 major hub airports, split by connection type, with the layout and immigration quirks that make each one faster or slower than the number suggests. The minimums are what airlines will sell you — the "book at least" column is what to give yourself. Every figure is approximate: published minimums differ by airline, terminal pairing, and season, so treat this as a planning guide and confirm the exact minimum with your carrier.</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <input type="search" id="act-search" class="search-input" placeholder="Airport code or city" aria-label="Search airports" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="pills tve-glue-m">
+      <button class="pill" data-filter="easy"  onclick="filterTier(this,'easy')">🟢 Easy <span class="pill-count" id="cnt-easy"></span></button>
+      <button class="pill" data-filter="mod"   onclick="filterTier(this,'mod')">🟡 Moderate <span class="pill-count" id="cnt-mod"></span></button>
+      <button class="pill" data-filter="extra" onclick="filterTier(this,'extra')">🔴 Allow extra <span class="pill-count" id="cnt-extra"></span></button>
+    </div>
+  </div>
+
+  <div class="howto">
+    <div class="howto-item"><span>All figures assume <strong>one ticket with bags checked through</strong>. On separate tickets you re-check bags and clear security again — allow three hours anywhere, four at the red hubs.</span></div>
+    <div class="howto-item"><span>The slow step is almost never walking — it is passport control. Any connection that crosses an immigration border (Schengen boundary, US or Canadian entry, terminal-change re-entry) needs the higher number.</span></div>
+    <div class="howto-item"><span>If you miss a connection on one ticket the airline rebooks you free. Miss one across two tickets and the second flight is simply gone — that gap is the whole reason to overbuy time.</span></div>
+    <div class="howto-item"><span>Last flight of the day, one bag, tight budget: buy the longer layover. The cheapest itinerary is usually the one with the shortest connection for a reason.</span></div>
+  </div>
+
+  <p id="no-results">Nothing matches your search.</p>
+
+  <div class="row-list">
+
+    <div class="region-label">Europe</div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">AMS</span><span class="ar-name">Amsterdam Schiphol</span><span class="ar-country">Netherlands</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">40 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">50 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">50 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 15</span></div>
+      </div>
+      <div class="ar-note">One terminal, one security zone, and the shortest published minimums of any major European hub. The only real friction is the Schengen border between the D piers — cross it and you queue at passport control. Gates in the far H/M pier are a 15-minute walk from the centre.</div>
+    </div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">MUC</span><span class="ar-name">Munich Franz Josef Strauss</span><span class="ar-country">Germany</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">35 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">45 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 15</span></div>
+      </div>
+      <div class="ar-note">The efficient alternative to Frankfurt on the same network. Terminal 2 and its satellite handle almost all connecting traffic and are linked by an underground train that runs constantly. Consistently makes short connections work where Frankfurt does not.</div>
+    </div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">ZRH</span><span class="ar-name">Zurich</span><span class="ar-country">Switzerland</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">40 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">40 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">40 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 15</span></div>
+      </div>
+      <div class="ar-note">Compact, well-signed, and reliably fast. The E gates used by long-haul flights sit across the runway and are reached by an underground train — allow ten minutes for that leg, plus passport control if you are crossing the Schengen boundary.</div>
+    </div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">CPH</span><span class="ar-name">Copenhagen Kastrup</span><span class="ar-country">Denmark</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">40 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">45 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 15</span></div>
+      </div>
+      <div class="ar-note">A single linear terminal that is genuinely quick to move through. Finger C handles most non-Schengen departures and is the longest walk. The main Nordic hub alongside Stockholm and Helsinki, and the easiest of the three.</div>
+    </div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">HEL</span><span class="ar-name">Helsinki Vantaa</span><span class="ar-country">Finland</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">35 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">45 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr</span></div>
+      </div>
+      <div class="ar-note">Built specifically as a short-connection hub between Europe and Asia, and it shows — one compact terminal, minimal walking, and among the lowest minimums in Europe. Long-haul Asian routes now fly around Russian airspace, so inbound delays are more common than they were.</div>
+    </div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">VIE</span><span class="ar-name">Vienna</span><span class="ar-country">Austria</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">25 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">40 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">40 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr</span></div>
+      </div>
+      <div class="ar-note">One of the shortest published minimums anywhere. The terminals are joined airside and the walk from the F gates to the D gates is a few minutes. A genuinely good place to route a tight Central European connection.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">LHR</span><span class="ar-name">London Heathrow</span><span class="ar-country">United Kingdom</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Same terminal</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">To international</span><span class="tv">75 min</span></div>
+        <div class="tc"><span class="tl">Terminal change</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr</span></div>
+      </div>
+      <div class="ar-note">Same-terminal is 60 minutes and works; anything crossing terminals is 90 and often needs it — T3 to T5 is a bus or a long transit ride plus a second security screening. Terminal 5 is self-contained and by far the easiest for British Airways connections. Assume delays: Heathrow runs at capacity almost every day.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">FRA</span><span class="ar-name">Frankfurt</span><span class="ar-country">Germany</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">Lufthansa raised the standard minimum here to 60 minutes in 2025 after the old 45-minute exceptions kept failing. Frankfurt is very large: Terminal 1 alone runs A through Z concourses, and a Z-gate long-haul arrival to an A-gate departure is a real walk plus passport control. Munich is the faster hub on the same network.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">MAD</span><span class="ar-name">Madrid Barajas</span><span class="ar-country">Spain</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">The main gateway between Europe and Latin America. Terminal 4 and its satellite T4S are connected only by an underground train — long-haul arrivals land at T4S and most European departures leave from T4, so budget 20 minutes for that transfer alone. A T1/T2/T3 connection means leaving security entirely.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">BCN</span><span class="ar-name">Barcelona El Prat</span><span class="ar-country">Spain</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">Terminal 1 is straightforward and handles nearly all connecting traffic. The trap is a T1–T2 connection: the terminals are 4 km apart with only a landside shuttle bus, so that pairing needs closer to two hours regardless of the published minimum.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">FCO</span><span class="ar-name">Rome Fiumicino</span><span class="ar-country">Italy</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">50 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">70 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">70 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 45</span></div>
+      </div>
+      <div class="ar-note">Much improved in recent years and now one of the better-run large Italian airports. Terminal 3 handles long-haul and the walk to the satellite E gates is via an automated train. Summer passport queues on the non-Schengen side are the main risk.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">IST</span><span class="ar-name">Istanbul</span><span class="ar-country">Türkiye</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">75 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">75 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr</span></div>
+      </div>
+      <div class="ar-note">Enormous — one of the largest terminals in the world under a single roof, and a gate-to-gate walk can genuinely take 25 minutes. Turkish Airlines runs dedicated short-connection transfer desks at the concourse ends for tight cases. Anything involving the domestic pier needs the full 75 minutes.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">DUB</span><span class="ar-name">Dublin</span><span class="ar-country">Ireland</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Within Europe</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">To international</span><span class="tv">75 min</span></div>
+        <div class="tc"><span class="tl">To US (preclearance)</span><span class="tv">2 hr</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">Normal European connections are easy. The one to plan carefully is a US-bound departure: Dublin has full US preclearance, so you clear American immigration and customs in Ireland. That is a real border crossing with real queues — give it two hours and you land in the US as a domestic arrival.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">CDG</span><span class="ar-name">Paris Charles de Gaulle</span><span class="ar-country">France</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr 30</span></div>
+      </div>
+      <div class="ar-note">The published minimums assume a clean same-hall connection, which is not the common case. Terminal 2 spans halls 2A to 2G; 2E to 2F is a short airside walk, 2A/2B to 2E/2F adds passport control, and remote hall 2G needs a dedicated shuttle costing another 30–40 minutes. Any connection touching Terminal 1 uses the CDGVAL train. Border-control queues on the non-Schengen side are the single biggest risk.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">LIS</span><span class="ar-name">Lisbon Humberto Delgado</span><span class="ar-country">Portugal</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Schengen</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr</span></div>
+      </div>
+      <div class="ar-note">The published minimum is optimistic. Lisbon operates well above its designed capacity and non-Schengen passport control has a long-standing reputation for queues that run past an hour at peak. A major hub for Brazil and West Africa, so those banks all arrive together. Treat 60 minutes as theoretical.</div>
+    </div>
+
+    <div class="region-label">North America</div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">ATL</span><span class="ar-name">Atlanta Hartsfield-Jackson</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">35–45 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">40 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">1 hr 30</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">The busiest airport in the world and, for domestic connections, one of the most efficient — every concourse sits on one underground train line, so 35 minutes genuinely works (45 if you arrive on a widebody). The asymmetry is the point: arriving internationally means immigration, baggage re-check, and a second security screening, which is why that number triples.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">ORD</span><span class="ar-name">Chicago O'Hare</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">1 hr 30</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr</span></div>
+      </div>
+      <div class="ar-note">Domestic connections within Terminals 1–3 are fine and airside. Terminal 5 handles most international arrivals and, until recently, had no airside link — check whether your pairing requires the ATS train and a re-clear of security. Winter weather makes O'Hare one of the least reliable US hubs from December to March.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">DFW</span><span class="ar-name">Dallas/Fort Worth</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">50 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">1 hr 30</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">Five terminals in a ring, all linked airside by the Skylink train, which runs every two minutes and reaches any terminal within nine. That design makes DFW one of the more forgiving large US hubs — the distances look alarming on a map and are not a problem in practice.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">IAH</span><span class="ar-name">Houston George Bush</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">1 hr 30</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">The main US gateway to Latin America. Terminals are joined by an airside Skyway train, so domestic connections are quick. International arrivals process through Terminal E and then re-check bags, which is where the time goes.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">MIA</span><span class="ar-name">Miami</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">1 hr 30</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 45</span></div>
+      </div>
+      <div class="ar-note">A single very long horseshoe terminal — the walk from the D gates to the J gates is close to 25 minutes even with the Skytrain. Immigration halls here handle enormous Latin American banks arriving together; the published 90 minutes for an international arrival is a floor, not an average.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">SFO</span><span class="ar-name">San Francisco</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">50 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">1 hr 30</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr</span></div>
+      </div>
+      <div class="ar-note">Compact by US standards and the international terminal connects airside to Terminals 1, 2, and 3 for departing passengers. The real hazard is not the building — it is summer fog, which routinely cuts arrival rates and makes SFO one of the most delay-prone US airports.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">JFK</span><span class="ar-name">New York JFK</span><span class="ar-country">United States</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Same terminal</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Terminal change</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">2 hr</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr 30</span></div>
+      </div>
+      <div class="ar-note">Six separate terminals with no airside connection between them. A terminal change means the AirTrain, landside, and a full re-clear of security — and the AirTrain alone can take 15 minutes plus waiting. Add ongoing terminal construction and JFK's chronic ground delays and this becomes the least forgiving major US hub.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">LAX</span><span class="ar-name">Los Angeles</span><span class="ar-country">United States</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">2 hr</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">2 hr</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr 30</span></div>
+      </div>
+      <div class="ar-note">A horseshoe of nine terminals with only partial airside links to the Tom Bradley international terminal — some pairings are a 10-minute walk, others need the terminal loop road. The Automated People Mover is only partly in service and Terminal 5 is being rebuilt ahead of the 2028 Olympics, so add 30 minutes to whatever you would otherwise allow.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">YYZ</span><span class="ar-name">Toronto Pearson</span><span class="ar-country">Canada</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">75 min</span></div>
+        <div class="tc"><span class="tl">To US (preclearance)</span><span class="tv">2 hr</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr</span></div>
+      </div>
+      <div class="ar-note">Canada's main hub and the connection most often underestimated. A US-bound flight routes you through US preclearance, which is a full immigration and customs check on Canadian soil and takes about as long as clearing Canadian customs would. One hour for an international-to-US connection here is high risk; two is the working number.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">YVR</span><span class="ar-name">Vancouver</span><span class="ar-country">Canada</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">75 min</span></div>
+        <div class="tc"><span class="tl">To US (preclearance)</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 45</span></div>
+      </div>
+      <div class="ar-note">The main North American gateway for trans-Pacific traffic and consistently better run than Toronto for the same connection types. US preclearance applies here too, but the volumes are lower and the queues shorter. The international-to-domestic path is well signed and quick.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">MEX</span><span class="ar-name">Mexico City Benito Juárez</span><span class="ar-country">Mexico</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr 30</span></div>
+      </div>
+      <div class="ar-note">Two terminals with no airside link — a T1 to T2 connection requires an airside shuttle bus (with a boarding pass for the onward flight) or, worse, a landside transfer. The airport operates well beyond its design capacity. Never book a T1/T2 pairing on a tight connection.</div>
+    </div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">PTY</span><span class="ar-name">Panama City Tocumen</span><span class="ar-country">Panama</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
+        <div class="tc"><span class="tl">To international</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">45 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 15</span></div>
+      </div>
+      <div class="ar-note">Purpose-built as Copa's connecting hub for the Americas and designed around short transfers — you stay airside and no immigration is involved for a straight connection. Terminal 2 is a walk from Terminal 1, so check which one your onward flight uses.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">GRU</span><span class="ar-name">São Paulo Guarulhos</span><span class="ar-country">Brazil</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr 30</span></div>
+      </div>
+      <div class="ar-note">South America's largest hub, with three terminals and long transfers between them. Immigration queues after the overnight European and North American arrival bank are routinely slow. If your onward flight is domestic you clear immigration and customs and re-check bags — build in the full two and a half hours.</div>
+    </div>
+
+    <div class="region-label">Middle East &amp; Africa</div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">DOH</span><span class="ar-name">Doha Hamad</span><span class="ar-country">Qatar</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
+        <div class="tc"><span class="tl">To international</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">45 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 15</span></div>
+      </div>
+      <div class="ar-note">Built from scratch as a single-terminal transfer hub and it is the fastest of the Gulf three. Everything is airside, connection security is quick, and the automated train covers the longer concourses. Most connections here are comfortable at the published minimum.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">DXB</span><span class="ar-name">Dubai International</span><span class="ar-country">United Arab Emirates</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
+        <div class="tc"><span class="tl">Same terminal</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">75 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr</span></div>
+      </div>
+      <div class="ar-note">The world's busiest international airport, and the scale is the problem rather than the process. Terminal 3 alone has three concourses linked by an underground train, and an A-gate to C-gate move plus connection security is a solid 30 minutes. A Terminal 3 to Terminal 2 connection (flydubai) is a different building entirely — treat it as a separate airport.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">AUH</span><span class="ar-name">Abu Dhabi Zayed</span><span class="ar-country">United Arab Emirates</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
+        <div class="tc"><span class="tl">To international</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">The new Terminal A is a single large building and connections within it are straightforward. The exception is a US-bound departure: Abu Dhabi has US preclearance, so you clear American immigration here — that adds an hour and needs its own planning.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">JNB</span><span class="ar-name">Johannesburg O.R. Tambo</span><span class="ar-country">South Africa</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr</span></div>
+      </div>
+      <div class="ar-note">The main gateway to southern Africa. Domestic and international sit in the same complex but are separated by immigration, and the international-to-domestic path involves a full customs clearance and bag re-check. Safari itineraries connecting to a light aircraft from here should assume the full two hours.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">CAI</span><span class="ar-name">Cairo</span><span class="ar-country">Egypt</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr 30</span></div>
+      </div>
+      <div class="ar-note">Three terminals with slow inter-terminal transfers by shuttle bus. Terminal 3 handles EgyptAir and its partners and is the modern one; a connection that moves between terminals should be treated as a landside transfer. Security screening is repeated at several points.</div>
+    </div>
+
+    <div class="region-label">Asia-Pacific</div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">SIN</span><span class="ar-name">Singapore Changi</span><span class="ar-country">Singapore</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
+        <div class="tc"><span class="tl">Same airline</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Different airlines</span><span class="tv">60 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">Security is at the gate rather than the terminal entrance, which removes the usual connection bottleneck entirely. Four terminals linked by Skytrain; T1–T3 are quick, and Terminal 4 needs a shuttle bus, so check which one your onward flight uses before trusting the shorter number.</div>
+    </div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">HKG</span><span class="ar-name">Hong Kong</span><span class="ar-country">Hong Kong</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
+        <div class="tc"><span class="tl">To international</span><span class="tv">50 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">50 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">One long terminal with an automated people mover down the middle and no immigration for transit passengers. Efficient and predictable. The only long walk is out to the far end of the north concourse or across to the satellite.</div>
+    </div>
+
+    <div class="apt-row tier-easy" data-tier="easy">
+      <div class="ar-header"><span class="ar-code">KUL</span><span class="ar-name">Kuala Lumpur</span><span class="ar-country">Malaysia</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 30</span></div>
+      </div>
+      <div class="ar-note">Terminal 1 and its satellite are joined by an aerotrain and connections within them are quick. The trap is Terminal 2, used by AirAsia — it is a separate building reached by shuttle, and a T1/T2 pairing is almost always on separate tickets anyway. Treat that as three hours.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">ICN</span><span class="ar-name">Seoul Incheon</span><span class="ar-country">South Korea</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
+        <div class="tc"><span class="tl">Same terminal</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Terminal change</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 45</span></div>
+      </div>
+      <div class="ar-note">Regularly rated among the world's best airports and same-terminal connections are effortless. The catch is that Terminal 1 and Terminal 2 are 15 minutes apart by shuttle bus — Korean Air and its partners use T2, most other carriers T1, so an interline connection frequently means a terminal change.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">NRT</span><span class="ar-name">Tokyo Narita</span><span class="ar-country">Japan</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Same terminal</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Terminal change</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 45</span></div>
+      </div>
+      <div class="ar-note">Three terminals with only a shuttle bus between them and no airside link. Terminal 3 is a low-cost facility a long walk from Terminal 2. The much bigger planning error is booking an arrival at Narita and a departure from Haneda — those are two airports about 90 minutes apart by road.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">HND</span><span class="ar-name">Tokyo Haneda</span><span class="ar-country">Japan</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 45</span></div>
+      </div>
+      <div class="ar-note">Closer to central Tokyo than Narita and increasingly the preferred long-haul airport. Domestic flights use Terminals 1 and 2 and international mostly Terminal 3, so a domestic-to-international connection means a shuttle plus immigration — that is where the 90 minutes goes.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">BKK</span><span class="ar-name">Bangkok Suvarnabhumi</span><span class="ar-country">Thailand</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr</span></div>
+      </div>
+      <div class="ar-note">A single vast terminal where the walk from a far concourse to the transfer desk is 20 minutes on its own, plus a connection security screening. As with Tokyo, the common mistake is mixing airports — low-cost carriers fly from Don Mueang, an hour away across the city.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">SYD</span><span class="ar-name">Sydney Kingsford Smith</span><span class="ar-country">Australia</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr</span></div>
+      </div>
+      <div class="ar-note">The international Terminal 1 sits on the opposite side of the runways from the domestic Terminals 2 and 3 — the transfer is a bus or the T-Bus shuttle and takes 15–20 minutes on top of immigration, customs, and Australia's strict biosecurity screening. That last step is slower than travellers expect.</div>
+    </div>
+
+    <div class="apt-row tier-mod" data-tier="mod">
+      <div class="ar-header"><span class="ar-code">AKL</span><span class="ar-name">Auckland</span><span class="ar-country">New Zealand</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">60 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">1 hr 45</span></div>
+      </div>
+      <div class="ar-note">The international and domestic terminals are separate buildings roughly a 10-minute walk or free shuttle apart. New Zealand biosecurity is among the strictest anywhere and inbound bag inspection is thorough — that, not the walk, is what fills the 90 minutes.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">PVG</span><span class="ar-name">Shanghai Pudong</span><span class="ar-country">China</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr 30</span></div>
+      </div>
+      <div class="ar-note">Two terminals plus satellite concourses, and international-to-domestic requires clearing immigration, collecting bags, and re-checking — even in transit. Shanghai also has a second airport at Hongqiao for most domestic routes, which is an hour away. Air traffic control delays out of PVG are frequent.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">DEL</span><span class="ar-name">Delhi Indira Gandhi</span><span class="ar-country">India</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">2 hr</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">75 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr 30</span></div>
+      </div>
+      <div class="ar-note">Terminal 3 handles international and most full-service domestic flights, and an international-to-international transfer within it is manageable. A connection to Terminal 1 (low-cost domestic) means leaving the building, taking a shuttle, and re-entering — allow three hours for that pairing and expect a security check to enter the terminal at all.</div>
+    </div>
+
+    <div class="apt-row tier-extra" data-tier="extra">
+      <div class="ar-header"><span class="ar-code">BOM</span><span class="ar-name">Mumbai Chhatrapati Shivaji</span><span class="ar-country">India</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-grid">
+        <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
+        <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">2 hr</span></div>
+        <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">90 min</span></div>
+        <div class="tc tc-rec"><span class="tl">Book at least</span><span class="tv">2 hr 30</span></div>
+      </div>
+      <div class="ar-note">Terminal 2 (international and some domestic) and Terminal 1 (domestic low-cost) are about 20 minutes apart by road with no airside link. Most long-haul arrivals land in the small hours into a heavy immigration bank. A T2-to-T1 connection on separate tickets is a four-hour proposition.</div>
+    </div>
+
+  </div>
+
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul class="source-list">
+      <li>Airline-published transfer minimums — <a href="https://www.klm.com/information/airport/transfers" target="_blank" rel="noopener" class="src-link">KLM transfer times at Schiphol</a></li>
+      <li>Lufthansa Group minimum connecting time change at Frankfurt (60 minutes, effective March 2025) — <a href="https://irreg.lufthansaexperts.com/en/news/frankfurt-airport-increase-of-the-minimum-connecting-time-mct-to-60-minutes.html" target="_blank" rel="noopener" class="src-link">Lufthansa eXperts bulletin</a></li>
+      <li>Turkish Airlines transfer and short-connection guidance at Istanbul — <a href="https://www.turkishairlines.com/en-int/any-questions/transfer-transit-passengers/" target="_blank" rel="noopener" class="src-link">Turkish Airlines transfer passengers</a></li>
+      <li>Air France connection guidance for Paris Charles de Gaulle terminal and hall pairings — <a href="https://wwws.airfrance.us/information/aeroport/conseils-correspondances-paris-cdg-ory" target="_blank" rel="noopener" class="src-link">Air France, my connection in Paris</a></li>
+      <li>Toronto Pearson departures and US preclearance guidance — <a href="https://www.torontopearson.com/en/departures/ready-to-depart" target="_blank" rel="noopener" class="src-link">Toronto Pearson, get ready to depart</a></li>
+      <li>Remaining figures compiled from carrier-published minimum connecting times and airport transfer guidance. Minimums vary by airline, terminal pairing, and season — always confirm the exact minimum with the operating carrier before booking a tight connection.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="Before-You-Go.html">Before you go</a>
+    <a class="also-on-this-site-pill" href="Baggage.html">Baggage</a>
+    <a class="also-on-this-site-pill" href="Lounges-Europe.html">Lounges Europe</a>
+    <a class="also-on-this-site-pill" href="Lounges-US.html">Lounges US</a>
+    <a class="also-on-this-site-pill" href="Trusted-Traveler.html">Trusted traveler</a>
+    <a class="also-on-this-site-pill" href="First-Timer-Mistakes.html">First-timer mistakes</a>
+  </div>
+</div>
+
+<script>
+var activeFilter = null;
+
+function countRows() {
+  var counts = { easy: 0, mod: 0, extra: 0 };
+  document.querySelectorAll('.apt-row').forEach(function (r) {
+    var t = r.dataset.tier;
+    if (counts[t] !== undefined) counts[t]++;
+  });
+  Object.keys(counts).forEach(function (t) {
+    var el = document.getElementById('cnt-' + t);
+    if (el) el.textContent = counts[t];
+  });
+}
+
+/* Hide a region header when every row under it is hidden. */
+function syncRegionLabels() {
+  document.querySelectorAll('.region-label').forEach(function (label) {
+    var any = false;
+    var node = label.nextElementSibling;
+    while (node && !node.classList.contains('region-label')) {
+      if (node.classList.contains('apt-row') && !node.classList.contains('hidden')) { any = true; break; }
+      node = node.nextElementSibling;
+    }
+    label.classList.toggle('hidden', !any);
+  });
+}
+
+function filterTier(btn, tier) {
+  var rows  = document.querySelectorAll('.apt-row');
+  var pills = document.querySelectorAll('.pill[data-filter]');
+  document.getElementById('act-search').value = '';
+  if (activeFilter === tier) {
+    activeFilter = null;
+    pills.forEach(function (p) { p.classList.remove('active'); });
+    rows.forEach(function (r) { r.classList.remove('hidden'); });
+  } else {
+    activeFilter = tier;
+    pills.forEach(function (p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    rows.forEach(function (r) { r.classList.toggle('hidden', r.dataset.tier !== tier); });
+  }
+  document.getElementById('no-results').style.display = 'none';
+  syncRegionLabels();
+}
+
+(function () {
+  var search = document.getElementById('act-search');
+  var rows   = document.querySelectorAll('.apt-row');
+  var noRes  = document.getElementById('no-results');
+  search.addEventListener('input', function () {
+    activeFilter = null;
+    document.querySelectorAll('.pill[data-filter]').forEach(function (p) { p.classList.remove('active'); });
+    var q = search.value.trim().toLowerCase();
+    var visible = 0;
+    rows.forEach(function (r) {
+      var show = !q || r.textContent.toLowerCase().indexOf(q) !== -1;
+      r.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+    noRes.style.display = visible === 0 ? '' : 'none';
+    syncRegionLabels();
+  });
+  countRows();
+  syncRegionLabels();
+})();
+</script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function () {
+  if (!window.TVESearch) return;
+  var input = document.getElementById('act-search');
+  if (!input) return;
+  var items = [], seen = {};
+  function add(nm, sub) {
+    nm = (nm || '').replace(/\s+/g, ' ').trim();
+    if (!nm) return;
+    var k = nm.toLowerCase();
+    if (seen[k]) return;
+    seen[k] = 1;
+    items.push({ name: nm, sub: sub });
+  }
+  document.querySelectorAll('.apt-row').forEach(function (row) {
+    var code    = row.querySelector('.ar-code');
+    var name    = row.querySelector('.ar-name');
+    var country = row.querySelector('.ar-country');
+    var c  = code ? code.textContent.trim() : '';
+    var nm = name ? name.textContent.trim() : '';
+    var cy = country ? country.textContent.trim() : '';
+    if (c)  add(c, nm);
+    if (nm) add(nm, cy);
+  });
+  TVESearch.attach(input, { items: items });
+}());</script>
+</body>
+</html>

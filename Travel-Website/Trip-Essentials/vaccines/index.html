@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Vaccines</title>
+<style>/* ── Search ── */
+.search-wrap { display: flex; justify-content: center; margin: 35px 0 16px; }
+.search-wrap input { margin-bottom: 0; }
+/* ── Tier filter pills ──────────────────────────────────────────────────────
+   OWNER-DIRECTED 2026-08-10: these four were a static `.tier-legend` strip —
+   they explained the colours and did nothing else, the only inert control on
+   the page. They are now the site's standard filter pills, identical in markup,
+   colour and behaviour to Disney-Parks (When to go / Book ahead / …) and
+   Tap-Water (Safe / Varies / Avoid): emoji dot, label, count, click to filter,
+   click again to clear. Family bg + family text on rest, border neutral. */
+.controls {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  padding: 12px 0 14px; margin: 0 0 20px;
+}
+.pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.pill {
+  font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; padding: 6px 12px;
+  border: 1px solid var(--border2); border-radius: 6px; background: var(--surface);
+  color: var(--muted, #6a6660); cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, box-shadow .15s;
+  text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+}
+.pill:hover { border-color: var(--rust); background: var(--bg,#f5f4f0); }
+.pill.active { background: var(--surface,#ffffff); color: var(--rust,#b85c2a); border-color: var(--rust); }
+/* Family-colored rest state — bg + text carry the family; border stays neutral. */
+.pill[data-filter="req"] { background:#fdf0e8; color:#7a3a1a; }
+.pill[data-filter="rec"] { background:#e8f5e8; color:#1a5a1a; }
+.pill[data-filter="con"] { background:#e8f0fb; color:var(--navy); }
+.pill[data-filter="med"] { background:#fff8e0; color:#7a5800; }
+.pill[data-filter="req"].active,
+.pill[data-filter="rec"].active,
+.pill[data-filter="con"].active,
+.pill[data-filter="med"].active { background: var(--surface,#ffffff); color: var(--rust,#b85c2a); border-color: var(--rust); }
+/* Hidden by the tier filter — cards, their grids, and any section label or
+   block that has nothing left to show. */
+.tier-off { display: none !important; }
+/* ── Region pills ── */
+.region-bar {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  justify-content: center; margin-bottom: 24px;
+}
+.rpill {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: inherit; padding: 6px 14px; border-radius: 6px; border: 1.5px solid var(--border);
+  background: var(--surface); font-size: 13px; font-weight: 400; color: var(--muted, #6a6660);
+  cursor: pointer; transition: all .15s; white-space: nowrap; user-select: none;
+}
+.rpill:hover { border-color: var(--rust); color: var(--text); }
+.rpill.active {
+  background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color: var(--rust);
+  color: #fff; font-weight: 600;
+}
+
+/* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Formatting/Formatting.html#src-desktoppill.
+   .region-bar (15 pills) → balanced 8+7 rows via flex-basis calc(100%/8).
+   .tier-legend (4 family-colored legend badges) → natural-width strip
+   CENTERED, squared corners, touching borders — family bg/text/border trios
+   preserved (they encode meaning). Mobile grid + base states untouched. */
+@media (min-width: 601px), (pointer: fine) {
+  .region-bar { gap: 0; }
+  .rpill { flex: 1 1 calc(100% / 8 - 0.01px); height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); }
+  .rpill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+  .rpill.active { background: #f0ede8; border: 1.5px solid var(--border2, #e6e2da); color: var(--muted); font-weight: 500; }
+  /* Tier pills — identical desktop treatment to Disney-Parks and Tap-Water:
+     36px, squared, touching, counts hidden, family bg on rest, and an .active
+     state that is page-bg + a terracotta BORDER. The terracotta gradient is
+     deliberately killed here — it belongs to mobile only. */
+  .pills { gap: 0; }
+  .pills .pill { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; border-width: 1.5px; border-radius: 0; margin-left: 0; }
+  .pills .pill-count { display: none; }
+  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); box-shadow: none; color: inherit; }
+  .pills .pill.active,
+  .pills .pill[data-filter="req"].active,
+  .pills .pill[data-filter="rec"].active,
+  .pills .pill[data-filter="con"].active,
+  .pills .pill[data-filter="med"].active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
+}
+/* ── Destination panel ── */
+#dest-panel { margin-bottom: 28px; }
+#dest-panel.hidden { display: none; }
+.dest-header {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 4px;
+}
+.dest-countries {
+  font-size: 12px; color: var(--muted); margin-bottom: 14px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+@media (min-width: 601px), (pointer: fine) {
+  .guide-pills { gap: 0; }
+  .guide-pill { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: var(--text, #3d3a32); border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); }
+  .guide-pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust, #b85c2a); }
+}
+@media (max-width: 600px) and (pointer: coarse) {
+  .guide-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .guide-pill { height: 46px; padding: 4px 6px; border-radius: 0; font-size: 12px; white-space: normal; line-height: 1.12; display: flex; align-items: center; justify-content: center; text-align: center; }
+}
+/* ── Vaccine cards ── */
+.vc-grid { display: flex; flex-direction: column; gap: 8px; }
+.vc-card {
+  display: grid; grid-template-columns: 200px 1fr; gap: 0 16px;
+  border-radius: 8px; padding: 12px 15px;
+  background: var(--surface); border: 1px solid var(--border2); border-left: 4px solid;
+}
+/* Bars use canonical family sphere mid tones per Badge spec 2026-07-29. */
+.vc-card.req  { border-left-color: #e01818; }  /* 🔴 sphere mid */
+.vc-card.rec  { border-left-color: #5eb833; }  /* 🟢 sphere mid */
+.vc-card.con  { border-left-color: #4a90e2; }  /* 🔵 sphere mid */
+.vc-card.med  { border-left-color: #f5c518; }  /* 🟡 sphere mid */
+.vc-left { display: flex; flex-direction: column; gap: 3px; }
+.vc-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.vc-badge {
+  display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5;
+  text-transform: uppercase; padding: 1px 5px; border-radius: 3px; width: fit-content; white-space: nowrap;
+}
+.req .vc-badge  { background: #fdf0e8; color: #7a3a1a; border: 1px solid rgba(122,58,26,0.4); }
+.rec .vc-badge  { background: #e8f5e8; color: #1a5a1a; border: 1px solid rgba(26,90,26,0.4); }
+.con .vc-badge  { background: #e8f0fb; color: var(--navy); border: 1px solid rgba(26,58,139,0.4); }
+.med .vc-badge  { background: #fff8e0; color: #7a5800; border: 1px solid rgba(122,88,0,0.4); }
+@media (prefers-color-scheme: dark) {
+  .req .vc-badge { background: #2a1408; color: #e8a880; border-color: #7a4020; }
+  .con .vc-badge { background: #0a1a3a; color: #93b4ff; border-color: #3a5a9a; }
+  .rec .vc-badge { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+  .med .vc-badge { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+}
+.vc-note { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.vc-note strong { color: var(--text); }
+/* ── Section labels ── */
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--muted); margin: 24px 0 10px;
+}
+/* ── Routine chips ── */
+.routine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.routine-chip {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  padding: 9px 12px; font-size: 12px; font-weight: 600; color: var(--text);
+}
+.routine-chip span { display: block; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+/* ── Timing / info bars ── */
+.info-bar {
+  margin-top: 14px; padding: 11px 14px; border-radius: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  font-size: 12px; color: var(--muted); line-height: 1.6;
+}
+.info-bar strong { color: var(--text); }
+.info-bar + .info-bar { margin-top: 8px; }
+/* ── Search results ── */
+.search-row {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 15px; margin-bottom: 8px; display: none;
+}
+.search-row.match { display: block; }
+.sr-name { font-size: 13px; font-weight: 700; }
+.sr-dest { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.sr-note { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+#search-panel { display: none; }
+#search-panel.active { display: block; }
+#main-ui.hidden { display: none; }
+#no-results { display: none; }
+/* .empty-state / -icon / -text live in web-travel-style.css (shared) */
+@media (max-width: 600px) and (pointer: coarse) {
+  .search-wrap input { width: 100%; }
+  .vc-card { grid-template-columns: 1fr; gap: 4px 0; }
+  /* Tier pills — Form B glued 2×2 grid on mobile so all 4 stretch full-width
+     with matching height. Family bg/text preserved (they encode meaning). */
+  .pills { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0 !important; width: 100% !important; }
+  .pill { min-height: 46px !important; height: auto !important; padding: 6px 4px !important; border-radius: 0 !important; font-size: 11px !important;
+    line-height: 1.15 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
+  /* Form B glued 3-across grid — full width, no gaps, square corners, 46px. */
+  .region-bar { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; width: 100% !important; }
+  .rpill { height: 46px !important; padding: 4px 6px !important; border-radius: 0 !important; font-size: 12px !important; white-space: normal !important; line-height: 1.12 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
+}
+@media (prefers-color-scheme: dark) {
+  .rpill { color: var(--text); }
+  .rpill.active { background: var(--surface); color: var(--rust,#b85c2a); border-color: var(--rust,#b85c2a); }
+  .pill[data-filter="req"] { background: #240e00; color: #d07050; border-color: rgba(208,112,80,.35); }
+  .pill[data-filter="rec"] { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+  .pill[data-filter="con"] { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
+  .pill[data-filter="med"] { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+  .pills .pill.active,
+  .pills .pill[data-filter].active { color: var(--text); }
+}
+:root[data-theme="dark"] .req .vc-badge  { background: #2a1408; color: #e8a880; border-color: #7a4020; }
+:root[data-theme="dark"] .con .vc-badge  { background: #0a1a3a; color: #93b4ff; border-color: #3a5a9a; }
+:root[data-theme="dark"] .rec .vc-badge  { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+:root[data-theme="dark"] .med .vc-badge  { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+:root[data-theme="dark"] .rpill          { color: var(--text); }
+:root[data-theme="dark"] .rpill.active   { background: var(--surface); color: var(--rust,#b85c2a); border-color: var(--rust,#b85c2a); }
+:root[data-theme="dark"] .pill[data-filter="req"] { background: #240e00; color: #d07050; border-color: rgba(208,112,80,.35); }
+:root[data-theme="dark"] .pill[data-filter="rec"] { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+:root[data-theme="dark"] .pill[data-filter="con"] { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
+:root[data-theme="dark"] .pill[data-filter="med"] { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+:root[data-theme="dark"] .pills .pill.active,
+:root[data-theme="dark"] .pills .pill[data-filter].active { color: var(--text); }
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="760" data-updated="2026-08-08"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+  <div class="page-header"><h1>VACCINES</h1></div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-syringe-colour"/></svg></div>
+    <div>
+      <div class="page-intro-head">The vaccines you need by region, and how far ahead to get them</div>
+      <div class="page-intro-sub">Vaccine guidance for 15 travel regions, split into required for entry, recommended, worth considering for your itinerary, and prescription-only medication — with dose schedules and how far ahead of departure to start each one. Written for US travellers following CDC guidance. Requirements and outbreak notices change, and what you personally need depends on your itinerary, season, and health history — confirm with a travel clinic before you book the appointment.</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <input type="search" id="vc-search" class="search-input" placeholder="Vaccine or destination" aria-label="Search by vaccine or destination" autocomplete="off">
+    </div>
+    <div class="pills tve-glue-m" id="tier-pills">
+      <button class="pill" data-filter="req" onclick="filterTier(this,'req')">🔴 Required for entry <span class="pill-count" id="cnt-req"></span></button>
+      <button class="pill" data-filter="rec" onclick="filterTier(this,'rec')">🟢 Recommended <span class="pill-count" id="cnt-rec"></span></button>
+      <button class="pill" data-filter="con" onclick="filterTier(this,'con')">🔵 Consider based on activities <span class="pill-count" id="cnt-con"></span></button>
+      <button class="pill" data-filter="med" onclick="filterTier(this,'med')">🟡 Prescription medication <span class="pill-count" id="cnt-med"></span></button>
+    </div>
+  </div>
+  <div class="empty-state" id="no-results"><span class="empty-state-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span><div class="empty-state-text">Nothing matches your search.</div></div>
+
+  <div id="search-panel"><div id="search-rows"></div></div>
+
+  <div id="main-ui">
+
+    <!-- Region pills -->
+    <div class="region-bar" id="region-bar">
+      <button class="rpill active" data-region="all" type="button">All destinations</button>
+      <button class="rpill" data-region="africa-sub" type="button">Sub-Saharan Africa</button>
+      <button class="rpill" data-region="africa-east" type="button">East Africa</button>
+      <button class="rpill" data-region="africa-north" type="button">North Africa</button>
+      <button class="rpill" data-region="sea" type="button">Southeast Asia</button>
+      <button class="rpill" data-region="south-asia" type="button">South Asia</button>
+      <button class="rpill" data-region="latin" type="button">Latin America</button>
+      <button class="rpill" data-region="caribbean" type="button">Caribbean</button>
+      <button class="rpill" data-region="mideast" type="button">Middle East & Gulf</button>
+      <button class="rpill" data-region="east-asia" type="button">East Asia</button>
+      <button class="rpill" data-region="eastern-europe" type="button">Eastern Europe</button>
+      <button class="rpill" data-region="central-asia" type="button">Central Asia</button>
+      <button class="rpill" data-region="pacific" type="button">Pacific Islands</button>
+      <button class="rpill" data-region="australia" type="button">Australia & NZ</button>
+      <button class="rpill" data-region="europe" type="button">Western Europe</button>
+    </div>
+
+    <div id="dest-panel" class="hidden"></div>
+    <div id="all-panel"></div>
+
+  </div>
+</div>
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="Safety-Guide.html">Safety guide</a>
+    <a class="also-on-this-site-pill" href="Scams-By-City.html">Scams &amp; traps</a>
+    <a class="also-on-this-site-pill" href="Tap-Water.html">Tap water</a>
+    <a class="also-on-this-site-pill" href="Travel-Insurance.html">Travel insurance</a>
+    <a class="also-on-this-site-pill" href="Before-You-Go.html">Before you go</a>
+  </div>
+</div>
+
+<script>
+var REGIONS = {
+  'africa-sub': {
+    label: 'Sub-Saharan Africa',
+    countries: 'Nigeria, Ghana, Senegal, Côte d\'Ivoire, Cameroon, DRC, Zambia, Zimbabwe, Mozambique, Ethiopia, and most of West and Central Africa',
+    guides: [
+      { city: 'Cape Town', href: '../guides/Cape-Town/cape-town.html' }
+    ],
+    cards: [
+      { type:'req', name:'Yellow Fever', badge:'Required for entry', note:'<strong>Proof of vaccination is a legal entry requirement</strong> for most sub-Saharan African countries, and for any traveler arriving from an endemic country. Must be given at an approved travel clinic. One dose — lasts for life. Get the International Certificate of Vaccination (yellow card) — border officials check it.' },
+      { type:'rec', name:'Meningococcal (MenACWY)', badge:'Recommended', note:'Essential for travel through the <strong>African meningitis belt</strong> — a band stretching from Senegal to Ethiopia (Burkina Faso, Chad, Mali, Niger, Nigeria, northern Ghana and Cameroon). Risk peaks during dry season (December–June). Single dose of MenACWY vaccine. Also required for Hajj/Umrah in Saudi Arabia.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'High risk across the region, especially outside tourist hotels. Oral vaccine (4 doses over 1 week) or single injection. Get the injection at least 2 weeks before departure. Oral vaccine must be refrigerated and requires 4 weeks before it\'s effective.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through contaminated food and water — common across the region. Two doses provide 20+ years of protection. First dose can be given as close as 2 weeks before departure.' },
+      { type:'med', name:'Malaria (medication)', badge:'Prescription required', note:'No vaccine for travelers. <strong>Prescription antimalarials are essential</strong> for most of sub-Saharan Africa — atovaquone-proguanil (Malarone), doxycycline, or mefloquine. Start Malarone 1–2 days before, doxycycline 2 days before, mefloquine 2–3 weeks before. Use DEET 30%+ and permethrin-treated clothing. See a travel doctor at least 4–6 weeks out.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for safari trips, cycling, camping, or any stay far from urban medical care. Dog, bat, and monkey bites are the main risks. Pre-exposure series is 3 doses over 3 weeks — must start at least 4 weeks before travel. Seek medical care immediately after any bite regardless of vaccination status.' },
+      { type:'con', name:'Polio (booster)', badge:'Consider', note:'An adult booster (IPV) is recommended for many destinations in West, Central, and East Africa. The CDC\'s Global Polio Level 2 notice (updated March 2026) covers 18+ African countries, including Nigeria, DRC, Cameroon, Central African Republic, Chad, Burkina Faso, and others. Check the CDC Global Polio travel notice for your specific country.' },
+      { type:'con', name:'Chikungunya (IXCHIQ / Vimkunya)', badge:'Consider for outbreak destinations', note:'Two FDA-approved chikungunya vaccines are available: <strong>Vimkunya</strong> (single dose, ages 12+) for travelers to countries with an active outbreak; <strong>IXCHIQ</strong> (single dose, ages 18+) for extended stays in high-risk areas. West and Central Africa have ongoing chikungunya risk — check CDC outbreak alerts before travel. Mosquito bite precautions (DEET, long sleeves, permethrin) remain essential.' },
+      { type:'con', name:'Mpox (Jynneos)', badge:'Consider for DRC, Central Africa & Zambia', note:'<strong>CDC recommends Jynneos vaccination</strong> for travelers to the DRC and countries with active clade I mpox outbreaks — including DRC, Republic of Congo, Central African Republic, and Zambia. 2-dose series (28 days apart); start at least 6 weeks before departure so immunity peaks before arrival. One prior mpox or smallpox vaccination counts as dose 1. Source: CDC HAN-00516.' },
+    ]
+  },
+  'africa-east': {
+    label: 'East Africa',
+    countries: 'Kenya, Tanzania, Rwanda, Uganda, Ethiopia, Burundi, Eritrea, Somalia — including safari destinations',
+    guides: [
+      { city: 'Seychelles', href: '../guides/Seychelles/seychelles.html' }
+    ],
+    cards: [
+      { type:'req', name:'Yellow Fever', badge:'Required for entry', note:'<strong>Required for entry to Uganda</strong> from all travelers age 1 year and up, regardless of origin. Rwanda, Tanzania, Ethiopia, and Kenya require it only for travelers arriving from — or transiting 12+ hours through — a yellow-fever-endemic country. Must be given at an approved travel clinic. One dose — lasts for life. Carry the International Certificate of Vaccination (yellow card) at all times.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for all travelers regardless of accommodation tier — food and water risk is present even in lodges near national parks. Single injection at least 2 weeks before travel or 4-dose oral course (must refrigerate).' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through contaminated food and water. Two doses provide 20+ years of protection. Can start the series as close as 2 weeks before departure.' },
+      { type:'rec', name:'Meningococcal (MenACWY)', badge:'Recommended', note:'Recommended for Ethiopia and northern parts of Uganda and Kenya, which fall within or near the African meningitis belt. Risk highest in dry season (December–June). Single dose of MenACWY.' },
+      { type:'med', name:'Malaria (medication)', badge:'Prescription required', note:'<strong>Essential for all safari regions</strong> — Masai Mara, Serengeti, Amboseli, Queen Elizabeth NP, Bwindi (gorilla trekking), and most lowland/coastal areas. Nairobi and Kigali are at low risk. Atovaquone-proguanil or doxycycline preferred. See a travel doctor at least 4–6 weeks before departure. Use DEET 30%+ at dawn and dusk.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for camping, cycling, or any wildlife-heavy itinerary where you could be far from a city for multiple days. Pre-exposure series is 3 doses over 3 weeks.' },
+      { type:'con', name:'Cholera', badge:'Consider for aid/relief work', note:'Not generally recommended for safari tourists. Recommended for aid workers, healthcare volunteers, or travelers to refugee settings or areas with active outbreaks. Oral vaccine (Vaxchora) is a single dose taken at least 10 days before travel.' },
+      { type:'con', name:'Polio (booster)', badge:'Consider', note:'Ethiopia and Tanzania are on the CDC\'s Global Polio Level 2 notice (updated March 2026). An adult one-time IPV booster is recommended if you haven\'t had one. Check the CDC Global Polio travel notice for current country coverage in East Africa.' },
+      { type:'con', name:'Chikungunya (IXCHIQ / Vimkunya)', badge:'Consider for outbreak destinations', note:'Two FDA-approved chikungunya vaccines are available: <strong>Vimkunya</strong> (single dose, ages 12+) for travelers to countries with an active outbreak; <strong>IXCHIQ</strong> (single dose, ages 18+) for extended stays in high-risk areas. East Africa sees periodic chikungunya transmission — check CDC outbreak alerts before travel. DEET and long sleeves remain essential.' },
+      { type:'con', name:'Mpox (Jynneos)', badge:'Consider for Uganda, Rwanda, Burundi, Kenya & Tanzania', note:'<strong>CDC recommends Jynneos vaccination</strong> for travelers to Uganda, Rwanda, Burundi, Kenya, and Tanzania — all have confirmed active clade I mpox transmission. Kenya and Tanzania were added to the CDC Level 2 notice in 2025. 2-dose series (28 days apart); start at least 6 weeks before departure. Recommended for anyone with anticipated close-contact exposure during travel. Source: CDC HAN-00516.' },
+    ]
+  },
+  'africa-north': {
+    label: 'North Africa',
+    countries: 'Egypt, Morocco, Tunisia, Algeria, Libya',
+    guides: [
+      { city: 'Cairo', href: '../guides/Cairo/cairo.html' },
+      { city: 'Marrakech', href: '../guides/Marrakech/marrakech.html' }
+    ],
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Risk is significant across the region, especially when eating at local restaurants or street food. Two doses provide 20+ years of protection.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for Egypt and Morocco in particular. Risk is higher if eating outside tourist areas. Single injection at least 2 weeks before departure.' },
+      { type:'con', name:'Hepatitis B', badge:'Consider for longer stays', note:'Recommended for travel longer than 1 month, or for anyone who might need medical procedures. 3-dose series; faster 2-dose schedule (Heplisav-B) available.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for camping, desert trekking, or travel to rural areas away from urban medical care. Dog bites are the main risk in Egypt and Morocco.' },
+    ]
+  },
+  sea: {
+    label: 'Southeast Asia',
+    countries: 'Thailand, Vietnam, Indonesia (Bali, Lombok, Komodo), Cambodia, Laos, Myanmar, Philippines, Malaysia, Singapore',
+    guides: [
+      { city: 'Bali', href: '../guides/Bali/bali.html' },
+      { city: 'Bangkok', href: '../guides/Bangkok/bangkok.html' },
+      { city: 'Chiang Mai', href: '../guides/Chiang-Mai/chiang-mai.html' },
+      { city: 'Hanoi', href: '../guides/Hanoi/hanoi.html' },
+      { city: 'Hoi An', href: '../guides/Hoi-An/hoi-an.html' },
+      { city: 'Luang Prabang', href: '../guides/Luang-Prabang/luang-prabang.html' },
+      { city: 'Palawan', href: '../guides/Palawan/palawan.html' },
+      { city: 'Phuket', href: '../guides/Phuket/phuket.html' },
+      { city: 'Singapore', href: '../guides/Singapore/singapore.html' }
+    ],
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through food and water across the region — present even in upscale restaurants. Two doses provide 20+ years of protection. First dose can be given as close as 2 weeks before departure.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'High risk if eating at street markets, local restaurants, or anywhere outside resort food service. Injection preferred — single dose, effective within 2 weeks. Oral vaccine requires refrigeration and 4 doses over 1 week.' },
+      { type:'con', name:'Japanese Encephalitis', badge:'Consider for rural stays', note:'Recommended if spending more than a month in rural areas, staying in accommodation without air conditioning/screens, or doing outdoor activities at dusk. Low risk in Bangkok, Bali resort areas, Singapore, and most major cities. 2-dose series (Ixiaro) over 4 weeks — start early.' },
+      { type:'con', name:'Dengue (Qdenga)', badge:'Consider if previously infected', note:'Qdenga (TAK-003, approved 2023 in the EU, UK, and several endemic countries) covers all 4 dengue serotypes. Not FDA-approved in the US — available through travel clinics abroad. Most international travel medicine guidelines recommend it only for those with a prior laboratory-confirmed dengue infection. 2 doses, 3 months apart — requires lead time. DEET and long sleeves remain essential regardless.' },
+      { type:'con', name:'Chikungunya (IXCHIQ / Vimkunya)', badge:'Consider for outbreak destinations', note:'Two FDA-approved chikungunya vaccines are available: <strong>Vimkunya</strong> (single dose, ages 12+) for travelers to countries with an active outbreak; <strong>IXCHIQ</strong> (single dose, ages 18+) for extended stays in high-risk areas. Southeast Asia sees periodic chikungunya outbreaks — Indonesia, Thailand, Philippines, and Vietnam have had significant transmission. Check CDC outbreak alerts before travel. DEET and long sleeves remain essential.' },
+      { type:'med', name:'Malaria (medication)', badge:'Prescription for some areas', note:'Risk is low in most tourist destinations — Bangkok, Bali, Phuket, Ho Chi Minh City, Singapore. <strong>Prescription antimalarials recommended for</strong>: rural Myanmar, parts of Indonesian Papua, border regions of Thailand/Cambodia/Laos, and rural Philippines. Confirm with a travel clinic based on your specific itinerary before deciding.' },
+      { type:'con', name:'Polio (booster)', badge:'Consider — Laos', note:'Laos is on the CDC\'s Global Polio Level 2 notice (updated March 2026), with poliovirus detected in environmental samples. An adult one-time IPV booster is recommended for travelers to Laos who have completed their childhood series but have not yet had an adult booster. Check the CDC Global Polio travel notice for current coverage.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for adventure travel, island-hopping, cycling, or long stays where emergency care is not readily accessible within 24 hours. Bali has a known dog rabies problem. Pre-exposure series is 3 doses over 3 weeks.' },
+    ]
+  },
+  'south-asia': {
+    label: 'South Asia',
+    countries: 'India, Nepal, Sri Lanka, Bangladesh, Pakistan, Bhutan, Maldives',
+    guides: [
+      { city: 'Bhutan', href: '../guides/Bhutan/bhutan.html' },
+      { city: 'Colombo', href: '../guides/Colombo/colombo.html' },
+      { city: 'Maldives', href: '../guides/Maldives/maldives.html' },
+      { city: 'Pokhara', href: '../guides/Pokhara/pokhara.html' }
+    ],
+    cards: [
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'<strong>India and Nepal have among the highest typhoid rates worldwide</strong>. Recommended for all travelers regardless of accommodation — contaminated food and water risk is significant even in cities. Single injection at least 2 weeks before departure.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'High risk across the region. Two doses provide 20+ years of protection. Can start as close as 2 weeks before departure.' },
+      { type:'con', name:'Japanese Encephalitis', badge:'Consider for rural stays', note:'Recommended for extended rural travel, trekking in Nepal\'s Terai belt, or outdoor activities in rural India. Low risk in Delhi, Mumbai, Kathmandu, and most urban tourist stays. 2-dose series over 4 weeks.' },
+      { type:'con', name:'Malaria (medication)', badge:'Consider for rural areas', note:'Most major cities (Delhi, Mumbai, Bangalore, Kathmandu) are low risk. <strong>Prescription antimalarials recommended for</strong>: rural India outside major cities, Nepal\'s Terai lowlands (below 2000m), Bangladesh, and most of Pakistan outside major cities. Confirm with a travel clinic.' },
+      { type:'con', name:'Rabies', badge:'Consider — higher risk than average', note:'<strong>Significant dog and monkey populations</strong> in India and Nepal make bite exposure more common than in most other regions. Recommended for any rural travel, trekking, or extended stays away from major cities. Pre-exposure series is 3 doses over 3 weeks.' },
+      { type:'con', name:'Polio (booster)', badge:'Consider — Pakistan/Afghanistan', note:'An adult IPV booster is recommended for travelers to Pakistan, where wild poliovirus continues to circulate. Some countries require proof of polio vaccination within the past 12 months for travelers arriving from Pakistan — check entry requirements for your onward destinations.' },
+      { type:'con', name:'Cholera', badge:'Consider for Bangladesh/flood zones', note:'Bangladesh has the highest cholera burden in the region. Recommended for humanitarian workers or travelers going to rural/flood-affected areas. Oral vaccine (Dukoral) is 2 doses 1–6 weeks apart.' },
+      { type:'con', name:'Chikungunya (IXCHIQ / Vimkunya)', badge:'Consider for outbreak destinations', note:'Two FDA-approved chikungunya vaccines are available: <strong>Vimkunya</strong> (single dose, ages 12+) for travelers to countries with an active outbreak; <strong>IXCHIQ</strong> (single dose, ages 18+) for extended stays in high-risk areas. India and Sri Lanka have experienced major chikungunya outbreaks — check CDC outbreak alerts before travel. DEET and long sleeves remain essential.' },
+    ]
+  },
+  latin: {
+    label: 'Latin America',
+    countries: 'Mexico, Colombia, Peru, Brazil, Ecuador, Bolivia, Argentina, Chile, Costa Rica, Panama, Guatemala, Honduras, El Salvador, Nicaragua',
+    guides: [
+      { city: 'Aracaju', href: '../guides/Aracaju/aracaju.html' },
+      { city: 'Arenal', href: '../guides/Arenal/arenal.html' },
+      { city: 'Buenos Aires', href: '../guides/Buenos-Aires/buenos-aires.html' },
+      { city: 'Cancún', href: '../guides/Cancun/cancun.html' },
+      { city: 'Curitiba', href: '../guides/Curitiba/curitiba.html' },
+      { city: 'Cusco', href: '../guides/Cusco/cusco.html' },
+      { city: 'Florianópolis', href: '../guides/Florianopolis/florianopolis.html' },
+      { city: 'Fortaleza', href: '../guides/Fortaleza/fortaleza.html' },
+      { city: 'Foz do Iguaçu', href: '../guides/Foz-do-Igua%C3%A7u/foz-do-iguacu.html' },
+      { city: 'João Pessoa', href: '../guides/Jo%C3%A3o-Pessoa/joao-pessoa.html' },
+      { city: 'Lima', href: '../guides/Lima/lima.html' },
+      { city: 'Los Cabos', href: '../guides/Los-Cabos/los-cabos.html' },
+      { city: 'Maceió', href: '../guides/Macei%C3%B3/maceio.html' },
+      { city: 'MachuPicchu', href: '../guides/MachuPicchu/machupicchu.html' },
+      { city: 'Manuel Antonio', href: '../guides/Manuel-Antonio/manuel-antonio.html' },
+      { city: 'Montevideo', href: '../guides/Montevideo/montevideo.html' },
+      { city: 'Natal', href: '../guides/Natal/natal.html' },
+      { city: 'Oaxaca', href: '../guides/Oaxaca/oaxaca.html' },
+      { city: 'Olinda', href: '../guides/Olinda/olinda.html' },
+      { city: 'Porto Alegre', href: '../guides/Porto-Alegre/porto-alegre.html' },
+      { city: 'Puerto Vallarta', href: '../guides/Puerto-Vallarta/puerto-vallarta.html' },
+      { city: 'Recife', href: '../guides/Recife/recife.html' },
+      { city: 'Rio de Janeiro', href: '../guides/Rio-de-Janeiro/rio-de-janeiro.html' },
+      { city: 'Salvador', href: '../guides/Salvador/salvador.html' },
+      { city: 'San José CR', href: '../guides/San-Jose-Costa-Rica/san-jose-costa-rica.html' },
+      { city: 'Santiago', href: '../guides/Santiago/santiago.html' },
+      { city: 'São Luís', href: '../guides/S%C3%A3o-Lu%C3%ADs/sao-luis.html' },
+      { city: 'São Paulo', href: '../guides/S%C3%A3o-Paulo/sao-paulo.html' }
+    ],
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through contaminated food and water throughout the region. Risk is highest outside major resort areas. Two doses provide 20+ years of protection.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for most of Latin America, especially Mexico, Peru, Bolivia, and Central America — particularly if eating outside tourist restaurants or at street markets.' },
+      { type:'con', name:'Yellow Fever', badge:'Required for some countries/areas', note:'<strong>Required for entry to Bolivia</strong> (all travelers). Required by Brazil for entry into Amazônia and Centro-Oeste states. Recommended for travel to the Amazon basin in Peru, Ecuador, Colombia, and Venezuela. Some countries require proof if arriving from an endemic country — check your specific route. One dose, lasts for life.' },
+      { type:'con', name:'Dengue (Qdenga)', badge:'Consider if previously infected', note:'Most of Latin America is dengue-endemic. Qdenga covers all 4 serotypes; available abroad where approved — most guidelines recommend it only for those with prior laboratory-confirmed dengue infection. 2 doses, 3 months apart. DEET and long sleeves remain essential — daytime mosquitoes carry dengue.' },
+      { type:'con', name:'Chikungunya (IXCHIQ / Vimkunya)', badge:'Consider for outbreak destinations', note:'Two FDA-approved chikungunya vaccines are available: <strong>Vimkunya</strong> (single dose, ages 12+) for travelers to countries with an active outbreak; <strong>IXCHIQ</strong> (single dose, ages 18+) for extended stays in high-risk areas. Most of Latin America sees periodic chikungunya activity — check CDC outbreak alerts before travel. DEET and long sleeves remain essential.' },
+      { type:'med', name:'Malaria (medication)', badge:'Prescription for jungle/rural areas', note:'Risk is low in most cities, beach resorts, and highland destinations (Mexico City, Bogotá, Lima, Buenos Aires, Santiago — all low risk). <strong>Prescription antimalarials recommended for</strong>: Amazon basin travel, rural Panama/Honduras/Nicaragua, and specific risk zones in Colombia and Venezuela. Confirm with a travel clinic.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for jungle treks, adventure travel, or any trip to remote areas more than a few hours from a city hospital. Pre-exposure series is 3 doses over 3 weeks.' },
+    ]
+  },
+  caribbean: {
+    label: 'Caribbean',
+    countries: 'Dominican Republic, Jamaica, Cuba, Barbados, The Bahamas, Trinidad & Tobago, Grenada, Sint Maarten, Turks & Caicos, US Virgin Islands, Puerto Rico, Cayman Islands, Aruba, Curaçao',
+    guides: [
+      { city: 'Aruba', href: '../guides/Aruba/aruba.html' },
+      { city: 'The Bahamas', href: '../guides/Bahamas/bahamas.html' },
+      { city: 'Barbados', href: '../guides/Barbados/barbados.html' },
+      { city: 'Cayman Islands', href: '../guides/Cayman-Islands/cayman-islands.html' },
+      { city: 'Curaçao', href: '../guides/Curacao/curacao.html' },
+      { city: 'Puerto Rico', href: '../guides/Puerto-Rico/puerto-rico.html' },
+      { city: 'Sint Maarten', href: '../guides/Sint-Maarten/sint-maarten.html' },
+      { city: 'Turks and Caicos', href: '../guides/Turks-and-Caicos/turks-and-caicos.html' },
+      { city: 'Virgin Islands', href: '../guides/Virgin-Islands/virgin-islands.html' }
+    ],
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Risk is present across the Caribbean, especially outside large resorts. Two doses provide 20+ years of protection.' },
+      { type:'con', name:'Typhoid', badge:'Consider for Haiti & Dominican Republic', note:'Recommended for travel to Haiti and the Dominican Republic — food and water quality is more variable than in other Caribbean islands. Less relevant for Barbados, Cayman Islands, and the US territories.' },
+      { type:'con', name:'Dengue (Qdenga)', badge:'Consider if previously infected', note:'Dengue is endemic throughout the Caribbean. Qdenga covers all 4 serotypes; available abroad where approved — most guidelines recommend it only for those with prior laboratory-confirmed dengue infection. 2 doses, 3 months apart. DEET and long sleeves during daytime remain the primary protection.' },
+      { type:'con', name:'Chikungunya (IXCHIQ / Vimkunya)', badge:'Consider for outbreak destinations', note:'Two FDA-approved chikungunya vaccines are available: <strong>Vimkunya</strong> (single dose, ages 12+) for travelers to countries with an active outbreak; <strong>IXCHIQ</strong> (single dose, ages 18+) for extended stays in high-risk areas. The Caribbean has seen chikungunya outbreaks — check CDC alerts before travel. DEET and long sleeves during daytime remain essential.' },
+      { type:'con', name:'Malaria (medication)', badge:'Consider for Haiti', note:'Haiti has the highest malaria risk in the Caribbean. Prescription antimalarials (atovaquone-proguanil or doxycycline) are recommended for travel outside Port-au-Prince. The Dominican Republic has isolated low-risk zones — confirm with a travel clinic. Other Caribbean islands are generally malaria-free.' },
+    ]
+  },
+  mideast: {
+    label: 'Middle East & Gulf',
+    countries: 'Jordan, Israel, UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, Lebanon, Iraq, Turkey',
+    guides: [
+      { city: 'Abu Dhabi', href: '../guides/Abu-Dhabi/abu-dhabi.html' },
+      { city: 'Doha', href: '../guides/Doha/doha.html' },
+      { city: 'Dubai', href: '../guides/Dubai/dubai.html' },
+      { city: 'Istanbul', href: '../guides/Istanbul/istanbul.html' },
+      { city: 'Muscat', href: '../guides/Muscat/muscat.html' },
+      { city: 'Petra', href: '../guides/Petra/petra.html' }
+    ],
+    cards: [
+      { type:'req', name:'Meningococcal (MenACWY)', badge:'Required for Saudi Arabia', note:'<strong>Mandatory for Hajj and Umrah pilgrims</strong> entering Saudi Arabia — the Saudi government requires proof of MenACWY vaccination issued within the past 3 years. Strongly recommended for any large group travel in the region. Single dose.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through food and water across the region. Risk is highest in Lebanon, Iraq, and when eating at local restaurants away from tourist areas. Two doses provide 20+ years of protection.' },
+      { type:'con', name:'Typhoid', badge:'Consider for Lebanon & Iraq', note:'Recommended for Lebanon and Iraq. Lower risk in UAE, Qatar, Bahrain, Israel, and Jordan\'s major tourist destinations (Petra, Amman, Dead Sea). If eating street food or at local markets, vaccination is advisable anywhere in the region.' },
+      { type:'con', name:'Hepatitis B', badge:'Consider for longer stays', note:'Recommended for stays over 1 month or for anyone who might need medical or dental care. 3-dose series; faster 2-dose schedule (Heplisav-B) available.' },
+      { type:'con', name:'Polio (booster)', badge:'Consider — Israel, Yemen & Gaza', note:'Israel, the West Bank and Gaza, and Yemen are on the CDC\'s Global Polio Level 2 notice (updated March 2026). An adult one-time IPV booster is recommended for travelers to these destinations. Check the CDC Global Polio travel notice for current regional guidance.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for camping, desert treks, or travel to rural areas in Jordan, Turkey, and Lebanon. Dog bites are the main vector. Pre-exposure series is 3 doses over 3 weeks.' },
+    ]
+  },
+  'east-asia': {
+    label: 'East Asia',
+    countries: 'Japan, China, South Korea, Taiwan, Hong Kong, Mongolia',
+    guides: [
+      { city: 'Beijing', href: '../guides/Beijing/beijing.html' },
+      { city: 'Chongqing', href: '../guides/Chongqing/chongqing.html' },
+      { city: 'Hong Kong', href: '../guides/Hong-Kong/hong-kong.html' },
+      { city: 'Kyoto', href: '../guides/Kyoto/kyoto.html' },
+      { city: 'Osaka', href: '../guides/Osaka/osaka.html' },
+      { city: 'Seoul', href: '../guides/Seoul/seoul.html' },
+      { city: 'Shanghai', href: '../guides/Shanghai/shanghai.html' },
+      { city: 'Taipei', href: '../guides/Taipei/taipei.html' },
+      { city: 'Tokyo', href: '../guides/Tokyo/tokyo.html' },
+      { city: 'Zhangjiajie', href: '../guides/Zhangjiajie/zhangjiajie.html' }
+    ],
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Standard recommendation for travel to China and Mongolia. Japan, South Korea, Taiwan, and Hong Kong are lower risk but vaccination remains advisable — particularly for extended stays or adventure travel.' },
+      { type:'con', name:'Japanese Encephalitis', badge:'Consider for rural China & rural Japan', note:'Low risk in Tokyo, Osaka, Beijing, Shanghai, Seoul, and most tourist routes. Recommended for extended rural travel in mainland China, rural Japan (especially Kyushu and Okinawa during summer), and rural parts of South Korea. 2-dose series (Ixiaro) over 4 weeks. Mosquito avoidance at dusk is essential in risk areas.' },
+      { type:'con', name:'Typhoid', badge:'Consider for rural China & Mongolia', note:'Low risk in major Chinese cities and Japan. Recommended for rural travel in China, and for any travel to Mongolia where food safety infrastructure is limited.' },
+      { type:'con', name:'Rabies', badge:'Consider for Mongolia', note:'Mongolia has significant dog bite risk, particularly in rural areas. Recommended for any travel outside Ulaanbaatar. Pre-exposure series is 3 doses over 3 weeks.' },
+    ]
+  },
+  'eastern-europe': {
+    label: 'Eastern Europe',
+    countries: 'Poland, Czech Republic, Slovakia, Hungary, Romania, Bulgaria, Baltic states (Estonia, Latvia, Lithuania), Ukraine, Serbia, Croatia, Slovenia, Bosnia',
+    guides: [
+      { city: 'Budapest', href: '../guides/Budapest/budapest.html' },
+      { city: 'Dubrovnik', href: '../guides/Dubrovnik/dubrovnik.html' },
+      { city: 'Kotor', href: '../guides/Kotor/kotor.html' },
+      { city: 'Kraków', href: '../guides/Krak%C3%B3w/krakow.html' },
+      { city: 'Ljubljana', href: '../guides/Ljubljana/ljubljana.html' },
+      { city: 'Prague', href: '../guides/Prague/prague.html' },
+      { city: 'Split', href: '../guides/Split/split.html' },
+      { city: 'Tallinn', href: '../guides/Tallinn/tallinn.html' },
+      { city: 'Tbilisi', href: '../guides/Tbilisi/tbilisi.html' }
+    ],
+    cards: [
+      { type:'rec', name:'Tick-Borne Encephalitis (TBE)', badge:'Recommended for forested areas', note:'<strong>A significant risk in forested areas of Central and Eastern Europe</strong> from spring through autumn (April–October). Risk is highest in Poland, Czech Republic, Slovakia, Baltic states, Austria, and parts of Germany. Spread by tick bites. 3-dose primary series (0, 1–3 months, 9–12 months) or an accelerated 3-dose schedule. <strong>Tick checks after any woodland walk are essential</strong> — the vaccine reduces severity but tick avoidance matters too.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Recommended for travel to the Balkans (Serbia, Bosnia, Romania, Bulgaria, North Macedonia) and Ukraine. Lower risk in Czech Republic, Poland, Baltic states, and EU member states with strong water infrastructure.' },
+      { type:'con', name:'Polio (booster)', badge:'Consider — Germany & Poland', note:'Germany and Poland are on the CDC\'s Global Polio Level 2 notice (updated March 2026), based on wastewater detection of poliovirus. No widespread clinical cases, but the CDC recommends ensuring an adult IPV booster is up to date before travel. An adult one-time booster provides lifelong protection if your childhood series was complete.' },
+      { type:'con', name:'Rabies', badge:'Consider for rural stays', note:'Dog and fox bite risk in parts of Eastern Europe, especially Romania, Ukraine, and the Balkans. Recommended for extended rural travel or camping. Pre-exposure series is 3 doses over 3 weeks.' },
+    ]
+  },
+  'central-asia': {
+    label: 'Central Asia',
+    countries: 'Kazakhstan, Uzbekistan, Kyrgyzstan, Tajikistan, Turkmenistan',
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Food and water risk is significant across the region — water infrastructure outside major cities is unreliable. Two doses provide 20+ years of protection.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for all destinations in Central Asia. Risk is high when eating outside large hotels. Single injection at least 2 weeks before departure.' },
+      { type:'rec', name:'Tick-Borne Encephalitis (TBE)', badge:'Recommended for spring/summer', note:'Risk is present in forested and mountainous areas of Kazakhstan and Kyrgyzstan, particularly the Tian Shan range. April through October is the active tick season. 3-dose series or accelerated schedule.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for travel to rural areas, trekking, or cycling. Dog bites are the main risk. Medical care may be several hours away in remote mountain regions — the pre-exposure series is particularly important here.' },
+    ]
+  },
+  pacific: {
+    label: 'Pacific Islands',
+    countries: 'Fiji, Samoa, Tonga, Vanuatu, Solomon Islands, Papua New Guinea, Micronesia, Palau, Cook Islands, Kiribati',
+    guides: [
+      { city: 'Bora Bora', href: '../guides/Bora-Bora/bora-bora.html' }
+    ],
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Standard recommendation for travel to Pacific island nations. Food and water safety varies significantly outside major resort areas. Two doses provide 20+ years of protection.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for Papua New Guinea and the Solomons in particular. Lower risk in Fiji\'s resort areas but advisable if traveling beyond Nadi or eating at local restaurants.' },
+      { type:'med', name:'Malaria (medication)', badge:'Prescription — Papua New Guinea & Solomons', note:'<strong>Papua New Guinea and the Solomon Islands have high malaria transmission</strong> — prescription antimalarials (atovaquone-proguanil or doxycycline) are strongly recommended. Fiji, Samoa, Tonga, Palau, and most smaller Pacific tourist destinations are malaria-free.' },
+      { type:'con', name:'Dengue (Qdenga)', badge:'Consider if previously infected', note:'Dengue outbreaks occur periodically across Pacific island nations, including Fiji and Samoa. DEET and long sleeves are the primary prevention; Qdenga (2 doses, 3 months apart) is available abroad where approved — most guidelines recommend it only for those with prior confirmed dengue infection.' },
+      { type:'con', name:'Chikungunya (IXCHIQ / Vimkunya)', badge:'Consider for outbreak destinations', note:'Two FDA-approved chikungunya vaccines are available: <strong>Vimkunya</strong> (single dose, ages 12+) for travelers to countries with an active outbreak; <strong>IXCHIQ</strong> (single dose, ages 18+) for extended stays in high-risk areas. Chikungunya outbreaks have occurred across Pacific island nations — check CDC outbreak alerts before travel. DEET and long sleeves remain essential.' },
+      { type:'con', name:'Japanese Encephalitis', badge:'Consider for PNG rural stays', note:'Risk is present in rural Papua New Guinea. Recommended for extended rural travel or fieldwork. 2-dose series over 4 weeks.' },
+      { type:'con', name:'Rabies', badge:'Consider for PNG', note:'Rabies is present in Papua New Guinea. Recommended for any travel to rural areas or wildlife-heavy settings. Pre-exposure series is 3 doses over 3 weeks.' },
+    ]
+  },
+  australia: {
+    label: 'Australia & New Zealand',
+    countries: 'Australia, New Zealand',
+    guides: [
+      { city: 'Melbourne', href: '../guides/Melbourne/melbourne.html' },
+      { city: 'Queenstown', href: '../guides/Queenstown/queenstown.html' },
+      { city: 'Sydney', href: '../guides/Sydney/sydney.html' },
+      { city: 'Wellington', href: '../guides/Wellington/wellington.html' }
+    ],
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Standard recommendation for most international travel. Risk in Australia and New Zealand is very low — comparable to Western Europe — but vaccination remains advisable as a baseline for any international trip.' },
+      { type:'con', name:'Hepatitis B', badge:'Consider for longer stays', note:'Standard recommendation for extended stays (over 1 month) or for anyone who might need medical or dental care abroad. 3-dose series or faster 2-dose schedule.' },
+    ]
+  },
+  europe: {
+    label: 'Western Europe',
+    countries: 'France, Italy, Spain, Germany, UK, Portugal, Greece, Netherlands, Scandinavia, Switzerland, Austria, Belgium, Ireland',
+    guides: [
+      { city: 'Aix-en-Provence', href: '../guides/Aix-en-Provence/aix-en-provence.html' },
+      { city: 'Alesund', href: '../guides/Alesund/alesund.html' },
+      { city: 'Amalfi', href: '../guides/Amalfi/amalfi.html' },
+      { city: 'Amsterdam', href: '../guides/Amsterdam/amsterdam.html' },
+      { city: 'Annecy', href: '../guides/Annecy/annecy.html' },
+      { city: 'Athens', href: '../guides/Athens/athens.html' },
+      { city: 'Azores', href: '../guides/Azores/azores.html' },
+      { city: 'Barcelona', href: '../guides/Barcelona/barcelona.html' },
+      { city: 'Bergen', href: '../guides/Bergen/bergen.html' },
+      { city: 'Berlin', href: '../guides/Berlin/berlin.html' },
+      { city: 'Bilbao', href: '../guides/Bilbao/bilbao.html' },
+      { city: 'Bologna', href: '../guides/Bologna/bologna.html' },
+      { city: 'Bordeaux', href: '../guides/Bordeaux/bordeaux.html' },
+      { city: 'Bruges', href: '../guides/Bruges/bruges.html' },
+      { city: 'Brussels', href: '../guides/Brussels/brussels.html' },
+      { city: 'Cambridge', href: '../guides/Cambridge/cambridge.html' },
+      { city: 'Cannes', href: '../guides/Cannes/cannes.html' },
+      { city: 'Capri', href: '../guides/Capri/capri.html' },
+      { city: 'Cascais', href: '../guides/Cascais/cascais.html' },
+      { city: 'Cinque Terre', href: '../guides/Cinque-Terre/cinque-terre.html' },
+      { city: 'Colmar', href: '../guides/Colmar/colmar.html' },
+      { city: 'Cologne', href: '../guides/Cologne/cologne.html' },
+      { city: 'Copenhagen', href: '../guides/Copenhagen/copenhagen.html' },
+      { city: 'Corfu', href: '../guides/Corfu/corfu.html' },
+      { city: 'Crete', href: '../guides/Crete/crete.html' },
+      { city: 'Dublin', href: '../guides/Dublin/dublin.html' },
+      { city: 'Edinburgh', href: '../guides/Edinburgh/edinburgh.html' },
+      { city: 'Florence', href: '../guides/Florence/florence.html' },
+      { city: 'Frankfurt', href: '../guides/Frankfurt/frankfurt.html' },
+      { city: 'Geneva', href: '../guides/Geneva/geneva.html' },
+      { city: 'Glasgow', href: '../guides/Glasgow/glasgow.html' },
+      { city: 'Gothenburg', href: '../guides/Gothenburg/gothenburg.html' },
+      { city: 'Hamburg', href: '../guides/Hamburg/hamburg.html' },
+      { city: 'Helsinki', href: '../guides/Helsinki/helsinki.html' },
+      { city: 'Lagos', href: '../guides/Lagos/lagos.html' },
+      { city: 'Lake Como', href: '../guides/Lake-Como/lake-como.html' },
+      { city: 'Lecce', href: '../guides/Lecce/lecce.html' },
+      { city: 'Lille', href: '../guides/Lille/lille.html' },
+      { city: 'Lisbon', href: '../guides/Lisbon/lisbon.html' },
+      { city: 'London', href: '../guides/London/london.html' },
+      { city: 'Lucerne', href: '../guides/Lucerne/lucerne.html' },
+      { city: 'Luxembourg', href: '../guides/Luxembourg/luxembourg.html' },
+      { city: 'Lyon', href: '../guides/Lyon/lyon.html' },
+      { city: 'Madeira', href: '../guides/Madeira/madeira.html' },
+      { city: 'Madrid', href: '../guides/Madrid/madrid.html' },
+      { city: 'Malaga', href: '../guides/Malaga/malaga.html' },
+      { city: 'Marktoberdorf', href: '../guides/Marktoberdorf/marktoberdorf.html' },
+      { city: 'Marseille', href: '../guides/Marseille/marseille.html' },
+      { city: 'Milan', href: '../guides/Milan/milan.html' },
+      { city: 'Monaco', href: '../guides/Monaco/monaco.html' },
+      { city: 'Munich', href: '../guides/Munich/munich.html' },
+      { city: 'Mykonos', href: '../guides/Mykonos/mykonos.html' },
+      { city: 'Naples', href: '../guides/Naples/naples.html' },
+      { city: 'Nice', href: '../guides/Nice/nice.html' },
+      { city: 'Oslo', href: '../guides/Oslo/oslo.html' },
+      { city: 'Oxford', href: '../guides/Oxford/oxford.html' },
+      { city: 'Paris', href: '../guides/Paris/paris.html' },
+      { city: 'Pisa', href: '../guides/Pisa/pisa.html' },
+      { city: 'Porto', href: '../guides/Porto/porto.html' },
+      { city: 'Reykjavik', href: '../guides/Reykjavik/reykjavik.html' },
+      { city: 'Rhodes', href: '../guides/Rhodes/rhodes.html' },
+      { city: 'Rome', href: '../guides/Rome/rome.html' },
+      { city: 'Salzburg', href: '../guides/Salzburg/salzburg.html' },
+      { city: 'San Sebastian', href: '../guides/San-Sebastian/san-sebastian.html' },
+      { city: 'Santorini', href: '../guides/Santorini/santorini.html' },
+      { city: 'Sardinia', href: '../guides/Sardinia/sardinia.html' },
+      { city: 'Seville', href: '../guides/Seville/seville.html' },
+      { city: 'Sicily', href: '../guides/Sicily/sicily.html' },
+      { city: 'Siena', href: '../guides/Siena/siena.html' },
+      { city: 'Sintra', href: '../guides/Sintra/sintra.html' },
+      { city: 'Sorrento', href: '../guides/Sorrento/sorrento.html' },
+      { city: 'Stockholm', href: '../guides/Stockholm/stockholm.html' },
+      { city: 'Strasbourg', href: '../guides/Strasbourg/strasbourg.html' },
+      { city: 'Stuttgart', href: '../guides/Stuttgart/stuttgart.html' },
+      { city: 'Tenerife', href: '../guides/Tenerife/tenerife.html' },
+      { city: 'Toledo', href: '../guides/Toledo/toledo.html' },
+      { city: 'Tromso', href: '../guides/Tromso/tromso.html' },
+      { city: 'Turin', href: '../guides/Turin/turin.html' },
+      { city: 'Valletta', href: '../guides/Valletta/valletta.html' },
+      { city: 'Venice', href: '../guides/Venice/venice.html' },
+      { city: 'Verona', href: '../guides/Verona/verona.html' },
+      { city: 'Vienna', href: '../guides/Vienna/vienna.html' },
+      { city: 'Zakynthos', href: '../guides/Zakynthos/zakynthos.html' },
+      { city: 'Zurich', href: '../guides/Zurich/zurich.html' }
+    ],
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Standard baseline recommendation for most international travel. Risk in Western Europe is low — comparable to the US — but vaccination remains advisable for extended trips or adventure travel.' },
+      { type:'con', name:'Tick-Borne Encephalitis (TBE)', badge:'Consider for forested areas in Germany/Austria', note:'A real but localized risk in forested regions of <strong>Bavaria, Baden-Württemberg, and most of Austria</strong> during spring through autumn. Also present in Switzerland and parts of Scandinavia. Risk is essentially zero in cities and non-forested areas. 3-dose series or accelerated schedule available. Tick checks after woodland walks are the first line of defense.' },
+    ]
+  }
+};
+
+var ROUTINE = [
+  { name:'MMR', sub:'Measles · Mumps · Rubella' },
+  { name:'Flu', sub:'Annual — all travelers' },
+  { name:'COVID-19', sub:'Shared clinical decision-making — discuss with your doctor' },
+  { name:'Tdap', sub:'Tetanus · Diphtheria · Pertussis' },
+  { name:'Chickenpox', sub:'If not previously vaccinated' },
+  { name:'Hepatitis B', sub:'Most international travel' },
+  { name:'RSV', sub:'Adults 75+ · Ages 50–74 at high risk' },
+  { name:'Shingles (Shingrix)', sub:'Adults 50+ — 2 doses' },
+  { name:'Pneumococcal', sub:'Adults 65+ or immunocompromised' },
+];
+
+function cardHTML(c) {
+  return '<div class="vc-card ' + c.type + '">' +
+    '<div class="vc-left"><div class="vc-name">' + c.name + '</div><div class="vc-badge">' + c.badge + '</div></div>' +
+    '<div class="vc-note">' + c.note + '</div>' +
+    '</div>';
+}
+
+function renderAll() {
+  var html = '<div class="section-label">Required for entry — some destinations</div><div class="vc-grid">';
+  html += cardHTML({ type:'req', name:'Yellow Fever', badge:'Required for entry', note:'<strong>Required for entry to most of sub-Saharan Africa and Bolivia.</strong> Also required by Brazil for entry into Amazon states. Needed for any traveler arriving from an endemic country. Must be given at a certified travel clinic. One dose — lasts for life. Carry the International Certificate of Vaccination (yellow card).' });
+  html += cardHTML({ type:'req', name:'Meningococcal (MenACWY)', badge:'Required for Saudi Arabia', note:'<strong>Mandatory for Hajj and Umrah pilgrims</strong> entering Saudi Arabia. Also strongly recommended for the African meningitis belt (Senegal to Ethiopia) — a wide band of West and Central Africa where seasonal outbreaks peak December–June. Single dose.' });
+  html += '</div>';
+  html += '<div class="section-label">Recommended for most international travel</div><div class="vc-grid">';
+  html += cardHTML({ type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through contaminated food and water worldwide. Recommended for travel to any non-Western destination. Two doses provide 20+ years of protection. First dose can be given as close as 2 weeks before departure.' });
+  html += cardHTML({ type:'rec', name:'Hepatitis B', badge:'Recommended', note:'Recommended for most international travel, especially trips over 1 month or to destinations with limited medical infrastructure. Spread through blood, bodily fluids, and contaminated medical equipment. 3-dose series (0, 1, 6 months); faster 2-dose schedule (Heplisav-B) gives full protection in 1 month.' });
+  html += cardHTML({ type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for South and Southeast Asia, sub-Saharan Africa, North Africa, Latin America, and the Middle East — especially if eating at local restaurants or street food. India and Nepal have among the highest typhoid rates worldwide. Single injection (effective in 2 weeks) or 4-dose oral course.' });
+  html += '</div>';
+  html += '<div class="section-label">Prescription medication</div><div class="vc-grid">';
+  html += cardHTML({ type:'med', name:'Malaria (medication)', badge:'Prescription required', note:'No vaccine for travelers. <strong>Prescription antimalarials are essential for sub-Saharan Africa</strong> and strongly recommended for parts of Southeast Asia, South Asia, the Amazon basin, and Papua New Guinea. Options: atovaquone-proguanil (Malarone), doxycycline, or mefloquine. See a travel doctor at least 4–6 weeks before departure. Use DEET 30%+ and permethrin-treated clothing.' });
+  html += '</div>';
+  html += '<div class="section-label">Consider based on destination &amp; activities</div><div class="vc-grid">';
+  html += cardHTML({ type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for safari travel, hiking, cycling, camping, or any trip where you\'ll be more than a few hours from emergency medical care. Dog, bat, and monkey bites are the main risks. Pre-exposure series is 3 doses over 3 weeks. Seek care immediately after any animal bite regardless of vaccination status.' });
+  html += cardHTML({ type:'con', name:'Japanese Encephalitis', badge:'Consider for rural Asia', note:'Recommended for stays of more than a month in rural parts of Southeast Asia, South Asia, or East Asia — or for significant outdoor activity at dusk. Low risk in Bangkok, Bali resort areas, Singapore, Tokyo, and most major cities. 2-dose series (Ixiaro) over 4 weeks — start early.' });
+  html += cardHTML({ type:'con', name:'Tick-Borne Encephalitis (TBE)', badge:'Consider for Eastern/Central Europe', note:'A real risk in forested areas of Poland, Czech Republic, Baltic states, Austria, Bavaria, Switzerland, and parts of Scandinavia and Central Asia — spring through autumn (April–October). Spread by tick bites. 3-dose primary series or an accelerated schedule. Tick checks after woodland walks are essential.' });
+  html += cardHTML({ type:'con', name:'Dengue (Qdenga)', badge:'Consider if previously infected', note:'Qdenga (TAK-003, approved 2023 in the EU, UK, and many endemic countries) covers all 4 dengue serotypes — not FDA-approved in the US. Most international travel medicine guidelines recommend it only for those with a prior laboratory-confirmed dengue infection. 2 doses, 3 months apart. Relevant for Southeast Asia, Latin America, Caribbean, and Pacific islands. DEET and long sleeves during daytime remain essential.' });
+  html += cardHTML({ type:'con', name:'Chikungunya (IXCHIQ / Vimkunya)', badge:'Consider for outbreak destinations', note:'Two FDA-approved chikungunya vaccines are now available: <strong>Vimkunya</strong> (single dose, ages 12+) for travelers to countries with an active outbreak; <strong>IXCHIQ</strong> (single dose, ages 18+) for extended stays (6+ months) in high-risk tropical areas. Relevant for travel to sub-Saharan Africa, South/Southeast Asia, Latin America, and the Caribbean. Check CDC outbreak alerts before travel — risk peaks during and after rainy seasons. DEET and long sleeves remain essential.' });
+  html += cardHTML({ type:'con', name:'Mpox (Jynneos)', badge:'Consider for Central &amp; East Africa', note:'<strong>CDC recommends Jynneos vaccination</strong> for travelers to countries with active clade I mpox outbreaks (CDC Level 2 notice): DRC, Uganda, Rwanda, Burundi, Republic of Congo, CAR, Kenya, Tanzania, and Zambia. 2-dose series (28 days apart); start at least 6 weeks before departure. Recommended for anyone with anticipated close-contact exposure during travel. Source: CDC HAN-00516.' });
+  html += cardHTML({ type:'con', name:'Polio (booster)', badge:'Consider — global advisory', note:'The CDC\'s Global Polio Level 2 notice (updated March 2026) covers 30+ countries, including <strong>Pakistan and Afghanistan</strong> (wild poliovirus), large parts of <strong>sub-Saharan Africa</strong>, <strong>Germany and Poland</strong> (wastewater detection), <strong>Israel</strong>, West Bank/Gaza, Yemen, and <strong>Laos</strong>. An adult one-time IPV booster is recommended for anyone traveling to any listed country who has not had one. Check the CDC Global Polio travel notice for the current country list.' });
+  html += cardHTML({ type:'con', name:'Cholera', badge:'Consider for aid/relief travel', note:'Not generally needed for standard tourism. Recommended for aid workers, healthcare volunteers, and travelers to areas with active outbreaks (Bangladesh, parts of East Africa, refugee settings). Oral vaccine: Vaxchora (single dose) or Dukoral (2 doses, 1–6 weeks apart).' });
+  html += '</div>';
+  html += '<div class="section-label">Routine vaccines — update before any trip</div><div class="routine-grid">';
+  ROUTINE.forEach(function(r) {
+    html += '<div class="routine-chip">' + r.name + '<span>' + r.sub + '</span></div>';
+  });
+  html += '</div>';
+  html += '<div class="info-bar"><strong>Timing:</strong> Visit a travel clinic at least <strong>4–6 weeks before departure</strong>. Some vaccines (Japanese Encephalitis, TBE, full Hepatitis B series) require multiple doses spread over weeks. Multi-dose series can sometimes be accelerated — ask your travel doctor if time is short.</div>';
+  html += '<div class="info-bar"><strong>Where to go:</strong> Travel clinics are at most CVS and Walgreens pharmacies without a referral. Yellow Fever can only be given at certified clinics; TBE is less widely stocked — call ahead. CDC destination tool: <a href="https://wwwnc.cdc.gov/travel" target="_blank" rel="noopener">wwwnc.cdc.gov/travel</a>.</div>';
+  html += '<div class="info-bar"><strong>Documentation:</strong> Carry the International Certificate of Vaccination (yellow card) for any trip to sub-Saharan Africa, South America, or Saudi Arabia — border officials check it for Yellow Fever and Meningococcal. Digital records are not universally accepted at border crossings.</div>';
+  return html;
+}
+
+function renderRegion(key) {
+  var r = REGIONS[key];
+  if (!r) return '';
+  var html = '<div class="dest-header">' + r.label + '</div>';
+  html += '<div class="dest-countries">' + r.countries + '</div>';
+  if (r.guides && r.guides.length) {
+    html += '<div class="region-guides">';
+    html += '<div class="region-guides-toggle"><span class="chev">&#8250;</span> Guides in this region (' + r.guides.length + ')</div>';
+    html += '<div class="region-guides-body"><div class="guide-pills">';
+    r.guides.forEach(function(g) { html += '<a class="guide-pill" href="' + g.href + '">' + g.city + '<span class="guide-pill-chev">&#8250;</span></a>'; });
+    html += '</div></div>';
+    html += '</div>';
+  }
+  html += '<div class="vc-grid">';
+  r.cards.forEach(function(c) { html += cardHTML(c); });
+  html += '</div>';
+  return html;
+}
+
+var allPanel = document.getElementById('all-panel');
+var destPanel = document.getElementById('dest-panel');
+allPanel.innerHTML = renderAll();
+
+/* ── Tier filter ─────────────────────────────────────────────────────────────
+   Same contract as Disney-Parks' filterCat and Tap-Water's filterStatus: one
+   tier at a time, clicking the active pill clears it, and picking a tier clears
+   the text search. Counts are recomputed whenever the visible set changes — a
+   region selection adds that region's cards, so the numbers follow. */
+var activeTier = null;
+
+function tierCounts() {
+  ['req', 'rec', 'con', 'med'].forEach(function (t) {
+    var el = document.getElementById('cnt-' + t);
+    if (el) el.textContent = document.querySelectorAll('#main-ui .vc-card.' + t).length;
+  });
+}
+
+function applyTier() {
+  document.querySelectorAll('#main-ui .vc-card').forEach(function (c) {
+    c.classList.toggle('tier-off', !!activeTier && !c.classList.contains(activeTier));
+  });
+  /* A grid with nothing left to show goes, and so does the section label above
+     it — otherwise the page fills with headings over empty space. */
+  document.querySelectorAll('#main-ui .vc-grid').forEach(function (g) {
+    var empty = !g.querySelector('.vc-card:not(.tier-off)');
+    g.classList.toggle('tier-off', empty);
+    var lbl = g.previousElementSibling;
+    if (lbl && lbl.classList.contains('section-label')) lbl.classList.toggle('tier-off', empty);
+  });
+  /* Routine vaccines carry no tier — they are not one of the four, so they are
+     out of scope while a tier is selected. */
+  var rg = document.querySelector('#main-ui .routine-grid');
+  if (rg) {
+    rg.classList.toggle('tier-off', !!activeTier);
+    var rl = rg.previousElementSibling;
+    if (rl && rl.classList.contains('section-label')) rl.classList.toggle('tier-off', !!activeTier);
+  }
+}
+
+function filterTier(btn, tier) {
+  var input = document.getElementById('vc-search');
+  if (input && input.value) { input.value = ''; input.dispatchEvent(new Event('input')); }
+  activeTier = (activeTier === tier) ? null : tier;
+  document.querySelectorAll('#tier-pills .pill').forEach(function (p) {
+    p.classList.toggle('active', p.dataset.filter === activeTier);
+  });
+  applyTier();
+}
+
+tierCounts();
+
+document.getElementById('region-bar').addEventListener('click', function(e) {
+  var pill = e.target.closest('.rpill');
+  if (!pill) return;
+  document.querySelectorAll('.rpill').forEach(function(p) { p.classList.remove('active'); });
+  pill.classList.add('active');
+  var region = pill.dataset.region;
+  if (region === 'all') {
+    destPanel.classList.add('hidden');
+    destPanel.innerHTML = '';
+  } else {
+    destPanel.innerHTML = renderRegion(region);
+    destPanel.classList.remove('hidden');
+    destPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  tierCounts();
+  applyTier();
+});
+
+destPanel.addEventListener('click', function(e) {
+  var toggle = e.target.closest('.region-guides-toggle');
+  if (!toggle) return;
+  toggle.classList.toggle('open');
+  toggle.nextElementSibling.classList.toggle('open');
+});
+
+var ALL_SEARCH = [
+  { name:'Routine vaccines', dest:'All destinations', note:'MMR, flu, COVID-19, Tdap, chickenpox, Hepatitis B, RSV (adults 75+ and 50–74 at high risk), and shingles (50+) — be up to date before any international travel.' },
+  { name:'Hepatitis A', dest:'Most non-Western destinations', note:'Recommended for Mexico, Central and South America, the Caribbean, Africa, Asia, Eastern Europe, and the Middle East. Two doses provide 20+ years of protection.' },
+  { name:'Hepatitis B', dest:'Most international travel', note:'Recommended for most international travel, especially trips over 1 month. 3-dose series; faster 2-dose schedule (Heplisav-B) available.' },
+  { name:'Typhoid', dest:'South/Southeast Asia · Africa · Latin America', note:'Recommended for India, Nepal, Southeast Asia, sub-Saharan Africa, North Africa, and parts of Latin America. Single injection or 4-dose oral course.' },
+  { name:'Yellow Fever', dest:'Sub-Saharan Africa · South America', note:'Required for entry to most of sub-Saharan Africa and Bolivia. Proof of vaccination required on arrival. Certified travel clinics only. One dose — lasts for life.' },
+  { name:'Malaria', dest:'Sub-Saharan Africa · Southeast Asia · Latin America · Pacific', note:'No vaccine for travelers. Prescription medication (atovaquone-proguanil, doxycycline, or mefloquine) required. See a travel doctor 4–6 weeks before departure.' },
+  { name:'Japanese Encephalitis', dest:'Rural Southeast Asia · China · India · Pacific', note:'Recommended for rural Asia stays over one month or significant outdoor time. Low risk on urban tourist routes. 2-dose series (Ixiaro) over 4 weeks.' },
+  { name:'Rabies', dest:'Adventure travel · rural areas globally', note:'Recommended for hikers, cyclists, safari travelers, and anyone far from urban medical care. 3-dose pre-exposure series. Seek care immediately after any animal bite.' },
+  { name:'Meningococcal', dest:'Sub-Saharan Africa meningitis belt · Saudi Arabia (Hajj)', note:'Required for Hajj/Umrah in Saudi Arabia. Essential for the African meningitis belt (Senegal to Ethiopia). Single dose of MenACWY.' },
+  { name:'Tick-Borne Encephalitis', dest:'Eastern Europe · Central Europe · Central Asia · Scandinavia', note:'Recommended for forested areas of Poland, Czech Republic, Baltic states, Austria, Bavaria, Switzerland, and parts of Scandinavia — spring through autumn. 3-dose series.' },
+  { name:'Polio', dest:'Global — Pakistan · Africa · Laos · Germany · Poland · Israel · more', note:'CDC Global Polio Level 2 notice (March 2026) covers 30+ countries. Adult IPV booster recommended for any destination on the list. Includes Pakistan/Afghanistan (wild poliovirus), 18+ African countries, Laos, Germany and Poland (wastewater), and Israel, West Bank/Gaza, Yemen. Check the CDC Global Polio travel notice.' },
+  { name:'Dengue', dest:'Southeast Asia · Latin America · Caribbean · Pacific', note:'Qdenga (TAK-003, 2023) covers all 4 dengue serotypes — not FDA-approved in the US; available abroad. Most guidelines recommend it only for those with prior confirmed dengue infection. 2 doses, 3 months apart. DEET and long sleeves remain essential.' },
+  { name:'Chikungunya', dest:'Sub-Saharan Africa · Southeast Asia · South Asia · Latin America · Caribbean', note:'Two FDA-approved vaccines: Vimkunya (single dose, ages 12+) for travelers to countries with active chikungunya outbreaks; IXCHIQ (single dose, ages 18+) for extended stays in high-risk tropical areas. Check CDC outbreak alerts before travel. DEET and long sleeves remain essential.' },
+  { name:'Mpox', dest:'DRC · Central Africa · East Africa · Kenya · Tanzania · Zambia', note:'CDC recommends Jynneos (2 doses, 28 days apart) for travelers to countries with active clade I mpox outbreaks — DRC, Uganda, Rwanda, Burundi, Republic of Congo, CAR, Kenya, Tanzania, and Zambia. Start at least 6 weeks before departure. Source: CDC HAN-00516.' },
+  { name:'Jynneos', dest:'DRC · Central Africa · East Africa · Kenya · Tanzania · Zambia', note:'Jynneos (mpox vaccine, 2 doses, 28 days apart) recommended for travel to the DRC, Uganda, Rwanda, Burundi, Republic of Congo, CAR, Kenya, Tanzania, and Zambia — all with active clade I mpox outbreaks. Start at least 6 weeks before departure.' },
+  { name:'Cholera', dest:'Bangladesh · East Africa · humanitarian travel', note:'Oral vaccine (Vaxchora/Dukoral) recommended for aid workers and healthcare volunteers in areas with active outbreaks. Not generally needed for standard tourism.' },
+];
+
+var searchInput = document.getElementById('vc-search');
+var searchPanel = document.getElementById('search-panel');
+var mainUI = document.getElementById('main-ui');
+var noResults = document.getElementById('no-results');
+var searchRows = document.getElementById('search-rows');
+
+searchInput.addEventListener('input', function() {
+  var q = searchInput.value.trim().toLowerCase();
+  var pillRow = document.getElementById('tier-pills');
+  if (!q) {
+    searchPanel.classList.remove('active');
+    mainUI.classList.remove('hidden');
+    noResults.style.display = 'none';
+    if (pillRow) pillRow.classList.remove('tier-off');
+    return;
+  }
+  /* Searching replaces the whole tiered list with flat result rows, so a tier
+     filter has nothing to act on — drop it and hide the row while search is on
+     (same mutual exclusion Disney-Parks uses between its search and pills). */
+  activeTier = null;
+  document.querySelectorAll('#tier-pills .pill').forEach(function (p) { p.classList.remove('active'); });
+  applyTier();
+  if (pillRow) pillRow.classList.add('tier-off');
+  searchPanel.classList.add('active');
+  mainUI.classList.add('hidden');
+  var matches = ALL_SEARCH.filter(function(r) {
+    return (r.name + r.dest + r.note).toLowerCase().indexOf(q) !== -1;
+  });
+  noResults.style.display = matches.length === 0 ? 'block' : 'none';
+  searchRows.innerHTML = matches.map(function(r) {
+    return '<div class="search-row match"><div class="sr-name">' + r.name + '</div><div class="sr-dest">' + r.dest + '</div><div class="sr-note">' + r.note + '</div></div>';
+  }).join('');
+});
+</script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('vc-search'); if(!input) return;
+  var all=window.ALL_SEARCH||[];
+  var blob=all.map(function(r){return (r.name+' '+r.dest+' '+r.note);}).join(' ').toLowerCase();
+  var items=[], seen={};
+  function add(nm,sub){ nm=(nm||'').trim(); if(!nm) return; var k=nm.toLowerCase(); if(seen[k]) return; seen[k]=1; items.push({name:nm,sub:sub}); }
+  all.forEach(function(r){ add(r.name, r.dest); });
+  var regs=window.REGIONS||{};
+  Object.keys(regs).forEach(function(k){
+    var r=regs[k];
+    if(r.label && blob.indexOf(r.label.toLowerCase())>=0) add(r.label,'Destination');
+    (r.countries||'').split(/[,·]/).forEach(function(part){
+      var nm=part.replace(/\([^)]*\)/g,'').replace(/\band\b.*/i,'').trim();
+      if(nm && nm.length>2 && blob.indexOf(nm.toLowerCase())>=0) add(nm,'Destination');
+    });
+  });
+  TVESearch.attach(input,{items:items});
+}());</script>
+</body>
+</html>

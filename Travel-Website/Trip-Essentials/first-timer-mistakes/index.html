@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>First-Timer Mistakes</title>
+<style>
+/* Intro-card CSS intentionally NOT duplicated here — it lives once in
+   web-travel-style.css (SHARED CSS ONLY). A byte-identical copy used to sit in
+   this <style> block, and after the shared rule was updated on 2026-08-12
+   (align-items center -> flex-start, sub 12.5px -> 13px) that copy silently
+   pinned this one page to the old look. Do not paste it back. */
+
+/* ── Controls ── */
+.controls {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  padding: 12px 0 14px; margin: 0 0 20px;
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg);
+}
+.search-wrap { display: flex; justify-content: center; align-self: stretch; }
+.search-wrap input { margin-bottom: 0; }
+.pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.pill {
+  font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; padding: 6px 12px;
+  border: 1px solid var(--border2); border-radius: 6px; background: var(--surface);
+  color: var(--muted, #6a6660); cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, box-shadow .15s;
+  text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+}
+a.pill:visited { color: #6a6660; }
+.pill:hover { border-color: var(--rust); background: var(--bg,#f5f4f0); }
+.pill.active { background: var(--surface,#ffffff); color: var(--rust,#b85c2a); border-color: var(--rust); }
+/* Family-colored rest state — bg + text carry the family; border stays neutral. */
+.pill[data-filter="season"]   { background:#fff8e0; color:#7a5800; }
+.pill[data-filter="base"]     { background:#e8f0fb; color:var(--navy); }
+.pill[data-filter="book"]     { background:#f3e8ff; color:#7c3aed; }
+.pill[data-filter="pace"]     { background:#fdf0e8; color:#7a3a1a; }
+.pill[data-filter="closed"]   { background:#e8f5e8; color:var(--green); }
+.pill[data-filter="distance"] { background:rgba(138,108,26,0.07); color:var(--muted); }
+.pill[data-filter="season"].active,
+.pill[data-filter="base"].active,
+.pill[data-filter="book"].active,
+.pill[data-filter="pace"].active,
+.pill[data-filter="distance"].active,
+.pill[data-filter="closed"].active { background: var(--surface,#ffffff); color: var(--rust,#b85c2a); border-color: var(--rust); }
+
+/* Desktop-only formatting + behavior per Formatting.html#src-desktoppill:
+   36px height, squared touching strip, counts hidden, family bg on rest,
+   terracotta-border page-bg on .active (kills the gradient). */
+@media (min-width: 601px), (pointer: fine) {
+  .pills { gap: 0; }
+  .pills .pill { flex: 1 1 auto; height: 36px; padding: 0 12px; font-size: 13px; font-weight: 500; line-height: 1; border-width: 1.5px; border-radius: 0; margin-left: 0; }
+  .pills .pill-count { display: none; }
+  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); box-shadow: none; color: inherit; }
+  .pills .pill.active,
+  .pills .pill[data-filter="season"].active,
+  .pills .pill[data-filter="base"].active,
+  .pills .pill[data-filter="book"].active,
+  .pills .pill[data-filter="pace"].active,
+  .pills .pill[data-filter="distance"].active,
+  .pills .pill[data-filter="closed"].active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
+}
+
+/* ── Rows ── */
+#no-results { display: none; color: var(--muted); font-size: 13px; margin-bottom: 12px; text-align: center; }
+.region-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); margin: 22px 0 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border2);
+}
+.region-label:first-of-type { margin-top: 4px; }
+.region-label.hidden { display: none; }
+.row-list { display: flex; flex-direction: column; gap: 8px; }
+.fm-row {
+  border: 1px solid var(--border2); border-radius: 8px;
+  padding: 13px 15px; background: var(--surface);
+  display: flex; flex-direction: column; gap: 9px;
+  scroll-margin-top: 120px;
+}
+.fm-row.hidden { display: none; }
+.fm-header { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.fm-city { font-size: 14px; font-weight: 700; color: var(--text); text-decoration: none; }
+.fm-city:visited { color: #3d3a32; text-decoration: none; }
+.fm-city:hover { color: var(--rust); text-decoration: none; }
+.fm-country { font-size: 12px; color: var(--muted); }
+.fm-mistake { display: flex; align-items: flex-start; gap: 9px; }
+.fm-text { font-size: 13px; color: var(--muted); line-height: 1.55; }
+.fm-tag {
+  display: inline-block; flex-shrink: 0;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+  min-width: 104px; text-align: center;
+}
+.ft-season   { background:#fff8e0; color:#7a5800; border:1px solid rgba(122,88,0,0.4); }
+.ft-base     { background:#e8f0fb; color:var(--navy); border:1px solid rgba(26,58,139,0.4); }
+.ft-book     { background:#f3e8ff; color:#7c3aed; border:1px solid rgba(124,58,237,0.4); }
+.ft-pace     { background:#fdf0e8; color:#7a3a1a; border:1px solid rgba(122,58,26,0.4); }
+.ft-closed   { background:#e8f5e8; color:var(--green); border:1px solid rgba(26,90,26,0.4); }
+.ft-distance { background:rgba(138,108,26,0.07); color:var(--muted); border:1px solid rgba(106,102,96,0.4); }
+
+@media (max-width: 600px) and (pointer: coarse) {
+  .search-wrap input { width: 100%; max-width: 100%; }
+  /* Form B glued grid — 3 across, two even rows of 3. 1.5px neutral border with
+     negative margins so adjacent borders overlap into one hairline. */
+  .pills { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; width: 100% !important; }
+  .pill { height: 46px !important; padding: 4px 5px !important; border: 1.5px solid var(--border2, #e6e2da) !important; border-radius: 0 !important; font-size: 13px !important; white-space: normal !important; line-height: 1.12 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
+  .pill-count { display: none !important; }
+  .fm-mistake { flex-direction: column; gap: 5px; }
+  .fm-tag { min-width: 0; }
+}
+@media (prefers-color-scheme: dark) {
+  .pill[data-filter="season"], .ft-season { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+  .pill[data-filter="base"],   .ft-base   { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
+  .pill[data-filter="book"],   .ft-book   { background: #2d1b5e; color: #c084fc; border-color: rgba(192,132,252,.35); }
+  .pill[data-filter="pace"],   .ft-pace   { background: #2a0e00; color: #e07050; border-color: rgba(224,112,80,.35); }
+  .pill[data-filter="closed"], .ft-closed { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+}
+:root[data-theme="dark"] .pill[data-filter="season"], :root[data-theme="dark"] .ft-season { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+:root[data-theme="dark"] .pill[data-filter="base"],   :root[data-theme="dark"] .ft-base   { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
+:root[data-theme="dark"] .pill[data-filter="book"],   :root[data-theme="dark"] .ft-book   { background: #2d1b5e; color: #c084fc; border-color: rgba(192,132,252,.35); }
+:root[data-theme="dark"] .pill[data-filter="pace"],   :root[data-theme="dark"] .ft-pace   { background: #2a0e00; color: #e07050; border-color: rgba(224,112,80,.35); }
+:root[data-theme="dark"] .pill[data-filter="closed"], :root[data-theme="dark"] .ft-closed { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="760" data-updated="2026-08-08"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+  <div class="page-header"><h1>FIRST-TIMER MISTAKES</h1></div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-first-timer"/></svg></div>
+    <div>
+      <div class="page-intro-head">The mistakes first-time visitors make, destination by destination</div>
+      <div class="page-intro-sub">One or two errors visitors reliably make on a first trip to each place — booking the wrong season, staying in the wrong part of town, skipping a reservation that sells out months ahead, cramming too much into a day, or underestimating how far apart things are. Not safety or scams: those live on the Safety Guide. These are the mistakes that cost you a day, not your wallet.</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <input type="search" id="fm-search" class="search-input" placeholder="City or country" aria-label="Search destinations" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="pills tve-glue-m">
+      <button class="pill" data-filter="season"   onclick="filterCat(this,'season')">🟡 Wrong season <span class="pill-count" id="cnt-season"></span></button>
+      <button class="pill" data-filter="base"     onclick="filterCat(this,'base')">🔵 Wrong base <span class="pill-count" id="cnt-base"></span></button>
+      <button class="pill" data-filter="book"     onclick="filterCat(this,'book')">🟣 Book ahead <span class="pill-count" id="cnt-book"></span></button>
+      <button class="pill" data-filter="pace"     onclick="filterCat(this,'pace')">🔴 Over-packed <span class="pill-count" id="cnt-pace"></span></button>
+      <button class="pill" data-filter="distance" onclick="filterCat(this,'distance')">⚫ Distances <span class="pill-count" id="cnt-distance"></span></button>
+      <button class="pill" data-filter="closed"   onclick="filterCat(this,'closed')">🟢 Closing days <span class="pill-count" id="cnt-closed"></span></button>
+    </div>
+  </div>
+
+  <p id="no-results">Nothing matches your search.</p>
+
+  <div class="row-list">
+
+    <div class="region-label">Western Europe</div>
+
+    <div class="fm-row" data-cats="book pace">
+      <div class="fm-header"><a class="fm-city" href="../guides/Paris/paris.html">Paris</a><span class="fm-country">France</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Turning up at the Louvre, Eiffel Tower, or Sainte-Chapelle without a timed slot. All three sell out days ahead in season and the walk-up line can run two hours. Catacombs slots go weeks out.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Stacking the Louvre and Musée d'Orsay into one day. The Louvre alone is a half-day minimum; pairing two major museums means you rush both and enjoy neither.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="base distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/London/london.html">London</a><span class="fm-country">United Kingdom</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Booking near Heathrow or in outer zones to save money. The nightly saving disappears into two hours of daily Tube time — stay in Zone 1 or the near edge of Zone 2.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Reading the Tube map as a real map. It is a schematic and badly distorts distance — Leicester Square to Covent Garden is one stop and a three-minute walk.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season base">
+      <div class="fm-header"><a class="fm-city" href="../guides/Amsterdam/amsterdam.html">Amsterdam</a><span class="fm-country">Netherlands</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Staying on or beside the Red Light District for the central location. It is loud until dawn every night of the week — the Jordaan and De Pijp are ten minutes away and quiet.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking late April for the tulips. Keukenhof peaks mid-April and the bulb fields are usually cut by the first week of May.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="book closed">
+      <div class="fm-header"><a class="fm-city" href="../guides/Barcelona/barcelona.html">Barcelona</a><span class="fm-country">Spain</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Assuming Sagrada Família and Park Güell can be done on the day. Both are capacity-capped timed entry and routinely sell out a week or more ahead in summer.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Planning a big lunch at 12:30. Kitchens mostly open 1:30–4pm and dinner rarely starts before 8:30pm — arriving at Spanish opening times, not your own, changes the whole trip.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Madrid/madrid.html">Madrid</a><span class="fm-country">Spain</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Visiting in August. Madrid regularly sits near 40°C and much of the city — including many of the best restaurants — closes while locals leave.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Treating Toledo, Segovia, and Ávila as one combined day trip. Each is a comfortable half-day from Madrid; all three in a day is six hours of transit.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season closed">
+      <div class="fm-header"><a class="fm-city" href="../guides/Seville/seville.html">Seville</a><span class="fm-country">Spain</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking July or August. Daytime temperatures pass 42°C and sightseeing outdoors becomes genuinely unpleasant — March to May and October are the windows.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Landing during Semana Santa or Feria without knowing. Both are extraordinary to witness, but hotels triple in price and normal sightseeing largely stops.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="pace book">
+      <div class="fm-header"><a class="fm-city" href="../guides/Lisbon/lisbon.html">Lisbon</a><span class="fm-country">Portugal</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Underestimating the hills. Lisbon is built on seven of them and a day that looks flat on a map involves serious climbing — plan roughly two-thirds of what you would elsewhere.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Going to Sintra without a Pena Palace time slot. Entry is timed, the bus queues are long, and unticketed visitors are regularly turned away in summer.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="base distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Porto/porto.html">Porto</a><span class="fm-country">Portugal</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Booking in Vila Nova de Gaia expecting to be "in Porto". It is across the river — fine, and the port lodges are there, but every evening ends with a bridge crossing.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Assuming the Douro Valley is a quick hop. The good stretch is two hours each way by road; it needs a full day or an overnight, not an afternoon.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="closed pace">
+      <div class="fm-header"><a class="fm-city" href="../guides/Dublin/dublin.html">Dublin</a><span class="fm-country">Ireland</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Giving Dublin five days. The core sights are comfortably two — the rest of the trip belongs on the west coast or in Wicklow.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Planning a Sunday around shops and smaller museums. Many keep short Sunday hours or close entirely, and Good Friday still shuts a lot of the city.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Edinburgh/edinburgh.html">Edinburgh</a><span class="fm-country">United Kingdom</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Arriving in August without realising the Fringe is on. The city's population roughly doubles, accommodation prices follow, and anything unbooked is gone.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Planning Loch Ness or Skye as a day trip. Skye is five hours each way — the Highlands need their own two or three days.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="base season">
+      <div class="fm-header"><a class="fm-city" href="../guides/Nice/nice.html">Nice</a><span class="fm-country">France</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Basing in Monaco or Cannes and commuting. Nice has the airport, the rail hub, and the cheapest beds on the coast — everything else is a short train ride from it.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Coming in August, when the whole of France is also on the Riviera. June and September have the same sea temperature and half the crowds.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="closed distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Copenhagen/copenhagen.html">Copenhagen</a><span class="fm-country">Denmark</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Planning around Tivoli in winter or early spring. It closes between seasons and only reopens for set periods — check the calendar before building a day around it.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Not realising Malmö in Sweden is 35 minutes away by train. First-timers repeatedly miss an easy second country on a short trip.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season base">
+      <div class="fm-header"><a class="fm-city" href="../guides/Stockholm/stockholm.html">Stockholm</a><span class="fm-country">Sweden</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking December for the light. Stockholm gets around six hours of daylight in midwinter, and it is dim daylight — June gives you eighteen.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Staying in Gamla Stan for the postcard. It is beautiful, cramped, and empties of locals after dark — Södermalm and Norrmalm are better bases.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="book closed">
+      <div class="fm-header"><a class="fm-city" href="../guides/Vienna/vienna.html">Vienna</a><span class="fm-country">Austria</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Expecting to see the Spanish Riding School or a Musikverein concert on a whim. Both sell out well in advance, and the standing-room tricks only work if you know the timings.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Building a Monday around museums. Several of the big ones close that day, and most shops shut entirely on Sundays.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="pace base">
+      <div class="fm-header"><a class="fm-city" href="../guides/Berlin/berlin.html">Berlin</a><span class="fm-country">Germany</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Treating Berlin like a compact European capital. It is nine times the area of Paris — pick two districts a day, not six sights.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Staying around Alexanderplatz or Potsdamer Platz. Both are transit hubs with little life after work — Kreuzberg, Neukölln, and Prenzlauer Berg are where the city actually is.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="pace book">
+      <div class="fm-header"><a class="fm-city" href="../guides/Prague/prague.html">Prague</a><span class="fm-country">Czech Republic</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Crossing Charles Bridge at midday with everyone else. The same walk at 6am is empty and is the single biggest quality-of-trip difference in Prague.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Leaving the Castle to the day itself. Timed circuits and the changing of the guard both reward a booked slot, and the queues from 10am are long.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season closed">
+      <div class="fm-header"><a class="fm-city" href="../guides/Budapest/budapest.html">Budapest</a><span class="fm-country">Hungary</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Skipping winter because of the cold. The thermal baths are at their best in the snow, and hotel prices are a fraction of summer.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Arriving at a bath at midday on a weekend. Széchenyi and Gellért are packed 11am–5pm; early morning is calm and half-empty.</span></div>
+    </div>
+
+    <div class="region-label">Italy &amp; the Mediterranean</div>
+
+    <div class="fm-row" data-cats="book pace">
+      <div class="fm-header"><a class="fm-city" href="../guides/Rome/rome.html">Rome</a><span class="fm-country">Italy</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Not reserving the Colosseum and Vatican Museums. Both are timed entry, both sell out, and the Vatican walk-up line can exceed three hours in summer.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Putting the Vatican and the Forum on the same day. Each is a half-day on its feet, and doing both means seeing neither properly.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="pace base">
+      <div class="fm-header"><a class="fm-city" href="../guides/Venice/venice.html">Venice</a><span class="fm-country">Italy</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Coming for a day. Venice between 10am and 5pm is a cruise-ship crush; the city only becomes itself in the evening and early morning, so stay the night.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Booking on the mainland in Mestre to save money. It saves real money and costs the entire reason you came — and note the day-tripper access fee on peak dates.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="book closed">
+      <div class="fm-header"><a class="fm-city" href="../guides/Florence/florence.html">Florence</a><span class="fm-country">Italy</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Arriving without Uffizi and Accademia reservations. Unbooked queues run two to three hours in season for both, and the David is a ten-minute visit at the end of it.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Planning a Monday of museums. The Uffizi, Accademia, and several others close on Mondays — make that the Tuscan hill-town day instead.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season base">
+      <div class="fm-header"><a class="fm-city" href="../guides/Santorini/santorini.html">Santorini</a><span class="fm-country">Greece</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Booking Fira or Perissa expecting the caldera view you saw in photos. That view is Oia and the Imerovigli ridge — everywhere else is a bus ride from it.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Going in August, when cruise passengers, heat, and prices all peak together. May, June, and late September are the same island at half the intensity.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season pace">
+      <div class="fm-header"><a class="fm-city" href="../guides/Dubrovnik/dubrovnik.html">Dubrovnik</a><span class="fm-country">Croatia</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Walking the city walls in the middle of the day. There is no shade on the circuit — do it at opening or in the last hour, not at 1pm in July.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking peak summer, when up to four cruise ships dock at once. The Old Town in shoulder season is a genuinely different place.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="base book">
+      <div class="fm-header"><a class="fm-city" href="../guides/Athens/athens.html">Athens</a><span class="fm-country">Greece</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Climbing to the Acropolis at midday in summer. It is timed-entry now, exposed, and frequently closed in the early afternoon during heatwaves — take the first slot.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Booking near Omonia because it looks central on a map. Plaka, Monastiraki, and Koukaki put you within walking distance of everything you came for.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="pace closed">
+      <div class="fm-header"><a class="fm-city" href="../guides/Istanbul/istanbul.html">Istanbul</a><span class="fm-country">Türkiye</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Arriving at the Hagia Sophia or Blue Mosque during prayer. Both restrict visitors around the five daily prayer times, and the Grand Bazaar closes all day Sunday.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Staying only on the Sultanahmet side. Half the city is across the water in Beyoğlu and Kadıköy, and a trip that never crosses misses most of modern Istanbul.</span></div>
+    </div>
+
+    <div class="region-label">Africa &amp; the Middle East</div>
+
+    <div class="fm-row" data-cats="season pace">
+      <div class="fm-header"><a class="fm-city" href="../guides/Cairo/cairo.html">Cairo</a><span class="fm-country">Egypt</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking June through August. Giza in summer regularly passes 40°C with no shade at all — October to April is when the pyramids are pleasant.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Squeezing Giza, Saqqara, and the Egyptian Museum into one day. Cairo traffic alone eats three hours of that plan.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="base distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Marrakech/marrakech.html">Marrakech</a><span class="fm-country">Morocco</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Booking a modern hotel in Gueliz for the amenities. The medina riads are the experience — and a taxi in and out of the old city every day gets old fast.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Buying a one-day Sahara tour. The real dunes at Merzouga are nine hours each way; a day trip gets you the stony Agafay desert instead.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Cape-Town/cape-town.html">Cape Town</a><span class="fm-country">South Africa</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking the northern-hemisphere summer. July is Cape Town's cold, wet winter — December to March is the season, and it books out early.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Assuming a Kruger safari attaches easily to a Cape Town trip. It is a two-hour flight away, not a drive.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="pace season">
+      <div class="fm-header"><a class="fm-city" href="../guides/Petra/petra.html">Petra</a><span class="fm-country">Jordan</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Allowing one day. The Siq to the Treasury is the first twenty minutes of a very large site — the Monastery alone is another 800 steps up.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Visiting in July or August, when the canyon holds the heat. March to May and September to November are the walking seasons.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season closed">
+      <div class="fm-header"><a class="fm-city" href="../guides/Dubai/dubai.html">Dubai</a><span class="fm-country">United Arab Emirates</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking the summer for cheap hotel rates. June to September runs above 45°C with high humidity — outdoors is effectively unusable.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Arriving during Ramadan without planning for it. Daytime eating and drinking in public is restricted and many venues shift hours entirely.</span></div>
+    </div>
+
+    <div class="region-label">Asia</div>
+
+    <div class="fm-row" data-cats="distance base">
+      <div class="fm-header"><a class="fm-city" href="../guides/Tokyo/tokyo.html">Tokyo</a><span class="fm-country">Japan</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Underestimating the scale. Tokyo is a chain of city centres — Shinjuku to Asakusa is 40 minutes, and a day of scattered pins becomes a day on trains.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Buying a Japan Rail Pass for a Tokyo-only trip. It does not cover the metro, and it only pays off once you are doing long Shinkansen legs.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season pace">
+      <div class="fm-header"><a class="fm-city" href="../guides/Kyoto/kyoto.html">Kyoto</a><span class="fm-country">Japan</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking cherry-blossom season without booking a hotel first. Late March to early April sells out months ahead at multiples of the normal rate.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Attempting eight temples a day. Fushimi Inari at 7am and Arashiyama before 8am are transformative; the same places at noon are queues.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="pace closed">
+      <div class="fm-header"><a class="fm-city" href="../guides/Bangkok/bangkok.html">Bangkok</a><span class="fm-country">Thailand</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Planning a day around road transport. Bangkok traffic is genuinely severe — build the day along the BTS Skytrain and the river boats instead.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Arriving at the Grand Palace in shorts. The dress code is enforced, and it closes far earlier than most visitors expect at 3:30pm.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="base pace">
+      <div class="fm-header"><a class="fm-city" href="../guides/Hanoi/hanoi.html">Hanoi</a><span class="fm-country">Vietnam</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Doing Ha Long Bay as a day trip. It is roughly three hours each way, leaving about two hours on the water — an overnight cruise is the point of going.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Staying outside the Old Quarter on a short trip. Hanoi's appeal is street-level and dense; a hotel on a boulevard misses it entirely.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Bali/bali.html">Bali</a><span class="fm-country">Indonesia</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Booking one hotel for the whole trip. Ubud to Uluwatu can take two hours in traffic — split the stay between the south coast and the interior.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking January or February, the wettest months of the rainy season. April to October is dry, and the shoulder months are the best value.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="closed pace">
+      <div class="fm-header"><a class="fm-city" href="../guides/Seoul/seoul.html">Seoul</a><span class="fm-country">South Korea</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Turning up at a palace on its closing day. Gyeongbokgung shuts Tuesdays and Changdeokgung Mondays — check before building the day around one.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Planning Seoul as a daytime city. Much of it — markets, food streets, shopping districts — runs late into the night, so front-load rest, not sights.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season pace">
+      <div class="fm-header"><a class="fm-city" href="../guides/Singapore/singapore.html">Singapore</a><span class="fm-country">Singapore</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Planning long outdoor stretches. The humidity is constant year-round — build the day so the hottest hours land somewhere air-conditioned.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Waiting for a dry season. There isn't one — it rains hard and briefly all year, so plan around afternoon showers rather than avoiding months.</span></div>
+    </div>
+
+    <div class="region-label">The Americas</div>
+
+    <div class="fm-row" data-cats="pace distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/New-York/new-york.html">New York</a><span class="fm-country">United States</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Booking a different neighbourhood every few hours. Twenty blocks is a mile — pick one area a day and walk it properly.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Treating the outer boroughs as far away. Brooklyn and Queens are 20 minutes on the subway and hold a great deal of what makes the city worth the trip.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season base">
+      <div class="fm-header"><a class="fm-city" href="../guides/San-Francisco/san-francisco.html">San Francisco</a><span class="fm-country">United States</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Packing for a Californian summer. July and August are the foggiest, coldest months in the city — September and October are the warm ones.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-base">Wrong base</span><span class="fm-text">Booking at Fisherman's Wharf. It is the least representative part of the city; Hayes Valley, the Mission, and North Beach all put you somewhere real.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="book distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Yellowstone/yellowstone.html">Yellowstone</a><span class="fm-country">United States</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Leaving lodging to the last minute. In-park lodges and campsites open bookings roughly a year out and fill almost immediately for summer.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Underestimating the park. The Grand Loop is 140 miles at 45 mph with wildlife jams — two nights inside beats five days of driving in from a gateway town.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season closed">
+      <div class="fm-header"><a class="fm-city" href="../guides/New-Orleans/new-orleans.html">New Orleans</a><span class="fm-country">United States</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking July or August. It is peak heat, humidity, and hurricane season all at once — February to May is the city at its best.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-closed">Closing days</span><span class="fm-text">Arriving during Mardi Gras or Jazz Fest by accident. Rates multiply, the Quarter is impassable, and normal restaurant bookings vanish.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season book">
+      <div class="fm-header"><a class="fm-city" href="../guides/Banff/banff.html">Banff</a><span class="fm-country">Canada</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Driving to Moraine Lake. Private vehicles are no longer permitted on the access road — you need a shuttle or a licensed operator, booked in advance.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking early June for the turquoise lakes. They are often still frozen — the colour needs late June onward.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="book pace">
+      <div class="fm-header"><a class="fm-city" href="../guides/Cusco/cusco.html">Cusco</a><span class="fm-country">Peru</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Landing and heading straight to Machu Picchu. Cusco sits at 3,400 m — most people need two days to acclimatise before doing anything strenuous.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Assuming Machu Picchu tickets and Inca Trail permits are available on arrival. Permits sell out months ahead and entry is timed by circuit.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="pace season">
+      <div class="fm-header"><a class="fm-city" href="../guides/Rio-de-Janeiro/rio-de-janeiro.html">Rio de Janeiro</a><span class="fm-country">Brazil</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking the northern summer. June to August is Rio's winter — December to March is the beach season, and Carnival prices are their own category.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-pace">Over-packed</span><span class="fm-text">Fixing Sugarloaf and Christ the Redeemer to set dates. Both are pointless in cloud — keep them flexible and go on the clear morning.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="season distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Buenos-Aires/buenos-aires.html">Buenos Aires</a><span class="fm-country">Argentina</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking January. It is high summer and the city empties for the coast — October to December and March to May are far better.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Adding Iguazú as an afternoon. It is a two-hour flight north and needs two nights to be worth the trip.</span></div>
+    </div>
+
+    <div class="region-label">Oceania</div>
+
+    <div class="fm-row" data-cats="distance season">
+      <div class="fm-header"><a class="fm-city" href="../guides/Sydney/sydney.html">Sydney</a><span class="fm-country">Australia</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Adding Uluru or the Great Barrier Reef as a side trip. Both are three-hour-plus flights — Australia is the size of Europe.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking July expecting beach weather. That is winter — December to February is Sydney's summer, and school holidays land inside it.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="book season">
+      <div class="fm-header"><a class="fm-city" href="../guides/Queenstown/queenstown.html">Queenstown</a><span class="fm-country">New Zealand</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Leaving Milford Sound and the big walks to chance. Cruise slots and Great Walk huts both open months ahead and sell out for the season.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Assuming it is a summer destination only. Queenstown is a ski town from June to September, with entirely different pricing and pace.</span></div>
+    </div>
+
+    <div class="fm-row" data-cats="book distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Maui/maui.html">Maui</a><span class="fm-country">United States</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Planning the Road to Hāna and Haleakalā sunrise on the same day. Hāna is a full day of driving on its own, and the summit needs a pre-dawn start.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-book">Book ahead</span><span class="fm-text">Turning up for Haleakalā sunrise without a reservation. Sunrise entry between 3am and 7am requires a permit booked in advance.</span></div>
+    </div>
+
+    <div class="region-label">Iceland &amp; the North</div>
+
+    <div class="fm-row" data-cats="season distance">
+      <div class="fm-header"><a class="fm-city" href="../guides/Reykjavik/reykjavik.html">Reykjavík</a><span class="fm-country">Iceland</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-season">Wrong season</span><span class="fm-text">Booking June for the northern lights. There is no darkness in the Icelandic summer — the aurora season runs roughly September to March.</span></div>
+      <div class="fm-mistake"><span class="fm-tag ft-distance">Distances</span><span class="fm-text">Planning the Ring Road in three days. It is 1,300 km and needs a week — the Golden Circle and south coast are the short-trip versions.</span></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="Before-You-Go.html">Before you go</a>
+    <a class="also-on-this-site-pill" href="when-to-go/">When to go</a>
+    <a class="also-on-this-site-pill" href="Safety-Guide.html">Safety guide</a>
+    <a class="also-on-this-site-pill" href="Neighborhoods.html">Neighborhoods</a>
+    <a class="also-on-this-site-pill" href="Tours-Tickets.html">Tours &amp; tickets</a>
+    <a class="also-on-this-site-pill" href="Airport-Connection-Times.html">Connection times</a>
+  </div>
+</div>
+
+<script>
+var activeFilter = null;
+
+function countRows() {
+  var counts = {};
+  document.querySelectorAll('.fm-row').forEach(function (r) {
+    (r.dataset.cats || '').split(/\s+/).forEach(function (c) {
+      if (!c) return;
+      counts[c] = (counts[c] || 0) + 1;
+    });
+  });
+  ['season','base','book','pace','distance','closed'].forEach(function (c) {
+    var el = document.getElementById('cnt-' + c);
+    if (el) el.textContent = counts[c] || 0;
+  });
+}
+
+/* Hide a region header when every row under it is hidden. */
+function syncRegionLabels() {
+  var labels = document.querySelectorAll('.region-label');
+  labels.forEach(function (label) {
+    var any = false;
+    var node = label.nextElementSibling;
+    while (node && !node.classList.contains('region-label')) {
+      if (node.classList.contains('fm-row') && !node.classList.contains('hidden')) { any = true; break; }
+      node = node.nextElementSibling;
+    }
+    label.classList.toggle('hidden', !any);
+  });
+}
+
+function filterCat(btn, cat) {
+  var rows  = document.querySelectorAll('.fm-row');
+  var pills = document.querySelectorAll('.pill[data-filter]');
+  document.getElementById('fm-search').value = '';
+  if (activeFilter === cat) {
+    activeFilter = null;
+    pills.forEach(function (p) { p.classList.remove('active'); });
+    rows.forEach(function (r) { r.classList.remove('hidden'); });
+  } else {
+    activeFilter = cat;
+    pills.forEach(function (p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    rows.forEach(function (r) {
+      var cats = (r.dataset.cats || '').split(/\s+/);
+      r.classList.toggle('hidden', cats.indexOf(cat) === -1);
+    });
+  }
+  document.getElementById('no-results').style.display = 'none';
+  syncRegionLabels();
+}
+
+(function () {
+  var search = document.getElementById('fm-search');
+  var rows   = document.querySelectorAll('.fm-row');
+  var noRes  = document.getElementById('no-results');
+  search.addEventListener('input', function () {
+    activeFilter = null;
+    document.querySelectorAll('.pill[data-filter]').forEach(function (p) { p.classList.remove('active'); });
+    var q = search.value.trim().toLowerCase();
+    var visible = 0;
+    rows.forEach(function (r) {
+      var show = !q || r.textContent.toLowerCase().indexOf(q) !== -1;
+      r.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+    noRes.style.display = visible === 0 ? '' : 'none';
+    syncRegionLabels();
+  });
+  countRows();
+  syncRegionLabels();
+})();
+</script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function () {
+  if (!window.TVESearch) return;
+  var input = document.getElementById('fm-search');
+  if (!input) return;
+  var items = [], seen = {};
+  document.querySelectorAll('.fm-row').forEach(function (row) {
+    var city    = row.querySelector('.fm-city');
+    var country = row.querySelector('.fm-country');
+    var nm = city ? city.textContent.trim() : '';
+    if (!nm || seen[nm.toLowerCase()]) return;
+    seen[nm.toLowerCase()] = 1;
+    items.push({ name: nm, sub: country ? country.textContent.trim() : '' });
+  });
+  TVESearch.attach(input, { items: items });
+}());</script>
+</body>
+</html>

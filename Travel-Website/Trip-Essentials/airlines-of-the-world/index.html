@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Airlines</title>
+<style>
+  footer, .tb-footnote { display: none !important; }
+
+  /* ── Search + filter stack ── */
+  .al-search-wrap { padding: 35px 32px 0; display: flex; justify-content: center; }
+  .al-search { max-width: 100%; }
+
+  .controls {
+    max-width: none; margin: 0 auto; padding: 10px 32px 0;
+    display: flex; gap: 7px; flex-wrap: wrap; align-items: center; justify-content: center;
+  }
+  .filter-label {
+    font-size: var(--fs-sub,12px); letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); margin-right: 4px;
+  }
+  .filter-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--surface); border: 1px solid var(--border2, #e6e2da);
+    color: var(--muted, #6a6660); font-weight: 400;
+    padding: 6px 12px; border-radius: 6px; font-size: 13px; line-height: 1;
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+  }
+.filter-btn:hover {
+    background: var(--bg,#f5f4f0); border-color: var(--rust);
+  }
+.filter-btn.active {
+    background: var(--surface,#ffffff);
+    color: var(--rust,#b85c2a); border-color: var(--rust);
+  }
+  @media (min-width: 601px), (pointer: fine) {
+    .controls { gap: 0; }
+    .filter-btn { flex: 0 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); }
+    .filter-btn:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); color: var(--text, #3d3a32); }
+    .filter-btn.active,
+    .filter-btn.active:hover,
+    .filter-btn.active:focus { background: var(--surface,#ffffff); border: 1.5px solid var(--rust); color: var(--rust,#b85c2a); }
+  }
+  .al-chip-n { font-size: 11px; color: var(--muted); margin-left: 5px; }
+  .filter-btn.active .al-chip-n { color: var(--muted); }
+
+  .al-count { text-align: center; font-size: 12.5px; color: var(--muted); padding: 12px 32px 0; }
+
+  /* ── Cards ── */
+  main { padding: 16px 32px 32px; max-width: none; }
+  .al-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; align-items: stretch; }
+  .al-card {
+    display: flex; flex-direction: column;
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border); border-radius: 5px; overflow: hidden;
+    transition: box-shadow .18s, transform .18s, border-color .15s;
+  }
+  .al-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(138,108,26,0.10); transform: translateY(-1px); }
+  .card-top {
+    padding: 14px 18px 12px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 12px; background: var(--surface2);
+  }
+  .card-flag { font-size: 26px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+  /* .card-meta, .card-tags, .card-tag, .card-desc, .info-rows → web-travel-style.css */
+  .card-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 5px; line-height: 1.2; }
+  .card-name a { color: inherit; text-decoration: none; }
+  .card-name a:hover { color: var(--rust, #b85c2a); }
+  .tag-star     { background: #e8f0fb; color: var(--navy); border-color: rgba(26,58,139,0.35); }
+  .tag-skyteam  { background: #e0f0ff; color: #0a4a8a; border-color: rgba(10,74,138,0.35); }
+  .tag-oneworld { background: #fff8e0; color: #7a5800; border-color: rgba(122,88,0,0.35); }
+  .tag-indep    { background: var(--surface2); color: #5a544a; border-color: rgba(90,84,74,0.35); }
+  .tag-full     { background: #f3e8ff; color: #7c3aed; border-color: rgba(124,58,237,0.35); }
+  .tag-lcc      { background: #e8f5e8; color: #1a5a1a; border-color: rgba(26,90,26,0.35); }
+  .tag-regional { background: #e8f8f0; color: #0a5a30; border-color: rgba(10,90,48,0.35); }
+  .tag-leisure  { background: #ffe8f0; color: #8a1a3a; border-color: rgba(138,26,58,0.35); }
+  .tag-longhaul { background: #fef3e2; color: #8a4a10; border-color: rgba(138,74,16,0.4); }
+
+  .card-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 0; flex: 1; }
+  .info-row { display: flex; gap: 8px; align-items: flex-start; }
+  .info-icon { font-size: 14px; line-height: 1.4; flex-shrink: 0; width: 18px; text-align: center; }
+  .info-content { font-size: 12.5px; color: var(--text); line-height: 1.45; }
+  .info-label {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--muted); display: block; margin-bottom: 1px;
+  }
+  .booking-section {
+    margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border2);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .booking-label {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--muted); flex-shrink: 0;
+  }
+  .booking-links { display: flex; gap: 6px; flex-wrap: wrap; }
+  .book-link {
+    display: inline-flex; align-items: center; font-size: 12px; font-weight: 600;
+    padding: 4px 10px; border-radius: 4px; text-decoration: none; transition: all .15s;
+    border: 1px solid; background: var(--surface2); color: var(--text); border-color: var(--border2);
+  }
+  .book-link:hover { background: #fdf0e8; border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); }
+
+  /* ── Section + country headings ── */
+  .al-region { margin-bottom: 30px; }
+  .al-region-head {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted); padding-bottom: 8px; border-bottom: 1px solid var(--border2); margin-bottom: 16px;
+  }
+  .al-country { margin-bottom: 18px; }
+  .al-country-head {
+    font-size: 12.5px; font-weight: 700; color: var(--text);
+    letter-spacing: 0.04em; margin-bottom: 9px;
+  }
+  .empty-state { text-align: center; color: var(--muted); font-size: 13px; padding: 40px 0; }
+
+  @media (max-width: 600px) and (pointer: coarse) {
+    main { padding: 14px 14px 28px; }
+    .al-grid { grid-template-columns: 1fr; }
+    .controls { padding: 8px 14px 0; }
+    /* Form B glued grid — two columns, not the shared three. Region and
+       alliance labels carry a count and run long ("Latin America 31"); at
+       three across they wrap to two and three lines and the tiles stop
+       matching each other. Two columns keeps every label on one line. */
+    .controls.filter-chip-row { grid-template-columns: repeat(2, 1fr) !important; gap: 0 !important; }
+    .controls.filter-chip-row .filter-btn {
+      min-height: 46px !important; height: auto !important;
+      font-size: 12px !important; border-radius: 0 !important;
+      padding: 4px 6px !important; line-height: 1.25 !important;
+      display: inline-flex !important; align-items: center !important; justify-content: center !important;
+      border: 1px solid var(--border2, #e6e2da) !important;
+    }
+    .al-search-wrap { padding: 12px 14px 0; }
+    .al-count { padding: 10px 14px 0; }
+  }
+
+@media (prefers-color-scheme: dark),
+:root[data-theme="dark"] {
+  .filter-btn { color: var(--text); }
+  .tag-indep   { color: var(--text); }
+  .tag-star     { background: #1a2a4a; color: #7ab0f8; border-color: rgba(122,176,248,0.3); }
+  .tag-skyteam  { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,0.3); }
+  .tag-oneworld { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,0.3); }
+  .tag-full     { background: #1e0e3a; color: #b08af8; border-color: rgba(176,138,248,0.3); }
+  .tag-lcc      { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,0.3); }
+  .tag-regional { background: #0a1e10; color: #3a9a60; border-color: rgba(58,154,96,0.3); }
+  .tag-leisure  { background: #260a14; color: #e06080; border-color: rgba(224,96,128,0.3); }
+  .tag-longhaul { background: #240e00; color: #c8840a; border-color: rgba(200,132,10,0.3); }
+  .book-link:hover { background: #2a1810; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="1100" data-updated="2026-08-09"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>AIRLINES</h1>
+  </div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-plane"/></svg></div>
+    <div>
+      <div class="page-intro-head">Every major airline by region — hubs, alliance and what each is good at</div>
+      <div class="page-intro-sub">Every major airline in the world, grouped by region: the country it flies under, where it is headquartered, its main hubs, the alliance it belongs to, roughly how large the fleet is, and what it is genuinely good at. Search by airline, country, hub or alliance, or filter to one region — useful both when you are working out who can actually get you somewhere and when you are deciding where your miles should credit.</div>
+    </div>
+  </div>
+
+
+  <div class="al-search-wrap">
+    <input type="text" id="al-search" class="al-search" placeholder="Airline, country, hub or alliance" autocomplete="off">
+  </div>
+
+  <div class="controls filter-chip-row" id="al-region-filters"></div>
+  <div class="controls filter-chip-row" id="al-alliance-filters"></div>
+
+  <div class="al-count" id="al-count"></div>
+
+<main>
+  <div id="al-results"></div>
+</main>
+
+</div><!-- /wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="United-Routes-Full.html">United full network</a>
+    <a class="also-on-this-site-pill" href="American-Routes-Full.html">American full network</a>
+    <a class="also-on-this-site-pill" href="Baggage.html">Baggage rules</a>
+    <a class="also-on-this-site-pill" href="Airport-Connection-Times.html">Connection times</a>
+    <a class="also-on-this-site-pill" href="Lounges-US.html">US lounges</a>
+    <a class="also-on-this-site-pill" href="Lounges-Europe.html">EU lounges</a>
+    <a class="also-on-this-site-pill" href="Trusted-Traveler.html">Global Entry &amp; CLEAR</a>
+    <a class="also-on-this-site-pill" href="Passport.html">Passport</a>
+    <a class="also-on-this-site-pill" href="Cruise-Ships.html">Cruise lines</a>
+    <a class="also-on-this-site-pill" href="Travel-Insurance.html">Travel insurance</a>
+  </div>
+</div>
+
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   AIRLINES — one record per carrier. Fields:
+     n  name          w  official website        f  country flag emoji
+     c  country       r  region                  hq headquarters city
+     hub main hubs / bases                       al alliance
+     t  type tags (full / lcc / regional / leisure / longhaul)
+     fl fleet size, approximate
+     d  what the airline is and who it suits     k  what it is known for
+   Regions render in REGIONS order; countries alphabetically inside a region;
+   airlines alphabetically inside a country.
+   ───────────────────────────────────────────────────────────────────────── */
+const REGIONS = ['North America','Latin America & Caribbean','Europe','Middle East','Africa','Asia','Oceania'];
+
+const ALLIANCES = {
+  'Star Alliance': { cls: 'tag-star',     label: 'Star Alliance' },
+  'SkyTeam':       { cls: 'tag-skyteam',  label: 'SkyTeam' },
+  'oneworld':      { cls: 'tag-oneworld', label: 'oneworld' },
+  'Independent':   { cls: 'tag-indep',    label: 'Independent' }
+};
+
+const TYPES = {
+  full:     { cls: 'tag-full',     label: 'Full-service' },
+  lcc:      { cls: 'tag-lcc',      label: 'Low-cost' },
+  regional: { cls: 'tag-regional', label: 'Regional' },
+  leisure:  { cls: 'tag-leisure',  label: 'Leisure' },
+  longhaul: { cls: 'tag-longhaul', label: 'Long-haul' }
+};
+
+const AIRLINES = [
+
+/* ═══ NORTH AMERICA ═══ */
+
+{ n:'Air Canada', w:'https://www.aircanada.com', f:'🇨🇦', c:'Canada', r:'North America',
+  hq:'Montreal, Quebec', hub:'Toronto Pearson (YYZ), Montreal (YUL), Vancouver (YVR), Calgary (YYC)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈360 including Rouge and Express',
+  d:"Canada's flag carrier and by far its largest international airline, with the widest long-haul network of any North American carrier outside the US big three.",
+  k:'Transatlantic and transpacific breadth, Signature Class on widebodies, strong Europe–Canada–Asia connecting traffic' },
+
+{ n:'Flair Airlines', w:'https://www.flyflair.com', f:'🇨🇦', c:'Canada', r:'North America',
+  hq:'Edmonton, Alberta', hub:'Toronto Pearson (YYZ), Vancouver (YVR), Edmonton (YEG)',
+  al:'Independent', t:['lcc'], fl:'≈20 Boeing 737 MAX',
+  d:"Canada's ultra-low-cost challenger, selling bare fares on domestic trunk routes and sun destinations with everything else charged as an add-on.",
+  k:'Lowest headline fares in Canada, unbundled pricing, seasonal Mexico and Caribbean flying' },
+
+{ n:'Porter Airlines', w:'https://www.flyporter.com', f:'🇨🇦', c:'Canada', r:'North America',
+  hq:'Toronto, Ontario', hub:'Toronto Billy Bishop (YTZ), Toronto Pearson (YYZ), Ottawa (YOW)',
+  al:'Independent', t:['full'], fl:'≈80 Embraer E195-E2 and De Havilland Dash 8',
+  d:'An all-economy airline that competes on comfort rather than price: no middle seats on its jets, free beer and wine, and complimentary snacks on every flight.',
+  k:'Billy Bishop downtown-island base, elevated economy product, rapid E195-E2 expansion across Canada and the US' },
+
+{ n:'WestJet', w:'https://www.westjet.com', f:'🇨🇦', c:'Canada', r:'North America',
+  hq:'Calgary, Alberta', hub:'Calgary (YYC), Toronto Pearson (YYZ), Vancouver (YVR)',
+  al:'Independent', t:['full','leisure'], fl:'≈180 including Encore and Sunwing',
+  d:"Canada's second-largest airline, built as a low-cost carrier and now a hybrid with business cabins, a Calgary long-haul base and a large sun-destination programme.",
+  k:'Calgary transatlantic hub, Dreamliner service to Europe and Asia, dominant Western Canada network' },
+
+{ n:'Aeroméxico', w:'https://www.aeromexico.com', f:'🇲🇽', c:'Mexico', r:'North America',
+  hq:'Mexico City', hub:'Mexico City (MEX), Monterrey (MTY), Guadalajara (GDL)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈150 including Connect',
+  d:"Mexico's flag carrier and the only Mexican airline with a meaningful long-haul network, tightly joined to Delta through a transborder joint venture.",
+  k:'Mexico City hub connections, Delta partnership, Dreamliner routes to Europe and Asia' },
+
+{ n:'VivaAerobus', w:'https://www.vivaaerobus.com', f:'🇲🇽', c:'Mexico', r:'North America',
+  hq:'Monterrey, Nuevo León', hub:'Monterrey (MTY), Mexico City Felipe Ángeles (NLU), Guadalajara (GDL)',
+  al:'Independent', t:['lcc'], fl:'≈90 Airbus A320 family',
+  d:'An ultra-low-cost carrier flying dense domestic Mexican routes plus cross-border service to the US, with fares built around a very low base and paid extras.',
+  k:'Cheapest domestic fares in Mexico, big Felipe Ángeles presence, fast-growing US routes' },
+
+{ n:'Volaris', w:'https://www.volaris.com', f:'🇲🇽', c:'Mexico', r:'North America',
+  hq:'Mexico City', hub:'Mexico City (MEX), Guadalajara (GDL), Tijuana (TIJ), Cancún (CUN)',
+  al:'Independent', t:['lcc'], fl:'≈145 Airbus A320 family',
+  d:'The largest Mexican airline by passengers, an ultra-low-cost carrier aimed heavily at the visiting-friends-and-relatives market between Mexico and the United States.',
+  k:'Tijuana cross-border terminal, dense US–Mexico network, aggressive fare pricing' },
+
+{ n:'Alaska Airlines', w:'https://www.alaskaair.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'SeaTac, Washington', hub:'Seattle (SEA), Portland (PDX), Anchorage (ANC), Los Angeles (LAX), San Francisco (SFO), Honolulu (HNL)',
+  al:'oneworld', t:['full'], fl:'≈330 with Hawaiian and Horizon',
+  d:'The dominant West Coast carrier, known for a loyal following, a well-regarded frequent flyer programme and unmatched service within Alaska itself.',
+  k:'West Coast network depth, Hawaiian Airlines merger adding widebodies and Pacific routes, top-rated Mileage Plan' },
+
+{ n:'Allegiant Air', w:'https://www.allegiant.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Las Vegas, Nevada', hub:'Las Vegas (LAS), Orlando Sanford (SFB), Punta Gorda (PGD), Nashville (BNA)',
+  al:'Independent', t:['lcc','leisure'], fl:'≈120 Airbus A320 family',
+  d:'A leisure specialist that connects small and mid-sized US cities directly to holiday destinations, usually only a few times a week and with no connecting traffic.',
+  k:'Small-city nonstops to Florida, Las Vegas and Phoenix, low frequencies, package holiday model' },
+
+{ n:'American Airlines', w:'https://www.aa.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Fort Worth, Texas', hub:'Dallas/Fort Worth (DFW), Charlotte (CLT), Chicago O\'Hare (ORD), Miami (MIA), Philadelphia (PHL), Phoenix (PHX), Washington National (DCA), New York (JFK/LGA)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈980 mainline',
+  d:'One of the largest airlines in the world by fleet and passengers, with the strongest US network into Latin America and the Caribbean out of its Miami hub.',
+  k:'Dallas/Fort Worth mega-hub, Miami gateway to Latin America, joint ventures with British Airways, Iberia, Japan Airlines and Qantas' },
+
+{ n:'Breeze Airways', w:'https://www.flybreeze.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Cottonwood Heights, Utah', hub:'Charleston (CHS), Provo (PVU), Norfolk (ORF), Tampa (TPA)',
+  al:'Independent', t:['lcc'], fl:'≈40 Airbus A220-300 and Embraer E190/195',
+  d:'A newer carrier founded by JetBlue\'s creator, flying point-to-point between mid-sized cities that previously had no nonstop link at all.',
+  k:'Underserved city pairs, A220 first-class seating on a low-cost airline, no hub connections' },
+
+{ n:'Delta Air Lines', w:'https://www.delta.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Atlanta, Georgia', hub:'Atlanta (ATL), Detroit (DTW), Minneapolis–St Paul (MSP), Salt Lake City (SLC), New York (JFK/LGA), Boston (BOS), Los Angeles (LAX), Seattle (SEA)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈990 mainline',
+  d:'A founding SkyTeam member consistently ranked at the top of US airlines for operational reliability, running the world\'s busiest hub at Atlanta.',
+  k:'Atlanta mega-hub, Delta One suites, joint ventures with Air France-KLM, Virgin Atlantic, Korean Air, LATAM and Aeroméxico' },
+
+{ n:'Frontier Airlines', w:'https://www.flyfrontier.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Denver, Colorado', hub:'Denver (DEN), Las Vegas (LAS), Orlando (MCO), Philadelphia (PHL)',
+  al:'Independent', t:['lcc'], fl:'≈150 Airbus A320neo family',
+  d:'An ultra-low-cost carrier built around a very low base fare and paid extras, with a young fuel-efficient fleet and animal tail art on every aircraft.',
+  k:'Rock-bottom base fares, all-Airbus neo fleet, Denver base, everything unbundled' },
+
+{ n:'Hawaiian Airlines', w:'https://www.hawaiianairlines.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Honolulu, Hawaii', hub:'Honolulu (HNL), Kahului (OGG)',
+  al:'oneworld', t:['full','longhaul','leisure'], fl:'≈60 Airbus A330/A321neo and Boeing 787',
+  d:'The largest airline serving Hawaii, carrying both inter-island traffic and long-haul routes to the US mainland, Japan, Korea and Oceania. Now part of Alaska Air Group.',
+  k:'Inter-island network, Hawaii–Asia routes, Boeing 787 Leihōkū suites, Amazon cargo A330 flying' },
+
+{ n:'JetBlue Airways', w:'https://www.jetblue.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Long Island City, New York', hub:'New York JFK (JFK), Boston (BOS), Fort Lauderdale (FLL), Orlando (MCO), San Juan (SJU)',
+  al:'Independent', t:['full'], fl:'≈290 Airbus A220/A320 family',
+  d:'A US carrier positioned between the low-cost and legacy models, with more legroom in standard economy than any other big US airline and a premium transatlantic product.',
+  k:'Mint business class on London and Paris routes, free wifi on every flight, best-in-class economy pitch' },
+
+{ n:'Southwest Airlines', w:'https://www.southwest.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Dallas, Texas', hub:'Point-to-point; largest bases Chicago Midway (MDW), Denver (DEN), Las Vegas (LAS), Baltimore (BWI), Dallas Love (DAL), Phoenix (PHX)',
+  al:'Independent', t:['lcc'], fl:'≈800 Boeing 737',
+  d:'The largest domestic carrier in the United States by passengers, running a single-type 737 fleet on a point-to-point network rather than through connecting hubs.',
+  k:'All-737 operation, huge US domestic reach, no long-haul flying, its own booking channel only' },
+
+{ n:'Spirit Airlines', w:'https://www.spirit.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Dania Beach, Florida', hub:'Fort Lauderdale (FLL), Orlando (MCO), Detroit (DTW), Las Vegas (LAS)',
+  al:'Independent', t:['lcc'], fl:'≈210 Airbus A320 family',
+  d:'The original US ultra-low-cost carrier, with the lowest base fares in the market and charges for carry-ons, seat selection and everything else.',
+  k:'Florida and Caribbean leisure routes, high-density cabins, fully unbundled fares' },
+
+{ n:'Sun Country Airlines', w:'https://www.suncountry.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Minneapolis, Minnesota', hub:'Minneapolis–St Paul (MSP)',
+  al:'Independent', t:['lcc','leisure'], fl:'≈60 Boeing 737',
+  d:'A hybrid airline that combines seasonal leisure flying from the Upper Midwest with charter work and a dedicated cargo operation for Amazon.',
+  k:'Minneapolis winter sun routes, charter and cargo mix, seasonal schedule that shifts with demand' },
+
+{ n:'United Airlines', w:'https://www.united.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Chicago, Illinois', hub:'Chicago O\'Hare (ORD), Denver (DEN), Houston Bush (IAH), Newark (EWR), San Francisco (SFO), Los Angeles (LAX), Washington Dulles (IAD)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈1,000 mainline',
+  d:'The US carrier with the broadest international route map, particularly across the Pacific from San Francisco and into Europe, Africa and India from Newark and Washington.',
+  k:'Widest US long-haul network, Polaris business class, transpacific strength, Star Alliance backbone' },
+
+/* ═══ LATIN AMERICA & CARIBBEAN ═══ */
+
+{ n:'Aerolíneas Argentinas', w:'https://www.aerolineas.com.ar', f:'🇦🇷', c:'Argentina', r:'Latin America & Caribbean',
+  hq:'Buenos Aires', hub:'Buenos Aires Ezeiza (EZE) and Aeroparque (AEP), Córdoba (COR)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈80 Boeing 737 and Airbus A330',
+  d:"Argentina's flag carrier and the country's largest domestic operator, the main way to reach Patagonia, Iguazú and the Andean northwest by air.",
+  k:'Domestic reach across Argentina, Patagonia access, long-haul routes to Madrid, Rome and Miami' },
+
+{ n:'Azul', w:'https://www.voeazul.com.br', f:'🇧🇷', c:'Brazil', r:'Latin America & Caribbean',
+  hq:'Barueri, São Paulo', hub:'Campinas Viracopos (VCP), Belo Horizonte Confins (CNF), Recife (REC)',
+  al:'Independent', t:['full'], fl:'≈180 mixed Embraer, Airbus and ATR',
+  d:'The Brazilian airline serving the most cities in the country, using turboprops and Embraer jets to reach places the 737-and-A320 operators cannot fly profitably.',
+  k:'Widest Brazilian domestic network, Viracopos connecting hub, mixed fleet from ATR to A350' },
+
+{ n:'GOL Linhas Aéreas', w:'https://www.voegol.com.br', f:'🇧🇷', c:'Brazil', r:'Latin America & Caribbean',
+  hq:'Rio de Janeiro', hub:'São Paulo Guarulhos (GRU) and Congonhas (CGH), Rio de Janeiro (GIG/SDU), Brasília (BSB)',
+  al:'Independent', t:['lcc'], fl:'≈140 Boeing 737',
+  d:'A single-type low-cost carrier that built the Brazilian shuttle market, with the strongest presence on the São Paulo–Rio de Janeiro corridor.',
+  k:'All-737 fleet, Rio–São Paulo air bridge, Smiles loyalty programme, Congonhas slots' },
+
+{ n:'JetSMART', w:'https://jetsmart.com', f:'🇨🇱', c:'Chile', r:'Latin America & Caribbean',
+  hq:'Santiago', hub:'Santiago (SCL), Buenos Aires (AEP), Lima (LIM)',
+  al:'Independent', t:['lcc'], fl:'≈50 Airbus A320 family',
+  d:'A pan-South American ultra-low-cost carrier operating separate Chilean, Argentine, Peruvian and Colombian arms under one brand and fare model.',
+  k:'Cross-border ULCC model, very low domestic fares in Chile and Argentina, rapid A320neo growth' },
+
+{ n:'LATAM Airlines', w:'https://www.latamairlines.com', f:'🇨🇱', c:'Chile', r:'Latin America & Caribbean',
+  hq:'Santiago', hub:'Santiago (SCL), São Paulo Guarulhos (GRU), Lima (LIM), Bogotá (BOG)',
+  al:'Independent', t:['full','longhaul'], fl:'≈350 across the group',
+  d:'The largest airline group in Latin America, formed from Chile\'s LAN and Brazil\'s TAM, with the region\'s deepest domestic networks and its widest long-haul map.',
+  k:'Four national hubs, Easter Island and Patagonia routes, Delta joint venture, left oneworld in 2020' },
+
+{ n:'Sky Airline', w:'https://www.skyairline.com', f:'🇨🇱', c:'Chile', r:'Latin America & Caribbean',
+  hq:'Santiago', hub:'Santiago (SCL), Lima (LIM)',
+  al:'Independent', t:['lcc'], fl:'≈35 Airbus A320neo family',
+  d:'Chile\'s low-cost challenger to LATAM, flying domestic trunk routes and regional international services with a young single-type fleet.',
+  k:'Chilean domestic price competition, all-A320neo fleet, growing Peruvian operation' },
+
+{ n:'Avianca', w:'https://www.avianca.com', f:'🇨🇴', c:'Colombia', r:'Latin America & Caribbean',
+  hq:'Bogotá', hub:'Bogotá El Dorado (BOG), Medellín (MDE), San Salvador (SAL)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈150 Airbus A320 family and Boeing 787',
+  d:'One of the oldest continuously operating airlines in the world and the main carrier of northern South America, now flying a simplified low-cost-style fare structure.',
+  k:'Bogotá hub connecting the Americas, Central American network, 787 routes to Europe and the US' },
+
+{ n:'Arajet', w:'https://www.arajet.com', f:'🇩🇴', c:'Dominican Republic', r:'Latin America & Caribbean',
+  hq:'Santo Domingo', hub:'Santo Domingo Las Américas (SDQ)',
+  al:'Independent', t:['lcc'], fl:'≈25 Boeing 737 MAX',
+  d:'A young Dominican low-cost carrier positioning Santo Domingo as a Caribbean connecting point between North, Central and South America.',
+  k:'Caribbean low-cost hub, all-737 MAX fleet, cheap links between the Americas' },
+
+{ n:'Copa Airlines', w:'https://www.copaair.com', f:'🇵🇦', c:'Panama', r:'Latin America & Caribbean',
+  hq:'Panama City', hub:'Panama City Tocumen (PTY)',
+  al:'Star Alliance', t:['full'], fl:'≈110 Boeing 737',
+  d:'A pure connecting airline built entirely around one hub, using Panama\'s geography to link almost any city in the Americas to any other with a single stop.',
+  k:'"Hub of the Americas" at Tocumen, exceptional on-time record, all-737 fleet, no long-haul flying' },
+
+{ n:'Caribbean Airlines', w:'https://www.caribbean-airlines.com', f:'🇹🇹', c:'Trinidad and Tobago', r:'Latin America & Caribbean',
+  hq:'Piarco, Trinidad', hub:'Port of Spain Piarco (POS), Kingston (KIN)',
+  al:'Independent', t:['full'], fl:'≈20 Boeing 737 and ATR 72',
+  d:'The main carrier of the English-speaking Caribbean, linking the islands to each other and to the large diaspora communities in New York, Toronto and London.',
+  k:'Inter-island network, Caribbean–North America diaspora routes, Jamaica and Trinidad bases' },
+
+/* ═══ EUROPE ═══ */
+
+{ n:'Austrian Airlines', w:'https://www.austrian.com', f:'🇦🇹', c:'Austria', r:'Europe',
+  hq:'Vienna', hub:'Vienna (VIE)',
+  al:'Star Alliance', t:['full'], fl:'≈80 Airbus and Embraer',
+  d:"Austria's flag carrier and a Lufthansa Group member, specialising in short connections from Vienna into Central and Eastern Europe and the Caucasus.",
+  k:'Vienna hub into Eastern Europe, dense CEE network, Lufthansa Group coordination' },
+
+{ n:'Brussels Airlines', w:'https://www.brusselsairlines.com', f:'🇧🇪', c:'Belgium', r:'Europe',
+  hq:'Brussels', hub:'Brussels (BRU)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈40 Airbus A320 family and A330',
+  d:'The Belgian flag carrier and a Lufthansa Group member with an unusually deep African network for an airline of its size.',
+  k:'Sub-Saharan Africa routes from Brussels, EU institution traffic, Lufthansa Group feed' },
+
+{ n:'Croatia Airlines', w:'https://www.croatiaairlines.com', f:'🇭🇷', c:'Croatia', r:'Europe',
+  hq:'Zagreb', hub:'Zagreb (ZAG), Split (SPU), Dubrovnik (DBV)',
+  al:'Star Alliance', t:['full','regional'], fl:'≈13 Airbus A220 and Dash 8',
+  d:"Croatia's small flag carrier, connecting the Dalmatian coast to Zagreb and to European capitals, with capacity that swings heavily by season.",
+  k:'Adriatic coast access, summer-heavy schedule, all-A220 fleet renewal' },
+
+{ n:'Smartwings', w:'https://www.smartwings.com', f:'🇨🇿', c:'Czechia', r:'Europe',
+  hq:'Prague', hub:'Prague (PRG)',
+  al:'Independent', t:['lcc','leisure'], fl:'≈40 Boeing 737',
+  d:'The largest Czech airline, built around holiday charters and low-cost scheduled flying to the Mediterranean, and now the owner of Czech Airlines.',
+  k:'Central European holiday charters, Prague base, tour-operator partnerships' },
+
+{ n:'Finnair', w:'https://www.finnair.com', f:'🇫🇮', c:'Finland', r:'Europe',
+  hq:'Helsinki', hub:'Helsinki (HEL)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈80 Airbus A320 family and A330/A350',
+  d:'The Finnish flag carrier, long built on the short great-circle route between Europe and Asia over the pole, and now rebalanced toward North America and India.',
+  k:'Helsinki as a fast Europe–Asia transfer point, Nordic design cabins, one of the oldest airlines still operating' },
+
+{ n:'Air France', w:'https://www.airfrance.com', f:'🇫🇷', c:'France', r:'Europe',
+  hq:'Paris', hub:'Paris Charles de Gaulle (CDG), Paris Orly (ORY)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈250 including Hop',
+  d:'A founding SkyTeam member and one of Europe\'s two largest long-haul carriers, with an exceptional network into West and North Africa and the French overseas territories.',
+  k:'La Première and La Première-tier service, Africa and Indian Ocean reach, Air France-KLM group with Delta and Virgin Atlantic' },
+
+{ n:'Corsair', w:'https://www.corsair.fr', f:'🇫🇷', c:'France', r:'Europe',
+  hq:'Paris', hub:'Paris Orly (ORY)',
+  al:'Independent', t:['leisure','longhaul'], fl:'≈9 Airbus A330neo',
+  d:'A long-haul leisure specialist flying from Paris Orly to the French Caribbean, Réunion, Mauritius and West Africa.',
+  k:'French overseas territory routes, all-A330neo fleet, Orly long-haul base' },
+
+{ n:'French Bee', w:'https://www.frenchbee.com', f:'🇫🇷', c:'France', r:'Europe',
+  hq:'Paris', hub:'Paris Orly (ORY)',
+  al:'Independent', t:['lcc','longhaul'], fl:'≈6 Airbus A350',
+  d:'A long-haul low-cost carrier flying Paris to Réunion, Tahiti, New York and San Francisco with an unbundled fare and a premium economy cabin.',
+  k:'Cheapest scheduled Paris–Tahiti routing, all-A350 fleet, long-haul low-cost model' },
+
+{ n:'Transavia France', w:'https://www.transavia.com', f:'🇫🇷', c:'France', r:'Europe',
+  hq:'Paris', hub:'Paris Orly (ORY), Nantes (NTE), Lyon (LYS), Montpellier (MPL)',
+  al:'Independent', t:['lcc','leisure'], fl:'≈70 Airbus A320neo family',
+  d:"Air France-KLM's French low-cost arm, now the group's main short-haul leisure operator from Orly and the regions.",
+  k:'Mediterranean and North Africa leisure routes, Orly base, Air France-KLM group ownership' },
+
+{ n:'Condor', w:'https://www.condor.com', f:'🇩🇪', c:'Germany', r:'Europe',
+  hq:'Frankfurt', hub:'Frankfurt (FRA), Düsseldorf (DUS)',
+  al:'Independent', t:['leisure','longhaul'], fl:'≈50 Airbus A320/A330neo',
+  d:'A German holiday airline with an unusually large long-haul programme for a leisure carrier, flying to the Caribbean, Indian Ocean and North America.',
+  k:'Striped livery, long-haul leisure routes, Frankfurt holiday base' },
+
+{ n:'Discover Airlines', w:'https://www.discover-airlines.com', f:'🇩🇪', c:'Germany', r:'Europe',
+  hq:'Frankfurt', hub:'Frankfurt (FRA), Munich (MUC)',
+  al:'Star Alliance', t:['leisure','longhaul'], fl:'≈27 Airbus A320 family and A330',
+  d:"Lufthansa's own leisure airline, flying holiday routes that the mainline cannot operate at a competitive cost while keeping Lufthansa connections and status.",
+  k:'Lufthansa holiday routes, Miles & More recognition, Frankfurt and Munich leisure long-haul' },
+
+{ n:'Eurowings', w:'https://www.eurowings.com', f:'🇩🇪', c:'Germany', r:'Europe',
+  hq:'Düsseldorf', hub:'Düsseldorf (DUS), Cologne/Bonn (CGN), Hamburg (HAM), Stuttgart (STR), Palma (PMI)',
+  al:'Independent', t:['lcc'], fl:'≈100 Airbus A320 family',
+  d:"Lufthansa Group's low-cost carrier for point-to-point European flying outside the Frankfurt and Munich hubs.",
+  k:'German domestic and Mediterranean routes, Palma de Mallorca base, Lufthansa Group ownership' },
+
+{ n:'Lufthansa', w:'https://www.lufthansa.com', f:'🇩🇪', c:'Germany', r:'Europe',
+  hq:'Cologne', hub:'Frankfurt (FRA), Munich (MUC)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈350 mainline',
+  d:'The largest airline group in Europe and a founding Star Alliance member, running two full hubs and owning SWISS, Austrian, Brussels Airlines and ITA Airways.',
+  k:'Frankfurt and Munich dual hubs, First Class Terminal at Frankfurt, Allegris cabin rollout, Star Alliance founder' },
+
+{ n:'Aegean Airlines', w:'https://en.aegeanair.com', f:'🇬🇷', c:'Greece', r:'Europe',
+  hq:'Athens', hub:'Athens (ATH), Thessaloniki (SKG), Larnaca (LCA)',
+  al:'Star Alliance', t:['full'], fl:'≈75 Airbus A320 family',
+  d:"Greece's largest airline, repeatedly rated the best regional carrier in Europe, and the main way to reach the Greek islands from abroad outside charter season.",
+  k:'Greek island connections, consistently high service ratings for a mid-sized carrier, Athens hub' },
+
+{ n:'Sky Express', w:'https://www.skyexpress.gr', f:'🇬🇷', c:'Greece', r:'Europe',
+  hq:'Athens', hub:'Athens (ATH), Heraklion (HER)',
+  al:'Independent', t:['regional','lcc'], fl:'≈35 Airbus A320neo family and ATR',
+  d:'A Greek domestic specialist that has grown from island turboprop routes into a low-cost operator on European leisure routes.',
+  k:'Widest Greek domestic island network, ATR plus A320neo mixed fleet' },
+
+{ n:'Wizz Air', w:'https://wizzair.com', f:'🇭🇺', c:'Hungary', r:'Europe',
+  hq:'Budapest', hub:'Budapest (BUD), Bucharest (OTP), Warsaw (WAW), Rome Fiumicino (FCO), London Luton (LTN), Abu Dhabi (AUH)',
+  al:'Independent', t:['lcc'], fl:'≈230 Airbus A320/A321neo family',
+  d:'The dominant ultra-low-cost carrier of Central and Eastern Europe, with one of the youngest and most fuel-efficient fleets of any large airline.',
+  k:'Central and Eastern Europe network, all-Airbus neo fleet, very low fares, large bases far from Hungary' },
+
+{ n:'Icelandair', w:'https://www.icelandair.com', f:'🇮🇸', c:'Iceland', r:'Europe',
+  hq:'Reykjavík', hub:'Keflavík (KEF)',
+  al:'Independent', t:['full'], fl:'≈50 Boeing 737 MAX, 757 and Airbus A321LR',
+  d:'The Icelandic flag carrier, built around using Keflavík as a mid-Atlantic connecting point between Europe and North America.',
+  k:'Free multi-day Iceland stopover, transatlantic connections over Keflavík, narrowbody-only ocean crossings' },
+
+{ n:'PLAY', w:'https://www.flyplay.com', f:'🇮🇸', c:'Iceland', r:'Europe',
+  hq:'Reykjavík', hub:'Keflavík (KEF)',
+  al:'Independent', t:['lcc'], fl:'≈10 Airbus A320neo family',
+  d:'A low-cost Icelandic carrier applying the same Keflavík transatlantic connecting model as Icelandair, at a lower fare and with paid extras.',
+  k:'Cheap Europe–North America connections via Iceland, all-Airbus fleet, unbundled fares' },
+
+{ n:'Aer Lingus', w:'https://www.aerlingus.com', f:'🇮🇪', c:'Ireland', r:'Europe',
+  hq:'Dublin', hub:'Dublin (DUB), Cork (ORK), Manchester (MAN)',
+  al:'Independent', t:['full','longhaul'], fl:'≈60 Airbus A320 family and A330/A321XLR',
+  d:'The Irish flag carrier and an IAG member, positioning Dublin as a transatlantic gateway with US preclearance before departure.',
+  k:'US preclearance at Dublin and Shannon, Europe–North America connections, A321XLR thin transatlantic routes' },
+
+{ n:'Ryanair', w:'https://www.ryanair.com', f:'🇮🇪', c:'Ireland', r:'Europe',
+  hq:'Dublin', hub:'London Stansted (STN), Dublin (DUB), Milan Bergamo (BGY), Madrid (MAD), Brussels Charleroi (CRL) and around 90 other bases',
+  al:'Independent', t:['lcc'], fl:'≈600 Boeing 737',
+  d:'Europe\'s largest airline by passengers, an ultra-low-cost operator flying a single aircraft type between roughly 230 airports, many of them secondary fields well outside the city they are named for.',
+  k:'Lowest fares in Europe, all-737 fleet, secondary airports, strict cabin-bag and check-in rules' },
+
+{ n:'ITA Airways', w:'https://www.ita-airways.com', f:'🇮🇹', c:'Italy', r:'Europe',
+  hq:'Rome', hub:'Rome Fiumicino (FCO), Milan Linate (LIN)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈95 Airbus A220 to A350',
+  d:"Italy's flag carrier, created in 2021 to replace Alitalia and now majority-owned by Lufthansa, rebuilding long-haul flying out of Rome.",
+  k:'Rome Fiumicino hub, Milan Linate business shuttle, Lufthansa Group integration' },
+
+{ n:'Neos', w:'https://www.neosair.it', f:'🇮🇹', c:'Italy', r:'Europe',
+  hq:'Milan', hub:'Milan Malpensa (MXP), Verona (VRN)',
+  al:'Independent', t:['leisure','longhaul'], fl:'≈15 Boeing 737 MAX and 787',
+  d:'An Italian holiday airline flying long-haul leisure routes to the Indian Ocean, Caribbean and Africa, largely for tour operators.',
+  k:'Maldives, Zanzibar and Cuba routes, 787 leisure long-haul, Malpensa base' },
+
+{ n:'airBaltic', w:'https://www.airbaltic.com', f:'🇱🇻', c:'Latvia', r:'Europe',
+  hq:'Riga', hub:'Riga (RIX), Vilnius (VNO), Tallinn (TLL)',
+  al:'Independent', t:['full','regional'], fl:'≈50 Airbus A220-300',
+  d:'The Baltic region\'s main airline and the first in the world to run an all-A220 fleet, connecting the three Baltic capitals to Europe over Riga.',
+  k:'All-A220 fleet, Baltic hub at Riga, wet-lease flying for other European carriers in winter' },
+
+{ n:'KLM', w:'https://www.klm.com', f:'🇳🇱', c:'Netherlands', r:'Europe',
+  hq:'Amstelveen', hub:'Amsterdam Schiphol (AMS)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈170 including Cityhopper',
+  d:'The oldest airline still operating under its original name, running one of Europe\'s most efficient single-hub connecting operations at Schiphol.',
+  k:'Schiphol one-terminal transfers, Air France-KLM group, extensive secondary-city European feed' },
+
+{ n:'Transavia', w:'https://www.transavia.com', f:'🇳🇱', c:'Netherlands', r:'Europe',
+  hq:'Schiphol-Rijk', hub:'Amsterdam Schiphol (AMS), Rotterdam (RTM), Eindhoven (EIN)',
+  al:'Independent', t:['lcc','leisure'], fl:'≈50 Boeing 737',
+  d:"KLM's low-cost subsidiary, flying Dutch holidaymakers to the Mediterranean, Canaries and North Africa.",
+  k:'Dutch leisure routes, Schiphol and regional bases, Air France-KLM group ownership' },
+
+{ n:'Norse Atlantic Airways', w:'https://flynorse.com', f:'🇳🇴', c:'Norway', r:'Europe',
+  hq:'Arendal', hub:'Oslo (OSL), London Gatwick (LGW)',
+  al:'Independent', t:['lcc','longhaul'], fl:'≈15 Boeing 787',
+  d:'A long-haul low-cost carrier flying 787s between Europe and the United States on unbundled fares, founded after the collapse of Norwegian\'s long-haul arm.',
+  k:'Cheap transatlantic fares, all-787 fleet, Gatwick and Oslo bases' },
+
+{ n:'Norwegian', w:'https://www.norwegian.com', f:'🇳🇴', c:'Norway', r:'Europe',
+  hq:'Fornebu', hub:'Oslo (OSL), Copenhagen (CPH), Stockholm Arlanda (ARN), Bergen (BGO)',
+  al:'Independent', t:['lcc'], fl:'≈90 Boeing 737',
+  d:'The largest low-cost airline in the Nordics, now focused entirely on short-haul European flying after exiting long-haul.',
+  k:'Nordic domestic and European leisure routes, Widerøe ownership, short-haul-only strategy' },
+
+{ n:'Widerøe', w:'https://www.wideroe.no', f:'🇳🇴', c:'Norway', r:'Europe',
+  hq:'Bodø', hub:'Bodø (BOO), Tromsø (TOS), Bergen (BGO), Oslo (OSL)',
+  al:'Independent', t:['regional'], fl:'≈45 De Havilland Dash 8 and Embraer E190-E2',
+  d:'Scandinavia\'s largest regional airline, flying short hops between small Norwegian airports including some of the shortest scheduled routes in the world.',
+  k:'Norwegian coastal and Arctic network, short-runway Dash 8 operations, state-contracted routes' },
+
+{ n:'LOT Polish Airlines', w:'https://www.lot.com', f:'🇵🇱', c:'Poland', r:'Europe',
+  hq:'Warsaw', hub:'Warsaw Chopin (WAW), Kraków (KRK), Budapest (BUD)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈80 Embraer, Boeing 737 and 787',
+  d:'Poland\'s flag carrier, one of the oldest airlines in the world, using Warsaw as a connecting point between North America and Central and Eastern Europe.',
+  k:'Warsaw transfer hub, 787 long-haul network, Embraer-heavy European feed' },
+
+{ n:'TAP Air Portugal', w:'https://www.flytap.com', f:'🇵🇹', c:'Portugal', r:'Europe',
+  hq:'Lisbon', hub:'Lisbon (LIS), Porto (OPO)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈100 Airbus A320 family and A330neo',
+  d:'The Portuguese flag carrier, with the strongest European network to Brazil and Lusophone Africa and a free stopover programme in Lisbon or Porto.',
+  k:'Brazil routes, Azores and Madeira service, free Portugal stopover, A330neo long-haul fleet' },
+
+{ n:'TAROM', w:'https://www.tarom.ro', f:'🇷🇴', c:'Romania', r:'Europe',
+  hq:'Bucharest', hub:'Bucharest Otopeni (OTP)',
+  al:'SkyTeam', t:['full'], fl:'≈20 Boeing 737 and ATR 72',
+  d:"Romania's state-owned flag carrier, flying a mostly regional European network from Bucharest with a small fleet.",
+  k:'Bucharest hub, SkyTeam connections from Romania, ATR regional flying' },
+
+{ n:'Aeroflot', w:'https://www.aeroflot.ru', f:'🇷🇺', c:'Russia', r:'Europe',
+  hq:'Moscow', hub:'Moscow Sheremetyevo (SVO)',
+  al:'Independent', t:['full','longhaul'], fl:'≈180 Airbus, Boeing and Superjet',
+  d:'Russia\'s flag carrier and largest airline. It left SkyTeam in 2022, and Western sanctions now close most of Europe and North America to it.',
+  k:'Sheremetyevo hub, domestic Russian network, routes now concentrated on Asia, the Middle East and the CIS' },
+
+{ n:'S7 Airlines', w:'https://www.s7.ru', f:'🇷🇺', c:'Russia', r:'Europe',
+  hq:'Novosibirsk', hub:'Moscow Domodedovo (DME), Novosibirsk (OVB)',
+  al:'Independent', t:['full'], fl:'≈100 Airbus and Boeing narrowbodies',
+  d:'Russia\'s largest privately owned airline, focused on domestic and Siberian routes after its oneworld membership was suspended in 2022.',
+  k:'Siberian and Russian Far East network, Domodedovo base, private ownership' },
+
+{ n:'Air Serbia', w:'https://www.airserbia.com', f:'🇷🇸', c:'Serbia', r:'Europe',
+  hq:'Belgrade', hub:'Belgrade (BEG)',
+  al:'Independent', t:['full'], fl:'≈25 Airbus A320 family and ATR 72',
+  d:'The Serbian flag carrier, positioned as a Balkan connecting hub with routes both to Western Europe and to markets other European airlines no longer serve.',
+  k:'Belgrade Balkan hub, diaspora routes, long-haul service to New York' },
+
+{ n:'Air Europa', w:'https://www.aireuropa.com', f:'🇪🇸', c:'Spain', r:'Europe',
+  hq:'Palma de Mallorca', hub:'Madrid (MAD), Palma (PMI)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈55 Boeing 737 and 787',
+  d:'Spain\'s third-largest airline, built around Madrid connections between Europe and Latin America and the Caribbean.',
+  k:'Madrid–Latin America routes, all-787 long-haul fleet, SkyTeam presence in Spain' },
+
+{ n:'Iberia', w:'https://www.iberia.com', f:'🇪🇸', c:'Spain', r:'Europe',
+  hq:'Madrid', hub:'Madrid Barajas (MAD)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈150 including Iberia Express and Air Nostrum',
+  d:'Spain\'s flag carrier and an IAG member, with the strongest European network into Latin America out of its Madrid hub.',
+  k:'Madrid gateway to Latin America, joint venture with British Airways and American, A350 long-haul fleet' },
+
+{ n:'Volotea', w:'https://www.volotea.com', f:'🇪🇸', c:'Spain', r:'Europe',
+  hq:'Barcelona', hub:'Asturias (OVD), Bilbao (BIO), Nantes (NTE), Venice (VCE), Athens (ATH)',
+  al:'Independent', t:['lcc'], fl:'≈45 Airbus A319/A320',
+  d:'A low-cost airline that deliberately avoids the big capitals, flying point-to-point between small and mid-sized European cities that would otherwise need a connection.',
+  k:'Secondary-city routes across Spain, France, Italy and Greece, no hub model' },
+
+{ n:'Vueling', w:'https://www.vueling.com', f:'🇪🇸', c:'Spain', r:'Europe',
+  hq:'Barcelona', hub:'Barcelona (BCN), Madrid (MAD), Paris Orly (ORY), Rome Fiumicino (FCO)',
+  al:'Independent', t:['lcc'], fl:'≈125 Airbus A320 family',
+  d:'The largest airline at Barcelona and IAG\'s low-cost arm in Spain, blending very cheap fares with a large domestic and Mediterranean network.',
+  k:'Barcelona base, Spanish domestic dominance, IAG group ownership' },
+
+{ n:'SAS', w:'https://www.flysas.com', f:'🇸🇪', c:'Sweden', r:'Europe',
+  hq:'Solna, Sweden', hub:'Copenhagen (CPH), Stockholm Arlanda (ARN), Oslo (OSL)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈130 Airbus A320neo family and A330/A350',
+  d:'The flag carrier of Sweden, Denmark and Norway jointly, running its main long-haul hub at Copenhagen. It moved from Star Alliance to SkyTeam in 2024 after Air France-KLM took a stake.',
+  k:'Copenhagen Scandinavian hub, three-country flag carrier, SkyTeam switch, EuroBonus loyalty programme' },
+
+{ n:'Edelweiss Air', w:'https://www.flyedelweiss.com', f:'🇨🇭', c:'Switzerland', r:'Europe',
+  hq:'Zurich', hub:'Zurich (ZRH)',
+  al:'Independent', t:['leisure','longhaul'], fl:'≈16 Airbus A320 family and A340',
+  d:'The Swiss leisure airline of the Lufthansa Group, flying holiday routes from Zurich that SWISS does not operate.',
+  k:'Zurich long-haul leisure routes, SWISS connections and Miles & More status, red-and-white livery' },
+
+{ n:'SWISS', w:'https://www.swiss.com', f:'🇨🇭', c:'Switzerland', r:'Europe',
+  hq:'Basel', hub:'Zurich (ZRH), Geneva (GVA)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈90 Airbus A220 to Boeing 777',
+  d:'The Swiss flag carrier and a Lufthansa Group member, known for precise operations and a widely praised premium cabin.',
+  k:'Zurich hub, all-Swiss service standards, SWISS First, large A220 short-haul fleet' },
+
+{ n:'AJet', w:'https://www.ajet.com', f:'🇹🇷', c:'Turkey', r:'Europe',
+  hq:'Istanbul', hub:'Istanbul Sabiha Gökçen (SAW), Ankara (ESB), Antalya (AYT)',
+  al:'Independent', t:['lcc'], fl:'≈45 Boeing 737 and Airbus A320 family',
+  d:"Turkish Airlines' low-cost brand, launched in 2024 out of the former AnadoluJet, flying domestic Turkish routes and short-haul leisure services.",
+  k:'Turkish domestic low-cost network, Sabiha Gökçen and Ankara bases, Turkish Airlines ownership' },
+
+{ n:'Pegasus Airlines', w:'https://www.flypgs.com', f:'🇹🇷', c:'Turkey', r:'Europe',
+  hq:'Istanbul', hub:'Istanbul Sabiha Gökçen (SAW), Ankara (ESB), İzmir (ADB)',
+  al:'Independent', t:['lcc'], fl:'≈120 Airbus A320neo family',
+  d:'Turkey\'s largest low-cost carrier, using Sabiha Gökçen on the Asian side of Istanbul as a cheap connecting point between Europe and Central Asia.',
+  k:'Sabiha Gökçen base, low-cost Europe–Central Asia connections, all-Airbus neo fleet' },
+
+{ n:'Turkish Airlines', w:'https://www.turkishairlines.com', f:'🇹🇷', c:'Turkey', r:'Europe',
+  hq:'Istanbul', hub:'Istanbul (IST), Istanbul Sabiha Gökçen (SAW)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈470 Airbus and Boeing',
+  d:'The airline flying to more countries than any other in the world, using Istanbul\'s geography to connect Europe, Africa, the Middle East and Asia in one stop.',
+  k:'More countries served than any other airline, Istanbul mega-hub, free stopover hotel programme, strong Africa network' },
+
+{ n:'British Airways', w:'https://www.britishairways.com', f:'🇬🇧', c:'United Kingdom', r:'Europe',
+  hq:'Harmondsworth, London', hub:'London Heathrow (LHR), London Gatwick (LGW), London City (LCY)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈280 mainline',
+  d:'The UK flag carrier and a founding oneworld member, holding roughly half the slots at Heathrow and the densest transatlantic schedule of any airline.',
+  k:'Heathrow slot dominance, Club World Suite, transatlantic joint venture with American, Iberia and Aer Lingus' },
+
+{ n:'easyJet', w:'https://www.easyjet.com', f:'🇬🇧', c:'United Kingdom', r:'Europe',
+  hq:'Luton', hub:'London Gatwick (LGW), London Luton (LTN), Manchester (MAN), Milan Malpensa (MXP), Geneva (GVA), Lisbon (LIS)',
+  al:'Independent', t:['lcc'], fl:'≈340 Airbus A320 family',
+  d:'Europe\'s second-largest low-cost airline and the biggest operator at London Gatwick, flying primarily to main airports rather than remote secondary fields.',
+  k:'Gatwick base, primary-airport low-cost model, all-Airbus fleet, large Alpine ski route programme' },
+
+{ n:'Jet2.com', w:'https://www.jet2.com', f:'🇬🇧', c:'United Kingdom', r:'Europe',
+  hq:'Leeds', hub:'Manchester (MAN), Leeds Bradford (LBA), Birmingham (BHX), London Stansted (STN)',
+  al:'Independent', t:['leisure','lcc'], fl:'≈130 Boeing 737 and Airbus A321neo',
+  d:'A UK holiday airline and package operator, flying regional British airports to the Mediterranean and Canaries with a bundled leisure product.',
+  k:'Jet2holidays packages, 22kg baggage included, regional UK bases, consistently high customer ratings' },
+
+{ n:'TUI Airways', w:'https://www.tui.co.uk', f:'🇬🇧', c:'United Kingdom', r:'Europe',
+  hq:'Luton', hub:'London Gatwick (LGW), Manchester (MAN), Birmingham (BHX)',
+  al:'Independent', t:['leisure','longhaul'], fl:'≈60 Boeing 737 and 787',
+  d:"The airline arm of the world's largest tour operator, flying mostly package holidaymakers from UK regional airports to the Mediterranean, Caribbean and Indian Ocean.",
+  k:'Package holiday flying, 787 long-haul leisure routes, regional UK departures' },
+
+{ n:'Virgin Atlantic', w:'https://www.virginatlantic.com', f:'🇬🇧', c:'United Kingdom', r:'Europe',
+  hq:'Crawley', hub:'London Heathrow (LHR), Manchester (MAN)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈45 Airbus A330/A350 and Boeing 787',
+  d:'A long-haul-only British airline built around transatlantic routes, with a distinctive cabin product and a joint venture with Delta and Air France-KLM.',
+  k:'Upper Class and the Retreat Suite, Clubhouse lounges, transatlantic joint venture, no short-haul flying' },
+
+/* ═══ MIDDLE EAST ═══ */
+
+{ n:'Gulf Air', w:'https://www.gulfair.com', f:'🇧🇭', c:'Bahrain', r:'Middle East',
+  hq:'Muharraq', hub:'Bahrain (BAH)',
+  al:'Independent', t:['full'], fl:'≈35 Airbus A320neo family and Boeing 787',
+  d:'The Bahraini flag carrier, one of the oldest airlines in the Gulf, running a compact network focused on the region, South Asia and a few European cities.',
+  k:'Bahrain hub, Falcon Gold cabin, regional Gulf and Indian subcontinent routes' },
+
+{ n:'El Al', w:'https://www.elal.com', f:'🇮🇱', c:'Israel', r:'Middle East',
+  hq:'Lod', hub:'Tel Aviv Ben Gurion (TLV)',
+  al:'Independent', t:['full','longhaul'], fl:'≈45 Boeing 737, 787 and 777',
+  d:'The Israeli flag carrier, known for exceptionally strict security screening and for not scheduling flights over the Jewish Sabbath.',
+  k:'Ben Gurion hub, Sabbath-free schedule, security procedures, long-haul 787 fleet' },
+
+{ n:'Royal Jordanian', w:'https://www.rj.com', f:'🇯🇴', c:'Jordan', r:'Middle East',
+  hq:'Amman', hub:'Amman Queen Alia (AMM)',
+  al:'oneworld', t:['full'], fl:'≈25 Airbus A320 family, Embraer and Boeing 787',
+  d:'Jordan\'s flag carrier and the oneworld member of the Levant, connecting Amman to Europe, the Gulf and North America.',
+  k:'Amman hub, oneworld access in the Middle East, Petra and Dead Sea tourism traffic' },
+
+{ n:'Jazeera Airways', w:'https://www.jazeeraairways.com', f:'🇰🇼', c:'Kuwait', r:'Middle East',
+  hq:'Kuwait City', hub:'Kuwait (KWI)',
+  al:'Independent', t:['lcc'], fl:'≈25 Airbus A320neo family',
+  d:'A Kuwaiti low-cost carrier with its own terminal at Kuwait airport, flying the Gulf, the Indian subcontinent and a handful of European cities.',
+  k:'Own private terminal at Kuwait, low-cost Gulf–South Asia routes, all-Airbus fleet' },
+
+{ n:'Kuwait Airways', w:'https://www.kuwaitairways.com', f:'🇰🇼', c:'Kuwait', r:'Middle East',
+  hq:'Kuwait City', hub:'Kuwait (KWI)',
+  al:'Independent', t:['full'], fl:'≈30 Airbus A320 family and A330',
+  d:'Kuwait\'s state-owned flag carrier, serving the Gulf, South Asia, Europe and North America. Alcohol is not served on board.',
+  k:'Kuwait hub, dry cabin policy, Gulf and Indian subcontinent network' },
+
+{ n:'Middle East Airlines', w:'https://www.mea.com.lb', f:'🇱🇧', c:'Lebanon', r:'Middle East',
+  hq:'Beirut', hub:'Beirut (BEY)',
+  al:'SkyTeam', t:['full'], fl:'≈20 Airbus A320neo family and A330',
+  d:'The Lebanese flag carrier, which has kept flying continuously through decades of regional instability and carries much of Lebanon\'s diaspora traffic.',
+  k:'Beirut hub, diaspora routes to Europe, Africa and the Gulf, SkyTeam member' },
+
+{ n:'Oman Air', w:'https://www.omanair.com', f:'🇴🇲', c:'Oman', r:'Middle East',
+  hq:'Muscat', hub:'Muscat (MCT)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈50 Boeing 737, 787 and Airbus A330',
+  d:'Oman\'s flag carrier, positioned as a smaller and quieter Gulf connector than its Emirati and Qatari neighbours, with a well-regarded business class.',
+  k:'Muscat hub, joined oneworld in 2025, spacious business class, Indian subcontinent network' },
+
+{ n:'Qatar Airways', w:'https://www.qatarairways.com', f:'🇶🇦', c:'Qatar', r:'Middle East',
+  hq:'Doha', hub:'Doha Hamad (DOH)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈260 Airbus and Boeing widebodies plus A320s',
+  d:'One of the most awarded airlines in the world, connecting almost everywhere through Doha and repeatedly voted the best airline overall.',
+  k:'Qsuite business class, Hamad International hub, oneworld member, very wide global network' },
+
+{ n:'flynas', w:'https://www.flynas.com', f:'🇸🇦', c:'Saudi Arabia', r:'Middle East',
+  hq:'Riyadh', hub:'Riyadh (RUH), Jeddah (JED)',
+  al:'Independent', t:['lcc'], fl:'≈60 Airbus A320neo family',
+  d:'Saudi Arabia\'s low-cost carrier, carrying domestic traffic plus large volumes of Umrah and Hajj pilgrims into Jeddah and Medina.',
+  k:'Saudi domestic network, pilgrimage traffic, all-Airbus neo fleet' },
+
+{ n:'Riyadh Air', w:'https://www.riyadhair.com', f:'🇸🇦', c:'Saudi Arabia', r:'Middle East',
+  hq:'Riyadh', hub:'Riyadh (RUH)',
+  al:'Independent', t:['full','longhaul'], fl:'Boeing 787 fleet in build-up',
+  d:'A state-backed startup launched to make Riyadh a global connecting hub, part of Saudi Arabia\'s plan to grow tourism and transfer traffic.',
+  k:'New Riyadh hub, digital-first product, 787 and A321neo orders, Saudi Vision 2030 backing' },
+
+{ n:'Saudia', w:'https://www.saudia.com', f:'🇸🇦', c:'Saudi Arabia', r:'Middle East',
+  hq:'Jeddah', hub:'Jeddah (JED), Riyadh (RUH), Dammam (DMM)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈145 Airbus and Boeing',
+  d:'Saudi Arabia\'s flag carrier and the main airline for pilgrimage traffic to Mecca and Medina, alongside a full domestic and international network.',
+  k:'Hajj and Umrah operations, Jeddah hub, SkyTeam member, no alcohol on board' },
+
+{ n:'Air Arabia', w:'https://www.airarabia.com', f:'🇦🇪', c:'United Arab Emirates', r:'Middle East',
+  hq:'Sharjah', hub:'Sharjah (SHJ), Abu Dhabi (AUH), Ras Al Khaimah (RKT)',
+  al:'Independent', t:['lcc'], fl:'≈80 Airbus A320 family',
+  d:'The first and largest low-cost carrier in the Middle East, flying from Sharjah and several other bases across the Gulf, North Africa and South Asia.',
+  k:'Sharjah base, lowest Gulf fares, multi-country franchise operations in Morocco, Egypt and Armenia' },
+
+{ n:'Emirates', w:'https://www.emirates.com', f:'🇦🇪', c:'United Arab Emirates', r:'Middle East',
+  hq:'Dubai', hub:'Dubai (DXB)',
+  al:'Independent', t:['full','longhaul'], fl:'≈260 Airbus A380 and Boeing 777 only',
+  d:'The world\'s largest international airline by passenger kilometres, flying an all-widebody fleet through Dubai and connecting almost any two continents in one stop.',
+  k:'Largest A380 fleet in the world, Dubai hub, onboard shower spa and bar in First, no alliance but many partners' },
+
+{ n:'Etihad Airways', w:'https://www.etihad.com', f:'🇦🇪', c:'United Arab Emirates', r:'Middle East',
+  hq:'Abu Dhabi', hub:'Abu Dhabi (AUH)',
+  al:'Independent', t:['full','longhaul'], fl:'≈100 Airbus and Boeing',
+  d:'The UAE\'s second flag carrier, based in Abu Dhabi, with a smaller and more premium-focused network than Emirates and US preclearance at its home airport.',
+  k:'The Residence and First Apartments, US preclearance at Abu Dhabi, Abu Dhabi stopover programme' },
+
+{ n:'flydubai', w:'https://www.flydubai.com', f:'🇦🇪', c:'United Arab Emirates', r:'Middle East',
+  hq:'Dubai', hub:'Dubai (DXB)',
+  al:'Independent', t:['lcc'], fl:'≈90 Boeing 737',
+  d:'Dubai\'s low-cost carrier, flying to smaller cities across the Gulf, Central Asia, Africa and Eastern Europe, with fares and schedules coordinated with Emirates.',
+  k:'Emirates codeshare and connecting baggage, thin regional routes, business class on a low-cost airline' },
+
+/* ═══ AFRICA ═══ */
+
+{ n:'Air Algérie', w:'https://airalgerie.dz', f:'🇩🇿', c:'Algeria', r:'Africa',
+  hq:'Algiers', hub:'Algiers (ALG)',
+  al:'Independent', t:['full'], fl:'≈60 Boeing and Airbus',
+  d:'Algeria\'s state-owned flag carrier, with a large domestic network across the Sahara and heavy traffic to France and the rest of Western Europe.',
+  k:'Saharan domestic routes, Algeria–France diaspora traffic, Algiers hub' },
+
+{ n:'TAAG Angola Airlines', w:'https://www.taag.com', f:'🇦🇴', c:'Angola', r:'Africa',
+  hq:'Luanda', hub:'Luanda (LAD)',
+  al:'Independent', t:['full','longhaul'], fl:'≈15 Boeing 737 and 777, Dash 8',
+  d:'Angola\'s flag carrier, the main air link between southern Africa, Brazil and Portugal, with a domestic network across a country with poor road connections.',
+  k:'Luanda hub, Lusophone routes to Lisbon and São Paulo, Angolan domestic network' },
+
+{ n:'EgyptAir', w:'https://www.egyptair.com', f:'🇪🇬', c:'Egypt', r:'Africa',
+  hq:'Cairo', hub:'Cairo (CAI)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈70 Airbus and Boeing',
+  d:'One of the oldest airlines in the world and the first African carrier to join Star Alliance, connecting Europe and the Gulf to Africa through Cairo.',
+  k:'Cairo hub, Nile Valley and Red Sea tourism traffic, Star Alliance access across North Africa' },
+
+{ n:'Ethiopian Airlines', w:'https://www.ethiopianairlines.com', f:'🇪🇹', c:'Ethiopia', r:'Africa',
+  hq:'Addis Ababa', hub:'Addis Ababa Bole (ADD), Lomé (LFW)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈150 Airbus, Boeing and De Havilland',
+  d:'Africa\'s largest and most profitable airline, serving more destinations on the continent than any other and connecting Africa to Asia and the Americas through Addis Ababa.',
+  k:'Largest African network, Addis Ababa hub, free stopover in Ethiopia, large cargo operation' },
+
+{ n:'Kenya Airways', w:'https://www.kenya-airways.com', f:'🇰🇪', c:'Kenya', r:'Africa',
+  hq:'Nairobi', hub:'Nairobi Jomo Kenyatta (NBO)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈35 Boeing 737, 787 and Embraer',
+  d:'Kenya\'s flag carrier and East Africa\'s SkyTeam member, the main gateway for safari traffic into the Maasai Mara and the wider region.',
+  k:'Nairobi hub, safari and East African tourism traffic, 787 routes to Europe and Asia' },
+
+{ n:'Air Mauritius', w:'https://www.airmauritius.com', f:'🇲🇺', c:'Mauritius', r:'Africa',
+  hq:'Port Louis', hub:'Mauritius (MRU)',
+  al:'Independent', t:['full','longhaul','leisure'], fl:'≈12 Airbus A330neo, A350 and ATR',
+  d:'The Mauritian flag carrier, carrying most of the island\'s long-haul leisure traffic from Europe, India and South Africa.',
+  k:'Indian Ocean island routes, A350 long-haul fleet, Réunion and Rodrigues regional flying' },
+
+{ n:'Royal Air Maroc', w:'https://www.royalairmaroc.com', f:'🇲🇦', c:'Morocco', r:'Africa',
+  hq:'Casablanca', hub:'Casablanca (CMN)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈60 Boeing 737, 787 and Embraer',
+  d:'Morocco\'s flag carrier and Africa\'s oneworld member, using Casablanca as a link between Europe, West Africa and North and South America.',
+  k:'Casablanca hub, West Africa network, oneworld access in North Africa, free Morocco stopover' },
+
+{ n:'Air Peace', w:'https://www.flyairpeace.com', f:'🇳🇬', c:'Nigeria', r:'Africa',
+  hq:'Lagos', hub:'Lagos (LOS), Abuja (ABV)',
+  al:'Independent', t:['full'], fl:'≈30 Boeing 737, Embraer 195-E2 and 777',
+  d:'Nigeria\'s largest airline, dominant on domestic routes and expanding into long-haul flying to London and the Gulf.',
+  k:'Nigerian domestic network, Lagos and Abuja bases, London Gatwick long-haul service' },
+
+{ n:'RwandAir', w:'https://www.rwandair.com', f:'🇷🇼', c:'Rwanda', r:'Africa',
+  hq:'Kigali', hub:'Kigali (KGL)',
+  al:'Independent', t:['full'], fl:'≈12 Airbus A330, Boeing 737 and CRJ',
+  d:'Rwanda\'s fast-growing flag carrier, building Kigali into a small but well-run connecting point across East, Central and West Africa.',
+  k:'Kigali hub, gorilla-trekking tourism traffic, pan-African network from a small fleet' },
+
+{ n:'Airlink', w:'https://www.flyairlink.com', f:'🇿🇦', c:'South Africa', r:'Africa',
+  hq:'Johannesburg', hub:'Johannesburg (JNB), Cape Town (CPT)',
+  al:'Independent', t:['regional'], fl:'≈65 Embraer regional jets',
+  d:'Southern Africa\'s largest regional airline, flying to small towns, safari airstrips and neighbouring countries that mainline carriers do not serve.',
+  k:'Kruger, Skukuza and safari-lodge airports, southern African regional reach, all-Embraer fleet' },
+
+{ n:'FlySafair', w:'https://www.flysafair.co.za', f:'🇿🇦', c:'South Africa', r:'Africa',
+  hq:'Johannesburg', hub:'Johannesburg (JNB), Cape Town (CPT), Durban (DUR)',
+  al:'Independent', t:['lcc'], fl:'≈35 Boeing 737',
+  d:'South Africa\'s largest domestic airline, a low-cost carrier that took over the market after the decline of SAA and several failed competitors.',
+  k:'South African domestic dominance, consistently strong on-time record, cheap Johannesburg–Cape Town fares' },
+
+{ n:'South African Airways', w:'https://www.flysaa.com', f:'🇿🇦', c:'South Africa', r:'Africa',
+  hq:'Johannesburg', hub:'Johannesburg (JNB), Cape Town (CPT)',
+  al:'Star Alliance', t:['full'], fl:'≈15 Airbus A320 family and A330',
+  d:'South Africa\'s flag carrier, now a much smaller airline after business rescue, flying a rebuilt regional African network plus a few long-haul routes.',
+  k:'Johannesburg hub, regional African routes, Star Alliance membership retained through restructuring' },
+
+{ n:'Air Tanzania', w:'https://www.airtanzania.co.tz', f:'🇹🇿', c:'Tanzania', r:'Africa',
+  hq:'Dar es Salaam', hub:'Dar es Salaam (DAR), Kilimanjaro (JRO)',
+  al:'Independent', t:['full'], fl:'≈12 Airbus A220, Boeing 787 and Dash 8',
+  d:'Tanzania\'s state-owned flag carrier, rebuilt around new aircraft to carry safari and Zanzibar tourism traffic directly.',
+  k:'Kilimanjaro and Zanzibar routes, A220 and 787 fleet renewal, domestic Tanzanian network' },
+
+{ n:'Tunisair', w:'https://www.tunisair.com', f:'🇹🇳', c:'Tunisia', r:'Africa',
+  hq:'Tunis', hub:'Tunis (TUN)',
+  al:'Independent', t:['full'], fl:'≈30 Airbus A320 family',
+  d:'Tunisia\'s flag carrier, flying mainly to France, Italy and the Gulf, with heavy summer traffic from European holidaymakers and the Tunisian diaspora.',
+  k:'Tunis hub, France and Italy routes, Mediterranean summer leisure traffic' },
+
+/* ═══ ASIA ═══ */
+
+{ n:'Azerbaijan Airlines', w:'https://www.azal.az', f:'🇦🇿', c:'Azerbaijan', r:'Asia',
+  hq:'Baku', hub:'Baku Heydar Aliyev (GYD)',
+  al:'Independent', t:['full'], fl:'≈35 Airbus, Boeing and Embraer',
+  d:'Azerbaijan\'s flag carrier, using Baku as a small connecting point between Europe, Russia, the Gulf and Central Asia.',
+  k:'Baku hub, Caucasus and Central Asia routes, growing European network' },
+
+{ n:'Biman Bangladesh Airlines', w:'https://www.biman-airlines.com', f:'🇧🇩', c:'Bangladesh', r:'Asia',
+  hq:'Dhaka', hub:'Dhaka (DAC), Chittagong (CGP)',
+  al:'Independent', t:['full'], fl:'≈21 Boeing 787, 777 and Dash 8',
+  d:'Bangladesh\'s flag carrier, carrying large volumes of migrant worker traffic to the Gulf alongside routes to Europe and Southeast Asia.',
+  k:'Dhaka hub, Gulf labour routes, 787 long-haul fleet' },
+
+{ n:'Royal Brunei Airlines', w:'https://www.flyroyalbrunei.com', f:'🇧🇳', c:'Brunei', r:'Asia',
+  hq:'Bandar Seri Begawan', hub:'Brunei (BWN)',
+  al:'Independent', t:['full'], fl:'≈15 Boeing 787 and Airbus A320neo',
+  d:'Brunei\'s small flag carrier, flying an all-modern fleet between Southeast Asia, Australia, the Middle East and London.',
+  k:'All-787 and A320neo fleet, London Heathrow service from a tiny nation, dry cabin policy' },
+
+{ n:'Air China', w:'https://www.airchina.com', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Beijing', hub:'Beijing Capital (PEK), Beijing Daxing (PKX), Chengdu (TFU), Shanghai (PVG)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈480 Airbus and Boeing',
+  d:'China\'s flag carrier and the only Chinese airline in Star Alliance, with the strongest network from Beijing to Europe and North America.',
+  k:'Beijing hub, state flag-carrier status, widest Chinese long-haul network to Europe' },
+
+{ n:'China Eastern Airlines', w:'https://www.ceair.com', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Shanghai', hub:'Shanghai Pudong (PVG), Shanghai Hongqiao (SHA), Kunming (KMG), Xi\'an (XIY)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈650 Airbus, Boeing and Comac',
+  d:'One of the world\'s largest airlines by fleet, dominant at Shanghai and the first operator of China\'s home-built Comac C919 airliner.',
+  k:'Shanghai dual-airport hub, first Comac C919 operator, huge Chinese domestic network' },
+
+{ n:'China Southern Airlines', w:'https://www.csair.com', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Guangzhou', hub:'Guangzhou (CAN), Beijing Daxing (PKX), Shenzhen (SZX), Ürümqi (URC)',
+  al:'Independent', t:['full','longhaul'], fl:'≈650 Airbus and Boeing',
+  d:'The largest airline in Asia by fleet and passengers, using Guangzhou as the main Chinese gateway to Southeast Asia and Oceania. It left SkyTeam in 2019.',
+  k:'Guangzhou hub, "Canton Route" to Australia and New Zealand, largest fleet in Asia' },
+
+{ n:'Hainan Airlines', w:'https://www.hainanairlines.com', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Haikou', hub:'Haikou (HAK), Beijing Capital (PEK), Sanya (SYX), Xi\'an (XIY)',
+  al:'Independent', t:['full','longhaul'], fl:'≈250 Airbus and Boeing',
+  d:'China\'s largest privately founded airline and long the highest-rated Chinese carrier for cabin service, with a big Hainan island leisure base.',
+  k:'Highest service ratings among Chinese airlines, Hainan island tourism traffic, long-haul routes to Europe and North America' },
+
+{ n:'Juneyao Air', w:'https://www.juneyaoair.com', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Shanghai', hub:'Shanghai Hongqiao (SHA), Shanghai Pudong (PVG), Nanjing (NKG)',
+  al:'Independent', t:['full'], fl:'≈100 Airbus A320 family and Boeing 787',
+  d:'A privately owned Shanghai carrier that sits between low-cost and full-service, and connects to Star Alliance itineraries as a connecting partner.',
+  k:'Shanghai base, Star Alliance connecting partner status, 787 routes to Europe' },
+
+{ n:'Spring Airlines', w:'https://en.ch.com', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Shanghai', hub:'Shanghai Pudong (PVG), Shanghai Hongqiao (SHA), Shijiazhuang (SJW)',
+  al:'Independent', t:['lcc'], fl:'≈130 Airbus A320 family',
+  d:'China\'s largest low-cost carrier, flying high-density A320s on domestic routes plus short international services to Japan, Korea and Southeast Asia.',
+  k:'Cheapest fares in China, all-Airbus high-density cabins, Shanghai base' },
+
+{ n:'Xiamen Air', w:'https://www.xiamenair.com', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Xiamen', hub:'Xiamen (XMN), Fuzhou (FOC), Hangzhou (HGH)',
+  al:'SkyTeam', t:['full'], fl:'≈200 Boeing 737 and 787',
+  d:'A profitable all-Boeing airline based in Fujian, serving the Chinese domestic market and Southeast Asia with a small long-haul programme.',
+  k:'All-Boeing fleet, Xiamen and Fuzhou bases, SkyTeam member alongside China Eastern' },
+
+{ n:'Cathay Pacific', w:'https://www.cathaypacific.com', f:'🇭🇰', c:'Hong Kong', r:'Asia',
+  hq:'Hong Kong', hub:'Hong Kong (HKG)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈180 Airbus and Boeing widebodies',
+  d:'Hong Kong\'s flag carrier and a founding oneworld member, long regarded as one of Asia\'s premium airlines and a major cargo operator.',
+  k:'Hong Kong hub, The Pier and The Wing lounges, all-widebody long-haul fleet, large freighter operation' },
+
+{ n:'HK Express', w:'https://www.hkexpress.com', f:'🇭🇰', c:'Hong Kong', r:'Asia',
+  hq:'Hong Kong', hub:'Hong Kong (HKG)',
+  al:'Independent', t:['lcc'], fl:'≈35 Airbus A320/A321neo family',
+  d:'Hong Kong\'s only low-cost carrier, owned by Cathay Pacific and flying short-haul leisure routes across Japan, Korea and Southeast Asia.',
+  k:'Cheap Hong Kong–Japan and Korea routes, Cathay ownership, all-Airbus fleet' },
+
+{ n:'Air India', w:'https://www.airindia.com', f:'🇮🇳', c:'India', r:'Asia',
+  hq:'Gurugram', hub:'Delhi (DEL), Mumbai (BOM), Bengaluru (BLR)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈200 Airbus and Boeing',
+  d:'India\'s flag carrier, privatised in 2022 and now owned by the Tata group, in the middle of one of the largest fleet and cabin renewals in aviation history.',
+  k:'Nonstop India–North America routes, record Airbus and Boeing orders, Vistara merger, Tata ownership' },
+
+{ n:'Air India Express', w:'https://www.airindiaexpress.com', f:'🇮🇳', c:'India', r:'Asia',
+  hq:'Kochi', hub:'Kochi (COK), Kozhikode (CCJ), Delhi (DEL), Bengaluru (BLR)',
+  al:'Independent', t:['lcc'], fl:'≈100 Boeing 737 and Airbus A320 family',
+  d:'Air India\'s low-cost arm, focused on routes between southern India and the Gulf, carrying large volumes of Indian workers to and from the Middle East.',
+  k:'India–Gulf routes, Kerala bases, merged with AIX Connect, Air India group feed' },
+
+{ n:'Akasa Air', w:'https://www.akasaair.com', f:'🇮🇳', c:'India', r:'Asia',
+  hq:'Mumbai', hub:'Mumbai (BOM), Bengaluru (BLR), Delhi (DEL)',
+  al:'Independent', t:['lcc'], fl:'≈30 Boeing 737 MAX',
+  d:'India\'s newest airline, launched in 2022 with an all-737 MAX fleet and a service standard aimed above the usual low-cost baseline.',
+  k:'All-737 MAX fleet, newest Indian carrier, growing international routes to the Gulf' },
+
+{ n:'IndiGo', w:'https://www.goindigo.in', f:'🇮🇳', c:'India', r:'Asia',
+  hq:'Gurugram', hub:'Delhi (DEL), Mumbai (BOM), Bengaluru (BLR), Hyderabad (HYD)',
+  al:'Independent', t:['lcc'], fl:'≈400 Airbus A320 family and ATR',
+  d:'India\'s dominant airline, carrying more than half the domestic market on a low-cost model, with the largest aircraft order book in the world.',
+  k:'Over half of Indian domestic traffic, huge A320neo and A350 order book, dense regional ATR network' },
+
+{ n:'SpiceJet', w:'https://www.spicejet.com', f:'🇮🇳', c:'India', r:'Asia',
+  hq:'Gurugram', hub:'Delhi (DEL), Hyderabad (HYD)',
+  al:'Independent', t:['lcc'], fl:'≈25 Boeing 737 and De Havilland Dash 8',
+  d:'An Indian low-cost carrier that once rivalled IndiGo and now flies a much reduced network after prolonged financial difficulty.',
+  k:'Indian regional routes, Dash 8 flying to small airports, low base fares' },
+
+{ n:'Garuda Indonesia', w:'https://www.garuda-indonesia.com', f:'🇮🇩', c:'Indonesia', r:'Asia',
+  hq:'Jakarta', hub:'Jakarta Soekarno–Hatta (CGK), Denpasar Bali (DPS)',
+  al:'SkyTeam', t:['full'], fl:'≈70 Boeing and Airbus',
+  d:'Indonesia\'s flag carrier, known for its Indonesian-hospitality cabin service and for carrying Hajj pilgrims alongside Bali tourism traffic.',
+  k:'Bali routes, Garuda Indonesia Experience service concept, Hajj charter flying' },
+
+{ n:'Lion Air', w:'https://www.lionair.co.id', f:'🇮🇩', c:'Indonesia', r:'Asia',
+  hq:'Jakarta', hub:'Jakarta Soekarno–Hatta (CGK), Surabaya (SUB), Denpasar Bali (DPS)',
+  al:'Independent', t:['lcc'], fl:'≈100 Boeing 737',
+  d:'Indonesia\'s largest private airline and the core of a low-cost group spanning Indonesia, Malaysia and Thailand across an archipelago of thousands of islands.',
+  k:'Indonesian domestic dominance, Lion Group network, very low island-hopping fares' },
+
+{ n:'All Nippon Airways', w:'https://www.ana.co.jp', f:'🇯🇵', c:'Japan', r:'Asia',
+  hq:'Tokyo', hub:'Tokyo Haneda (HND), Tokyo Narita (NRT)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈240 Airbus and Boeing',
+  d:'Japan\'s largest airline and the launch customer of the Boeing 787, consistently rated among the best carriers in the world for service and reliability.',
+  k:'Haneda slots, The Room business class, largest 787 fleet in the world, five-star service ratings' },
+
+{ n:'Japan Airlines', w:'https://www.jal.co.jp', f:'🇯🇵', c:'Japan', r:'Asia',
+  hq:'Tokyo', hub:'Tokyo Haneda (HND), Tokyo Narita (NRT), Osaka Kansai (KIX)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈230 Airbus and Boeing',
+  d:'Japan\'s flag carrier and oneworld member, with a strong domestic network and a long-haul product built around a well-regarded business class.',
+  k:'Haneda hub, JAL Sky Suite, joint ventures with American, British Airways and Finnair, top on-time performance' },
+
+{ n:'Peach Aviation', w:'https://www.flypeach.com', f:'🇯🇵', c:'Japan', r:'Asia',
+  hq:'Izumisano, Osaka', hub:'Osaka Kansai (KIX), Tokyo Narita (NRT), Naha (OKA)',
+  al:'Independent', t:['lcc'], fl:'≈40 Airbus A320 family',
+  d:'Japan\'s largest low-cost carrier, owned by ANA, flying domestic routes and short international services to Korea, Taiwan and Southeast Asia.',
+  k:'Kansai base, cheapest Japanese domestic fares, ANA group ownership' },
+
+{ n:'Zipair Tokyo', w:'https://www.zipair.net', f:'🇯🇵', c:'Japan', r:'Asia',
+  hq:'Narita, Chiba', hub:'Tokyo Narita (NRT)',
+  al:'Independent', t:['lcc','longhaul'], fl:'≈10 Boeing 787',
+  d:'Japan Airlines\' long-haul low-cost arm, flying 787s from Narita to North America, Asia and Oceania on unbundled fares with lie-flat seats available.',
+  k:'Cheap Japan–US fares, all-787 fleet, full-flat Zip Full-Flat seats on a low-cost airline' },
+
+{ n:'Air Astana', w:'https://www.airastana.com', f:'🇰🇿', c:'Kazakhstan', r:'Asia',
+  hq:'Almaty', hub:'Almaty (ALA), Astana (NQZ)',
+  al:'Independent', t:['full'], fl:'≈50 Airbus, Boeing and Embraer including FlyArystan',
+  d:'Kazakhstan\'s flag carrier, repeatedly named the best airline in Central Asia, with a low-cost arm called FlyArystan flying the domestic market.',
+  k:'Almaty and Astana hubs, Central Asia service leadership, FlyArystan low-cost subsidiary' },
+
+{ n:'AirAsia', w:'https://www.airasia.com', f:'🇲🇾', c:'Malaysia', r:'Asia',
+  hq:'Sepang, Selangor', hub:'Kuala Lumpur (KUL), Bangkok Don Mueang (DMK), Jakarta (CGK), Manila (MNL)',
+  al:'Independent', t:['lcc'], fl:'≈200 across the group',
+  d:'Southeast Asia\'s largest low-cost airline group, with separate Malaysian, Thai, Indonesian and Philippine operations under one brand and booking platform.',
+  k:'Kuala Lumpur base, pan-ASEAN low-cost network, AirAsia X long-haul arm, consistently rated the world\'s best low-cost carrier' },
+
+{ n:'Malaysia Airlines', w:'https://www.malaysiaairlines.com', f:'🇲🇾', c:'Malaysia', r:'Asia',
+  hq:'Sepang, Selangor', hub:'Kuala Lumpur (KUL)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈110 including Firefly and MASwings',
+  d:'Malaysia\'s flag carrier and oneworld member, with a network centred on Southeast Asia, Australia and Northeast Asia from Kuala Lumpur.',
+  k:'Kuala Lumpur hub, Business Suite on A350s, Borneo regional flying through MASwings' },
+
+{ n:'Pakistan International Airlines', w:'https://www.piac.com.pk', f:'🇵🇰', c:'Pakistan', r:'Asia',
+  hq:'Karachi', hub:'Karachi (KHI), Islamabad (ISB), Lahore (LHE)',
+  al:'Independent', t:['full'], fl:'≈30 Airbus A320 family and Boeing 777',
+  d:'Pakistan\'s state-owned flag carrier, flying domestic routes plus heavy diaspora and worker traffic to the Gulf, the UK and Europe.',
+  k:'Karachi and Islamabad hubs, Gulf and UK diaspora routes, northern Pakistan domestic flying' },
+
+{ n:'Cebu Pacific', w:'https://www.cebupacificair.com', f:'🇵🇭', c:'Philippines', r:'Asia',
+  hq:'Pasay, Metro Manila', hub:'Manila (MNL), Cebu (CEB), Clark (CRK)',
+  al:'Independent', t:['lcc'], fl:'≈90 Airbus A320 family, A330 and ATR',
+  d:'The Philippines\' largest airline, a low-cost carrier serving an archipelago of more than 7,000 islands plus high-density routes to the Gulf and Northeast Asia.',
+  k:'Philippine domestic dominance, high-density A330s to Dubai, ATR island network' },
+
+{ n:'Philippine Airlines', w:'https://www.philippineairlines.com', f:'🇵🇭', c:'Philippines', r:'Asia',
+  hq:'Pasay, Metro Manila', hub:'Manila (MNL), Cebu (CEB)',
+  al:'Independent', t:['full','longhaul'], fl:'≈70 Airbus and Boeing',
+  d:'Asia\'s oldest continuously operating airline under its original name, carrying much of the Filipino diaspora traffic to North America and the Gulf.',
+  k:'Manila hub, nonstop routes to the US West Coast and Canada, large overseas Filipino worker market' },
+
+{ n:'Scoot', w:'https://www.flyscoot.com', f:'🇸🇬', c:'Singapore', r:'Asia',
+  hq:'Singapore', hub:'Singapore Changi (SIN)',
+  al:'Independent', t:['lcc','longhaul'], fl:'≈60 Airbus A320 family, A321neo, Boeing 787 and Embraer E190-E2',
+  d:'Singapore Airlines\' low-cost arm, flying both short regional routes and 787 long-haul services, and feeding the SIA network at Changi.',
+  k:'ScootPlus cabin, 787 long-haul low-cost routes, Singapore Airlines group connections' },
+
+{ n:'Singapore Airlines', w:'https://www.singaporeair.com', f:'🇸🇬', c:'Singapore', r:'Asia',
+  hq:'Singapore', hub:'Singapore Changi (SIN)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈150 Airbus and Boeing widebodies',
+  d:'Repeatedly voted the best airline in the world, and the operator of the longest scheduled flight on earth between Singapore and New York.',
+  k:'Singapore–New York ultra-long-haul, Suites and Business on the A380, Changi hub, KrisFlyer programme' },
+
+{ n:'Air Premia', w:'https://www.airpremia.com', f:'🇰🇷', c:'South Korea', r:'Asia',
+  hq:'Seoul', hub:'Seoul Incheon (ICN)',
+  al:'Independent', t:['longhaul'], fl:'≈5 Boeing 787',
+  d:'A hybrid Korean carrier flying 787s to the United States and Europe at fares between low-cost and full-service, with a single premium economy-style cabin.',
+  k:'Cheap Korea–US long-haul, all-787 fleet, mid-market cabin positioning' },
+
+{ n:'Asiana Airlines', w:'https://flyasiana.com', f:'🇰🇷', c:'South Korea', r:'Asia',
+  hq:'Seoul', hub:'Seoul Incheon (ICN), Seoul Gimpo (GMP)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈75 Airbus and Boeing',
+  d:'South Korea\'s second flag carrier, now being absorbed into Korean Air following a merger approved in 2024.',
+  k:'Incheon hub, A380 operations, Star Alliance membership pending the Korean Air merger' },
+
+{ n:'Jeju Air', w:'https://www.jejuair.net', f:'🇰🇷', c:'South Korea', r:'Asia',
+  hq:'Jeju City', hub:'Seoul Incheon (ICN), Seoul Gimpo (GMP), Jeju (CJU)',
+  al:'Independent', t:['lcc'], fl:'≈40 Boeing 737',
+  d:'South Korea\'s largest low-cost carrier, built on the extremely busy Seoul–Jeju route and short international services to Japan and Southeast Asia.',
+  k:'Seoul–Jeju shuttle, cheapest Korea–Japan fares, all-737 fleet' },
+
+{ n:'Korean Air', w:'https://www.koreanair.com', f:'🇰🇷', c:'South Korea', r:'Asia',
+  hq:'Seoul', hub:'Seoul Incheon (ICN), Seoul Gimpo (GMP)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈160 Airbus and Boeing',
+  d:'South Korea\'s flag carrier and a SkyTeam founder, with a strong transpacific network and a major cargo operation, now merging with Asiana.',
+  k:'Incheon transpacific hub, SkyTeam founder, Asiana merger, large freighter fleet' },
+
+{ n:'T\'way Air', w:'https://www.twayair.com', f:'🇰🇷', c:'South Korea', r:'Asia',
+  hq:'Seoul', hub:'Seoul Incheon (ICN), Seoul Gimpo (GMP), Daegu (TAE)',
+  al:'Independent', t:['lcc'], fl:'≈35 Boeing 737 and Airbus A330',
+  d:'A Korean low-cost carrier expanding beyond short-haul into European routes handed over as a condition of the Korean Air–Asiana merger.',
+  k:'Korea–Japan and Southeast Asia routes, new A330 long-haul flying to Europe' },
+
+{ n:'SriLankan Airlines', w:'https://www.srilankan.com', f:'🇱🇰', c:'Sri Lanka', r:'Asia',
+  hq:'Katunayake', hub:'Colombo (CMB)',
+  al:'oneworld', t:['full'], fl:'≈23 Airbus A320 family and A330',
+  d:'Sri Lanka\'s flag carrier and a oneworld member, using Colombo as a connecting point between India, the Gulf and Southeast Asia.',
+  k:'Colombo hub, Maldives and India routes, oneworld access in South Asia' },
+
+{ n:'China Airlines', w:'https://www.china-airlines.com', f:'🇹🇼', c:'Taiwan', r:'Asia',
+  hq:'Taoyuan', hub:'Taipei Taoyuan (TPE), Kaohsiung (KHH)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈85 Airbus and Boeing',
+  d:'Taiwan\'s flag carrier and SkyTeam member, with a large transpacific network and one of the biggest air cargo operations in the world.',
+  k:'Taipei hub, major freighter fleet, SkyTeam member in Taiwan' },
+
+{ n:'EVA Air', w:'https://www.evaair.com', f:'🇹🇼', c:'Taiwan', r:'Asia',
+  hq:'Taoyuan', hub:'Taipei Taoyuan (TPE)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈85 Airbus and Boeing',
+  d:'A consistently top-rated Taiwanese airline, known for its Royal Laurel business class and for pioneering the premium economy cabin in Asia.',
+  k:'Royal Laurel business class, Hello Kitty themed jets, strong transpacific and European routes' },
+
+{ n:'Starlux Airlines', w:'https://www.starlux-airlines.com', f:'🇹🇼', c:'Taiwan', r:'Asia',
+  hq:'Taipei', hub:'Taipei Taoyuan (TPE)',
+  al:'Independent', t:['full','longhaul'], fl:'≈25 Airbus A321neo, A330neo and A350',
+  d:'A boutique Taiwanese airline launched in 2020 with a deliberately premium product, all-new Airbus aircraft and a first class cabin on long-haul routes.',
+  k:'Luxury positioning, all-Airbus new-generation fleet, Taipei–US West Coast routes' },
+
+{ n:'Bangkok Airways', w:'https://www.bangkokair.com', f:'🇹🇭', c:'Thailand', r:'Asia',
+  hq:'Bangkok', hub:'Bangkok Suvarnabhumi (BKK), Koh Samui (USM)',
+  al:'Independent', t:['full','regional'], fl:'≈25 Airbus A320 family and ATR',
+  d:'A Thai regional airline that owns and operates Koh Samui airport, and gives every passenger lounge access regardless of cabin.',
+  k:'Koh Samui airport ownership, lounge access for all passengers, Thai and Indochina regional routes' },
+
+{ n:'Thai Airways International', w:'https://www.thaiairways.com', f:'🇹🇭', c:'Thailand', r:'Asia',
+  hq:'Bangkok', hub:'Bangkok Suvarnabhumi (BKK)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈75 Airbus and Boeing',
+  d:'Thailand\'s flag carrier, rebuilt after restructuring, with a network centred on Europe, Australia and Northeast Asia from Bangkok.',
+  k:'Bangkok hub, Royal Orchid service, long-haul routes to Europe and Australia' },
+
+{ n:'Uzbekistan Airways', w:'https://www.uzairways.com', f:'🇺🇿', c:'Uzbekistan', r:'Asia',
+  hq:'Tashkent', hub:'Tashkent (TAS)',
+  al:'Independent', t:['full'], fl:'≈35 Airbus and Boeing',
+  d:'Uzbekistan\'s flag carrier, the main way into Samarkand and Bukhara by air, with routes to Europe, Russia, the Gulf and East Asia.',
+  k:'Tashkent hub, Silk Road tourism traffic, 787 routes to Europe' },
+
+{ n:'VietJet Air', w:'https://www.vietjetair.com', f:'🇻🇳', c:'Vietnam', r:'Asia',
+  hq:'Hanoi', hub:'Ho Chi Minh City (SGN), Hanoi (HAN), Da Nang (DAD)',
+  al:'Independent', t:['lcc'], fl:'≈105 Airbus A320/A321 family',
+  d:'Vietnam\'s largest low-cost carrier, which grew rapidly on domestic trunk routes and now flies across Asia and to Australia.',
+  k:'Vietnamese domestic network, cheap fares across Southeast Asia, all-Airbus fleet' },
+
+{ n:'Vietnam Airlines', w:'https://www.vietnamairlines.com', f:'🇻🇳', c:'Vietnam', r:'Asia',
+  hq:'Hanoi', hub:'Hanoi (HAN), Ho Chi Minh City (SGN)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈100 Airbus and Boeing',
+  d:'Vietnam\'s flag carrier and SkyTeam member, flying a full domestic network plus long-haul routes to Europe, Australia and North America.',
+  k:'Hanoi and Ho Chi Minh City hubs, 787 and A350 long-haul fleet, SkyTeam member' },
+
+/* ═══ OCEANIA ═══ */
+
+{ n:'Jetstar', w:'https://www.jetstar.com', f:'🇦🇺', c:'Australia', r:'Oceania',
+  hq:'Melbourne, Victoria', hub:'Melbourne (MEL), Sydney (SYD), Brisbane (BNE), Gold Coast (OOL)',
+  al:'Independent', t:['lcc'], fl:'≈90 Airbus A320 family and Boeing 787',
+  d:'Qantas\' low-cost arm, flying Australian domestic routes plus low-cost long-haul services to Asia and Hawaii with 787s.',
+  k:'Cheapest Australian domestic fares, 787 low-cost long-haul, Qantas group ownership' },
+
+{ n:'Qantas', w:'https://www.qantas.com', f:'🇦🇺', c:'Australia', r:'Oceania',
+  hq:'Mascot, Sydney', hub:'Sydney (SYD), Melbourne (MEL), Brisbane (BNE), Perth (PER)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈130 mainline plus QantasLink',
+  d:'Australia\'s flag carrier, a oneworld founder and one of the oldest airlines in the world, operating some of the longest nonstop routes ever flown.',
+  k:'Perth–London nonstop, Project Sunrise ultra-long-haul, outstanding safety record, extensive outback network' },
+
+{ n:'Rex', w:'https://www.rex.com.au', f:'🇦🇺', c:'Australia', r:'Oceania',
+  hq:'Mascot, Sydney', hub:'Sydney (SYD), Melbourne (MEL), Adelaide (ADL)',
+  al:'Independent', t:['regional'], fl:'≈60 Saab 340 and Boeing 737',
+  d:'Australia\'s largest independent regional airline, serving small outback and country towns that the majors have long abandoned.',
+  k:'Regional and outback New South Wales and Queensland routes, Saab 340 fleet, community air links' },
+
+{ n:'Virgin Australia', w:'https://www.virginaustralia.com', f:'🇦🇺', c:'Australia', r:'Oceania',
+  hq:'Brisbane, Queensland', hub:'Brisbane (BNE), Sydney (SYD), Melbourne (MEL), Perth (PER)',
+  al:'Independent', t:['full'], fl:'≈100 Boeing 737',
+  d:'Australia\'s second-largest airline, rebuilt after administration as a mid-market carrier flying an all-737 domestic network plus routes to the Pacific and Asia.',
+  k:'Australian domestic competition to Qantas, all-737 fleet, Qatar Airways partnership on long-haul' },
+
+{ n:'Fiji Airways', w:'https://www.fijiairways.com', f:'🇫🇯', c:'Fiji', r:'Oceania',
+  hq:'Nadi', hub:'Nadi (NAN), Suva (SUV)',
+  al:'oneworld', t:['full','leisure'], fl:'≈25 Airbus A330/A350, Boeing 737 and ATR',
+  d:'Fiji\'s flag carrier and a oneworld connect member, the main air link between the South Pacific islands, Australasia and North America.',
+  k:'Nadi hub for the South Pacific, A350 routes to the US, inter-island ATR network' },
+
+{ n:'Air Tahiti Nui', w:'https://www.airtahitinui.com', f:'🇵🇫', c:'French Polynesia', r:'Oceania',
+  hq:'Papeete', hub:'Papeete Faa\'a (PPT)',
+  al:'Independent', t:['full','longhaul','leisure'], fl:'≈4 Boeing 787-9',
+  d:'The flag carrier of French Polynesia, flying a tiny all-787 fleet between Tahiti, Paris, Los Angeles and Auckland.',
+  k:'Tahiti long-haul routes, all-787 fleet, Paris service via Los Angeles' },
+
+{ n:'Air New Zealand', w:'https://www.airnewzealand.com', f:'🇳🇿', c:'New Zealand', r:'Oceania',
+  hq:'Auckland', hub:'Auckland (AKL), Christchurch (CHC), Wellington (WLG)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈105 Airbus, Boeing and ATR',
+  d:'New Zealand\'s flag carrier, repeatedly named among the world\'s safest and best airlines, with a domestic network reaching almost every corner of the country.',
+  k:'Skycouch and the Skynest sleep pods, Auckland Pacific hub, extensive domestic turboprop network' }
+
+];
+</script>
+
+<script>
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function tagsHTML(a) {
+  var out = '';
+  var al = ALLIANCES[a.al] || ALLIANCES['Independent'];
+  out += '<span class="card-tag ' + al.cls + '">' + al.label + '</span>';
+  (a.t || []).forEach(function(k) {
+    var ty = TYPES[k];
+    if (ty) out += '<span class="card-tag ' + ty.cls + '">' + ty.label + '</span>';
+  });
+  return out;
+}
+
+function cardHTML(a) {
+  var host = a.w.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  return '' +
+  '<div class="al-card">' +
+    '<div class="card-top">' +
+      '<div class="card-flag">' + a.f + '</div>' +
+      '<div class="card-meta">' +
+        '<div class="card-name"><a href="' + a.w + '" target="_blank" rel="noopener">' + esc(a.n) + '</a></div>' +
+        '<div class="card-tags">' + tagsHTML(a) + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card-body">' +
+      '<div class="card-desc">' + esc(a.d) + '</div>' +
+      '<div class="info-rows">' +
+        '<div class="info-row"><div class="info-content">' +
+          '<span class="info-label">Headquarters</span>' + esc(a.hq) + '</div></div>' +
+        '<div class="info-row"><div class="info-content">' +
+          '<span class="info-label">Main hubs</span>' + esc(a.hub) + '</div></div>' +
+        '<div class="info-row"><div class="info-content">' +
+          '<span class="info-label">Fleet</span>' + esc(a.fl) + '</div></div>' +
+        '<div class="info-row"><div class="info-content">' +
+          '<span class="info-label">Known for</span>' + esc(a.k) + '</div></div>' +
+      '</div>' +
+      '<div class="booking-section">' +
+        '<span class="booking-label">Website</span>' +
+        '<div class="booking-links">' +
+          '<a href="' + a.w + '" target="_blank" rel="noopener" class="book-link">' + esc(host) + '</a>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+var alRegion = 'All', alAlliance = 'All';
+
+function matches(a) {
+  if (alRegion !== 'All' && a.r !== alRegion) return false;
+  if (alAlliance !== 'All' && a.al !== alAlliance) return false;
+  var q = (document.getElementById('al-search').value || '').trim().toLowerCase();
+  if (!q) return true;
+  return [a.n, a.c, a.hq, a.hub, a.al, a.d, a.k].join(' ').toLowerCase().indexOf(q) !== -1;
+}
+
+function render() {
+  var res = document.getElementById('al-results');
+  var cnt = document.getElementById('al-count');
+  var list = AIRLINES.filter(matches);
+  var q = (document.getElementById('al-search').value || '').trim();
+  var noResults = list.length === 0;
+
+  // No-results state: only the title, the search box and the message remain.
+  document.getElementById('al-region-filters').style.display   = noResults ? 'none' : '';
+  document.getElementById('al-alliance-filters').style.display = noResults ? 'none' : '';
+  var also = document.getElementById('also-on-this-site');
+  if (also) also.style.display = noResults ? 'none' : '';
+
+  if (noResults) {
+    cnt.textContent = '';
+    res.innerHTML = '<div class="empty-state">No airline matches “' + esc(q) + '”.</div>';
+    return;
+  }
+
+  cnt.innerHTML = '<strong>' + list.length + '</strong> airline' + (list.length === 1 ? '' : 's')
+                + ' · <strong>' + new Set(list.map(function(a) { return a.c; })).size + '</strong> countries';
+
+  var html = '';
+  REGIONS.forEach(function(region) {
+    var inRegion = list.filter(function(a) { return a.r === region; });
+    if (!inRegion.length) return;
+    html += '<div class="al-region"><div class="al-region-head">' + esc(region)
+          + ' · ' + inRegion.length + '</div>';
+    var countries = Array.from(new Set(inRegion.map(function(a) { return a.c; })))
+                         .sort(function(x, y) { return x.localeCompare(y); });
+    countries.forEach(function(country) {
+      var cards = inRegion.filter(function(a) { return a.c === country; })
+                          .sort(function(x, y) { return x.n.localeCompare(y.n); });
+      html += '<div class="al-country"><div class="al-country-head">' + cards[0].f + ' ' + esc(country) + '</div>'
+            + '<div class="al-grid">' + cards.map(cardHTML).join('') + '</div></div>';
+    });
+    html += '</div>';
+  });
+  res.innerHTML = html;
+}
+
+function buildChips(mountId, values, current, setter) {
+  var mount = document.getElementById(mountId);
+  mount.innerHTML = '';
+  values.forEach(function(v) {
+    var b = document.createElement('button');
+    b.className = 'filter-btn' + (v.key === current() ? ' active' : '');
+    var n = v.key === 'All' ? AIRLINES.length : AIRLINES.filter(v.test).length;
+    b.innerHTML = esc(v.label) + ' <span class="al-chip-n">' + n + '</span>';
+    b.onclick = function() {
+      setter(v.key);
+      document.getElementById('al-search').value = '';
+      buildAllChips();
+      render();
+    };
+    mount.appendChild(b);
+  });
+}
+
+function buildAllChips() {
+  buildChips('al-region-filters',
+    [{ key:'All', label:'All regions', test:function() { return true; } }].concat(
+      REGIONS.map(function(r) {
+        /* Chip label only — the section heading keeps the full region name. */
+        var short = r === 'Latin America & Caribbean' ? 'Latin America' : r;
+        return { key:r, label:short, test:function(a) { return a.r === r; } };
+      })),
+    function() { return alRegion; },
+    function(v) { alRegion = v; });
+
+  buildChips('al-alliance-filters',
+    [{ key:'All', label:'All alliances', test:function() { return true; } }].concat(
+      Object.keys(ALLIANCES).map(function(k) {
+        return { key:k, label:ALLIANCES[k].label, test:function(a) { return a.al === k; } };
+      })),
+    function() { return alAlliance; },
+    function(v) { alAlliance = v; });
+}
+
+var alInput = document.getElementById('al-search');
+
+function runQuery(q) {
+  alInput.value = q;
+  alRegion = 'All';
+  alAlliance = 'All';
+  buildAllChips();
+  render();
+}
+
+alInput.addEventListener('input', function() { runQuery(alInput.value); });
+
+/* Shared typeahead — every search box on the site uses TVESearch (Toolbar.html
+   § TVESearch). Items are the airlines themselves plus the countries they fly
+   from, so a reader typing "Qatar" is offered both the airline and the country. */
+if (window.TVESearch) {
+  var seen = {};
+  var items = AIRLINES.map(function(a) { return { name: a.n, sub: a.c }; });
+  AIRLINES.forEach(function(a) {
+    if (!seen[a.c]) { seen[a.c] = 1; items.push({ name: a.c, sub: a.r }); }
+  });
+  TVESearch.attach(alInput, { items: items, onPick: function(it) { runQuery(it.name); } });
+}
+
+buildAllChips();
+render();
+</script>
+
+</body>
+</html>

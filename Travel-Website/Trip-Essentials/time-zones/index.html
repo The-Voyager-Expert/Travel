@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Time Zones</title>
+<style>/* .wrap — fluid width from web-travel-style.css */
+/* ── Page header — from web-travel-style.css ── */
+.page-desc { font-size: 12px; color: var(--muted); margin: -8px 0 14px; }
+/* ── Seattle home row ── */
+.home-row {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.home-label { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+.home-city  { font-size: 30px; font-weight: 400; color: var(--text); }
+.home-right { text-align: right; }
+.home-time  { font-size: 42px; font-weight: 700; color: var(--rust); font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1; }
+.home-day   { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 3px; }
+/* ── Controls ── */
+.controls { display: flex; flex-direction: column; gap: 14px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.search-wrap { position: relative; }
+input.search {
+  width: 360px; padding: 11px 18px; padding-left: 36px;
+  border: 1.5px solid #e6e2da; border-radius: 6px;
+  background: #fff var(--search-icon, none) no-repeat 13px center; font-family: inherit; font-size: 16px; color: var(--text, #1a1917);
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+input.search::placeholder { color: var(--c-search-placeholder); }
+#search.search-input::placeholder { color: #A8895A; }
+input.search:focus { border-color: var(--c-search-focus-border); box-shadow: none; }
+.pills { font-family: inherit; display: flex; gap: 4px; flex-wrap: wrap; }
+.pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border2);
+  background: #fff; font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; color: var(--muted, #6a6660);
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.pill:hover, .pill.active { font-family: inherit; background: var(--bg, #f5f4f0); border-color: var(--rust, #b85c2a); color: var(--text, #3d3a32); }
+a.pill:visited { color: #6a6660; }
+
+/* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Formatting/Formatting.html#src-desktoppill.
+   Two pill groups (6 region + 2 sort) — not enough pills to fill a row,
+   so each group is a natural-width horizontal strip CENTERED on its own line
+   with gap:0 (touching borders). Squared corners, height 36px. */
+@media (min-width: 601px), (pointer: fine) {
+  .pills { justify-content: center; gap: 0; }
+  .pills .pill { height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); }
+  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+  .pills .pill.active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
+}
+/* ── Grid ── */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 10px; }
+.card {
+  background-color: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 12px 14px; display: flex; flex-direction: column; gap: 6px;
+  transition: border-color .15s, box-shadow .15s, transform .08s;
+}
+.card-link { color: inherit; cursor: pointer; text-decoration: none;
+  transition: border-color .15s, box-shadow .15s, transform .08s; }
+.card-link:hover, .card-link:visited, .card-link:focus { text-decoration: none; color: inherit; }
+.card-link:hover  { border-color: var(--rust); box-shadow: 0 3px 10px rgba(184,92,42,.12); }
+.card-link:active { border-color: var(--rust); box-shadow: 0 1px 3px rgba(184,92,42,.10); transform: scale(.97) translateY(1px); }
+.card-top    { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+.card-top-left { display: flex; align-items: center; gap: 6px; }
+.card-flag   { font-size: 15px; line-height: 1; flex-shrink: 0; }
+.card-city   { font-size: 13px; font-weight: 500; color: var(--text); }
+.card-country{ font-size: 9.5px; color: var(--muted); text-align: right; flex-shrink: 0; max-width: 90px; line-height: 1.3; letter-spacing: .02em; }
+.card-clock  { display: flex; align-items: baseline; gap: 5px; }
+.card-time   { font-size: 22px; font-weight: 600; color: var(--rust); font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1; cursor: copy; }
+.card-day    { font-size: 11px; color: var(--muted); font-weight: 400; }
+.card-meta   { display: flex; align-items: center; justify-content: space-between; }
+.utc-offset  { font-size: 11px; color: var(--muted); }
+.vs-sea      { font-size: 11px; font-weight: 500; padding: 1px 6px; border-radius: 6px; }
+/* Canonical family colors per Badge spec 2026-07-29. */
+.vs-sea.ahead  { color: #1a5a1a; background: #e8f5e8; }   /* GREEN */
+.vs-sea.behind { color: #7a3a1a; background: #fdf0e8; }   /* RED */
+.vs-sea.same   { color: var(--muted); background: transparent; }
+/* base .empty-state lives in web-travel-style.css — page keeps only the grid span */
+.empty-state { grid-column: 1 / -1; }
+/* ── Sleep indicator ── */
+.sleep-icon { font-size: 11px; margin-left: 4px; opacity: .7; }
+/* ── Mobile overrides ── */
+@media (max-width: 600px) and (pointer: coarse) {
+  /* Controls: search full-width on top, pills below */
+  .controls { flex-direction: column; align-items: center; gap: 8px; }
+  .search-wrap { min-width: 0; }
+  input.search { max-width: 100%; box-sizing: border-box; }
+  /* Region + sort pills as clean uniform grids so they line up together instead
+     of ragged flex-wrap (region was 4+2 with Europe running to the edge). */
+  #region-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; align-self: stretch; }
+  #sort-pills   { display: grid; grid-template-columns: 1fr 1fr; gap: 0; align-self: stretch; }
+  #region-pills .pill, #sort-pills .pill {
+    width: 100%; justify-content: center; padding: 4px 6px;
+    height: 46px; border-radius: 0; font-size: 12px; line-height: 1.12;
+    white-space: normal; text-align: center;
+  }
+  /* Home row: stack left and right blocks vertically */
+  .home-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .home-right { align-self: stretch; display: flex; align-items: baseline; gap: 10px; }
+  .home-time { font-size: 36px; }
+  .home-day  { font-size: 12px; }
+  /* Grid: 2 columns on phones ≥ 360px, 1 column on very small */
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  /* Cards: tighten up */
+  .card { padding: 10px 11px; gap: 5px; }
+  .card-time { font-size: 19px; }
+  /* Shorten the "Same" label so it fits the chip */
+  /* (handled in JS — see vsSeattle short labels for mobile) */
+  /* Search input: keep font-size 16px (from mobile.css) to prevent iOS zoom — don't override */
+}
+@media (max-width: 359px) {
+  .grid { grid-template-columns: 1fr; }
+}
+@media (prefers-color-scheme: dark) {
+  .pills .pill       { color: var(--text); }
+  .pills .pill.active { color: var(--text); }
+  #search.search-input { background: var(--surface, #2a2825) var(--search-icon, none) no-repeat 13px center; color: var(--text, #e8e2d9); }
+  .vs-sea.ahead  { background: #0a1e0a; color: #4aaa4a; }
+  .vs-sea.behind { background: #240e00; color: #c8840a; }
+}
+:root[data-theme="dark"] .pills .pill        { color: var(--text); }
+:root[data-theme="dark"] .pills .pill.active  { color: var(--text); }
+:root[data-theme="dark"] #search.search-input { background: var(--surface, #2a2825) var(--search-icon, none) no-repeat 13px center; color: var(--text, #e8e2d9); }
+:root[data-theme="dark"] .vs-sea.ahead  { background: #0a1e0a; color: #4aaa4a; }
+:root[data-theme="dark"] .vs-sea.behind { background: #240e00; color: #c8840a; }
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="760" data-updated="2026-06-19"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+  <div class="page-header">
+    <h1>TIME ZONES</h1>
+  </div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-wall-clock"/></svg></div>
+    <div>
+      <div class="page-intro-head">Local time right now in every destination, against your home base</div>
+      <div class="page-intro-sub">Live local time in every destination on the site, shown against your home base, so you can see at a glance whether it is a reasonable hour to call a hotel, whether a shop is still open, or what time you actually land. Filter by region, sort A–Z, or sort by how far each city's clock sits from home.</div>
+    </div>
+  </div>
+
+
+  <div class="controls">
+    <div class="search-wrap">
+      <input class="search search-input" id="search" type="search" placeholder="City or country" aria-label="Search by city or country" autocomplete="off">
+    </div>
+    <div class="pills" id="region-pills">
+      <button class="pill active" data-region="all">All</button>
+      <button class="pill" data-region="americas">Americas</button>
+      <button class="pill" data-region="caribbean">Caribbean</button>
+      <button class="pill" data-region="europe">Europe</button>
+      <button class="pill" data-region="asiapac">Asia · Pacific</button>
+      <button class="pill" data-region="other">M.E. &amp; Africa</button>
+    </div>
+    <div class="pills" id="sort-pills">
+      <button class="pill sort-pill active" data-sort="alpha" aria-label="Sort alphabetically">A–Z</button>
+      <button class="pill sort-pill" data-sort="time">Closest to Seattle</button>
+    </div>
+  </div>
+  <div class="alert-banner">Times are approximate (±15–30 min) · Mid-month estimate · Computed from latitude</div>
+
+  <div class="home-row">
+    <div>
+      <div class="home-label">Home base</div>
+      <div class="home-city">🇺🇸 Seattle</div>
+    </div>
+    <div class="home-right">
+      <div class="home-time" id="sea-time">--:--</div>
+      <div class="home-day"  id="sea-day"></div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+
+</div>
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="sunrise-sunset/">Sunrise &amp; sunset</a>
+    <a class="also-on-this-site-pill" href="Weather.html">Weather</a>
+    <a class="also-on-this-site-pill" href="Climate-Finder.html">Browse by climate</a>
+    <a class="also-on-this-site-pill" href="when-to-go/">When to go</a>
+  </div>
+</div>
+
+<script>
+var CITIES = [
+  {name:'Paro', country:'Bhutan', tz:'Asia/Thimphu', region:'asiapac', flag:'🇧🇹', guide:'Bhutan', url:'../guides/Bhutan/bhutan.html'},
+  {name:'Seychelles', country:'Seychelles', tz:'Indian/Mahe', region:'other', flag:'🇸🇨', url:'../guides/Seychelles/seychelles.html'},
+  {name:'Muscat', country:'Oman', tz:'Asia/Muscat', region:'other', flag:'🇴🇲', url:'../guides/Muscat/muscat.html'},
+  {name:'Pokhara', country:'Nepal', tz:'Asia/Kathmandu', region:'asiapac', flag:'🇳🇵', url:'../guides/Pokhara/pokhara.html'},
+  // Americas
+  {name:'Banff', country:'Canada · Alberta', tz:'America/Edmonton', region:'americas', flag:'🇨🇦', url:'../guides/Banff/banff.html'},
+  {name:'Marco Island', country:'USA · Florida', tz:'America/New_York', region:'americas', flag:'🇺🇸', guide:'Marco-Island', url:'../guides/Marco-Island/marco-island.html'},
+  {name:'Hilton Head Island', country:'United States', tz:'America/New_York', region:'americas', flag:'🇺🇸', guide:'Hilton-Head-Island', url:'../guides/Hilton-Head-Island/hilton-head-island.html'},
+  {name:'Coeur dAlene', country:'USA · Idaho', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', guide:'Coeur-dAlene', url:'../guides/Coeur-dAlene/coeur-dalene.html'},
+  {name:'Santa Fe', country:'USA · New Mexico', tz:'America/Denver', region:'americas', flag:'🇺🇸', guide:'Santa-Fe', url:'../guides/Santa-Fe/santa-fe.html'},
+  {name:'Los Cabos', country:'Mexico', tz:'America/Mazatlan', region:'americas', flag:'🇲🇽', guide:'Los-Cabos', url:'../guides/Los-Cabos/los-cabos.html'},
+  {name:'Alaska',          country:'USA',                  tz:'America/Anchorage',              region:'americas',  flag:'🇺🇸', url:'../guides/Alaska/alaska.html'},
+  {name:'Aracaju',         country:'Brazil',               tz:'America/Maceio',                 region:'americas',  flag:'🇧🇷', url:'../guides/Aracaju/aracaju.html'},
+  {name:'Arenal',          country:'Costa Rica',           tz:'America/Costa_Rica',             region:'americas',  flag:'🇨🇷', url:'../guides/Arenal/arenal.html'},
+  {name:'Atlanta',         country:'USA · Georgia',        tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Atlanta/atlanta.html'},
+  {name:'Austin',          country:'USA · Texas',          tz:'America/Chicago',                region:'americas',  flag:'🇺🇸', url:'../guides/Austin/austin.html'},
+  {name:'Bend',            country:'USA · Oregon',         tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Bend/bend.html'},
+  {name:'Big Island',      country:'USA · Hawaii',         tz:'Pacific/Honolulu',               region:'americas',  flag:'🇺🇸', url:'../guides/Big-Island/big-island.html'},
+  {name:'Boston',          country:'USA · Massachusetts',  tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Boston/boston.html'},
+  {name:'Boulder',         country:'USA · Colorado',       tz:'America/Denver',                 region:'americas',  flag:'🇺🇸', url:'../guides/Boulder/boulder.html'},
+  {name:'Buenos Aires',    country:'Argentina',            tz:'America/Argentina/Buenos_Aires', region:'americas',  flag:'🇦🇷', url:'../guides/Buenos-Aires/buenos-aires.html'},
+  {name:'Cape Cod',        country:'USA · Massachusetts',  tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Cape-Cod/cape-cod.html'},
+  {name:'Carmel-by-the-Sea', country:'USA · California',  tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Carmel-by-the-Sea/carmel-by-the-sea.html'},
+  {name:'Charlotte',       country:'USA · North Carolina', tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Charlotte/charlotte.html'},
+  {name:'Chicago',         country:'USA · Illinois',       tz:'America/Chicago',                region:'americas',  flag:'🇺🇸', url:'../guides/Chicago/chicago.html'},
+  {name:'Columbia',        country:'USA · South Carolina', tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Columbia/columbia.html'},
+  {name:'Cusco',           country:'Peru',                 tz:'America/Lima',                   region:'americas',  flag:'🇵🇪', url:'../guides/Cusco/cusco.html'},
+  {name:'Cancún',         country:'Mexico',               tz:'America/Cancun',                 region:'americas',  flag:'🇲🇽', url:'../guides/Cancun/cancun.html', guide:'Cancun'},
+  {name:'Dallas',          country:'USA · Texas',          tz:'America/Chicago',                region:'americas',  flag:'🇺🇸', url:'../guides/Dallas/dallas.html'},
+  {name:'Denver',          country:'USA · Colorado',       tz:'America/Denver',                 region:'americas',  flag:'🇺🇸', url:'../guides/Denver/denver.html'},
+  {name:'Glacier National Park', country:'USA · Montana',    tz:'America/Denver',                 region:'americas',  flag:'🇺🇸', guide:'Glacier-National-Park', url:'../guides/Glacier-National-Park/glacier-national-park.html'},
+  {name:'Florida Keys',    country:'USA · Florida',        tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Florida-Keys/florida-keys.html'},
+  {name:'Kauai',           country:'USA · Hawaii',         tz:'Pacific/Honolulu',               region:'americas',  flag:'🇺🇸', url:'../guides/Kauai/kauai.html'},
+  {name:'Key West',        country:'USA · Florida',        tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/KeyWest/keywest.html'},
+  {name:'La Jolla',        country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/La-Jolla/la-jolla.html'},
+  {name:'Lake Tahoe',      country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', guide:'Lake-Tahoe', url:'../guides/Lake-Tahoe/lake-tahoe.html'},
+  {name:'Las Vegas',       country:'USA · Nevada',         tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Las-Vegas/las-vegas.html'},
+  {name:'Lima',            country:'Peru',                 tz:'America/Lima',                   region:'americas',  flag:'🇵🇪', url:'../guides/Lima/lima.html'},
+  {name:'Los Angeles',     country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Los-Angeles/los-angeles.html'},
+  {name:'Machu Picchu',    country:'Peru',                 tz:'America/Lima',                   region:'americas',  flag:'🇵🇪', guide:'MachuPicchu', url:'../guides/MachuPicchu/machupicchu.html'},
+  {name:'Malibu',          country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Malibu/malibu.html'},
+  {name:'Maui',            country:'USA · Hawaii',         tz:'Pacific/Honolulu',               region:'americas',  flag:'🇺🇸', url:'../guides/Maui/maui.html'},
+  {name:'Miami',           country:'USA · Florida',        tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Miami/miami.html'},
+  {name:'Manuel Antonio',  country:'Costa Rica',           tz:'America/Costa_Rica',             region:'americas',  flag:'🇨🇷', url:'../guides/Manuel-Antonio/manuel-antonio.html'},
+  {name:'Montevideo',      country:'Uruguay',              tz:'America/Montevideo',             region:'americas',  flag:'🇺🇾', url:'../guides/Montevideo/montevideo.html'},
+  {name:'Montreal',        country:'Canada · Quebec',      tz:'America/Toronto',                region:'americas',  flag:'🇨🇦', url:'../guides/Montreal/montreal.html'},
+  {name:'Napa',            country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Napa/napa.html'},
+  {name:'Naples',          country:'USA · Florida',        tz:'America/New_York',               region:'americas',  flag:'🇺🇸', guide:'Naples-Florida', url:'../guides/Naples-Florida/naples-florida.html'},
+  {name:'Nashville',       country:'USA · Tennessee',      tz:'America/Chicago',                region:'americas',  flag:'🇺🇸', url:'../guides/Nashville/nashville.html'},
+  {name:'Oaxaca',         country:'Mexico',               tz:'America/Mexico_City',            region:'americas',  flag:'🇲🇽', url:'../guides/Oaxaca/oaxaca.html'},
+  {name:'Puerto Vallarta',country:'Mexico',               tz:'America/Mexico_City',            region:'americas',  flag:'🇲🇽', url:'../guides/Puerto-Vallarta/puerto-vallarta.html'},
+  {name:'New Orleans',     country:'USA · Louisiana',      tz:'America/Chicago',                region:'americas',  flag:'🇺🇸', url:'../guides/New-Orleans/new-orleans.html'},
+  {name:'New York',        country:'USA · New York',       tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/New-York/new-york.html'},
+  {name:'Oahu',            country:'USA · Hawaii',         tz:'Pacific/Honolulu',               region:'americas',  flag:'🇺🇸', url:'../guides/Oahu/oahu.html'},
+  {name:'Orlando',         country:'USA · Florida',        tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Orlando/orlando.html'},
+  {name:'Palm Desert',     country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Palm-Desert/palm-desert.html'},
+  {name:'Palo Alto',       country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Palo-Alto/palo-alto.html'},
+  {name:'Pensacola',       country:'USA · Florida',        tz:'America/Chicago',                region:'americas',  flag:'🇺🇸', url:'../guides/Pensacola/pensacola.html'},
+  {name:'Pasadena',        country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Pasadena/pasadena.html'},
+  {name:'Philadelphia',    country:'USA · Pennsylvania',   tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Philadelphia/philadelphia.html'},
+  {name:'Phoenix',         country:'USA · Arizona',        tz:'America/Phoenix',                region:'americas',  flag:'🇺🇸', url:'../guides/Phoenix/phoenix.html'},
+  {name:'Portland',        country:'USA · Oregon',         tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Portland/portland.html'},
+  {name:'Quebec City',     country:'Canada · Quebec',      tz:'America/Toronto',                region:'americas',  flag:'🇨🇦', url:'../guides/Quebec-City/quebec-city.html'},
+  {name:'Rio de Janeiro',  country:'Brazil',               tz:'America/Sao_Paulo',              region:'americas',  flag:'🇧🇷', url:'../guides/Rio-de-Janeiro/rio-de-janeiro.html'},
+  {name:'Curitiba',        country:'Brazil',               tz:'America/Sao_Paulo',              region:'americas',  flag:'🇧🇷', url:'../guides/Curitiba/curitiba.html'},
+  {name:'Florianópolis',   country:'Brazil',               tz:'America/Sao_Paulo',              region:'americas',  flag:'🇧🇷', guide:'Florianopolis', url:'../guides/Florianopolis/florianopolis.html'},
+  {name:'Fortaleza',       country:'Brazil',               tz:'America/Fortaleza',              region:'americas',  flag:'🇧🇷', url:'../guides/Fortaleza/fortaleza.html'},
+  {name:'Foz do Iguaçu',  country:'Brazil',               tz:'America/Sao_Paulo',              region:'americas',  flag:'🇧🇷', url:'../guides/Foz-do-Iguaçu/foz-do-iguacu.html'},
+  {name:'Galápagos Islands', country:'Ecuador',            tz:'Pacific/Galapagos',              region:'americas',  flag:'🇪🇨', guide:'Galapagos-Islands', url:'../guides/Galapagos-Islands/galapagos-islands.html'},
+  {name:'João Pessoa',     country:'Brazil',               tz:'America/Recife',                 region:'americas',  flag:'🇧🇷', url:'../guides/João-Pessoa/joao-pessoa.html'},
+  {name:'Maceió',          country:'Brazil',               tz:'America/Maceio',                 region:'americas',  flag:'🇧🇷', url:'../guides/Maceió/maceio.html'},
+  {name:'Natal',           country:'Brazil',               tz:'America/Fortaleza',              region:'americas',  flag:'🇧🇷', url:'../guides/Natal/natal.html'},
+  {name:'Olinda',          country:'Brazil',               tz:'America/Recife',                 region:'americas',  flag:'🇧🇷', url:'../guides/Olinda/olinda.html'},
+  {name:'Porto Alegre',    country:'Brazil',               tz:'America/Sao_Paulo',              region:'americas',  flag:'🇧🇷', url:'../guides/Porto-Alegre/porto-alegre.html'},
+  {name:'Recife',          country:'Brazil',               tz:'America/Recife',                 region:'americas',  flag:'🇧🇷', url:'../guides/Recife/recife.html'},
+  {name:'Salvador',        country:'Brazil',               tz:'America/Bahia',                  region:'americas',  flag:'🇧🇷', url:'../guides/Salvador/salvador.html'},
+  {name:'São Luís',        country:'Brazil',               tz:'America/Fortaleza',              region:'americas',  flag:'🇧🇷', url:'../guides/São-Luís/sao-luis.html'},
+  {name:'São Paulo',       country:'Brazil',               tz:'America/Sao_Paulo',              region:'americas',  flag:'🇧🇷', url:'../guides/S%C3%A3o-Paulo/sao-paulo.html'},
+  {name:'San Diego',       country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/San-Diego/san-diego.html'},
+  {name:'San Francisco',   country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/San-Francisco/san-francisco.html'},
+  {name:'San Jose',        country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/San-Jose/san-jose.html'},
+  {name:'San Jose Costa Rica', country:'Costa Rica',      tz:'America/Costa_Rica',             region:'americas',  flag:'🇨🇷', guide:'San-Jose-Costa-Rica', url:'../guides/San-Jose-Costa-Rica/san-jose-costa-rica.html'},
+  {name:'Orcas Island',    country:'USA · Washington',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Orcas-Island/orcas-island.html'},
+  {name:'San Juan Island', country:'USA · Washington',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/San-Juan-Island/san-juan-island.html'},
+  {name:'Santa Barbara',   country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Santa-Barbara/santa-barbara.html'},
+  {name:'Santa Cruz',      country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Santa-Cruz/santa-cruz.html'},
+  {name:'Santa Monica',    country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Santa-Monica/santa-monica.html'},
+  {name:'Santiago',        country:'Chile',                tz:'America/Santiago',               region:'americas',  flag:'🇨🇱', url:'../guides/Santiago/santiago.html'},
+  {name:'Sarasota',        country:'USA · Florida',        tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Sarasota/sarasota.html'},
+  {name:'Scottsdale',      country:'USA · Arizona',        tz:'America/Phoenix',                region:'americas',  flag:'🇺🇸', url:'../guides/Scottsdale/scottsdale.html'},
+  {name:'Sedona',          country:'USA · Arizona',        tz:'America/Phoenix',                region:'americas',  flag:'🇺🇸', url:'../guides/Sedona/sedona.html'},
+  {name:'Seattle',         country:'USA · Washington',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸', url:'../guides/Seattle/seattle.html'},
+  {name:'Toronto',         country:'Canada · Ontario',     tz:'America/Toronto',                region:'americas',  flag:'🇨🇦', url:'../guides/Toronto/toronto.html'},
+  {name:'Vancouver',       country:'Canada · BC',          tz:'America/Vancouver',              region:'americas',  flag:'🇨🇦', url:'../guides/Vancouver/vancouver.html'},
+  {name:'Victoria',        country:'Canada · BC',          tz:'America/Vancouver',              region:'americas',  flag:'🇨🇦', url:'../guides/Victoria/victoria.html'},
+  {name:'Whistler',        country:'Canada · BC',          tz:'America/Vancouver',              region:'americas',  flag:'🇨🇦', url:'../guides/Whistler/whistler.html'},
+  {name:'Washington DC',   country:'USA · Washington DC',  tz:'America/New_York',               region:'americas',  flag:'🇺🇸', url:'../guides/Washington-DC/washington-dc.html'},
+  {name:'Yellowstone',     country:'USA · Wyoming',        tz:'America/Denver',                 region:'americas',  flag:'🇺🇸', url:'../guides/Yellowstone/yellowstone.html'},
+  // Caribbean
+  {name:'Aruba',           country:'Kingdom of Netherlands', tz:'America/Aruba',               region:'caribbean', flag:'🇦🇼', url:'../guides/Aruba/aruba.html'},
+  {name:'Bahamas',         country:'Bahamas',              tz:'America/Nassau',                 region:'caribbean', flag:'🇧🇸', url:'../guides/Bahamas/bahamas.html'},
+  {name:'Barbados',        country:'Barbados',             tz:'America/Barbados',               region:'caribbean', flag:'🇧🇧', url:'../guides/Barbados/barbados.html'},
+  {name:'Cayman Islands',  country:'Cayman Islands',       tz:'America/Cayman',                 region:'caribbean', flag:'🇰🇾', url:'../guides/Cayman-Islands/cayman-islands.html'},
+  {name:'Curacao',         country:'Netherlands Antilles', tz:'America/Curacao',                region:'caribbean', flag:'🇨🇼', url:'../guides/Curacao/curacao.html'},
+  {name:'Puerto Rico',     country:'USA · Puerto Rico',    tz:'America/Puerto_Rico',            region:'caribbean', flag:'🇵🇷', url:'../guides/Puerto-Rico/puerto-rico.html'},
+  {name:'Sint Maarten',    country:'Sint Maarten',         tz:'America/Lower_Princes',          region:'caribbean', flag:'🇸🇽', url:'../guides/Sint-Maarten/sint-maarten.html'},
+  {name:'Turks and Caicos', country:'Turks and Caicos',   tz:'America/Grand_Turk',             region:'caribbean', flag:'🇹🇨', url:'../guides/Turks-and-Caicos/turks-and-caicos.html'},
+  {name:'Virgin Islands',  country:'USA · USVI',           tz:'America/St_Thomas',              region:'caribbean', flag:'🇻🇮', url:'../guides/Virgin-Islands/virgin-islands.html'},
+  // Europe
+  {name:'Granada', country:'Spain', tz:'Europe/Madrid', region:'europe', flag:'🇪🇸', url:'../guides/Granada/granada.html'},
+  {name:'Kraków', country:'Poland', tz:'Europe/Warsaw', region:'europe', flag:'🇵🇱', url:'../guides/Kraków/krakow.html'},
+  {name:'Aix-en-Provence', country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Aix-en-Provence/aix-en-provence.html'},
+  {name:'Alesund',         country:'Norway',               tz:'Europe/Oslo',                    region:'europe',    flag:'🇳🇴', url:'../guides/Alesund/alesund.html'},
+  {name:'Amalfi',          country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Amalfi/amalfi.html'},
+  {name:'Amsterdam',       country:'Netherlands',          tz:'Europe/Amsterdam',               region:'europe',    flag:'🇳🇱', url:'../guides/Amsterdam/amsterdam.html'},
+  {name:'Annecy',          country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Annecy/annecy.html'},
+  {name:'Bora Bora',       country:'French Polynesia',     tz:'Pacific/Tahiti',                 region:'other',     flag:'🇵🇫', url:'../guides/Bora-Bora/bora-bora.html'},
+  {name:'Athens',          country:'Greece',               tz:'Europe/Athens',                  region:'europe',    flag:'🇬🇷', url:'../guides/Athens/athens.html'},
+  {name:'Azores',          country:'Portugal',             tz:'Atlantic/Azores',                region:'europe',    flag:'🇵🇹', url:'../guides/Azores/azores.html'},
+  {name:'Barcelona',       country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸', url:'../guides/Barcelona/barcelona.html'},
+  {name:'Bilbao',          country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸', url:'../guides/Bilbao/bilbao.html'},
+  {name:'Bergen',          country:'Norway',               tz:'Europe/Oslo',                    region:'europe',    flag:'🇳🇴', url:'../guides/Bergen/bergen.html'},
+  {name:'Berlin',          country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪', url:'../guides/Berlin/berlin.html'},
+  {name:'Bologna',         country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Bologna/bologna.html'},
+  {name:'Bordeaux',        country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Bordeaux/bordeaux.html'},
+  {name:'Bruges',          country:'Belgium',              tz:'Europe/Brussels',                region:'europe',    flag:'🇧🇪', url:'../guides/Bruges/bruges.html'},
+  {name:'Brussels',        country:'Belgium',              tz:'Europe/Brussels',                region:'europe',    flag:'🇧🇪', url:'../guides/Brussels/brussels.html'},
+  {name:'Budapest',        country:'Hungary',              tz:'Europe/Budapest',                region:'europe',    flag:'🇭🇺', url:'../guides/Budapest/budapest.html'},
+  {name:'Cambridge',       country:'UK · England',         tz:'Europe/London',                  region:'europe',    flag:'🇬🇧', url:'../guides/Cambridge/cambridge.html'},
+  {name:'Cannes',          country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Cannes/cannes.html'},
+  {name:'Capri',           country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Capri/capri.html'},
+  {name:'Cascais',         country:'Portugal',             tz:'Europe/Lisbon',                  region:'europe',    flag:'🇵🇹', url:'../guides/Cascais/cascais.html'},
+  {name:'Cinque Terre',    country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Cinque-Terre/cinque-terre.html'},
+  {name:'Colmar',          country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Colmar/colmar.html'},
+  {name:'Cologne',         country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪', url:'../guides/Cologne/cologne.html'},
+  {name:'Copenhagen',      country:'Denmark',              tz:'Europe/Copenhagen',              region:'europe',    flag:'🇩🇰', url:'../guides/Copenhagen/copenhagen.html'},
+  {name:'Corfu',           country:'Greece',               tz:'Europe/Athens',                  region:'europe',    flag:'🇬🇷', url:'../guides/Corfu/corfu.html'},
+  {name:'Crete',           country:'Greece',               tz:'Europe/Athens',                  region:'europe',    flag:'🇬🇷', url:'../guides/Crete/crete.html'},
+  {name:'Dublin',          country:'Ireland',              tz:'Europe/Dublin',                  region:'europe',    flag:'🇮🇪', url:'../guides/Dublin/dublin.html'},
+  {name:'Dubrovnik',       country:'Croatia',              tz:'Europe/Zagreb',                  region:'europe',    flag:'🇭🇷', url:'../guides/Dubrovnik/dubrovnik.html'},
+  {name:'Edinburgh',       country:'UK · Scotland',        tz:'Europe/London',                  region:'europe',    flag:'🇬🇧', url:'../guides/Edinburgh/edinburgh.html'},
+  {name:'Florence',        country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Florence/florence.html'},
+  {name:'Frankfurt',       country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪', url:'../guides/Frankfurt/frankfurt.html'},
+  {name:'Geneva',          country:'Switzerland',          tz:'Europe/Zurich',                  region:'europe',    flag:'🇨🇭', url:'../guides/Geneva/geneva.html'},
+  {name:'Glasgow',         country:'UK · Scotland',        tz:'Europe/London',                  region:'europe',    flag:'🇬🇧', url:'../guides/Glasgow/glasgow.html'},
+  {name:'Gothenburg',      country:'Sweden',               tz:'Europe/Stockholm',               region:'europe',    flag:'🇸🇪', url:'../guides/Gothenburg/gothenburg.html'},
+  {name:'Hamburg',         country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪', url:'../guides/Hamburg/hamburg.html'},
+  {name:'Helsinki',        country:'Finland',              tz:'Europe/Helsinki',                region:'europe',    flag:'🇫🇮', url:'../guides/Helsinki/helsinki.html'},
+  {name:'Istanbul',        country:'Turkey',               tz:'Europe/Istanbul',                region:'europe',    flag:'🇹🇷', url:'../guides/Istanbul/istanbul.html'},
+  {name:'Lake Como',       country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Lake-Como/lake-como.html'},
+  {name:'Lille',           country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Lille/lille.html'},
+  {name:'Lisbon',          country:'Portugal',             tz:'Europe/Lisbon',                  region:'europe',    flag:'🇵🇹', url:'../guides/Lisbon/lisbon.html'},
+  {name:'Ljubljana',       country:'Slovenia',             tz:'Europe/Ljubljana',               region:'europe',    flag:'🇸🇮', url:'../guides/Ljubljana/ljubljana.html'},
+  {name:'London',          country:'UK · England',         tz:'Europe/London',                  region:'europe',    flag:'🇬🇧', url:'../guides/London/london.html'},
+  {name:'Lucerne',         country:'Switzerland',          tz:'Europe/Zurich',                  region:'europe',    flag:'🇨🇭', url:'../guides/Lucerne/lucerne.html'},
+  {name:'Luxembourg',      country:'Luxembourg',           tz:'Europe/Luxembourg',              region:'europe',    flag:'🇱🇺', url:'../guides/Luxembourg/luxembourg.html'},
+  {name:'Lyon',            country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Lyon/lyon.html'},
+  {name:'Madeira',         country:'Portugal',             tz:'Atlantic/Madeira',               region:'europe',    flag:'🇵🇹', url:'../guides/Madeira/madeira.html'},
+  {name:'Madrid',          country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸', url:'../guides/Madrid/madrid.html'},
+  {name:'Malaga',          country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸', url:'../guides/Malaga/malaga.html'},
+  {name:'Marktoberdorf',   country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪', url:'../guides/Marktoberdorf/marktoberdorf.html'},
+  {name:'Marseille',       country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Marseille/marseille.html'},
+  {name:'Milan',           country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Milan/milan.html'},
+  {name:'Monaco',          country:'Monaco',               tz:'Europe/Monaco',                  region:'europe',    flag:'🇲🇨', url:'../guides/Monaco/monaco.html'},
+  {name:'Munich',          country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪', url:'../guides/Munich/munich.html'},
+  {name:'Mykonos',         country:'Greece',               tz:'Europe/Athens',                  region:'europe',    flag:'🇬🇷', url:'../guides/Mykonos/mykonos.html'},
+  {name:'Naples',          country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Naples/naples.html'},
+  {name:'Nice',            country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Nice/nice.html'},
+  {name:'Oslo',            country:'Norway',               tz:'Europe/Oslo',                    region:'europe',    flag:'🇳🇴', url:'../guides/Oslo/oslo.html'},
+  {name:'Oxford',          country:'UK · England',         tz:'Europe/London',                  region:'europe',    flag:'🇬🇧', url:'../guides/Oxford/oxford.html'},
+  {name:'Paris',           country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Paris/paris.html'},
+  {name:'Pisa',            country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Pisa/pisa.html'},
+  {name:'Porto',           country:'Portugal',             tz:'Europe/Lisbon',                  region:'europe',    flag:'🇵🇹', url:'../guides/Porto/porto.html'},
+  {name:'Prague',          country:'Czech Republic',       tz:'Europe/Prague',                  region:'europe',    flag:'🇨🇿', url:'../guides/Prague/prague.html'},
+  {name:'Lecce',          country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Lecce/lecce.html'},
+  {name:'Reykjavik',       country:'Iceland',              tz:'Atlantic/Reykjavik',             region:'europe',    flag:'🇮🇸', url:'../guides/Reykjavik/reykjavik.html'},
+  {name:'Rhodes',          country:'Greece',               tz:'Europe/Athens',                  region:'europe',    flag:'🇬🇷', url:'../guides/Rhodes/rhodes.html'},
+  {name:'Rome',            country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Rome/rome.html'},
+  {name:'Rotterdam',      country:'Netherlands',          tz:'Europe/Amsterdam',               region:'europe',    flag:'🇳🇱', url:'../guides/Rotterdam/rotterdam.html'},
+  {name:'Sardinia',        country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Sardinia/sardinia.html'},
+  {name:'Salzburg',        country:'Austria',              tz:'Europe/Vienna',                  region:'europe',    flag:'🇦🇹', url:'../guides/Salzburg/salzburg.html'},
+  {name:'San Sebastian',   country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸', url:'../guides/San-Sebastian/san-sebastian.html'},
+  {name:'Santorini',       country:'Greece',               tz:'Europe/Athens',                  region:'europe',    flag:'🇬🇷', url:'../guides/Santorini/santorini.html'},
+  {name:'Seville',         country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸', url:'../guides/Seville/seville.html'},
+  {name:'Sicily',          country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Sicily/sicily.html'},
+  {name:'Siena',           country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Siena/siena.html'},
+  {name:'Sintra',          country:'Portugal',             tz:'Europe/Lisbon',                  region:'europe',    flag:'🇵🇹', url:'../guides/Sintra/sintra.html'},
+  {name:'Sorrento',        country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Sorrento/sorrento.html'},
+  {name:'Split',           country:'Croatia',              tz:'Europe/Zagreb',                  region:'europe',    flag:'🇭🇷', url:'../guides/Split/split.html'},
+  {name:'Tbilisi',        country:'Georgia',              tz:'Asia/Tbilisi',                   region:'europe',    flag:'🇬🇪', url:'../guides/Tbilisi/tbilisi.html'},
+  {name:'Kotor',           country:'Montenegro',           tz:'Europe/Podgorica',               region:'europe',    flag:'🇲🇪', url:'../guides/Kotor/kotor.html'},
+  {name:'Stockholm',       country:'Sweden',               tz:'Europe/Stockholm',               region:'europe',    flag:'🇸🇪', url:'../guides/Stockholm/stockholm.html'},
+  {name:'Strasbourg',      country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷', url:'../guides/Strasbourg/strasbourg.html'},
+  {name:'Stuttgart',       country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪', url:'../guides/Stuttgart/stuttgart.html'},
+  {name:'Tallinn',         country:'Estonia',              tz:'Europe/Tallinn',                 region:'europe',    flag:'🇪🇪', url:'../guides/Tallinn/tallinn.html'},
+  {name:'Tenerife',        country:'Spain',                tz:'Atlantic/Canary',                region:'europe',    flag:'🇪🇸', url:'../guides/Tenerife/tenerife.html'},
+  {name:'Toledo',          country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸', url:'../guides/Toledo/toledo.html'},
+  {name:'Tromsø',          country:'Norway',               tz:'Europe/Oslo',                    region:'europe',    flag:'🇳🇴', guide:'Tromso', url:'../guides/Tromso/tromso.html'},
+  {name:'Turin',           country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Turin/turin.html'},
+  {name:'Venice',          country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Venice/venice.html'},
+  {name:'Verona',          country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹', url:'../guides/Verona/verona.html'},
+  {name:'Vienna',          country:'Austria',              tz:'Europe/Vienna',                  region:'europe',    flag:'🇦🇹', url:'../guides/Vienna/vienna.html'},
+  {name:'Valletta',       country:'Malta',                tz:'Europe/Malta',                   region:'europe',    flag:'🇲🇹', url:'../guides/Valletta/valletta.html'},
+  {name:'Zakynthos',       country:'Greece',               tz:'Europe/Athens',                  region:'europe',    flag:'🇬🇷', url:'../guides/Zakynthos/zakynthos.html'},
+  {name:'Zurich',          country:'Switzerland',          tz:'Europe/Zurich',                  region:'europe',    flag:'🇨🇭', url:'../guides/Zurich/zurich.html'},
+  // Asia · Pacific
+  {name:'Bali',            country:'Indonesia',            tz:'Asia/Makassar',                  region:'asiapac',   flag:'🇮🇩', url:'../guides/Bali/bali.html'},
+  {name:'Bangkok',         country:'Thailand',             tz:'Asia/Bangkok',                   region:'asiapac',   flag:'🇹🇭', url:'../guides/Bangkok/bangkok.html'},
+  {name:'Chiang Mai',      country:'Thailand',             tz:'Asia/Bangkok',                   region:'asiapac',   flag:'🇹🇭', url:'../guides/Chiang-Mai/chiang-mai.html'},
+  {name:'Luang Prabang',   country:'Laos',                 tz:'Asia/Vientiane',                 region:'asiapac',   flag:'🇱🇦', url:'../guides/Luang-Prabang/luang-prabang.html'},
+  {name:'Beijing',         country:'China',                tz:'Asia/Shanghai',                  region:'asiapac',   flag:'🇨🇳', url:'../guides/Beijing/beijing.html'},
+  {name:'Chongqing',       country:'China',                tz:'Asia/Shanghai',                  region:'asiapac',   flag:'🇨🇳', url:'../guides/Chongqing/chongqing.html'},
+  {name:'Colombo',         country:'Sri Lanka',            tz:'Asia/Colombo',                   region:'asiapac',   flag:'🇱🇰', url:'../guides/Colombo/colombo.html'},
+  {name:'Hanoi',           country:'Vietnam',              tz:'Asia/Ho_Chi_Minh',               region:'asiapac',   flag:'🇻🇳', url:'../guides/Hanoi/hanoi.html'},
+  {name:'Hiroshima',       country:'Japan',                tz:'Asia/Tokyo',                     region:'asiapac',   flag:'🇯🇵', url:'../guides/Hiroshima/hiroshima.html'},
+  {name:'Hoi An', country:'Vietnam', tz:'Asia/Ho_Chi_Minh', region:'asiapac', flag:'🇻🇳', url:'../guides/Hoi-An/hoi-an.html'},
+  {name:'Hong Kong',       country:'Hong Kong SAR',        tz:'Asia/Hong_Kong',                 region:'asiapac',   flag:'🇭🇰', url:'../guides/Hong-Kong/hong-kong.html'},
+  {name:'Kyoto',           country:'Japan',                tz:'Asia/Tokyo',                     region:'asiapac',   flag:'🇯🇵', url:'../guides/Kyoto/kyoto.html'},
+  {name:'Osaka',           country:'Japan',                tz:'Asia/Tokyo',                     region:'asiapac',   flag:'🇯🇵', url:'../guides/Osaka/osaka.html'},
+  {name:'Maldives',        country:'Maldives',             tz:'Indian/Maldives',                region:'asiapac',   flag:'🇲🇻', url:'../guides/Maldives/maldives.html'},
+  {name:'Melbourne',       country:'Australia',            tz:'Australia/Melbourne',            region:'asiapac',   flag:'🇦🇺', url:'../guides/Melbourne/melbourne.html'},
+  {name:'Palawan',         country:'Philippines',          tz:'Asia/Manila',                    region:'asiapac',   flag:'🇵🇭', url:'../guides/Palawan/palawan.html'},
+  {name:'Phuket',          country:'Thailand',             tz:'Asia/Bangkok',                   region:'asiapac',   flag:'🇹🇭', url:'../guides/Phuket/phuket.html'},
+  {name:'Queenstown',      country:'New Zealand',          tz:'Pacific/Auckland',               region:'asiapac',   flag:'🇳🇿', url:'../guides/Queenstown/queenstown.html'},
+  {name:'Busan',           country:'South Korea',          tz:'Asia/Seoul',                     region:'asiapac',   flag:'🇰🇷', url:'../guides/Busan/busan.html'},
+  {name:'Seoul',           country:'South Korea',          tz:'Asia/Seoul',                     region:'asiapac',   flag:'🇰🇷', url:'../guides/Seoul/seoul.html'},
+  {name:'Shanghai',        country:'China',                tz:'Asia/Shanghai',                  region:'asiapac',   flag:'🇨🇳', url:'../guides/Shanghai/shanghai.html'},
+  {name:'Singapore',       country:'Singapore',            tz:'Asia/Singapore',                 region:'asiapac',   flag:'🇸🇬', url:'../guides/Singapore/singapore.html'},
+  {name:'Sydney',          country:'Australia',            tz:'Australia/Sydney',               region:'asiapac',   flag:'🇦🇺', url:'../guides/Sydney/sydney.html'},
+  {name:'Taipei',          country:'Taiwan',               tz:'Asia/Taipei',                    region:'asiapac',   flag:'🇹🇼', url:'../guides/Taipei/taipei.html'},
+  {name:'Tokyo',           country:'Japan',                tz:'Asia/Tokyo',                     region:'asiapac',   flag:'🇯🇵', url:'../guides/Tokyo/tokyo.html'},
+  {name:'Wellington',      country:'New Zealand',          tz:'Pacific/Auckland',               region:'asiapac',   flag:'🇳🇿', url:'../guides/Wellington/wellington.html'},
+  {name:'Zhangjiajie',     country:'China',                tz:'Asia/Shanghai',                  region:'asiapac',   flag:'🇨🇳', url:'../guides/Zhangjiajie/zhangjiajie.html'},
+  // Middle East & Africa
+  {name:'Abu Dhabi',       country:'UAE',                  tz:'Asia/Dubai',                     region:'other',     flag:'🇦🇪', url:'../guides/Abu-Dhabi/abu-dhabi.html'},
+  {name:'Cairo',           country:'Egypt',                tz:'Africa/Cairo',                   region:'other',     flag:'🇪🇬', url:'../guides/Cairo/cairo.html'},
+  {name:'Doha',            country:'Qatar',                tz:'Asia/Qatar',                     region:'other',     flag:'🇶🇦', url:'../guides/Doha/doha.html'},
+  {name:'Dubai',           country:'UAE',                  tz:'Asia/Dubai',                     region:'other',     flag:'🇦🇪', url:'../guides/Dubai/dubai.html'},
+  {name:'Petra',           country:'Jordan',               tz:'Asia/Amman',                     region:'other',     flag:'🇯🇴', url:'../guides/Petra/petra.html'},
+  {name:'Lagos',           country:'Nigeria',              tz:'Africa/Lagos',                   region:'other',     flag:'🇳🇬', url:'../guides/Lagos/lagos.html'},
+  {name:'Marrakech',       country:'Morocco',              tz:'Africa/Casablanca',              region:'other',     flag:'🇲🇦', url:'../guides/Marrakech/marrakech.html'},
+  {name:'Cape Town',       country:'South Africa',         tz:'Africa/Johannesburg',            region:'other',     flag:'🇿🇦', url:'../guides/Cape-Town/cape-town.html'},
+];
+
+var SEA_TZ = 'America/Los_Angeles';
+
+function getOffsetMinutes(tz, date) {
+  var d   = new Date(date.toLocaleString('en-US', {timeZone: tz}));
+  var utc = new Date(date.toLocaleString('en-US', {timeZone: 'UTC'}));
+  return (d - utc) / 60000;
+}
+
+function formatTime(tz, date) {
+  var s = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false
+  }).format(date);
+  return s.replace(/^24:/, '00:');
+}
+
+function formatFullDay(tz, date) {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, weekday: 'long', month: 'short', day: 'numeric'
+  }).format(date);
+}
+
+function formatShortDay(tz, date) {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, weekday: 'short'
+  }).format(date);
+}
+
+function relativeDay(tz, date) {
+  function ymd(d, zone) {
+    var f = new Intl.DateTimeFormat('en-CA', {timeZone: zone, year:'numeric', month:'2-digit', day:'2-digit'});
+    return f.format(d);
+  }
+  var cityDay = ymd(date, tz);
+  var seaDay  = ymd(date, SEA_TZ);
+  if (cityDay === seaDay)   return 'today';
+  var seaDate = new Date(seaDay + 'T12:00:00Z');
+  var cityDate= new Date(cityDay + 'T12:00:00Z');
+  var diff = Math.round((cityDate - seaDate) / 86400000);
+  if (diff === 1)  return 'tomorrow';
+  if (diff === -1) return 'yesterday';
+  return formatShortDay(tz, date);
+}
+
+function formatUTCOffset(tz, date) {
+  var mins = getOffsetMinutes(tz, date);
+  var h = Math.floor(Math.abs(mins) / 60);
+  var m = Math.abs(mins) % 60;
+  var sign = mins >= 0 ? '+' : '−';
+  return 'UTC' + sign + h + (m ? ':' + String(m).padStart(2, '0') : '');
+}
+
+function vsSeattle(tz, date) {
+  var seaMins  = getOffsetMinutes(SEA_TZ, date);
+  var cityMins = getOffsetMinutes(tz, date);
+  var diffH = (cityMins - seaMins) / 60;
+  if (diffH === 0) return {label: 'Same', cls: 'same'};
+  var abs  = Math.abs(diffH);
+  var sign = diffH > 0 ? '+' : '−';
+  var label = sign + abs + (abs === 1 ? ' hr' : ' hrs');
+  return {label: label, cls: diffH > 0 ? 'ahead' : 'behind'};
+}
+
+var activeRegion = 'all';
+var searchVal    = '';
+var activeSort   = 'alpha';
+var _sunCityIdx  = null;
+
+function render() {
+  var now  = new Date();
+  var grid = document.getElementById('grid');
+
+  document.getElementById('sea-time').textContent = formatTime(SEA_TZ, now);
+  document.getElementById('sea-day').textContent  = formatFullDay(SEA_TZ, now);
+  document.querySelector('.home-row').style.display = searchVal ? 'none' : '';
+
+  var filtered = CITIES.filter(function(c) {
+    if (activeRegion !== 'all' && c.region !== activeRegion) return false;
+    if (searchVal) {
+      var q = searchVal;
+      // Expand abbreviated countries so a full-name search matches (UK -> United Kingdom, etc.)
+      var cc = c.country.toLowerCase()
+        .replace(/\buk\b/g, 'uk united kingdom')
+        .replace(/\buae\b/g, 'uae united arab emirates')
+        .replace(/\busa?\b/g, 'us usa united states');
+      if (c.name.toLowerCase().indexOf(q) === -1 && cc.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+
+  var seaMins = getOffsetMinutes(SEA_TZ, now);
+  if (activeSort === 'time') {
+    filtered.sort(function(a, b) {
+      var da = Math.abs(getOffsetMinutes(a.tz, now) - seaMins);
+      var db = Math.abs(getOffsetMinutes(b.tz, now) - seaMins);
+      return da !== db ? da - db : a.name.localeCompare(b.name);
+    });
+  } else {
+    filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
+  }
+
+  // Auto-sync Sunrise & Sunset when search narrows to one city
+  if (filtered.length === 1) {
+    var syncIdx = CITIES.indexOf(filtered[0]);
+    var sunInp = document.getElementById('sun-city-input');
+    if (sunInp && _sunCityIdx !== syncIdx) {
+      _sunCityIdx = syncIdx;
+      sunInp.value = filtered[0].name;
+      renderSun();
+    }
+  }
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state">No cities match “' + searchVal + '”</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(function(c) {
+    var time = formatTime(c.tz, now);
+    var day  = relativeDay(c.tz, now);
+    var utc  = formatUTCOffset(c.tz, now);
+    var vs   = vsSeattle(c.tz, now);
+    var hour = parseInt(time.split(':')[0], 10);
+    var sleeping = hour >= 22 || hour < 7;
+    var sleepMark = sleeping ? '' : '';
+    var cardCls = 'card' + (sleeping ? ' sleeping' : '');
+    var inner =
+      '<div class="card-top">' +
+        '<div class="card-top-left">' +
+          '<span class="card-flag">' + c.flag + '</span>' +
+          '<div class="card-city">' + c.name + sleepMark + '</div>' +
+        '</div>' +
+        '<div class="card-country">' + (c.country.indexOf(' · ') !== -1 ? c.country.split(' · ').slice(1).join(' · ') + '<br>' + c.country.split(' · ')[0] : c.country) + '</div>' +
+      '</div>' +
+      '<div class="card-clock">' +
+        '<span class="card-time" title="Tap to copy">' + time + '</span>' +
+        '<span class="card-day">'  + day  + '</span>' +
+      '</div>' +
+      '<div class="card-meta">' +
+        '<span class="utc-offset">' + utc + '</span>' +
+        '<span class="vs-sea ' + vs.cls + '">' + vs.label + '</span>' +
+      '</div>';
+    return c.url
+      ? '<a class="' + cardCls + ' card-link" href="' + c.url + '">' + inner + '</a>'
+      : '<div class="' + cardCls + '">' + inner + '</div>';
+  }).join('');
+}
+
+document.getElementById('region-pills').addEventListener('click', function(e) {
+  var btn = e.target.closest('.pill');
+  if (!btn) return;
+  activeRegion = btn.dataset.region;
+  document.querySelectorAll('#region-pills .pill').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  render();
+});
+
+document.getElementById('search').addEventListener('input', function(e) {
+  searchVal = e.target.value.toLowerCase().trim();
+  render();
+});
+
+document.getElementById('sort-pills').addEventListener('click', function(e) {
+  var btn = e.target.closest('.sort-pill');
+  if (!btn) return;
+  activeSort = btn.dataset.sort;
+  document.querySelectorAll('.sort-pill').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  render();
+});
+
+// Click-to-copy: clicking the time on a card copies "City · HH:MM · Day"
+document.getElementById('grid').addEventListener('click', function(e) {
+  var timeEl = e.target.closest('.card-time');
+  if (!timeEl) return;
+  var card = e.target.closest('.card');
+  if (!card) return;
+  var city = card.querySelector('.card-city');
+  var day  = card.querySelector('.card-day');
+  if (!city) return;
+  var cityText = city.textContent.replace('', '').trim();
+  var text = cityText + ' · ' + timeEl.textContent + (day ? ' · ' + day.textContent : '');
+  navigator.clipboard.writeText(text).then(function() {
+    var orig = timeEl.textContent;
+    timeEl.textContent = 'Copied!';
+    setTimeout(function() { timeEl.textContent = orig; }, 1200);
+  }).catch(function() {});
+});
+
+// Hash-based deep link: Time-Zones.html#Barcelona pre-selects that city
+(function () {
+  /* Guide "Also on this site" pills build the fragment from the guide FOLDER
+     name, so a multi-word city arrives separator-joined and unaccented:
+     #New_Orleans, #Porto-Alegre, #Krakow, #Sao_Paulo. The old comparison was a
+     raw lowercased === against c.name / c.guide ("new orleans", "kraków"), so
+     every one of those pills silently fell through to `if (!match) return` and
+     the reader landed on an unfiltered page. Normalising both sides — strip
+     accents, fold _ and - to a space, collapse runs — makes the match tolerant
+     of the fragment convention the rest of the site already uses (fixed
+     2026-08-03; caught by validate_planning_pages_coverage.py). */
+  function normKey(s) {
+    return (s || '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim().toLowerCase();
+  }
+  var hashCity = normKey(decodeURIComponent(location.hash.slice(1)));
+  if (!hashCity) return;
+  // Match against c.guide (folder name exceptions) or c.name
+  var match = CITIES.find(function (c) {
+    return (c.guide && normKey(c.guide) === hashCity) ||
+           normKey(c.name) === hashCity;
+  });
+  if (!match) return;
+  searchVal = match.name.toLowerCase();
+  document.getElementById('search').value = match.name;
+})();
+
+render();
+setInterval(render, 60000);
+
+// ── Sunrise & Sunset Lookup ──────────────────────────────────────────
+var CITY_LAT = {
+  'Alaska':61,'Aracaju':-11,'Arenal':10,'Atlanta':34,'Austin':30,
+  'Bahamas':25,'Bend':44,'Big Island':20,'Boston':42,'Boulder':40,'Buenos Aires':-34,
+  'Cape Cod':42,'Carmel-by-the-Sea':36,'Charlotte':35,'Chicago':42,
+  'Coeur dAlene':48,'Columbia':34,'Cusco':-14,'Cancún':21,'Dallas':33,'Denver':40,
+  'Florida Keys':25,'Glacier National Park':49,'Hilton Head Island':32,
+  'João Pessoa':-7,'Kauai':22,'Key West':25,'La Jolla':33,'Lake Tahoe':39,
+  'Las Vegas':36,'Lima':-12,'Los Angeles':34,'Los Cabos':23,
+  'Machu Picchu':-13,'Malibu':34,'Manuel Antonio':9,'Marco Island':26,'Maui':21,
+  'Miami':26,'Montevideo':-35,'Montreal':46,'Napa':38,'Nashville':36,
+  'Natal':-5,'New Orleans':30,'New York':41,'Oahu':21,'Oaxaca':17,
+  'Olinda':-8,'Orcas Island':48,'Orlando':28,
+  'Palm Desert':34,'Palo Alto':37,'Pasadena':34,'Pensacola':30,
+  'Philadelphia':40,'Phoenix':33,'Portland':46,
+  'Puerto Rico':18,'Puerto Vallarta':21,'Quebec City':47,
+  'Curitiba':-25,'Florianópolis':-28,'Fortaleza':-4,
+  'Foz do Iguaçu':-25,'Maceió':-10,'Porto Alegre':-30,
+  'Recife':-8,'Salvador':-13,'São Luís':-2,'São Paulo':-24,
+  'Rio de Janeiro':-23,'San Diego':33,'San Francisco':38,'San Jose':37,
+  'San Jose Costa Rica':10,'San Juan Island':48,'Santa Barbara':34,
+  'Santa Cruz':37,'Santa Fe':36,'Santa Monica':34,'Santiago':-33,
+  'Sarasota':27,'Scottsdale':33,'Seattle':48,'Sedona':35,
+  'Toronto':44,'Vancouver':49,'Victoria':48,'Washington DC':39,
+  'Whistler':50,'Yellowstone':44,
+  'Aruba':12,'Barbados':13,'Cayman Islands':19,'Curacao':12,
+  'Sint Maarten':18,'Turks and Caicos':22,'Virgin Islands':18,
+  'Kraków':50,'Aix-en-Provence':44,'Alesund':62,'Amalfi':40,'Amsterdam':52,
+  'Annecy':46,'Athens':38,'Azores':38,'Barcelona':41,'Bilbao':43,'Bergen':60,
+  'Berlin':53,'Bologna':44,'Bordeaux':45,'Bruges':51,'Brussels':51,
+  'Budapest':47,'Cambridge':52,'Cannes':43,'Capri':40,'Cascais':39,
+  'Cinque Terre':44,'Colmar':48,'Cologne':51,'Copenhagen':56,'Corfu':40,'Crete':40,'Dublin':53,
+  'Dubrovnik':43,'Edinburgh':56,'Florence':44,'Frankfurt':50,'Geneva':46,'Glasgow':56,
+  'Gothenburg':57,'Hamburg':54,'Helsinki':60,'Istanbul':41,'Kotor':42,
+  'Lake Como':46,'Lecce':40,'Lille':51,'Lisbon':39,'Ljubljana':46,
+  'London':51,'Lucerne':47,'Luxembourg':50,'Lyon':46,'Madeira':33,
+  'Madrid':40,'Malaga':37,'Marktoberdorf':48,'Marseille':43,'Milan':45,
+  'Monaco':44,'Munich':48,'Mykonos':37,'Nice':44,'Oslo':60,'Oxford':52,
+  'Paris':49,'Pisa':44,'Porto':41,'Prague':50,'Reykjavik':64,'Rhodes':36,'Rome':42,'Rotterdam':52,
+  'Salzburg':47,'San Sebastian':43,'Sardinia':40,'Santorini':36,'Seville':37,
+  'Sicily':37,'Siena':43,'Sintra':39,'Sorrento':41,'Split':43,
+  'Stockholm':59,'Strasbourg':48,'Stuttgart':49,'Tallinn':59,'Tbilisi':42,'Tenerife':28,
+  'Toledo':40,'Tromsø':70,'Turin':45,'Valletta':36,'Venice':45,
+  'Verona':45,'Vienna':48,'Zakynthos':38,'Zurich':47,
+  'Bali':-8,'Bangkok':14,'Beijing':40,'Bora Bora':-16,'Chiang Mai':19,
+  'Chongqing':30,'Colombo':7,'Hanoi':21,'Hiroshima':34,'Hoi An':16,'Hong Kong':22,
+  'Kyoto':35,'Luang Prabang':20,'Maldives':4,'Melbourne':-38,'Osaka':35,
+  'Palawan':10,'Phuket':8,'Queenstown':-45,'Seoul':37,'Shanghai':31,
+  'Singapore':1,'Sydney':-34,'Taipei':25,'Tokyo':36,'Wellington':-41,
+  'Zhangjiajie':29,
+  'Abu Dhabi':24,'Cairo':30,'Doha':25,'Dubai':25,
+  'Marrakech':32,'Muscat':24,'Paro':27,'Petra':30,'Pokhara':28,'Seychelles':-5,
+  'Cape Town':-34
+};
+
+function getSunLat(c) {
+  if (c.name === 'Naples') return c.region === 'americas' ? 26 : 41;
+  if (c.name === 'Lagos')  return c.tz === 'Africa/Lagos' ? 6 : 37;
+  return CITY_LAT[c.name] !== undefined ? CITY_LAT[c.name] : null;
+}
+
+function calcSunTimes(lat, month) {
+  var doy = [15,46,74,105,135,166,196,227,258,288,319,349];
+  var N = doy[month];
+  var B = (360/365*(N-81)) * Math.PI/180;
+  var decl = 23.45 * Math.sin(B) * Math.PI/180;
+  var latR = lat * Math.PI/180;
+  var cosHA = -Math.tan(latR)*Math.tan(decl);
+  if (cosHA <= -1) return {type:'sun'};
+  if (cosHA >= 1)  return {type:'night'};
+  var HA = Math.acos(cosHA)*180/Math.PI;
+  var sr = 12 - HA/15, ss = 12 + HA/15;
+  return {type:'normal', sr:sr, ss:ss, len:ss-sr};
+}
+
+function sunFmtTime(h) {
+  var m = ((Math.round(h*60)%1440)+1440)%1440;
+  var hh = Math.floor(m/60), mm = m%60;
+  var ap = hh < 12 ? 'AM' : 'PM';
+  hh = hh%12||12;
+  return hh+':'+(mm<10?'0':'')+mm+' '+ap;
+}
+
+function sunFmtLen(h) {
+  var hh = Math.floor(h), mm = Math.round((h-hh)*60);
+  if (mm === 60) { hh++; mm = 0; }
+  return hh+'h '+(mm<10?'0':'')+mm+'m';
+}
+
+function renderSun() {
+  var mon = document.getElementById('sun-month');
+  var res = document.getElementById('sun-result');
+  if (!mon || !res) return;
+  var idx = _sunCityIdx;
+  var month = parseInt(mon.value, 10);
+  if (idx === null || isNaN(month)) { res.innerHTML = ''; return; }
+  var city = CITIES[idx];
+  if (!city) { res.innerHTML = ''; return; }
+  var lat = getSunLat(city);
+  if (lat === null) {
+    res.innerHTML = '<p class="sun-note">No data for ' + city.name + '.</p>';
+    return;
+  }
+  var r = calcSunTimes(lat, month);
+  if (r.type === 'sun') {
+    res.innerHTML = '<div class="sun-special">Midnight sun — the sun does not set in ' + city.name + ' during this month.</div>';
+    return;
+  }
+  if (r.type === 'night') {
+    res.innerHTML = '<div class="sun-special">Polar night — the sun does not rise in ' + city.name + ' during this month.</div>';
+    return;
+  }
+  var html = '<div class="sun-card">';
+  html += '<div class="sun-row"><span class="sun-row-label">Sunrise</span><span class="sun-row-value">'+sunFmtTime(r.sr)+'</span></div>';
+  html += '<div class="sun-row"><span class="sun-row-label">Sunset</span><span class="sun-row-value">'+sunFmtTime(r.ss)+'</span></div>';
+  html += '<div class="sun-row"><span class="sun-row-label">Day length</span><span class="sun-row-value">'+sunFmtLen(r.len)+'</span></div>';
+  html += '<div class="sun-row sun-golden"><span class="sun-row-label">Golden hour · morning</span><span class="sun-row-value">'+sunFmtTime(r.sr)+' – '+sunFmtTime(r.sr+0.5)+'</span></div>';
+  html += '<div class="sun-row sun-golden"><span class="sun-row-label">Golden hour · evening</span><span class="sun-row-value">'+sunFmtTime(r.ss-0.5)+' – '+sunFmtTime(r.ss)+'</span></div>';
+  html += '</div>';
+  res.innerHTML = html;
+}
+
+(function () {
+  var mon = document.getElementById('sun-month');
+  if (!mon) return;
+  mon.addEventListener('change', renderSun);
+}());
+</script>
+
+
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var src=window.CITIES||[];
+  var input=document.getElementById('search');
+  if(input){
+    var items=src.map(function(c){ return { name:c.name, sub:c.country }; });
+    TVESearch.attach(input,{items:items});
+  }
+  var sunInp=document.getElementById('sun-city-input');
+  if(sunInp){
+    var sunItems=src.map(function(c,i){ return { name:c.name, sub:c.country, _idx:i }; });
+    TVESearch.attach(sunInp,{
+      items:sunItems,
+      onPick:function(it){ _sunCityIdx=it._idx; renderSun(); }
+    });
+  }
+}());</script>
+</body>
+</html>

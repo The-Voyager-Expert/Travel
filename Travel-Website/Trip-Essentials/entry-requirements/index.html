@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Entry Requirements</title>
+<style>
+/* Colors via CSS variables */
+:root {
+  --er-live-bg: #e8f5e8; --er-live-fg: #1a5a1a; --er-live-bd: #9ad09a; --er-live-accent: #5eb833;
+  --er-coming-bg: #fdf8f0; --er-coming-fg: #8a4a10; --er-coming-bd: rgba(184,134,90,0.4); --er-coming-accent: #f5a623;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --er-live-bg: #0d200d; --er-live-fg: #5aaa5e; --er-live-bd: #3a7a3a;
+          --er-coming-bg: #2a1808; --er-coming-fg: #f5a860; --er-coming-bd: rgba(220,150,80,0.4); --er-coming-accent: #ffb85a; }
+}
+:root[data-theme="dark"]  { --er-live-bg: #0d200d; --er-live-fg: #5aaa5e; --er-live-bd: #3a7a3a;
+                             --er-coming-bg: #2a1808; --er-coming-fg: #f5a860; --er-coming-bd: rgba(220,150,80,0.4); --er-coming-accent: #ffb85a; }
+:root[data-theme="light"] { --er-live-bg: #e8f5e8; --er-live-fg: #1a5a1a; --er-live-bd: #9ad09a;
+                             --er-coming-bg: #fdf8f0; --er-coming-fg: #8a4a10; --er-coming-bd: rgba(184,134,90,0.4); }
+
+.alert-banner strong { color: var(--text); }
+a.pill:visited { color: #6a6660; }
+
+/* Status badges — canonical spec: Brain/Reference/Formatting/Formatting.html#sec-badges */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px; white-space: nowrap; flex-shrink: 0;
+}
+.status-live   { background: var(--er-live-bg);   color: var(--er-live-fg);   border: 1px solid var(--er-live-bd); }
+.status-coming { background: var(--er-coming-bg); color: var(--er-coming-fg); border: 1px solid var(--er-coming-bd); }
+:root[data-theme="dark"] .status-live   { background: var(--er-live-bg);   color: var(--er-live-fg);   border-color: var(--er-live-bd); }
+:root[data-theme="dark"] .status-coming { background: var(--er-coming-bg); color: var(--er-coming-fg); border-color: var(--er-coming-bd); }
+
+/* System cards */
+.system-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 10px;
+  padding: 18px 20px; margin-bottom: 14px;
+  border-left: 4px solid transparent;
+}
+/* Family-accent bar — canonical sphere mid tones (Badge spec 2026-07-29). */
+.system-card:has(.status-live)   { border-left-color: var(--er-live-accent); }
+.system-card:has(.status-coming) { border-left-color: var(--er-coming-accent); }
+.system-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; margin-bottom: 14px;
+}
+.system-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.system-sub  { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.system-meta {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px 16px; margin-bottom: 14px;
+}
+.meta-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 2px;
+}
+.meta-val { font-size: 13px; color: var(--text); line-height: 1.4; }
+.system-countries {
+  font-size: 12px; color: var(--muted); line-height: 1.7;
+  border-top: 1px solid var(--border2); padding-top: 12px; margin-bottom: 12px;
+}
+.system-countries strong { color: var(--text); font-weight: 600; }
+.apply-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 6px 14px; border-radius: 6px; font-family: inherit; font-size: 12px; font-weight: 400;
+  background: var(--surface); border: 1.5px solid var(--border2, #e6e2da);
+  color: var(--muted); text-decoration: none;
+  transition: border-color .15s, background .15s;
+}
+a.apply-btn:visited { color: #6a6660; }
+.apply-btn:hover { border-color: var(--rust); }
+
+/* Section headers */
+.section-head {
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin: 30px 0 14px; padding-bottom: 7px;
+  border-bottom: 2px solid var(--border2);
+}
+
+/* e-Visa table */
+.evisa-wrap {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; overflow: hidden; margin-bottom: 24px;
+}
+.evisa-table { width: 100%; border-collapse: collapse; }
+.evisa-table th {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 10px 14px 8px; text-align: left;
+  border-bottom: 1px solid var(--border2);
+}
+.evisa-table td {
+  font-size: 13px; padding: 11px 14px;
+  border-top: 1px solid var(--border2);
+  vertical-align: top; line-height: 1.4; color: var(--text);
+}
+.evisa-table tr:first-child td { border-top: none; }
+.dest-name { font-weight: 600; }
+.dest-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.evisa-link { font-size: 12px; color: var(--accent); text-decoration: none; }
+.evisa-link:hover { color: #7a3b1e; }
+
+/* Visa-free note */
+.visa-free-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px; margin-bottom: 20px;
+}
+.vf-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 12px 14px;
+}
+.vf-region { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 5px; }
+.vf-cities { font-size: 12px; color: var(--text); line-height: 1.65; }
+
+/* Mobile apply link — visible only on mobile inside the destination cell */
+.evisa-mobile-link { display: none; margin-top: 3px; }
+
+/* Mobile */
+@media (max-width: 600px) and (pointer: coarse) {
+  .system-meta { grid-template-columns: 1fr 1fr; }
+  .evisa-table th:nth-child(4), .evisa-table td:nth-child(4) { display: none; }
+  .evisa-mobile-link { display: block; }
+  .visa-free-grid { grid-template-columns: 1fr; }
+  /* Keep the e-visa table a real table (mobile.css display:block squishes its
+     columns to one word/line); scroll it in its wrapper if it exceeds width. */
+  .evisa-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .evisa-table { display: table; min-width: 380px; }
+}
+
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="760" data-updated="2026-08-08"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>ENTRY REQUIREMENTS</h1>
+  </div>
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-id-card-check"/></svg></div>
+    <div>
+      <div class="page-intro-head">The travel authorizations and eVisas to arrange before you fly</div>
+      <div class="page-intro-sub">The pre-entry authorizations and eVisas a US passport holder has to arrange before boarding — ESTA-style travel authorizations, electronic visas and online arrival cards — with what each costs and how far ahead to apply. Countries that need a full visa application are on the Visas page instead. Rules here change with little notice, so the page also tracks the ones currently in flux, including ETIAS.</div>
+    </div>
+  </div>
+  <div class="alert-banner">
+    <strong>ETIAS has been delayed.</strong> In July 2026, EU-Lisa confirmed that a Q4 2026 launch was no longer feasible after technical issues with the EES border system. A revised timeline is expected in late 2026. Americans will eventually need a quick online pre-authorization (€20, valid 3 years) to visit France, Italy, Spain, Germany, and 27 other Schengen countries — similar to the US ESTA. No action needed until a launch date is confirmed.
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:5px;margin:0 0 4px;">
+    <a href="#er-preauth" class="pill">Pre-entry authorizations</a>
+    <a href="#er-evisas" class="pill">e-Visas</a>
+    <a href="#er-visafree" class="pill">Visa-free</a>
+  </div>
+  <div id="er-dest-count" style="font-size:12px;color:var(--muted);margin:8px 0 10px;"></div>
+  <div style="display:flex;justify-content:center;margin:16px 0 18px;">
+    <input type="search" class="search-input" id="er-search" placeholder="Country or system" aria-label="Search entry requirements by country or system" autocomplete="off" spellcheck="false">
+  </div>
+  <div id="er-noresult" style="display:none;text-align:center;color:var(--muted);font-size:14px;padding:10px 0;">No entry requirements match your search.</div>
+
+  <!-- ── Pre-Entry Authorizations ─────────────────────────── -->
+  <div class="section-head" id="er-preauth">Pre-Entry Authorizations</div>
+
+  <!-- ETIAS -->
+  <div class="system-card">
+    <div class="system-head">
+      <div>
+        <div class="system-name">ETIAS</div>
+        <div class="system-sub">European Travel Information and Authorization System · 30 Schengen countries</div>
+      </div>
+      <span class="status-badge status-coming">Delayed — 2027 or later</span>
+    </div>
+    <div class="system-meta">
+      <div><div class="meta-label">Fee</div><div class="meta-val">€20 (~$22 USD)</div></div>
+      <div><div class="meta-label">Valid</div><div class="meta-val">3 years or passport expiry</div></div>
+      <div><div class="meta-label">Stay allowed</div><div class="meta-val">90 days per 180-day period</div></div>
+      <div><div class="meta-label">Processing</div><div class="meta-val">Minutes to 96 hours</div></div>
+      <div><div class="meta-label">Fee exemption</div><div class="meta-val">Under 18 and over 70</div></div>
+      <div><div class="meta-label">Enforcement</div><div class="meta-val">TBD — no confirmed date</div></div>
+    </div>
+    <div class="system-countries">
+      <strong>Applies to these guides —</strong>
+      Austria (Vienna · Salzburg) ·
+      Belgium (Brussels · Bruges) ·
+      Croatia (Dubrovnik · Split) ·
+      Czech Republic (Prague) ·
+      Denmark (Copenhagen) ·
+      Estonia (Tallinn) ·
+      Finland (Helsinki) ·
+      France (Paris · Nice · Cannes · Bordeaux · Strasbourg · Colmar · Annecy · Aix-en-Provence · Lille · Lyon · Marseille) ·
+      Germany (Berlin · Cologne · Frankfurt · Hamburg · Marktoberdorf · Munich · Stuttgart) ·
+      Greece (Athens · Corfu · Crete · Mykonos · Rhodes · Santorini · Zakynthos) ·
+      Hungary (Budapest) ·
+      Iceland (Reykjavik) ·
+      Italy (Rome · Florence · Venice · Naples · Amalfi · Bologna · Capri · Cinque Terre · Lake Como · Pisa · Sardinia · Sicily · Siena · Sorrento · Turin · Verona · Lecce · Milan) ·
+      Luxembourg (Luxembourg) ·
+      Malta (Valletta) ·
+      Netherlands (Amsterdam) ·
+      Norway (Oslo · Bergen · Tromsø · Ålesund) ·
+      Poland (Kraków) ·
+      Portugal (Azores · Cascais · Lagos · Lisbon · Madeira · Porto · Sintra) ·
+      Slovenia (Ljubljana) ·
+      Spain (Barcelona · Bilbao · Granada · Madrid · Málaga · San Sebastián · Seville · Tenerife · Toledo) ·
+      Sweden (Stockholm · Gothenburg) ·
+      Switzerland (Zurich · Geneva · Lucerne)
+    </div>
+    <a class="apply-btn" href="https://travel.ec.europa.eu/etias_en" target="_blank" rel="noopener">Official ETIAS info</a>
+  </div>
+
+  <!-- UK ETA -->
+  <div class="system-card">
+    <div class="system-head">
+      <div>
+        <div class="system-name">UK ETA</div>
+        <div class="system-sub">Electronic Travel Authorisation · United Kingdom</div>
+      </div>
+      <span class="status-badge status-live">Required now</span>
+    </div>
+    <div class="system-meta">
+      <div><div class="meta-label">Fee</div><div class="meta-val">£20 (~$25 USD)</div></div>
+      <div><div class="meta-label">Valid</div><div class="meta-val">2 years or passport expiry</div></div>
+      <div><div class="meta-label">Entries</div><div class="meta-val">Unlimited</div></div>
+      <div><div class="meta-label">Processing</div><div class="meta-val">Usually minutes</div></div>
+      <div><div class="meta-label">Required since</div><div class="meta-val">February 25, 2026</div></div>
+      <div><div class="meta-label">Apply via</div><div class="meta-val">gov.uk/eta or UK ETA app</div></div>
+    </div>
+    <div class="system-countries">
+      <strong>Applies to these guides —</strong>
+      Edinburgh · Glasgow · Oxford · Cambridge · London
+    </div>
+    <a class="apply-btn" href="https://www.gov.uk/guidance/apply-for-an-electronic-travel-authorisation-eta" target="_blank" rel="noopener">Apply at GOV.UK</a>
+  </div>
+
+  <!-- Australia ETA -->
+  <div class="system-card">
+    <div class="system-head">
+      <div>
+        <div class="system-name">Australia ETA (Subclass 601)</div>
+        <div class="system-sub">Electronic Travel Authority · Australia</div>
+      </div>
+      <span class="status-badge status-live">Required now</span>
+    </div>
+    <div class="system-meta">
+      <div><div class="meta-label">Fee</div><div class="meta-val">AUD $20 (~$13 USD)</div></div>
+      <div><div class="meta-label">Valid</div><div class="meta-val">12 months or passport expiry</div></div>
+      <div><div class="meta-label">Stay per visit</div><div class="meta-val">Up to 3 months</div></div>
+      <div><div class="meta-label">Entries</div><div class="meta-val">Multiple</div></div>
+      <div><div class="meta-label">Processing</div><div class="meta-val">Usually immediate</div></div>
+      <div><div class="meta-label">Apply via</div><div class="meta-val">Australian ETA app only</div></div>
+    </div>
+    <div class="system-countries">
+      <strong>Applies to these guides —</strong>
+      Sydney · Melbourne
+    </div>
+    <a class="apply-btn" href="https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601" target="_blank" rel="noopener">Official info</a>
+  </div>
+
+  <!-- NZeTA -->
+  <div class="system-card">
+    <div class="system-head">
+      <div>
+        <div class="system-name">NZeTA</div>
+        <div class="system-sub">New Zealand Electronic Travel Authority · New Zealand</div>
+      </div>
+      <span class="status-badge status-live">Required now</span>
+    </div>
+    <div class="system-meta">
+      <div><div class="meta-label">Fee</div><div class="meta-val">NZD $17 (~$10 USD)</div></div>
+      <div><div class="meta-label">+ IVL</div><div class="meta-val">NZD $100 (~$60 USD) visitor levy</div></div>
+      <div><div class="meta-label">Valid</div><div class="meta-val">2 years</div></div>
+      <div><div class="meta-label">Stay allowed</div><div class="meta-val">Up to 6 months per 12-month period</div></div>
+      <div><div class="meta-label">Processing</div><div class="meta-val">Usually within 72 hours</div></div>
+      <div><div class="meta-label">Apply via</div><div class="meta-val">Immigration NZ app or website</div></div>
+    </div>
+    <div class="system-countries">
+      <strong>Applies to these guides —</strong>
+      Wellington · Queenstown
+    </div>
+    <a class="apply-btn" href="https://nzeta.immigration.govt.nz/" target="_blank" rel="noopener">Apply at Immigration NZ</a>
+  </div>
+
+  <!-- ── e-Visas ─────────────────────────────────────────── -->
+  <div class="section-head" id="er-evisas">e-Visas &amp; Online Visa Systems</div>
+
+  <div class="evisa-wrap">
+    <table class="evisa-table">
+      <thead>
+        <tr>
+          <th>Destination</th>
+          <th>Fee</th>
+          <th>Valid / Stay</th>
+          <th>Apply</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="dest-name">Brazil</div>
+            <div class="dest-note">Rio · São Paulo · Salvador and all other Brazilian guides · Required since April 2025</div>
+            <a class="evisa-link evisa-mobile-link" href="https://brazil.vfsevisa.com/" target="_blank" rel="noopener">Apply</a>
+          </td>
+          <td>$80.90</td>
+          <td>10 years · 90 days per stay / 180 per year</td>
+          <td><a class="evisa-link" href="https://brazil.vfsevisa.com/" target="_blank" rel="noopener">brazil.vfsevisa.com</a></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="dest-name">India</div>
+            <div class="dest-note">e-Tourist Visa · No India guides yet but a popular add-on to SE Asia trips</div>
+            <a class="evisa-link evisa-mobile-link" href="https://indianvisaonline.gov.in/" target="_blank" rel="noopener">Apply</a>
+          </td>
+          <td>$25 (30-day) / $40 (1-yr) / $80 (5-yr)</td>
+          <td>As selected · 90 days continuous per visit</td>
+          <td><a class="evisa-link" href="https://indianvisaonline.gov.in/" target="_blank" rel="noopener">indianvisaonline.gov.in</a></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="dest-name">Oman</div>
+            <div class="dest-note">Muscat</div>
+            <a class="evisa-link evisa-mobile-link" href="https://evisa.rop.gov.om/" target="_blank" rel="noopener">Apply</a>
+          </td>
+          <td>~$52</td>
+          <td>30 days</td>
+          <td><a class="evisa-link" href="https://evisa.rop.gov.om/" target="_blank" rel="noopener">evisa.rop.gov.om</a></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="dest-name">Kenya</div>
+            <div class="dest-note">eTA replaced visa-on-arrival in 2024 · No Kenya guide yet</div>
+            <a class="evisa-link evisa-mobile-link" href="https://etakenya.go.ke/" target="_blank" rel="noopener">Apply</a>
+          </td>
+          <td>$30</td>
+          <td>90 days · 3–5 working days to process</td>
+          <td><a class="evisa-link" href="https://etakenya.go.ke/" target="_blank" rel="noopener">etakenya.go.ke</a></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="dest-name">Egypt</div>
+            <div class="dest-note">Cairo · Also available visa on arrival $30</div>
+            <a class="evisa-link evisa-mobile-link" href="https://visa2egypt.gov.eg/" target="_blank" rel="noopener">Apply</a>
+          </td>
+          <td>$30</td>
+          <td>30 days · Extendable</td>
+          <td><a class="evisa-link" href="https://visa2egypt.gov.eg/" target="_blank" rel="noopener">visa2egypt.gov.eg</a></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="dest-name">Jordan</div>
+            <div class="dest-note">Petra · Visa on arrival also available · Jordan Pass covers fee + many sites</div>
+            <a class="evisa-link evisa-mobile-link" href="https://www.jordanpass.jo/" target="_blank" rel="noopener">Apply</a>
+          </td>
+          <td>$56 (visa on arrival)</td>
+          <td>30 days · Single entry</td>
+          <td><a class="evisa-link" href="https://www.jordanpass.jo/" target="_blank" rel="noopener">Jordan Pass</a></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="dest-name">Nepal</div>
+            <div class="dest-note">Pokhara · Visa on arrival at Kathmandu airport or pre-register online to skip the kiosk line</div>
+            <a class="evisa-link evisa-mobile-link" href="https://online.nepalimmigration.gov.np/" target="_blank" rel="noopener">Apply</a>
+          </td>
+          <td>$30 (15 days) / $50 (30 days)</td>
+          <td>15 or 30 days · Extendable in Kathmandu</td>
+          <td><a class="evisa-link" href="https://online.nepalimmigration.gov.np/" target="_blank" rel="noopener">online.nepalimmigration.gov.np</a></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="dest-name">Laos</div>
+            <div class="dest-note">Luang Prabang · Apply online before travel · Valid at designated entry points including Luang Prabang airport</div>
+            <a class="evisa-link evisa-mobile-link" href="https://laoevisa.gov.la/" target="_blank" rel="noopener">Apply</a>
+          </td>
+          <td>$50</td>
+          <td>30 days · 3 working days to process</td>
+          <td><a class="evisa-link" href="https://laoevisa.gov.la/" target="_blank" rel="noopener">laoevisa.gov.la</a></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="dest-name">Seychelles</div>
+            <div class="dest-note">Travel Authorization required before departure · Apply online or via app</div>
+            <a class="evisa-link evisa-mobile-link" href="https://seychelles.govtas.com/en" target="_blank" rel="noopener">Apply</a>
+          </td>
+          <td>€10.90 (~$12 USD)</td>
+          <td>Up to 3 months per stay</td>
+          <td><a class="evisa-link" href="https://seychelles.govtas.com/en" target="_blank" rel="noopener">seychelles.govtas.com</a></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="dest-name">Bhutan</div>
+            <div class="dest-note">Requires a licensed Bhutanese tour operator · Also pay SDF $100/night sustainability fee</div>
+            <a class="evisa-link evisa-mobile-link" href="https://www.bhutan.travel/" target="_blank" rel="noopener">Apply</a>
+          </td>
+          <td>$40 visa fee via operator</td>
+          <td>Duration of booked tour</td>
+          <td><a class="evisa-link" href="https://www.bhutan.travel/" target="_blank" rel="noopener">bhutan.travel</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── No Authorization Needed ──────────────────────────── -->
+  <div class="section-head" id="er-visafree">No Pre-Authorization Needed</div>
+  <p style="font-size:13px; color:var(--muted); margin:0 0 14px; line-height:1.55;">US passport holders enter these countries visa-free with no pre-travel step. Standard rules apply: passport valid for at least 6 months beyond arrival, and no overstaying.</p>
+
+  <div class="visa-free-grid">
+    <div class="vf-card">
+      <div class="vf-region">Asia — Pacific </div>
+      <div class="vf-cities">Japan · South Korea · Taiwan · Singapore · Thailand · Vietnam · Hong Kong · Bali (Indonesia) · Maldives (on arrival · 30 days) · Palawan (Philippines) · Sri Lanka (Colombo · free ETA since May 25, 2026) · Bora Bora (French Polynesia · 90 days)</div>
+    </div>
+    <div class="vf-card">
+      <div class="vf-region">Europe (non-Schengen) </div>
+      <div class="vf-cities">Ireland (Dublin) · Georgia (Tbilisi · 365 days) · Albania · Turkey (Istanbul · 90 days) · Montenegro (Kotor · 90 days) · Monaco (90 days)</div>
+    </div>
+    <div class="vf-card">
+      <div class="vf-region">Middle East </div>
+      <div class="vf-cities">UAE (Dubai · Abu Dhabi) · Qatar (Doha)</div>
+    </div>
+    <div class="vf-card">
+      <div class="vf-region">Latin America </div>
+      <div class="vf-cities">Mexico · Costa Rica · Argentina · Peru · Chile · Colombia · Uruguay</div>
+    </div>
+    <div class="vf-card">
+      <div class="vf-region">Caribbean </div>
+      <div class="vf-cities">Puerto Rico · US Virgin Islands (US territory) · Aruba · Barbados · Cayman Islands · Turks &amp; Caicos · Sint Maarten · Bahamas · Curaçao</div>
+    </div>
+    <div class="vf-card">
+      <div class="vf-region">North America </div>
+      <div class="vf-cities">Canada</div>
+    </div>
+    <div class="vf-card">
+      <div class="vf-region">Africa </div>
+      <div class="vf-cities">Morocco (Marrakech · 90 days)</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px; color:var(--muted); margin:0 0 32px; line-height:1.6;">Entry rules change. Verify requirements at <a href="https://travel.state.gov/" target="_blank" rel="noopener" class="xref">travel.state.gov</a> before every trip — especially for ETIAS, which has been delayed past 2026 with no confirmed new launch date.</p>
+
+
+</div><!-- /.wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="Visas.html">Visas</a>
+    <a class="also-on-this-site-pill" href="Digital-Nomad-Visas.html">Digital nomad visas</a>
+    <a class="also-on-this-site-pill" href="Visa-Processing-Times.html">Visa processing times</a>
+    <a class="also-on-this-site-pill" href="Passport.html">Passport</a>
+    <a class="also-on-this-site-pill" href="Trusted-Traveler.html">Global Entry &amp; CLEAR</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  var inp = document.getElementById('er-search');
+  var noRes = document.getElementById('er-noresult');
+  if (!inp) return;
+  var cards = [].slice.call(document.querySelectorAll('.system-card, .vf-card'));
+  // Group each section-head with the cards that follow it (DOM order), to hide empty sections.
+  var groups = [], cur = null;
+  [].slice.call(document.querySelectorAll('.section-head, .system-card, .vf-card')).forEach(function (el) {
+    if (el.classList.contains('section-head')) { cur = { head: el, cards: [] }; groups.push(cur); }
+    else if (cur) { cur.cards.push(el); }
+  });
+  function expand(s) {
+    return s.replace(/\buk\b/g, 'uk united kingdom').replace(/\busa\b/g, 'usa united states').replace(/\buae\b/g, 'uae united arab emirates');
+  }
+  inp.addEventListener('input', function () {
+    var q = inp.value.trim().toLowerCase();
+    var anyVisible = 0;
+    cards.forEach(function (c) {
+      var show = !q || expand(c.textContent.toLowerCase()).indexOf(q) >= 0;
+      c.style.display = show ? '' : 'none';
+      if (show && q) anyVisible++;
+    });
+    groups.forEach(function (g) {
+      var vis = g.cards.some(function (c) { return c.style.display !== 'none'; });
+      g.head.style.display = (q && !vis) ? 'none' : '';
+    });
+    if (noRes) noRes.style.display = (q && anyVisible === 0) ? '' : 'none';
+  });
+})();
+</script>
+<script>
+(function () {
+  var el = document.getElementById('er-dest-count');
+  if (!el) return;
+  var systems = document.querySelectorAll('.system-card').length;
+  var evisas = document.querySelectorAll('.evisa-table tbody tr').length;
+  var vfCards = document.querySelectorAll('.vf-card').length;
+  var total = systems + evisas + vfCards;
+  el.textContent = 'Covering ' + total + ' destinations across ' + systems + ' pre-entry systems, ' + evisas + ' e-visa countries, and ' + vfCards + ' visa-free regions.';
+})();
+</script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('er-search'); if(!input) return;
+  var items=[], seen={};
+  function add(o){ var k=o.name.toLowerCase(); if(!o.name||seen[k]) return; seen[k]=1; items.push(o); }
+  document.querySelectorAll('.system-card').forEach(function(card){
+    var nm=card.querySelector('.system-name'); if(!nm) return;
+    var cs=card.querySelector('.system-countries');
+    add({name:nm.textContent.trim(), sub:'Pre-entry system', text:cs?cs.textContent:'', el:card});
+  });
+  document.querySelectorAll('.evisa-table tbody tr').forEach(function(tr){
+    var dn=tr.querySelector('.dest-name'); if(!dn) return;
+    add({name:dn.textContent.trim(), sub:'e-Visa', el:tr});
+  });
+  document.querySelectorAll('.vf-card').forEach(function(card){
+    var region=card.querySelector('.vf-region');
+    var cities=card.querySelector('.vf-cities'); if(!cities) return;
+    var rlabel=region?region.textContent.trim():'Visa-free';
+    cities.textContent.replace(/\([^)]*\)/g,'').split('·').forEach(function(part){
+      var nm=part.trim(); if(!nm) return;
+      add({name:nm, sub:rlabel, el:card});
+    });
+  });
+  TVESearch.attach(input,{items:items, onPick:function(it){
+    input.value=it.name;
+    if(it.el && it.el.closest && it.el.closest('.evisa-wrap')){
+      input.value=''; input.dispatchEvent(new Event('input',{bubbles:true}));
+      it.el.scrollIntoView({block:'center'});
+      input.value=it.name;
+    } else {
+      input.dispatchEvent(new Event('input',{bubbles:true}));
+      if(it.el) it.el.scrollIntoView({block:'center'});
+    }
+  }});
+}());</script>
+</body>
+</html>

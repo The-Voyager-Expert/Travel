@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Safety Guide</title>
+<style>/* .wrap — fluid width from web-travel-style.css */
+/* ── Intro & legend ── */
+.intro {
+  margin-bottom: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 0 14px;
+  margin: 0 0 18px;
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg); border-bottom: 1px solid var(--border2);
+}
+/* ── Level filter pills ──────────────────────────────────────────────────────
+   OWNER-DIRECTED 2026-08-10: these four were `a.badge` jump-links with their
+   own hover treatment — a full terracotta gradient, a drop shadow and a scale
+   transform on :active, none of which the site's pill standard does. They are
+   now the standard filter pills, identical to Disney-Parks, Tap-Water and
+   Vaccines: emoji dot, label, count, click to filter to that level, click again
+   to clear. Family bg + neutral border at rest; on desktop the strip is glued
+   and .active is page-bg with a terracotta BORDER, never the gradient. */
+.pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.pill {
+  font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; padding: 6px 12px;
+  border: 1px solid var(--border2); border-radius: 6px; background: var(--surface);
+  color: var(--muted, #6a6660); cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, box-shadow .15s;
+  text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+}
+.pill:hover { border-color: var(--rust); background: var(--bg,#f5f4f0); }
+.pill.active { background: var(--surface,#ffffff); color: var(--rust,#b85c2a); border-color: var(--rust); }
+.pill[data-filter="l1"] { background:#e8f5e8; color:#1a5a1a; }
+.pill[data-filter="l2"] { background:#fff8e0; color:#7a5800; }
+.pill[data-filter="l3"] { background:#fdf0e8; color:#7a3a1a; }
+.pill[data-filter="l4"] { background:var(--surface2); color:var(--muted); }
+.pill[data-filter="l1"].active,
+.pill[data-filter="l2"].active,
+.pill[data-filter="l3"].active,
+.pill[data-filter="l4"].active { background: var(--surface,#ffffff); color: var(--rust,#b85c2a); border-color: var(--rust); }
+@media (min-width: 601px), (pointer: fine) {
+  .pills { gap: 0; }
+  .pills .pill { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; border-width: 1.5px; border-radius: 0; margin-left: 0; }
+  .pills .pill-count { display: none; }
+  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); box-shadow: none; color: inherit; }
+  .pills .pill.active,
+  .pills .pill[data-filter="l1"].active,
+  .pills .pill[data-filter="l2"].active,
+  .pills .pill[data-filter="l3"].active,
+  .pills .pill[data-filter="l4"].active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
+}
+.level-section.hidden { display: none; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid #d8d4cc;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #3d3a32;
+  line-height: 1;
+}
+a.badge { text-decoration: none; cursor: pointer; transition: background .15s, box-shadow .15s, transform .08s; }
+a.badge:visited { color: #3d3a32; }
+.badge-l1 { background: #e8f5e8; }
+.badge-l2 { background: #fef7e0; }
+.badge-l3 { background: #fcedef; }
+.badge-l4 { background: var(--surface2); }
+a.badge:hover  { background: linear-gradient(135deg,#7a3b1e 0%,var(--rust) 55%,#d4874a 100%); color: #fff !important; border-color: var(--rust); box-shadow: 0 3px 10px rgba(184,92,42,.18); }
+a.badge:active { background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%); color: #fff !important; border-color: var(--rust); box-shadow: 0 1px 3px rgba(184,92,42,.12); transform: scale(.97) translateY(1px); }
+html { scroll-behavior: smooth; }
+.level-section { scroll-margin-top: 110px; }
+/* ── Search (now inside .legend row) ── */
+.search-row { display: none; }
+#city-search {
+  width: 360px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: 40px;
+  padding: 0 18px 0 36px;
+  font-size: 16px;
+  line-height: 1;
+  border: 1.5px solid var(--border2,#e6e2da);
+  border-radius: 6px;
+  color: var(--text, #1a1917);
+  background: var(--surface,#fff) var(--search-icon, none) no-repeat 13px center;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+#city-search::placeholder { color: #A8895A; }
+#city-search:focus { border-color: var(--c-search-focus-border); box-shadow: none; }
+#no-results { display: none; color: var(--muted); font-size: 13px; margin: 12px 0; }
+/* ── Level section ── */
+.level-section { margin-bottom: 28px; }
+.level-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 7px;
+}
+.level-heading .badge { font-size: var(--fs-sub,12px); }
+.level-count {
+  font-size: var(--fs-sub,12px);
+  color: var(--muted);
+  margin-left: auto;
+}
+/* ── City grid ── */
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 7px;
+}
+a.city-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-left: 3px solid #ccc;
+  border-radius: 6px;
+  font-size: 13px;
+  text-decoration: none;
+  transition: background .12s, border-color .15s, box-shadow .15s, color .12s, transform .08s;
+}
+a.city-row:hover  { background: linear-gradient(135deg,#7a3b1e 0%,var(--rust) 55%,#d4874a 100%); border-color: var(--rust); box-shadow: 0 3px 10px rgba(184,92,42,.18); color: #fff; }
+a.city-row:hover .city-name,
+a.city-row:hover .city-country { color: #fff !important; }
+a.city-row:active { background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%); border-color: var(--rust); box-shadow: 0 1px 3px rgba(184,92,42,.12); color: #fff; transform: scale(.97) translateY(1px); }
+#grid-l1 a.city-row { border-left-color: #22c55e; }
+#grid-l2 a.city-row { border-left-color: #eab308; }
+#grid-l3 a.city-row { border-left-color: #b3402a; }
+#grid-l4 a.city-row { border-left-color: var(--text, #1a1917); }
+.city-name { font-weight: 500; color: var(--text); }
+.city-country { font-size: var(--fs-sub,12px); color: var(--muted); margin-left: auto; }
+a.city-row.hidden { display: none; }
+/* ── Sources ── */
+.sources {
+  margin-top: 32px;
+  padding-top: 18px;
+}
+.sources h2 { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+.source-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.source-list li { font-size: var(--fs-sub,12px); color: var(--muted); }
+.source-list a { color: var(--accent); text-decoration: none; }
+.source-list a:visited { color: #8a6c1a; }
+.source-list a:hover { text-decoration: underline; }
+/* ── Note box ── */
+.note {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-left: 3px solid #b3402a;
+  border-radius: 6px;
+  padding: 10px 13px;
+  font-size: 12.5px;
+  color: var(--text);
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+.note strong { color: var(--text); }
+@media (max-width: 600px) and (pointer: coarse) {
+  .city-grid { grid-template-columns: 1fr 1fr; }
+  .legend { display: flex !important; flex-direction: column !important; gap: 10px !important; padding: 10px 0 12px !important; margin: 0 0 12px !important; justify-content: flex-start !important; align-items: center !important; }
+  /* Level pills — Form B glued 2×2 grid, matching Vaccines and Tap-Water. */
+  .pills { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0 !important; width: 100% !important; }
+  .pill { min-height: 46px !important; height: auto !important; padding: 6px 6px !important; border-radius: 0 !important; font-size: 11px !important;
+    line-height: 1.15 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; white-space: normal !important; }
+  /* The level-heading badges keep the old flat treatment — they are labels, not controls. */
+  .level-heading .badge { background: none !important; border: none !important; border-bottom: 1px solid currentColor !important; padding: 2px 0 !important; font-size: 12px !important; gap: 5px !important; min-height: auto !important; height: auto !important; line-height: 1.3 !important; display: inline-flex !important; }
+  #city-search { width: 100%; }
+  .level-heading { flex-wrap: wrap; gap: 6px; }
+  .level-count { margin-left: 0; }
+}
+@media (prefers-color-scheme: dark) {
+  .badge { background: var(--surface); color: var(--text); border-color: var(--border); }
+  a.badge:visited { color: #e8e5e0; }
+  .badge-l1 { background: #0a1e0a; color: #4aaa4a; }
+  .badge-l2 { background: #2a2000; color: #c8a040; }
+  .badge-l3 { background: #2a0e00; color: #e07050; }
+  .badge-l4 { color: var(--text); }
+  .pill[data-filter="l1"] { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+  .pill[data-filter="l2"] { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+  .pill[data-filter="l3"] { background: #2a0e00; color: #e07050; border-color: rgba(224,112,80,.35); }
+  a[style*="9b2020"] { color: #f07070 !important; }
+}
+:root[data-theme="dark"] .badge { background: var(--surface); color: var(--text); border-color: var(--border); }
+:root[data-theme="dark"] a.badge:visited { color: #e8e5e0; }
+:root[data-theme="dark"] .badge-l1 { background: #0a1e0a; color: #4aaa4a; }
+:root[data-theme="dark"] .badge-l2 { background: #2a2000; color: #c8a040; }
+:root[data-theme="dark"] .badge-l3 { background: #2a0e00; color: #e07050; }
+:root[data-theme="dark"] .badge-l4 { color: var(--text); }
+:root[data-theme="dark"] .pill[data-filter="l1"] { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+:root[data-theme="dark"] .pill[data-filter="l2"] { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+:root[data-theme="dark"] .pill[data-filter="l3"] { background: #2a0e00; color: #e07050; border-color: rgba(224,112,80,.35); }
+:root[data-theme="dark"] a[style*="9b2020"] { color: #f07070 !important; }
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=50">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-updated="2026-08-09"></div>
+<!-- toolbar.js ?v= is FROZEN — cache-busting via sw.js MIN_VERSIONS only -->
+<script src="../assets/toolbar.js?v=122"></script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+
+<div class="wrap">
+  <div class="page-header">
+    <h1>SAFETY GUIDE</h1>
+    <a class="src-link" href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html" target="_blank" rel="noopener">travel.state.gov</a>
+  </div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-safety-guide"/></svg></div>
+    <div>
+      <div class="page-intro-head">Every destination sorted by US State Department advisory level</div>
+      <div class="page-intro-sub">All 237 cities and islands with a guide on this site, placed in the four US State Department advisory levels — normal precautions, increased caution, reconsider travel, do not travel — with the current standing notices called out above the list. Advisory levels move with events and can be raised or lowered without warning; check the live advisory on travel.state.gov before you book or fly.</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <input type="search" id="city-search" class="search-input" placeholder="City or country" aria-label="Filter cities">
+    <div class="pills tve-glue-m" id="level-pills">
+      <button class="pill" data-filter="l1" onclick="filterLevel(this,'l1')">🟢 Level 1 — Normal precautions <span class="pill-count" id="pcnt-l1"></span></button>
+      <button class="pill" data-filter="l2" onclick="filterLevel(this,'l2')">🟡 Level 2 — Increased caution <span class="pill-count" id="pcnt-l2"></span></button>
+      <button class="pill" data-filter="l3" onclick="filterLevel(this,'l3')">🔴 Level 3 — Reconsider travel <span class="pill-count" id="pcnt-l3"></span></button>
+      <button class="pill" data-filter="l4" onclick="filterLevel(this,'l4')">⚫ Level 4 — Do not travel <span class="pill-count" id="pcnt-l4"></span></button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>UAE, Qatar, Oman &amp; Jordan — Level 3 as of 2026.</strong> The State Dept issued Level 3 "Reconsider Travel" advisories for the UAE, Qatar, Oman, and Jordan citing regional armed-conflict risks — including the threat of drone and missile attacks following US–Iran hostilities — and authorized non-emergency US government personnel to depart the UAE and Qatar. Monitor the advisories for <a href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/united-arab-emirates-travel-advisory.html" target="_blank" rel="noopener" style="color:#9b2020">the UAE</a>, <a href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/qatar-travel-advisory.html" target="_blank" rel="noopener" style="color:#9b2020">Qatar</a>, <a href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/oman-travel-advisory.html" target="_blank" rel="noopener" style="color:#9b2020">Oman</a>, and <a href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/jordan-travel-advisory.html" target="_blank" rel="noopener" style="color:#9b2020">Jordan</a> closely before any travel to Abu Dhabi, Dubai, Doha, Muscat, or Petra.
+  </div>
+  <p id="no-results">No cities match your search.</p>
+
+  <!-- ── LEVEL 1 ── -->
+  <div class="level-section" id="section-l1">
+    <div class="level-heading">
+      <span class="badge badge-l1">🟢 Level 1</span>
+      <span style="font-size:13px;color:var(--muted)">Exercise normal precautions</span>
+      <span class="level-count" id="count-l1"></span>
+    </div>
+    <div class="city-grid" id="grid-l1">
+      <a class="city-row" href="../guides/Alaska/alaska.html" data-city="alaska" data-verified="2026-08"><span class="city-name">Alaska</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Aruba/aruba.html" data-city="aruba" data-verified="2026-08"><span class="city-name">Aruba</span><span class="city-country">🇦🇼 Aruba</span></a>
+      <a class="city-row" href="../guides/Athens/athens.html" data-city="athens" data-verified="2026-08"><span class="city-name">Athens</span><span class="city-country">🇬🇷 Greece</span></a>
+      <a class="city-row" href="../guides/Atlanta/atlanta.html" data-city="atlanta" data-verified="2026-08"><span class="city-name">Atlanta</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Austin/austin.html" data-city="austin" data-verified="2026-08"><span class="city-name">Austin</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Azores/azores.html" data-city="azores" data-verified="2026-08"><span class="city-name">Azores</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../guides/Banff/banff.html" data-city="banff" data-verified="2026-08"><span class="city-name">Banff</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../guides/Bangkok/bangkok.html" data-city="bangkok" data-verified="2026-08"><span class="city-name">Bangkok</span><span class="city-country">🇹🇭 Thailand</span></a>
+      <a class="city-row" href="../guides/Barbados/barbados.html" data-city="barbados" data-verified="2026-08"><span class="city-name">Barbados</span><span class="city-country">🇧🇧 Barbados</span></a>
+      <a class="city-row" href="../guides/Bend/bend.html" data-city="bend" data-verified="2026-08"><span class="city-name">Bend</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Bergen/bergen.html" data-city="bergen" data-verified="2026-08"><span class="city-name">Bergen</span><span class="city-country">🇳🇴 Norway</span></a>
+      <a class="city-row" href="../guides/Big-Island/big-island.html" data-city="big island" data-verified="2026-08"><span class="city-name">Big Island</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Bilbao/bilbao.html" data-city="bilbao" data-verified="2026-08"><span class="city-name">Bilbao</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../guides/Bora-Bora/bora-bora.html" data-city="bora bora" data-verified="2026-08"><span class="city-name">Bora Bora</span><span class="city-country">🇵🇫 French Polynesia</span></a>
+      <a class="city-row" href="../guides/Boston/boston.html" data-city="boston" data-verified="2026-08"><span class="city-name">Boston</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Boulder/boulder.html" data-city="boulder" data-verified="2026-08"><span class="city-name">Boulder</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Budapest/budapest.html" data-city="budapest" data-verified="2026-08"><span class="city-name">Budapest</span><span class="city-country">🇭🇺 Hungary</span></a>
+      <a class="city-row" href="../guides/Buenos-Aires/buenos-aires.html" data-city="buenos aires" data-verified="2026-08"><span class="city-name">Buenos Aires</span><span class="city-country">🇦🇷 Argentina</span></a>
+      <a class="city-row" href="../guides/Busan/busan.html" data-city="busan" data-verified="2026-08"><span class="city-name">Busan</span><span class="city-country">🇰🇷 South Korea</span></a>
+      <a class="city-row" href="../guides/Cape-Cod/cape-cod.html" data-city="cape cod" data-verified="2026-08"><span class="city-name">Cape Cod</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Carmel-by-the-Sea/carmel-by-the-sea.html" data-city="carmel-by-the-sea" data-verified="2026-08"><span class="city-name">Carmel-by-the-Sea</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Cascais/cascais.html" data-city="cascais" data-verified="2026-08"><span class="city-name">Cascais</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../guides/Cayman-Islands/cayman-islands.html" data-city="cayman islands" data-verified="2026-08"><span class="city-name">Cayman Islands</span><span class="city-country">🇰🇾 Cayman Is.</span></a>
+      <a class="city-row" href="../guides/Charlotte/charlotte.html" data-city="charlotte" data-verified="2026-08"><span class="city-name">Charlotte</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Chiang-Mai/chiang-mai.html" data-city="chiang mai" data-verified="2026-08"><span class="city-name">Chiang Mai</span><span class="city-country">🇹🇭 Thailand</span></a>
+      <a class="city-row" href="../guides/Chicago/chicago.html" data-city="chicago" data-verified="2026-08"><span class="city-name">Chicago</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Coeur-dAlene/coeur-dalene.html" data-city="coeur-dalene" data-verified="2026-08"><span class="city-name">Coeur d'Alene</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Columbia/columbia.html" data-city="columbia" data-verified="2026-08"><span class="city-name">Columbia</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Corfu/corfu.html" data-city="corfu" data-verified="2026-08"><span class="city-name">Corfu</span><span class="city-country">🇬🇷 Greece</span></a>
+      <a class="city-row" href="../guides/Crete/crete.html" data-city="crete" data-verified="2026-08"><span class="city-name">Crete</span><span class="city-country">🇬🇷 Greece</span></a>
+      <a class="city-row" href="../guides/Curacao/curacao.html" data-city="curaçao curacao" data-verified="2026-08"><span class="city-name">Curaçao</span><span class="city-country">🇨🇼 Curaçao</span></a>
+      <a class="city-row" href="../guides/Dallas/dallas.html" data-city="dallas" data-verified="2026-08"><span class="city-name">Dallas</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Denver/denver.html" data-city="denver" data-verified="2026-08"><span class="city-name">Denver</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Dublin/dublin.html" data-city="dublin" data-verified="2026-08"><span class="city-name">Dublin</span><span class="city-country">🇮🇪 Ireland</span></a>
+      <a class="city-row" href="../guides/Dubrovnik/dubrovnik.html" data-city="dubrovnik" data-verified="2026-08"><span class="city-name">Dubrovnik</span><span class="city-country">🇭🇷 Croatia</span></a>
+      <a class="city-row" href="../guides/Florida-Keys/florida-keys.html" data-city="florida keys" data-verified="2026-08"><span class="city-name">Florida Keys</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Geneva/geneva.html" data-city="geneva" data-verified="2026-08"><span class="city-name">Geneva</span><span class="city-country">🇨🇭 Switzerland</span></a>
+      <a class="city-row" href="../guides/Glacier-National-Park/glacier-national-park.html" data-city="glacier national park" data-verified="2026-08"><span class="city-name">Glacier National Park</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Hanoi/hanoi.html" data-city="hanoi" data-verified="2026-08"><span class="city-name">Hanoi</span><span class="city-country">🇻🇳 Vietnam</span></a>
+      <a class="city-row" href="../guides/Helsinki/helsinki.html" data-city="helsinki" data-verified="2026-08"><span class="city-name">Helsinki</span><span class="city-country">🇫🇮 Finland</span></a>
+      <a class="city-row" href="../guides/Hilton-Head-Island/hilton-head-island.html" data-city="hilton head island" data-verified="2026-08"><span class="city-name">Hilton Head Island</span><span class="city-country">🇺🇸 United States</span></a>
+      <a class="city-row" href="../guides/Hiroshima/hiroshima.html" data-city="hiroshima" data-verified="2026-08"><span class="city-name">Hiroshima</span><span class="city-country">🇯🇵 Japan</span></a>
+      <a class="city-row" href="../guides/Hoi-An/hoi-an.html" data-city="hoi an" data-verified="2026-08"><span class="city-name">Hoi An</span><span class="city-country">🇻🇳 Vietnam</span></a>
+      <a class="city-row" href="../guides/Kauai/kauai.html" data-city="kauai" data-verified="2026-08"><span class="city-name">Kauai</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/KeyWest/keywest.html" data-city="key west" data-verified="2026-08"><span class="city-name">Key West</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Kotor/kotor.html" data-city="kotor" data-verified="2026-08"><span class="city-name">Kotor</span><span class="city-country">🇲🇪 Montenegro</span></a>
+      <a class="city-row" href="../guides/Kraków/krakow.html" data-city="kraków krakow" data-verified="2026-08"><span class="city-name">Kraków</span><span class="city-country">🇵🇱 Poland</span></a>
+      <a class="city-row" href="../guides/Kyoto/kyoto.html" data-city="kyoto" data-verified="2026-08"><span class="city-name">Kyoto</span><span class="city-country">🇯🇵 Japan</span></a>
+      <a class="city-row" href="../guides/La-Jolla/la-jolla.html" data-city="la jolla" data-verified="2026-08"><span class="city-name">La Jolla</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Lagos/lagos.html" data-city="lagos algarve" data-verified="2026-08"><span class="city-name">Lagos</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../guides/Lake-Tahoe/lake-tahoe.html" data-city="lake tahoe" data-verified="2026-08"><span class="city-name">Lake Tahoe</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Las-Vegas/las-vegas.html" data-city="las vegas" data-verified="2026-08"><span class="city-name">Las Vegas</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Lecce/lecce.html" data-city="lecce" data-verified="2026-08"><span class="city-name">Lecce</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Lisbon/lisbon.html" data-city="lisbon" data-verified="2026-08"><span class="city-name">Lisbon</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../guides/Ljubljana/ljubljana.html" data-city="ljubljana" data-verified="2026-08"><span class="city-name">Ljubljana</span><span class="city-country">🇸🇮 Slovenia</span></a>
+      <a class="city-row" href="../guides/Los-Angeles/los-angeles.html" data-city="los angeles" data-verified="2026-08"><span class="city-name">Los Angeles</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Lucerne/lucerne.html" data-city="lucerne" data-verified="2026-08"><span class="city-name">Lucerne</span><span class="city-country">🇨🇭 Switzerland</span></a>
+      <a class="city-row" href="../guides/Luxembourg/luxembourg.html" data-city="luxembourg" data-verified="2026-08"><span class="city-name">Luxembourg</span><span class="city-country">🇱🇺 Luxembourg</span></a>
+      <a class="city-row" href="../guides/Madeira/madeira.html" data-city="madeira funchal" data-verified="2026-08"><span class="city-name">Madeira</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../guides/Malibu/malibu.html" data-city="malibu" data-verified="2026-08"><span class="city-name">Malibu</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Marco-Island/marco-island.html" data-city="marco island florida" data-verified="2026-08"><span class="city-name">Marco Island</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Maui/maui.html" data-city="maui" data-verified="2026-08"><span class="city-name">Maui</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Melbourne/melbourne.html" data-city="melbourne" data-verified="2026-08"><span class="city-name">Melbourne</span><span class="city-country">🇦🇺 Australia</span></a>
+      <a class="city-row" href="../guides/Miami/miami.html" data-city="miami" data-verified="2026-08"><span class="city-name">Miami</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Montreal/montreal.html" data-city="montréal montreal" data-verified="2026-08"><span class="city-name">Montréal</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../guides/Mykonos/mykonos.html" data-city="mykonos" data-verified="2026-08"><span class="city-name">Mykonos</span><span class="city-country">🇬🇷 Greece</span></a>
+      <a class="city-row" href="../guides/Malaga/malaga.html" data-city="malaga" data-verified="2026-08"><span class="city-name">Málaga</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../guides/Napa/napa.html" data-city="napa" data-verified="2026-08"><span class="city-name">Napa</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Naples-Florida/naples-florida.html" data-city="naples florida" data-verified="2026-08"><span class="city-name">Naples</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Nashville/nashville.html" data-city="nashville" data-verified="2026-08"><span class="city-name">Nashville</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/New-Orleans/new-orleans.html" data-city="new orleans" data-verified="2026-08"><span class="city-name">New Orleans</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/New-York/new-york.html" data-city="new york" data-verified="2026-08"><span class="city-name">New York</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Oahu/oahu.html" data-city="oahu" data-verified="2026-08"><span class="city-name">Oahu</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Orcas-Island/orcas-island.html" data-city="orcas island" data-verified="2026-08"><span class="city-name">Orcas Island</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Orlando/orlando.html" data-city="orlando" data-verified="2026-08"><span class="city-name">Orlando</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Osaka/osaka.html" data-city="osaka" data-verified="2026-08"><span class="city-name">Osaka</span><span class="city-country">🇯🇵 Japan</span></a>
+      <a class="city-row" href="../guides/Oslo/oslo.html" data-city="oslo" data-verified="2026-08"><span class="city-name">Oslo</span><span class="city-country">🇳🇴 Norway</span></a>
+      <a class="city-row" href="../guides/Palm-Desert/palm-desert.html" data-city="palm desert" data-verified="2026-08"><span class="city-name">Palm Desert</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Palo-Alto/palo-alto.html" data-city="palo alto" data-verified="2026-08"><span class="city-name">Palo Alto</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Bhutan/bhutan.html" data-city="paro bhutan" data-verified="2026-08"><span class="city-name">Paro</span><span class="city-country">🇧🇹 Bhutan</span></a>
+      <a class="city-row" href="../guides/Pasadena/pasadena.html" data-city="pasadena" data-verified="2026-08"><span class="city-name">Pasadena</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Pensacola/pensacola.html" data-city="pensacola" data-verified="2026-08"><span class="city-name">Pensacola</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Philadelphia/philadelphia.html" data-city="philadelphia" data-verified="2026-08"><span class="city-name">Philadelphia</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Phoenix/phoenix.html" data-city="phoenix" data-verified="2026-08"><span class="city-name">Phoenix</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Phuket/phuket.html" data-city="phuket" data-verified="2026-08"><span class="city-name">Phuket</span><span class="city-country">🇹🇭 Thailand</span></a>
+      <a class="city-row" href="../guides/Portland/portland.html" data-city="portland" data-verified="2026-08"><span class="city-name">Portland</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Porto/porto.html" data-city="porto" data-verified="2026-08"><span class="city-name">Porto</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../guides/Prague/prague.html" data-city="prague" data-verified="2026-08"><span class="city-name">Prague</span><span class="city-country">🇨🇿 Czech Rep.</span></a>
+      <a class="city-row" href="../guides/Puerto-Rico/puerto-rico.html" data-city="puerto rico" data-verified="2026-08"><span class="city-name">Puerto Rico</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Queenstown/queenstown.html" data-city="queenstown" data-verified="2026-08"><span class="city-name">Queenstown</span><span class="city-country">🇳🇿 New Zealand</span></a>
+      <a class="city-row" href="../guides/Quebec-City/quebec-city.html" data-city="québec city quebec city" data-verified="2026-08"><span class="city-name">Québec City</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../guides/Reykjavik/reykjavik.html" data-city="reykjavik iceland" data-verified="2026-08"><span class="city-name">Reykjavik</span><span class="city-country">🇮🇸 Iceland</span></a>
+      <a class="city-row" href="../guides/Rhodes/rhodes.html" data-city="rhodes greece" data-verified="2026-08"><span class="city-name">Rhodes</span><span class="city-country">🇬🇷 Greece</span></a>
+      <a class="city-row" href="../guides/Salzburg/salzburg.html" data-city="salzburg" data-verified="2026-08"><span class="city-name">Salzburg</span><span class="city-country">🇦🇹 Austria</span></a>
+      <a class="city-row" href="../guides/San-Diego/san-diego.html" data-city="san diego" data-verified="2026-08"><span class="city-name">San Diego</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/San-Francisco/san-francisco.html" data-city="san francisco" data-verified="2026-08"><span class="city-name">San Francisco</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/San-Jose/san-jose.html" data-city="san jose" data-verified="2026-08"><span class="city-name">San Jose</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/San-Juan-Island/san-juan-island.html" data-city="san juan island" data-verified="2026-08"><span class="city-name">San Juan Island</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Santa-Barbara/santa-barbara.html" data-city="santa barbara" data-verified="2026-08"><span class="city-name">Santa Barbara</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Santa-Cruz/santa-cruz.html" data-city="santa cruz" data-verified="2026-08"><span class="city-name">Santa Cruz</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Santa-Fe/santa-fe.html" data-city="santa fe" data-verified="2026-08"><span class="city-name">Santa Fe</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Santa-Monica/santa-monica.html" data-city="santa monica" data-verified="2026-08"><span class="city-name">Santa Monica</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Santorini/santorini.html" data-city="santorini" data-verified="2026-08"><span class="city-name">Santorini</span><span class="city-country">🇬🇷 Greece</span></a>
+      <a class="city-row" href="../guides/Sarasota/sarasota.html" data-city="sarasota" data-verified="2026-08"><span class="city-name">Sarasota</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Sardinia/sardinia.html" data-city="sardinia olbia" data-verified="2026-08"><span class="city-name">Sardinia</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Scottsdale/scottsdale.html" data-city="scottsdale" data-verified="2026-08"><span class="city-name">Scottsdale</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Seattle/seattle.html" data-city="seattle" data-verified="2026-08"><span class="city-name">Seattle</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Sedona/sedona.html" data-city="sedona" data-verified="2026-08"><span class="city-name">Sedona</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Seoul/seoul.html" data-city="seoul" data-verified="2026-08"><span class="city-name">Seoul</span><span class="city-country">🇰🇷 South Korea</span></a>
+      <a class="city-row" href="../guides/Seychelles/seychelles.html" data-city="seychelles" data-verified="2026-08"><span class="city-name">Seychelles</span><span class="city-country">🇸🇨 Seychelles</span></a>
+      <a class="city-row" href="../guides/Sicily/sicily.html" data-city="sicily palermo" data-verified="2026-08"><span class="city-name">Sicily</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Singapore/singapore.html" data-city="singapore" data-verified="2026-08"><span class="city-name">Singapore</span><span class="city-country">🇸🇬 Singapore</span></a>
+      <a class="city-row" href="../guides/Sint-Maarten/sint-maarten.html" data-city="sint maarten" data-verified="2026-08"><span class="city-name">Sint Maarten</span><span class="city-country">🇸🇽 Sint Maarten</span></a>
+      <a class="city-row" href="../guides/Sintra/sintra.html" data-city="sintra" data-verified="2026-08"><span class="city-name">Sintra</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../guides/Split/split.html" data-city="split" data-verified="2026-08"><span class="city-name">Split</span><span class="city-country">🇭🇷 Croatia</span></a>
+      <a class="city-row" href="../guides/Sydney/sydney.html" data-city="sydney" data-verified="2026-08"><span class="city-name">Sydney</span><span class="city-country">🇦🇺 Australia</span></a>
+      <a class="city-row" href="../guides/Taipei/taipei.html" data-city="taipei taiwan" data-verified="2026-08"><span class="city-name">Taipei</span><span class="city-country">🇹🇼 Taiwan</span></a>
+      <a class="city-row" href="../guides/Tallinn/tallinn.html" data-city="tallinn" data-verified="2026-08"><span class="city-name">Tallinn</span><span class="city-country">🇪🇪 Estonia</span></a>
+      <a class="city-row" href="../guides/Tbilisi/tbilisi.html" data-city="tbilisi" data-verified="2026-08"><span class="city-name">Tbilisi</span><span class="city-country">🇬🇪 Georgia</span></a>
+      <a class="city-row" href="../guides/Tokyo/tokyo.html" data-city="tokyo" data-verified="2026-08"><span class="city-name">Tokyo</span><span class="city-country">🇯🇵 Japan</span></a>
+      <a class="city-row" href="../guides/Toronto/toronto.html" data-city="toronto" data-verified="2026-08"><span class="city-name">Toronto</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../guides/Tromso/tromso.html" data-city="tromsø tromso" data-verified="2026-08"><span class="city-name">Tromsø</span><span class="city-country">🇳🇴 Norway</span></a>
+      <a class="city-row" href="../guides/Valletta/valletta.html" data-city="valletta" data-verified="2026-08"><span class="city-name">Valletta</span><span class="city-country">🇲🇹 Malta</span></a>
+      <a class="city-row" href="../guides/Vancouver/vancouver.html" data-city="vancouver" data-verified="2026-08"><span class="city-name">Vancouver</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../guides/Victoria/victoria.html" data-city="victoria" data-verified="2026-08"><span class="city-name">Victoria</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../guides/Vienna/vienna.html" data-city="vienna" data-verified="2026-08"><span class="city-name">Vienna</span><span class="city-country">🇦🇹 Austria</span></a>
+      <a class="city-row" href="../guides/Virgin-Islands/virgin-islands.html" data-city="virgin islands" data-verified="2026-08"><span class="city-name">Virgin Islands</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Washington-DC/washington-dc.html" data-city="washington dc" data-verified="2026-08"><span class="city-name">Washington DC</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Wellington/wellington.html" data-city="wellington" data-verified="2026-08"><span class="city-name">Wellington</span><span class="city-country">🇳🇿 New Zealand</span></a>
+      <a class="city-row" href="../guides/Whistler/whistler.html" data-city="whistler" data-verified="2026-08"><span class="city-name">Whistler</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../guides/Yellowstone/yellowstone.html" data-city="yellowstone" data-verified="2026-08"><span class="city-name">Yellowstone</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../guides/Zakynthos/zakynthos.html" data-city="zakynthos" data-verified="2026-08"><span class="city-name">Zakynthos</span><span class="city-country">🇬🇷 Greece</span></a>
+      <a class="city-row" href="../guides/Zurich/zurich.html" data-city="zürich zurich" data-verified="2026-08"><span class="city-name">Zürich</span><span class="city-country">🇨🇭 Switzerland</span></a>
+      <a class="city-row" href="../guides/Alesund/alesund.html" data-city="ålesund alesund" data-verified="2026-08"><span class="city-name">Ålesund</span><span class="city-country">🇳🇴 Norway</span></a>
+    </div>
+  </div>
+  <!-- ── LEVEL 2 ── -->
+  <div class="level-section" id="section-l2">
+    <div class="level-heading">
+      <span class="badge badge-l2">🟡 Level 2</span>
+      <span style="font-size:13px;color:var(--muted)">Increased caution</span>
+      <span class="level-count" id="count-l2"></span>
+    </div>
+    <div class="city-grid" id="grid-l2">
+      <a class="city-row" href="../guides/Aix-en-Provence/aix-en-provence.html" data-city="aix-en-provence aix" data-verified="2026-08"><span class="city-name">Aix-en-Provence</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Amalfi/amalfi.html" data-city="amalfi" data-verified="2026-08"><span class="city-name">Amalfi</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Amsterdam/amsterdam.html" data-city="amsterdam" data-verified="2026-08"><span class="city-name">Amsterdam</span><span class="city-country">🇳🇱 Netherlands</span></a>
+      <a class="city-row" href="../guides/Annecy/annecy.html" data-city="annecy" data-verified="2026-08"><span class="city-name">Annecy</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Aracaju/aracaju.html" data-city="aracaju" data-verified="2026-08"><span class="city-name">Aracaju</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Arenal/arenal.html" data-city="arenal costa rica" data-verified="2026-08"><span class="city-name">Arenal</span><span class="city-country">🇨🇷 Costa Rica</span></a>
+      <a class="city-row" href="../guides/Bahamas/bahamas.html" data-city="bahamas nassau" data-verified="2026-08"><span class="city-name">Bahamas</span><span class="city-country">🇧🇸 Bahamas</span></a>
+      <a class="city-row" href="../guides/Bali/bali.html" data-city="bali" data-verified="2026-08"><span class="city-name">Bali</span><span class="city-country">🇮🇩 Indonesia</span></a>
+      <a class="city-row" href="../guides/Barcelona/barcelona.html" data-city="barcelona" data-verified="2026-08"><span class="city-name">Barcelona</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../guides/Beijing/beijing.html" data-city="beijing" data-verified="2026-08"><span class="city-name">Beijing</span><span class="city-country">🇨🇳 China</span></a>
+      <a class="city-row" href="../guides/Berlin/berlin.html" data-city="berlin" data-verified="2026-08"><span class="city-name">Berlin</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../guides/Bologna/bologna.html" data-city="bologna" data-verified="2026-08"><span class="city-name">Bologna</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Bordeaux/bordeaux.html" data-city="bordeaux" data-verified="2026-08"><span class="city-name">Bordeaux</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Bruges/bruges.html" data-city="bruges" data-verified="2026-08"><span class="city-name">Bruges</span><span class="city-country">🇧🇪 Belgium</span></a>
+      <a class="city-row" href="../guides/Brussels/brussels.html" data-city="brussels" data-verified="2026-08"><span class="city-name">Brussels</span><span class="city-country">🇧🇪 Belgium</span></a>
+      <a class="city-row" href="../guides/Cairo/cairo.html" data-city="cairo egypt" data-verified="2026-08"><span class="city-name">Cairo</span><span class="city-country">🇪🇬 Egypt</span></a>
+      <a class="city-row" href="../guides/Cambridge/cambridge.html" data-city="cambridge" data-verified="2026-08"><span class="city-name">Cambridge</span><span class="city-country">🇬🇧 UK</span></a>
+      <a class="city-row" href="../guides/Cancun/cancun.html" data-city="cancun" data-verified="2026-08"><span class="city-name">Cancun</span><span class="city-country">🇲🇽 Mexico</span></a>
+      <a class="city-row" href="../guides/Cannes/cannes.html" data-city="cannes" data-verified="2026-08"><span class="city-name">Cannes</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Cape-Town/cape-town.html" data-city="cape town" data-verified="2026-08"><span class="city-name">Cape Town</span><span class="city-country">🇿🇦 South Africa</span></a>
+      <a class="city-row" href="../guides/Capri/capri.html" data-city="capri" data-verified="2026-08"><span class="city-name">Capri</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Chongqing/chongqing.html" data-city="chongqing" data-verified="2026-08"><span class="city-name">Chongqing</span><span class="city-country">🇨🇳 China</span></a>
+      <a class="city-row" href="../guides/Cinque-Terre/cinque-terre.html" data-city="cinque terre" data-verified="2026-08"><span class="city-name">Cinque Terre</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Colmar/colmar.html" data-city="colmar" data-verified="2026-08"><span class="city-name">Colmar</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Cologne/cologne.html" data-city="cologne koln germany" data-verified="2026-08"><span class="city-name">Cologne</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../guides/Colombo/colombo.html" data-city="colombo" data-verified="2026-08"><span class="city-name">Colombo</span><span class="city-country">🇱🇰 Sri Lanka</span></a>
+      <a class="city-row" href="../guides/Copenhagen/copenhagen.html" data-city="copenhagen" data-verified="2026-08"><span class="city-name">Copenhagen</span><span class="city-country">🇩🇰 Denmark</span></a>
+      <a class="city-row" href="../guides/Curitiba/curitiba.html" data-city="curitiba" data-verified="2026-08"><span class="city-name">Curitiba</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Cusco/cusco.html" data-city="cusco" data-verified="2026-08"><span class="city-name">Cusco</span><span class="city-country">🇵🇪 Peru</span></a>
+      <a class="city-row" href="../guides/Edinburgh/edinburgh.html" data-city="edinburgh" data-verified="2026-08"><span class="city-name">Edinburgh</span><span class="city-country">🇬🇧 UK</span></a>
+      <a class="city-row" href="../guides/Florence/florence.html" data-city="florence firenze" data-verified="2026-08"><span class="city-name">Florence</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Florianopolis/florianopolis.html" data-city="florianópolis florianopolis" data-verified="2026-08"><span class="city-name">Florianópolis</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Fortaleza/fortaleza.html" data-city="fortaleza" data-verified="2026-08"><span class="city-name">Fortaleza</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Foz-do-Iguaçu/foz-do-iguacu.html" data-city="foz do iguaçu foz do iguacu" data-verified="2026-08"><span class="city-name">Foz do Iguaçu</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Frankfurt/frankfurt.html" data-city="frankfurt" data-verified="2026-08"><span class="city-name">Frankfurt</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../guides/Galapagos-Islands/galapagos-islands.html" data-city="galapagos islands galápagos" data-verified="2026-08"><span class="city-name">Galápagos Islands</span><span class="city-country">🇪🇨 Ecuador</span></a>
+      <a class="city-row" href="../guides/Glasgow/glasgow.html" data-city="glasgow" data-verified="2026-08"><span class="city-name">Glasgow</span><span class="city-country">🇬🇧 UK</span></a>
+      <a class="city-row" href="../guides/Gothenburg/gothenburg.html" data-city="gothenburg" data-verified="2026-08"><span class="city-name">Gothenburg</span><span class="city-country">🇸🇪 Sweden</span></a>
+      <a class="city-row" href="../guides/Granada/granada.html" data-city="granada" data-verified="2026-08"><span class="city-name">Granada</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../guides/Hamburg/hamburg.html" data-city="hamburg" data-verified="2026-08"><span class="city-name">Hamburg</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../guides/Hong-Kong/hong-kong.html" data-city="hong kong" data-verified="2026-08"><span class="city-name">Hong Kong</span><span class="city-country">🇭🇰 Hong Kong</span></a>
+      <a class="city-row" href="../guides/Istanbul/istanbul.html" data-city="istanbul" data-verified="2026-08"><span class="city-name">Istanbul</span><span class="city-country">🇹🇷 Turkey</span></a>
+      <a class="city-row" href="../guides/João-Pessoa/joao-pessoa.html" data-city="joão pessoa joao pessoa" data-verified="2026-08"><span class="city-name">João Pessoa</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Lake-Como/lake-como.html" data-city="lake como como" data-verified="2026-08"><span class="city-name">Lake Como</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Lille/lille.html" data-city="lille" data-verified="2026-08"><span class="city-name">Lille</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Lima/lima.html" data-city="lima" data-verified="2026-08"><span class="city-name">Lima</span><span class="city-country">🇵🇪 Peru</span></a>
+      <a class="city-row" href="../guides/London/london.html" data-city="london" data-verified="2026-08"><span class="city-name">London</span><span class="city-country">🇬🇧 UK</span></a>
+      <a class="city-row" href="../guides/Los-Cabos/los-cabos.html" data-city="los cabos cabo san lucas" data-verified="2026-08"><span class="city-name">Los Cabos</span><span class="city-country">🇲🇽 Mexico</span></a>
+      <a class="city-row" href="../guides/Luang-Prabang/luang-prabang.html" data-city="luang prabang" data-verified="2026-08"><span class="city-name">Luang Prabang</span><span class="city-country">🇱🇦 Laos</span></a>
+      <a class="city-row" href="../guides/Lyon/lyon.html" data-city="lyon" data-verified="2026-08"><span class="city-name">Lyon</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Maceió/maceio.html" data-city="maceió maceio" data-verified="2026-08"><span class="city-name">Maceió</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/MachuPicchu/machupicchu.html" data-city="machu picchu" data-verified="2026-08"><span class="city-name">Machu Picchu</span><span class="city-country">🇵🇪 Peru</span></a>
+      <a class="city-row" href="../guides/Madrid/madrid.html" data-city="madrid" data-verified="2026-08"><span class="city-name">Madrid</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../guides/Maldives/maldives.html" data-city="maldives" data-verified="2026-08"><span class="city-name">Maldives</span><span class="city-country">🇲🇻 Maldives</span></a>
+      <a class="city-row" href="../guides/Manuel-Antonio/manuel-antonio.html" data-city="manuel antonio costa rica" data-verified="2026-08"><span class="city-name">Manuel Antonio</span><span class="city-country">🇨🇷 Costa Rica</span></a>
+      <a class="city-row" href="../guides/Marktoberdorf/marktoberdorf.html" data-city="marktoberdorf" data-verified="2026-08"><span class="city-name">Marktoberdorf</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../guides/Marrakech/marrakech.html" data-city="marrakech marrakesh" data-verified="2026-08"><span class="city-name">Marrakech</span><span class="city-country">🇲🇦 Morocco</span></a>
+      <a class="city-row" href="../guides/Marseille/marseille.html" data-city="marseille" data-verified="2026-08"><span class="city-name">Marseille</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Milan/milan.html" data-city="milan milano" data-verified="2026-08"><span class="city-name">Milan</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Monaco/monaco.html" data-city="monaco" data-verified="2026-08"><span class="city-name">Monaco</span><span class="city-country">🇲🇨 Monaco</span></a>
+      <a class="city-row" href="../guides/Montevideo/montevideo.html" data-city="montevideo" data-verified="2026-08"><span class="city-name">Montevideo</span><span class="city-country">🇺🇾 Uruguay</span></a>
+      <a class="city-row" href="../guides/Munich/munich.html" data-city="munich" data-verified="2026-08"><span class="city-name">Munich</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../guides/Naples/naples.html" data-city="naples napoli" data-verified="2026-08"><span class="city-name">Naples</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Natal/natal.html" data-city="natal" data-verified="2026-08"><span class="city-name">Natal</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Nice/nice.html" data-city="nice" data-verified="2026-08"><span class="city-name">Nice</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Oaxaca/oaxaca.html" data-city="oaxaca" data-verified="2026-08"><span class="city-name">Oaxaca</span><span class="city-country">🇲🇽 Mexico</span></a>
+      <a class="city-row" href="../guides/Olinda/olinda.html" data-city="olinda" data-verified="2026-08"><span class="city-name">Olinda</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Oxford/oxford.html" data-city="oxford" data-verified="2026-08"><span class="city-name">Oxford</span><span class="city-country">🇬🇧 UK</span></a>
+      <a class="city-row" href="../guides/Palawan/palawan.html" data-city="palawan" data-verified="2026-08"><span class="city-name">Palawan</span><span class="city-country">🇵🇭 Philippines</span></a>
+      <a class="city-row" href="../guides/Paris/paris.html" data-city="paris" data-verified="2026-08"><span class="city-name">Paris</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Pisa/pisa.html" data-city="pisa" data-verified="2026-08"><span class="city-name">Pisa</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Pokhara/pokhara.html" data-city="pokhara" data-verified="2026-08"><span class="city-name">Pokhara</span><span class="city-country">🇳🇵 Nepal</span></a>
+      <a class="city-row" href="../guides/Porto-Alegre/porto-alegre.html" data-city="porto alegre" data-verified="2026-08"><span class="city-name">Porto Alegre</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Puerto-Vallarta/puerto-vallarta.html" data-city="puerto vallarta" data-verified="2026-08"><span class="city-name">Puerto Vallarta</span><span class="city-country">🇲🇽 Mexico</span></a>
+      <a class="city-row" href="../guides/Recife/recife.html" data-city="recife" data-verified="2026-08"><span class="city-name">Recife</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Rio-de-Janeiro/rio-de-janeiro.html" data-city="rio de janeiro rio" data-verified="2026-08"><span class="city-name">Rio de Janeiro</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Rome/rome.html" data-city="rome roma" data-verified="2026-08"><span class="city-name">Rome</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Rotterdam/rotterdam.html" data-city="rotterdam" data-verified="2026-08"><span class="city-name">Rotterdam</span><span class="city-country">🇳🇱 Netherlands</span></a>
+      <a class="city-row" href="../guides/Salvador/salvador.html" data-city="salvador" data-verified="2026-08"><span class="city-name">Salvador</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/San-Jose-Costa-Rica/san-jose-costa-rica.html" data-city="san josé" data-verified="2026-08"><span class="city-name">San José</span><span class="city-country">🇨🇷 Costa Rica</span></a>
+      <a class="city-row" href="../guides/San-Sebastian/san-sebastian.html" data-city="san sebastián san sebastian donostia" data-verified="2026-08"><span class="city-name">San Sebastián</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../guides/Santiago/santiago.html" data-city="santiago" data-verified="2026-08"><span class="city-name">Santiago</span><span class="city-country">🇨🇱 Chile</span></a>
+      <a class="city-row" href="../guides/Seville/seville.html" data-city="seville sevilla" data-verified="2026-08"><span class="city-name">Seville</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../guides/Shanghai/shanghai.html" data-city="shanghai" data-verified="2026-08"><span class="city-name">Shanghai</span><span class="city-country">🇨🇳 China</span></a>
+      <a class="city-row" href="../guides/Siena/siena.html" data-city="siena" data-verified="2026-08"><span class="city-name">Siena</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Sorrento/sorrento.html" data-city="sorrento" data-verified="2026-08"><span class="city-name">Sorrento</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Stockholm/stockholm.html" data-city="stockholm" data-verified="2026-08"><span class="city-name">Stockholm</span><span class="city-country">🇸🇪 Sweden</span></a>
+      <a class="city-row" href="../guides/Strasbourg/strasbourg.html" data-city="strasbourg" data-verified="2026-08"><span class="city-name">Strasbourg</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../guides/Stuttgart/stuttgart.html" data-city="stuttgart" data-verified="2026-08"><span class="city-name">Stuttgart</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../guides/São-Luís/sao-luis.html" data-city="são luís sao luis" data-verified="2026-08"><span class="city-name">São Luís</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/São-Paulo/sao-paulo.html" data-city="são paulo sao paulo brazil" data-verified="2026-08"><span class="city-name">São Paulo</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../guides/Tenerife/tenerife.html" data-city="tenerife" data-verified="2026-08"><span class="city-name">Tenerife</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../guides/Toledo/toledo.html" data-city="toledo" data-verified="2026-08"><span class="city-name">Toledo</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../guides/Turin/turin.html" data-city="turin torino" data-verified="2026-08"><span class="city-name">Turin</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Turks-and-Caicos/turks-and-caicos.html" data-city="turks and caicos providenciales" data-verified="2026-08"><span class="city-name">Turks and Caicos</span><span class="city-country">🇹🇨 Turks and Caicos</span></a>
+      <a class="city-row" href="../guides/Venice/venice.html" data-city="venice venezia" data-verified="2026-08"><span class="city-name">Venice</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Verona/verona.html" data-city="verona" data-verified="2026-08"><span class="city-name">Verona</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../guides/Zhangjiajie/zhangjiajie.html" data-city="zhangjiajie" data-verified="2026-08"><span class="city-name">Zhangjiajie</span><span class="city-country">🇨🇳 China</span></a>
+    </div>
+  </div>
+  <!-- ── LEVEL 3 ── -->
+  <div class="level-section" id="section-l3">
+    <div class="level-heading">
+      <span class="badge badge-l3">🔴 Level 3</span>
+      <span style="font-size:13px;color:var(--muted)">Reconsider travel</span>
+      <span class="level-count" id="count-l3"></span>
+    </div>
+    <div class="city-grid" id="grid-l3">
+      <a class="city-row" href="../guides/Abu-Dhabi/abu-dhabi.html" data-city="abu dhabi uae emirates" data-verified="2026-08"><span class="city-name">Abu Dhabi</span><span class="city-country">🇦🇪 UAE</span></a>
+      <a class="city-row" href="../guides/Doha/doha.html" data-city="doha qatar" data-verified="2026-08"><span class="city-name">Doha</span><span class="city-country">🇶🇦 Qatar</span></a>
+      <a class="city-row" href="../guides/Dubai/dubai.html" data-city="dubai uae emirates" data-verified="2026-08"><span class="city-name">Dubai</span><span class="city-country">🇦🇪 UAE</span></a>
+      <a class="city-row" href="../guides/Muscat/muscat.html" data-city="muscat" data-verified="2026-08"><span class="city-name">Muscat</span><span class="city-country">🇴🇲 Oman</span></a>
+      <a class="city-row" href="../guides/Petra/petra.html" data-city="petra jordan" data-verified="2026-08"><span class="city-name">Petra</span><span class="city-country">🇯🇴 Jordan</span></a>
+    </div>
+  </div>
+  <!-- ── LEVEL 4 ── -->
+  <div class="level-section" id="section-l4">
+    <div class="level-heading">
+      <span class="badge badge-l4">⚫ Level 4</span>
+      <span style="font-size:13px;color:var(--muted)">Do not travel</span>
+      <span class="level-count" id="count-l4"></span>
+    </div>
+    <div class="city-grid" id="grid-l4">
+      <p style="color:var(--muted);font-size:13px;margin:8px 0">No destinations currently at this level.</p>
+    </div>
+  </div>
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul class="source-list">
+      <li><a href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html" target="_blank" rel="noopener">U.S. State Department Travel Advisories</a></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+(function() {
+  const allRows = document.querySelectorAll('.city-row');
+  const searchInput = document.getElementById('city-search');
+  const noResults = document.getElementById('no-results');
+
+  // Update level counts — section heading and filter pill read the same number
+  ['l1', 'l2', 'l3', 'l4'].forEach(level => {
+    const grid = document.getElementById(`grid-${level}`);
+    const count = document.getElementById(`count-${level}`);
+    const rows = grid.querySelectorAll('.city-row');
+    count.textContent = `(${rows.length})`;
+    const pc = document.getElementById(`pcnt-${level}`);
+    if (pc) pc.textContent = rows.length;
+  });
+
+  /* Level filter — same contract as Disney-Parks' filterCat, Tap-Water's
+     filterStatus and Vaccines' filterTier: one level at a time, clicking the
+     active pill clears it, and picking a level clears the text search. */
+  window.filterLevel = function (btn, level) {
+    if (searchInput.value) { searchInput.value = ''; searchInput.dispatchEvent(new Event('input')); }
+    const on = btn.classList.contains('active');
+    document.querySelectorAll('#level-pills .pill').forEach(p => p.classList.remove('active'));
+    if (!on) btn.classList.add('active');
+    document.querySelectorAll('.level-section').forEach(s => {
+      s.classList.toggle('hidden', !on && s.id !== 'section-' + level);
+    });
+  };
+
+  // Search filter
+  searchInput.addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    /* A search spans every level, so it clears the level filter and brings all
+       four sections back (same mutual exclusion the other pages use). */
+    if (query) {
+      document.querySelectorAll('#level-pills .pill').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.level-section').forEach(s => s.classList.remove('hidden'));
+    }
+    let visibleCount = 0;
+
+    allRows.forEach(row => {
+      const cityText = row.getAttribute('data-city').toLowerCase();
+      const countryText = row.querySelector('.city-country').textContent.toLowerCase();
+      const isMatch = cityText.includes(query) || countryText.includes(query);
+
+      if (isMatch) {
+        row.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        row.classList.add('hidden');
+      }
+    });
+
+    noResults.style.display = visibleCount === 0 && query.length > 0 ? 'block' : 'none';
+  });
+
+  // Hash navigation (scroll to city)
+  function scrollToCity() {
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+
+    const hashCity = hash.toLowerCase();
+    let target = null;
+
+    allRows.forEach(row => {
+      const key = row.getAttribute('data-city');
+      if (key === hashCity || key.indexOf(hashCity) === 0 || key.indexOf(' ' + hashCity) !== -1) {
+        target = row;
+      }
+    });
+
+    if (target) {
+      setTimeout(function () {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.style.transition = 'background 0.3s';
+        target.style.background = 'var(--hover)';
+        setTimeout(function () { target.style.background = ''; }, 1500);
+      }, 300);
+    }
+  }
+
+  scrollToCity();
+  window.addEventListener('hashchange', scrollToCity);
+
+  // TVESearch typeahead — build items from city rows
+  (function () {
+    var inp = document.getElementById('city-search');
+    if (!inp || typeof TVESearch === 'undefined') return;
+    var items = [];
+    document.querySelectorAll('.city-row').forEach(function (row) {
+      var city = row.getAttribute('data-city') || '';
+      var link = row.querySelector('a[href]');
+      var href = link ? link.getAttribute('href') : null;
+      if (city && href) items.push({ name: city, sub: '', href: href });
+    });
+    TVESearch.attach(inp, {
+      items: items,
+      onPick: function (item) {
+        inp.value = item.name;
+        inp.dispatchEvent(new Event('input'));
+      }
+    });
+  }());
+})();
+</script>
+</body>
+</html>
