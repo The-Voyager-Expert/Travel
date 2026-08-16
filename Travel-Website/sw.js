@@ -1,3 +1,4 @@
+/* 2026-08-16: Time Zones promoted out of essentials to the site root (owner): /time-zones/. toolbar.js floor +1. CACHE to v952. */
 /* 2026-08-16: Plugs and Currencies promoted out of essentials to the site root (owner): /plugs/ and /currencies/. CACHE to v951. */
 /* 2026-08-16: RETIRED (owner) — Delta Routes from Seattle and Travel Stats moved to /retired/. That folder is excluded from search and from the page-format validators, and its pages are not rebuilt as part of any flow. The regional stats pages (/stats/europe, /us, /records …) are unaffected. CACHE to v950. */
 /* 2026-08-16: the READ ABOUT button on 237 guides was built in JS (a.href='read-about/') so the markup link fixer never saw it — every guide's read-about page was unreachable from the guide. Now /guides/<city>-read-about.html. CACHE to v949. */
@@ -1276,7 +1277,7 @@
 /* 2026-08-15: toolbar: replace Where to Stay dropdown with Best Of tab → /best-of/. toolbar.js -> v670. CACHE to v935. */
 /* 2026-08-15: toolbar: swap Before You Go and Best Of order. toolbar.js -> v671. CACHE to v936. */
 /* 2026-08-16: toolbar: Best Of → dropdown with all 34 categories (was plain tab to /best-of/). toolbar.js -> v672. CACHE to v937. */
-var CACHE = 'travel-cache-v951';
+var CACHE = 'travel-cache-v952';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1284,7 +1285,7 @@ var CACHE = 'travel-cache-v951';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 219,'toolbar.js': 679, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 7 };
+var MIN_VERSIONS = { 'guide-style.css': 219,'toolbar.js': 680, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 7 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
