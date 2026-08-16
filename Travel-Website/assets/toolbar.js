@@ -2892,10 +2892,24 @@ window.TVE.home = (function () {
        retired. Spec: Brain/Reference/Toolbar-Nav/Toolbar.html Sec 10.
      No attribute → no stamp (silent). Spec: Brain/Reference/Toolbar.html § 10. */
   var _updated = mount ? (mount.dataset.updated || '') : '';
+  /* OWNER-DIRECTED 2026-08-16: the "Updated {Month} {Year}" stamp renders on the
+     STATS PAGES ONLY. It used to render on every page carrying data-updated —
+     all 237 guides and every essentials page — where it answered a question no
+     reader asks and dated the page in a way that reads as staleness rather than
+     maintenance. On the stats pages it is real information: those numbers are a
+     snapshot and the date says which one.
+
+     THE ATTRIBUTE IS NOT REMOVED, and must never be. data-updated is the Fifth
+     non-negotiable: every page carries it, it moves only after a full content
+     audit, and the audit routines read it. What changed is only whether it is
+     PAINTED. Stripping data-updated to "clean up" this stamp would destroy the
+     audit trail for 245 pages — the gate below is the whole mechanism, and
+     brain_check.check_updated_stamp_stats_only fails if it is removed. */
+  var _statsPage = /(^|\/)stats\//.test(location.pathname);
   if (_updated) {
     var _MONTHS = ['January','February','March','April','May','June',
                    'July','August','September','October','November','December'];
-    function _injectUpdated() {
+    function _injectStamp(tp) {
       var mFull  = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.exec(_updated);
       var mShort = /^(\d{4})-(0[1-9]|1[0-2])$/.exec(_updated);
       var yr, mo, dy;
@@ -2908,19 +2922,11 @@ window.TVE.home = (function () {
       el.textContent = dy
         ? 'Updated ' + _MONTHS[mo - 1] + ' ' + dy + ', ' + yr
         : 'Updated ' + _MONTHS[mo - 1] + ' ' + yr;
-      var tp = document.querySelector('.title-page');
       if (tp) {
         tp.appendChild(el);
       } else {
-        /* Non-guide pages, ALL viewports: inject at end of body so the stamp
-           always lands at the true visual bottom, left-aligned (stats pages
-           close .wrap early). Matches the guide treatment, where the stamp
-           sits after the last section. padding-left is set via inline style;
-           mobile override injected as a <style> tag. */
-        /* margin-top clears the "Also on this site" strip: that strip has no
-           bottom padding, so a zero-margin stamp butts straight onto its last
-           pill row and reads as a caption of the last pill rather than page
-           metadata. */
+        /* ALL viewports: end of body, so the stamp lands at the true visual
+           bottom, left-aligned (stats pages close .wrap early). */
         el.style.cssText = 'display:block;font-size:11px;color:#9a948a;margin:18px 0 20px;padding-left:32px;text-align:left;';
         document.body.appendChild(el);
         /* Mobile: shrink padding-left to match .wrap mobile gutter (14px). */
@@ -2931,6 +2937,16 @@ window.TVE.home = (function () {
           document.head.appendChild(mst);
         }
       }
+    }
+    function _injectUpdated() {
+      var tp = document.querySelector('.title-page');
+      /* The STAMP is stats-only; the no-entries footnote below is NOT and runs
+         on every page. They share this function, so the gate has to sit here
+         around the stamp rather than around the whole block — gating the outer
+         `if (_updated)` silently removes the "No entries for: …" footnote from
+         all 237 guides, which is a different feature entirely. */
+      if (_statsPage) _injectStamp(tp);
+
       /* No-entries footnote: lists sections omitted for having no qualifying
          content. Source: data-no-entries on toolbar-mount (comma-separated).
          Spec: Brain/Reference/Toolbar.html § 10. */

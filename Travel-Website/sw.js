@@ -1,3 +1,4 @@
+/* 2026-08-16: "Also on this site" pills — the LABEL VANISHED ON HOVER, repeatedly. The hover rule filled the pill with the terracotta gradient and set `color:#fff !important`; toolbar.js injects `html[data-theme=...] .also-on-this-site-pill{background:#ffffff}` into <head>, which lands after the stylesheets at equal specificity and beat the non-!important fill while the !important white label survived — white text on a white pill for any reader who had touched the theme toggle. Hover is now OUTLINED per the Twenty-fourth non-negotiable (resting fill kept, terracotta border AND terracotta label, slight lift); the white label is deleted as a state, and the theme override is scoped :not(:hover):not(:active):not(:focus-visible). Same fix on .nearby-guide-pill and .also-in-country-pill. SECOND bug in the same strip: PAGE_ICON was keyed on old CamelCase .html filenames, so after the URL flatten `href.split('/').pop()` returned '' for every directory URL — and the ITEMS walk wrote every nav icon to PAGE_ICON[''], so every pill site-wide drew ONE repeated icon (a clock). Re-keyed to page slugs behind a single _pageKey() reader. Duplicate 'Browse by climate' pill dropped from time-zones and sunrise-sunset (same target as 'When to go'). guide-style.css floor +1, toolbar.js floor +1, web-travel-style.css floor +1. CACHE to v968. */
 /* 2026-08-16: Trip Essentials redesign — Hero D (terracotta band + Georgia title + warm ground + search) applied to all ~45 essentials pages; hero CSS moved to shared web-travel-style.css + mobile.css; per-page page-header/page-intro-card removed. web-travel-style.css floor +1, mobile.css floor +1. CACHE to v957. */
 /* 2026-08-16: the Day 1 airport chip was gone from all 237 guides. It looks the city slug up in CHIP_DATA off location.pathname, and the URL flatten changed that segment from 'Athens' to 'athens.html' — so the lookup missed on every guide and the chip silently never rendered (no error: a miss is an early return). Slug now strips .html and lowercases; CHIP_DATA rekeyed to the flat de-accented slugs, and Busan and Rotterdam gained the rows they never had. Link only where a lounge page covers the airport (jumps to its row); everywhere else a plain div, no hover. toolbar.js floor +1. CACHE to v956. */
 /* 2026-08-16: Contact — the mailto no longer prefills a subject (owner). The toolbar Contact link and the "Prefer your own mail app?" line on the homepage both opened the reader's mail app with Subject: Guide My Days already typed in, which the reader then had to clear before writing their own. Both are now a bare mailto:contact@guidemydays.com. toolbar.js floor +1. CACHE to v955. */
@@ -1312,7 +1313,17 @@
    site does — it was the last city-only search; (b) the page no longer defaults to
    Seattle, so it opens empty and waits for a search instead of answering a question
    the reader did not ask. weather.js -> v8. CACHE to v966. */
-var CACHE = 'travel-cache-v966';
+/* 2026-08-16: the "Updated {Month} {Year}" stamp renders on the STATS pages only
+   (owner). Everywhere else — 237 guides, every essentials page, the landing page —
+   it answered a question no reader asks. One gate in toolbar.js does it: _statsPage,
+   from location.pathname, guarding _injectStamp(tp). data-updated is UNTOUCHED and
+   must never be stripped for this — it is the Fifth non-negotiable and the audit
+   routines read it; only the painting changed. The gate deliberately does NOT wrap
+   the whole `if (_updated)` block: the no-entries footnote shares that function and
+   still runs on every guide. Enforced by brain_check.check_updated_stamp_stats_only
+   (Cleanliness rule 862). weather/index.html also dropped its own #wx-updated stamp.
+   toolbar.js -> v691. CACHE to v967. */
+var CACHE = 'travel-cache-v968';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1320,7 +1331,7 @@ var CACHE = 'travel-cache-v966';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 221,'toolbar.js': 690, 'mobile.css': 81, 'web-travel-style.css': 49, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
+var MIN_VERSIONS = { 'guide-style.css': 222,'toolbar.js': 692, 'mobile.css': 81, 'web-travel-style.css': 50, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
