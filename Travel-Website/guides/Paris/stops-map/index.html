@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../../assets/stops-map-style.css">
+<title>Paris — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="3" data-maxwidth="1400" data-title="Paris — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+  <button class="day-btn" data-day="7" style="--dc:#e74c3c">Day 7</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+    {
+        "day": 1,
+        "name": "Notre-Dame de Paris",
+        "query": "Cathedrale Notre-Dame de Paris 6 Parvis Notre-Dame 75004 Paris",
+        "lat": 48.8529371,
+        "lng": 2.3500501
+    },
+    {
+        "day": 1,
+        "name": "Sainte-Chapelle",
+        "query": "Sainte Chapelle 10 Boulevard du Palais 75001 Paris",
+        "lat": 48.8553933,
+        "lng": 2.3449941
+    },
+    {
+        "day": 1,
+        "name": "Conciergerie",
+        "query": "Conciergerie 2 Boulevard du Palais 75001 Paris",
+        "lat": 48.8559492,
+        "lng": 2.3460263
+    },
+    {
+        "day": 4,
+        "name": "Place des Vosges &amp; Le Marais stroll",
+        "query": "Place des Vosges 75004 Paris",
+        "lat": 48.8556308,
+        "lng": 2.3655346
+    },
+    {
+        "day": 4,
+        "name": "Musée du Louvre",
+        "query": "Musee du Louvre Rue de Rivoli 75001 Paris",
+        "lat": 48.8624011,
+        "lng": 2.3363844
+    },
+    {
+        "day": 4,
+        "name": "Palais-Royal",
+        "query": "Palais-Royal Place du Palais-Royal 75001 Paris",
+        "lat": 48.8625963,
+        "lng": 2.3362568
+    },
+    {
+        "day": 2,
+        "name": "Jardin des Tuileries",
+        "query": "Jardin des Tuileries Place de la Concorde 75001 Paris",
+        "lat": 48.8635662,
+        "lng": 2.3269552
+    },
+    {
+        "day": 2,
+        "name": "Musée de l'Orangerie",
+        "query": "Musee de l Orangerie Jardin des Tuileries 75001 Paris",
+        "lat": 48.8653454,
+        "lng": 2.3226649
+    },
+    {
+        "day": 5,
+        "name": "Eiffel Tower",
+        "query": "Eiffel Tower Champ de Mars 5 Avenue Anatole France 75007 Paris",
+        "lat": 48.8582599,
+        "lng": 2.2945006
+    },
+    {
+        "day": 3,
+        "name": "Rue Cler · food street stroll",
+        "query": "Rue Cler 75007 Paris",
+        "lat": 48.8565839,
+        "lng": 2.3065089
+    },
+    {
+        "day": 3,
+        "name": "Musée Rodin",
+        "query": "Musee Rodin 77 Rue de Varenne 75007 Paris",
+        "lat": 48.8547473,
+        "lng": 2.315867
+    },
+    {
+        "day": 3,
+        "name": "Les Invalides &amp; Napoleon's Tomb",
+        "query": "Hotel des Invalides 129 Rue de Grenelle 75007 Paris",
+        "lat": 48.8559537,
+        "lng": 2.3133431
+    },
+    {
+        "day": 3,
+        "name": "Pont Alexandre III",
+        "query": "Pont Alexandre III 75008 Paris",
+        "lat": 48.8634697,
+        "lng": 2.3135181
+    },
+    {
+        "day": 2,
+        "name": "Musée d'Orsay",
+        "query": "Musee d Orsay 1 Rue de la Legion d Honneur 75007 Paris",
+        "lat": 48.8599179,
+        "lng": 2.3265849
+    },
+    {
+        "day": 2,
+        "name": "Les Deux Magots",
+        "query": "Les Deux Magots 6 Place Saint-Germain des Pres 75006 Paris",
+        "lat": 48.854069,
+        "lng": 2.3330634
+    },
+    {
+        "day": 1,
+        "name": "Jardin du Luxembourg",
+        "query": "Jardin du Luxembourg 75006 Paris",
+        "lat": 48.8488923,
+        "lng": 2.3384835
+    },
+    {
+        "day": 1,
+        "name": "Panthéon",
+        "query": "Pantheon Place du Pantheon 75005 Paris",
+        "lat": 48.8461947,
+        "lng": 2.3460507
+    },
+    {
+        "day": 1,
+        "name": "Rue Mouffetard · food street stroll",
+        "query": "Rue Mouffetard 75005 Paris",
+        "lat": 48.8434464,
+        "lng": 2.349494
+    },
+    {
+        "day": 5,
+        "name": "Arc de Triomphe · rooftop",
+        "query": "Arc de Triomphe Place Charles de Gaulle 75008 Paris",
+        "lat": 48.8737791,
+        "lng": 2.2950372
+    },
+    {
+        "day": 4,
+        "name": "Palais Garnier · Opéra",
+        "query": "Palais Garnier Place de l Opera 75009 Paris",
+        "lat": 48.8714332,
+        "lng": 2.3319654
+    },
+    {
+        "day": 4,
+        "name": "Sacré-Cœur &amp; Montmartre",
+        "query": "Basilique du Sacre Coeur 35 Rue du Chevalier de la Barre 75018 Paris",
+        "lat": 48.8867,
+        "lng": 2.3431
+    },
+    {
+        "day": 5,
+        "name": "Seine River Cruise · Bateaux-Mouches",
+        "query": "Bateaux Mouches Port de la Conference 75008 Paris",
+        "lat": 48.8639784,
+        "lng": 2.3058261
+    },
+    {
+        "day": 6,
+        "name": "Château de Versailles",
+        "query": "Chateau de Versailles Place d Armes 78000 Versailles",
+        "lat": 48.8047835,
+        "lng": 2.120417
+    },
+    {
+        "day": 6,
+        "name": "Gardens of Versailles",
+        "query": "Jardins du Chateau de Versailles 78000 Versailles",
+        "lat": 48.8046,
+        "lng": 2.1187
+    },
+    {
+        "day": 6,
+        "name": "Domaine de Marie-Antoinette · Trianon",
+        "query": "Hameau de la Reine Petit Trianon 78000 Versailles",
+        "lat": 48.8172,
+        "lng": 2.1092
+    },
+    {
+        "day": 7,
+        "name": "Fondation Monet — House &amp; Gardens",
+        "query": "Fondation Claude Monet 84 Rue Claude Monet 27620 Giverny",
+        "lat": 49.0753489,
+        "lng": 1.5337884
+    },
+    {
+        "day": 7,
+        "name": "Musée des Impressionnismes Giverny",
+        "query": "Musee des Impressionnismes 99 Rue Claude Monet 27620 Giverny",
+        "lat": 49.0763478,
+        "lng": 1.5313261
+    },
+    {
+        "day": 7,
+        "name": "Giverny Village &amp; Église Sainte-Radegonde",
+        "query": "Eglise Sainte-Radegonde Giverny 27620",
+        "lat": 49.0775493,
+        "lng": 1.5235933
+    }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085", "7": "#e74c3c"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

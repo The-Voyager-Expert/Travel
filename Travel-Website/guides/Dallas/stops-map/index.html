@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../../assets/stops-map-style.css">
+<title>Dallas — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="3" data-maxwidth="1400" data-title="Dallas — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Dallas Museum of Art",
+    "query": "1717 N Harwood St Dallas",
+    "lat": 32.7872922,
+    "lng": -96.8004979
+  },
+  {
+    "day": 1,
+    "name": "Nasher Sculpture Center",
+    "query": "2001 Flora St Dallas",
+    "lat": 32.7882373,
+    "lng": -96.8001498
+  },
+  {
+    "day": 1,
+    "name": "Klyde Warren Park",
+    "query": "2012 Woodall Rodgers Fwy Dallas",
+    "lat": 32.7894122,
+    "lng": -96.8015415
+  },
+  {
+    "day": 1,
+    "name": "Perot Museum of Nature and Science",
+    "query": "2201 N Field St Dallas",
+    "lat": 32.7869273,
+    "lng": -96.8064108
+  },
+  {
+    "day": 1,
+    "name": "Dallas World Aquarium",
+    "query": "1801 N Griffin St Dallas",
+    "lat": 32.7833533,
+    "lng": -96.8052366
+  },
+  {
+    "day": 2,
+    "name": "Hall of State",
+    "query": "3939 Grand Ave Dallas",
+    "lat": 32.7808936,
+    "lng": -96.7619731
+  },
+  {
+    "day": 2,
+    "name": "African American Museum",
+    "query": "3536 Grand Ave Dallas",
+    "lat": 32.779056,
+    "lng": -96.7644402
+  },
+  {
+    "day": 2,
+    "name": "Reunion Tower Geo-Deck",
+    "query": "300 Reunion Blvd E Dallas",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 3,
+    "name": "Dallas Arboretum and Botanical Garden",
+    "query": "8525 Garland Rd Dallas",
+    "lat": 32.8213624,
+    "lng": -96.7184124
+  },
+  {
+    "day": 4,
+    "name": "The Sixth Floor Museum",
+    "query": "411 Elm St Dallas",
+    "lat": 32.7797097,
+    "lng": -96.8084399
+  },
+  {
+    "day": 4,
+    "name": "Pioneer Plaza",
+    "query": "1428 Young St Dallas",
+    "lat": 32.7772899,
+    "lng": -96.7982301
+  },
+  {
+    "day": 4,
+    "name": "George W. Bush Presidential Library and Museum",
+    "query": "2943 SMU Blvd Dallas TX 75205",
+    "lat": 32.8420527,
+    "lng": -96.7754472
+  },
+  {
+    "day": 4,
+    "name": "Meadows Museum",
+    "query": "5900 Bishop Blvd Dallas TX 75205",
+    "lat": 32.8384328,
+    "lng": -96.7843711
+  },
+  {
+    "day": 4,
+    "name": "Crow Museum of Asian Art",
+    "query": "2010 Flora St Dallas TX 75201",
+    "lat": 32.7878937,
+    "lng": -96.7996563
+  },
+  {
+    "day": 5,
+    "name": "Kimbell Art Museum",
+    "query": "3333 Camp Bowie Blvd Fort Worth TX 76107",
+    "lat": 32.748591,
+    "lng": -97.3650794
+  },
+  {
+    "day": 5,
+    "name": "Amon Carter Museum of American Art",
+    "query": "3501 Camp Bowie Blvd Fort Worth TX 76107",
+    "lat": 32.7478304,
+    "lng": -97.3688566
+  },
+  {
+    "day": 5,
+    "name": "Fort Worth Stockyards",
+    "query": "131 East Exchange Ave Fort Worth TX 76164",
+    "lat": 32.789533,
+    "lng": -97.3467159
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

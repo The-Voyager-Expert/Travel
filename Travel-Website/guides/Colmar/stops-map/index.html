@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Colmar — All Stops Map</title>
+<link rel="stylesheet" href="../../assets/stops-map-style.css">
+</head>
+<body>
+<div data-toolbar data-depth="3" data-maxwidth="1400" data-title="Colmar — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+    {
+        "day": 1,
+        "name": "Unterlinden Museum",
+        "query": "Place Unterlinden, Colmar",
+        "lat": 48.0795124,
+        "lng": 7.3559949
+    },
+    {
+        "day": 1,
+        "name": "Dominican Church",
+        "query": "Place des Dominicains, Colmar",
+        "lat": 48.0782016,
+        "lng": 7.3569779
+    },
+    {
+        "day": 2,
+        "name": "Petite Venise",
+        "query": "Quai de la Poissonnerie, Colmar",
+        "lat": 48.0740943,
+        "lng": 7.3593288
+    },
+    {
+        "day": 2,
+        "name": "Maison Pfister",
+        "query": "11 rue des Marchands, Colmar",
+        "lat": 48.0766906,
+        "lng": 7.3581279
+    },
+    {
+        "day": 1,
+        "name": "Collégiale Saint-Martin",
+        "query": "Place de la Cathédrale, Colmar",
+        "lat": 48.0771473,
+        "lng": 7.3580894
+    },
+    {
+        "day": 2,
+        "name": "Koïfhus",
+        "query": "29 Grand-Rue, Colmar",
+        "lat": 48.0760472,
+        "lng": 7.359079
+    },
+    {
+        "day": 1,
+        "name": "Bartholdi Museum",
+        "query": "30 rue des Marchands, Colmar",
+        "lat": 48.0767771,
+        "lng": 7.3576957
+    },
+    {
+        "day": 2,
+        "name": "La Krutenau",
+        "query": "rue des Tanneurs, Colmar",
+        "lat": 48.0746311,
+        "lng": 7.3603361
+    },
+    {
+        "day": 3,
+        "name": "Château du Haut-Koenigsbourg",
+        "query": "Chateau Haut-Koenigsbourg Orschwiller Alsace France",
+        "lat": 48.249382,
+        "lng": 7.3439412
+    },
+    {
+        "day": 3,
+        "name": "Bergheim",
+        "query": "Bergheim Alsace France",
+        "lat": 48.2056672,
+        "lng": 7.3621755
+    },
+    {
+        "day": 3,
+        "name": "Ribeauvillé",
+        "query": "Grand Rue, 68150 Ribeauville, France",
+        "lat": 48.1950846,
+        "lng": 7.3188422
+    },
+    {
+        "day": 3,
+        "name": "Riquewihr",
+        "query": "Riquewihr Alsace France",
+        "lat": 48.1660766,
+        "lng": 7.298014
+    }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
