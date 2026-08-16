@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../essentials/maps/vendor/MarkerCluster.min.css">
+<title>Pasadena — All Stops Map</title>
+<link rel="stylesheet" href="../assets/stops-map-style.css">
+</head>
+<body>
+<div data-toolbar data-depth="1" data-maxwidth="1400" data-title="Pasadena — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+  <button class="day-btn" data-day="7" style="--dc:#e74c3c">Day 7</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../essentials/maps/vendor/leaflet.min.js"></script>
+<script src="../essentials/maps/vendor/markercluster.min.js"></script>
+<script src="../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+    {
+        "day": 2,
+        "name": "Old Pasadena",
+        "query": "Old Pasadena Colorado Blvd Fair Oaks Ave Pasadena CA 91103",
+        "lat": 34.1458473,
+        "lng": -118.1498123
+    },
+    {
+        "day": 2,
+        "name": "Norton Simon Museum",
+        "query": "Norton Simon Museum 411 W Colorado Blvd Pasadena CA 91105",
+        "lat": 34.1463727,
+        "lng": -118.159259
+    },
+    {
+        "day": 2,
+        "name": "Gamble House",
+        "query": "Gamble House 4 Westmoreland Pl Pasadena CA 91103",
+        "lat": 34.1516188,
+        "lng": -118.1609547
+    },
+    {
+        "day": 2,
+        "name": "Descanso Gardens",
+        "query": "Descanso Gardens 1418 Descanso Dr La Canada Flintridge CA 91011",
+        "lat": null,
+        "lng": null
+    },
+    {
+        "day": 6,
+        "name": "The Huntington",
+        "query": "The Huntington Library 1151 Oxford Rd San Marino CA 91108",
+        "lat": 34.1291585,
+        "lng": -118.1116676
+    },
+    {
+        "day": 3,
+        "name": "Griffith Observatory",
+        "query": "Griffith Observatory 2800 E Observatory Rd Los Angeles CA 90027",
+        "lat": 34.1182187,
+        "lng": -118.3002933
+    },
+    {
+        "day": 1,
+        "name": "The Broad",
+        "query": "The Broad 221 S Grand Ave Los Angeles CA 90012",
+        "lat": 34.0544584,
+        "lng": -118.2505943
+    },
+    {
+        "day": 3,
+        "name": "Walt Disney Concert Hall",
+        "query": "Walt Disney Concert Hall 111 S Grand Ave Los Angeles CA 90012",
+        "lat": null,
+        "lng": null
+    },
+    {
+        "day": 4,
+        "name": "Santa Monica Pier",
+        "query": "Santa Monica Pier 200 Santa Monica Pier Santa Monica CA 90401",
+        "lat": null,
+        "lng": null
+    },
+    {
+        "day": 4,
+        "name": "Palisades Park",
+        "query": "Palisades Park Ocean Ave Santa Monica CA 90402",
+        "lat": null,
+        "lng": null
+    },
+    {
+        "day": 4,
+        "name": "Venice Beach",
+        "query": "Venice Beach Boardwalk Venice CA 90291",
+        "lat": null,
+        "lng": null
+    },
+    {
+        "day": 5,
+        "name": "Disneyland",
+        "query": "Disneyland 1313 Disneyland Dr Anaheim CA 92802",
+        "lat": null,
+        "lng": null
+    },
+    {
+        "day": 5,
+        "name": "The Getty Center",
+        "query": "The Getty Center 1200 Getty Center Dr Los Angeles CA 90049",
+        "lat": 34.0769513,
+        "lng": -118.475712
+    },
+    {
+        "day": 4,
+        "name": "The Getty Villa",
+        "query": "Getty Villa 17985 Pacific Coast Hwy Pacific Palisades CA 90272",
+        "lat": 34.0449819,
+        "lng": -118.5650197
+    },
+    {
+        "day": 7,
+        "name": "Mission San Juan Capistrano",
+        "query": "Mission San Juan Capistrano 26801 Old Mission Rd San Juan Capistrano CA 92675",
+        "lat": null,
+        "lng": null
+    },
+    {
+        "day": 7,
+        "name": "Heisler Park",
+        "query": "Heisler Park 375 Cliff Dr Laguna Beach CA 92651",
+        "lat": null,
+        "lng": null
+    },
+    {
+        "day": 7,
+        "name": "Laguna Village",
+        "query": "Forest Ave Laguna Beach CA 92651",
+        "lat": 33.545123,
+        "lng": -117.7814166
+    }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085", "7": "#e74c3c"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
