@@ -1378,7 +1378,23 @@
    — those pages had no gutter at all and were the worst of what the owner saw.
    Both shared sheets changed: web-travel-style.css -> v52, mobile.css -> v82.
    CACHE to v978. */
-var CACHE = 'travel-cache-v978';
+
+/* 2026-08-16: phone reading pass on the guides (owner) — "increase the mobile
+   fonts got way too small, and give more breathing room between the weather
+   banner and pills between trip overview, summary of the stop and stops block
+   ... also bookmark, share, and note all the terracotta symbols are way too
+   close i can barely hit only one may increase the size too". Three changes,
+   phone only, desktop untouched: the type scale moves off the desktop 15px base
+   (base and stop rows 16.5px, stop names 18.5px, day-card stop list 13 -> 15px,
+   captions 12 -> 13px); the block rhythm opens up at every boundary the owner
+   named, worst of which was .stop-block at zero margin and 12px padding so one
+   stop ran straight into the next; and the four stop controls each get a 40px
+   tap target with an 18px glyph, up from 13-14px targets 8-12px apart — four
+   controls inside 96px of row, every one under a third of the 44px minimum. The
+   ✓ ring keeps its 22px circle (padding it out paints a 40px disc) and takes
+   its hit area from a transparent ::after. guide-style.css -> v224. CACHE to
+   v979. */
+var CACHE = 'travel-cache-v979';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1386,7 +1402,7 @@ var CACHE = 'travel-cache-v978';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 223,'toolbar.js': 697, 'mobile.css': 82, 'web-travel-style.css': 52, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
+var MIN_VERSIONS = { 'guide-style.css': 224,'toolbar.js': 697, 'mobile.css': 82, 'web-travel-style.css': 52, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

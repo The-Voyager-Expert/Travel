@@ -4628,3 +4628,140 @@ a.also-in-country-pill:active {
 :root[data-theme="dark"] .gm-mk { background-color: #d4874a; }
 
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PHONE READING PASS — owner rule 2026-08-16
+   "increase the mobile fonts got way too small, and give more breathing room
+    between the weather banner and pills between trip overview, summary of the
+    stop and stops block. It makes it easier to read. also bookmark, share, and
+    note all the terracotta symbols are way too close i can barely hit only one
+    may increase the size too"
+
+   Phone only — `(max-width: 600px) and (pointer: coarse)`, never a narrowed
+   desktop window (check_mobile_breakpoints_gated_on_pointer). Desktop keeps the
+   15px scale and the tight rhythm exactly as they are; nothing below this line
+   is visible above 600px.
+
+   Last block in the file on purpose: the three stop controls are styled by
+   <style> elements that toolbar.js appends to <head> at runtime, so they land
+   AFTER this stylesheet in document order. Equal specificity would lose to
+   them, which is why the control rules below are scoped through .stop-header
+   .stop-actions rather than written as bare class selectors. Do not "simplify"
+   those selectors — they will silently stop applying.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) and (pointer: coarse) {
+
+  /* ── 1 · Type scale ──────────────────────────────────────────────────────
+     The whole guide ran on the desktop 15px base with a 13px day-card stop
+     list and 12px captions. That reads fine on a monitor at arm's length and
+     is small in the hand — iOS sets its own body text at 17px. Bumped as a
+     scale rather than per-rule, so the existing hierarchy is preserved and
+     every element that already reads a token moves with it. */
+     Every token check_font_size_consistency lists must equal --fs-base — one
+     body scale, no near-misses — so they all move to 16.5px together rather
+     than being nudged individually. --fs-overview-stops and --fs-small are
+     outside that set (they are a dense list and a caption, deliberately
+     smaller) and keep their own relationship to the base. */
+  :root {
+    --fs-base:               16.5px;
+    --fs-stop-row:           16.5px;
+    --fs-overview-day:       16.5px;
+    --fs-overview-pills:     16.5px;
+    --fs-overview-day-title: 16.5px;
+    --fs-index-title:        16.5px;
+    --fs-header:             16.5px;
+    --fs-overview-stops:     15px;
+    --fs-small:              13px;
+  }
+  .stop-name { font-size: 18.5px; }
+  .stop-dur  { font-size: 13px; }
+
+  /* ── 2 · Breathing room between the major blocks ─────────────────────────
+     Every boundary the owner named, in page order: weather strip → pill row →
+     Trip Overview → day block → the stops inside it. The stops were the worst
+     of them — .stop-block carried no margin at all and only 12px of padding,
+     so one stop ran straight into the next with nothing but a hairline. */
+  #tve-wx-strip   { margin-bottom: 16px; }
+  #ics-pill-row   { margin-top: 44px; margin-bottom: 26px; }
+  .overview-section,
+  .day-block,
+  .extras-section,
+  .worth-knowing  { margin-bottom: 26px; }
+  .day-header     { margin-bottom: 22px; }
+  .stop-block     { padding-top: 22px; padding-bottom: 6px; }
+  .stop-desc      { margin-top: 10px; }
+
+  /* ── 3 · The four stop controls get a real tap target ────────────────────
+     ✓ mark · share · bookmark · note sat at 13–14px each with 8–12px between
+     them: four targets inside 96px of row, every one of them under a third of
+     the 44px Apple and WCAG both ask for. Owner: "way too close i can barely
+     hit only one".
+
+     The glyph grows to 18px and each control is centred in a 40px box, so the
+     touch areas are adjacent (no dead gap to miss into) while the drawn marks
+     themselves sit ~22px apart. The old per-control margin-left is zeroed and
+     replaced by one gap on the rail, or the boxes would inherit spacing on top
+     of their own width and push the rail into a second line.
+
+     .stop-actions is one flex ITEM of .stop-header, which is flex-wrap:wrap —
+     so if a long stop name leaves less than the rail's width, the whole rail
+     drops to its own line intact rather than splitting 3 + 1. That is the same
+     property the rail was built for (owner rule 2026-08-15). */
+  .stop-header .stop-actions { gap: 2px; }
+  .stop-header .stop-actions > .tve-share-stop-btn,
+  .stop-header .stop-actions > .tve-wl-btn,
+  .stop-header .stop-actions > .tve-note-btn {
+    min-width: 40px;
+    min-height: 40px;
+    margin-left: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stop-header .stop-actions > .tve-share-stop-btn svg,
+  .stop-header .stop-actions > .tve-wl-btn svg,
+  .stop-header .stop-actions > .tve-note-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  /* The unchecked mark is the odd one out: the ring is not an icon INSIDE the
+     control, it IS the control — border-radius:50% with a border and a fill on
+     the element itself. Padding it out to 40px therefore paints a 40px disc,
+     because border and background cover the padding box; it stops reading as a
+     small checkbox and becomes a bubble sitting beside three thin glyphs.
+     So the ring keeps its own 22px size and border, takes 9px of MARGIN on each
+     side to occupy the same 40px of the rail as its neighbours, and gets its
+     touch area from a transparent 40×40 ::after laid over it. Repainting the
+     ring on a pseudo instead was tried first and does not work here: the ring
+     has to sit behind the ✓ text node, z-index:-1 is the only way to put a
+     positioned pseudo behind in-flow text, and because the button creates no
+     stacking context that also sends it behind .stop-block's own background —
+     the ring vanishes completely. */
+  .stop-block:not(.stop-done) .stop-header .stop-actions > .stop-mark-btn {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    box-sizing: border-box;
+    margin: 0 9px;
+    padding: 0;
+    font-size: 12px;
+  }
+  .stop-block:not(.stop-done) .stop-header .stop-actions > .stop-mark-btn::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 40px;
+    height: 40px;
+    transform: translate(-50%, -50%);
+  }
+  /* Checked state is the word "Visited" in a pill, not a ring — it keeps its own
+     shape untouched and only takes the 40px tap height. */
+  .stop-block.stop-done .stop-header .stop-actions > .stop-mark-btn {
+    min-height: 40px;
+    margin-left: 0;
+    display: inline-flex;
+    align-items: center;
+  }
+}
