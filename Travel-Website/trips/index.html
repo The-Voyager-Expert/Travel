@@ -316,7 +316,7 @@ a.trip-jump-pill:visited { color: #3d3a32; }
    Each icon builds that one part's .ics in the page and hands it to Calendar
    as a FILE — the share sheet on a phone, a download anywhere else. Never as a
    URL of any kind (webcal:// or a blob: navigation): a URL is what Calendar
-   offers to SUBSCRIBE to. See the save() comment for the whole rule.
+   offers to SUBSCRIBE to. See the delivery rule further down for the whole story.
 
    The .added state is remembered in localStorage, because the real cost of
    per-part exporting is losing track — owner: *"i would get lost which one i
@@ -927,7 +927,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    two of them take only what is theirs. Owner rule 2026-08-17: **that icon
    ADDS the event; it never offers a subscription.** Which of the two you get is
    decided by what Calendar is handed — a file imports, a URL subscribes — and
-   the whole rule is written out at save() below.
+   the whole rule is written out at the delivery comment below.
 
    The pre-trip-audit routine writes the same files to Trip-Exports/ on every
    run, so they are already sitting there when you want them — this page is the
@@ -1010,7 +1010,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     L.push('END:VCALENDAR');
     return L.join('\r\n')+'\r\n';
   }
-  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
   /* ── Delivery — hand Calendar a FILE, never a URL (owner, 2026-08-17) ──────
      No Google anywhere in this file, by owner rule (2026-08-16): the calendar
@@ -1027,25 +1026,34 @@ document.addEventListener('DOMContentLoaded',()=>{
      along with X-WR-CALNAME / NAME / REFRESH-INTERVAL, which are the same claim
      by another name. See calendar() above; never put any of them back.
 
-     DELIVERY: navigate to the blob. **Nothing is ever saved to disk** — owner,
-     2026-08-17: *"i should not need to save in my disk first"* · the behaviour
-     they want, in their words: *"the link opens, i press okay, add on my
-     calendar."* Safari — macOS and iOS alike — reads the text/calendar MIME off
-     the navigation and hands it straight to Calendar, which opens its add sheet
-     with the event in it. No download, no Downloads folder, no double-click.
-     An `<a download>` was tried on 2026-08-17 and is exactly what the owner
-     rejected: it puts a file on the disk for them to go and find.
+     DELIVERY: A SERVED FILE. Nothing is built in the browser and nothing is
+     saved to disk — owner, 2026-08-17: *"i should not need to save in my disk
+     first"* · *"should not ask me to save on the disk for me to hunt it and
+     then open and save it"* · the behaviour they want, in their words: *"the
+     link opens, i press okay, add on my calendar."*
 
-     Do not "improve" this: a `data:` URI is blocked outright by WebKit's
-     navigation policy, and the object URL is revoked after 1500ms rather than
-     at once, because revoking immediately can cancel the handoff that just
-     started. Nothing async before the navigation either — any await breaks the
-     user-gesture chain. */
-  function save(name,ics){
-    var url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));
-    window.location.href=url;
-    setTimeout(function(){ URL.revokeObjectURL(url); },1500);
-  }
+     **There is no URL that opens Apple Calendar with an event in it.** Google,
+     Outlook and Yahoo each have one; Apple does not, and every add-to-calendar
+     library on the web handles Apple with a `.ics` and nothing else. What Apple
+     *does* do reliably is take a **real file served as `text/calendar`**:
+     Safari, on macOS and iOS, hands it straight to Calendar and Calendar opens
+     its add prompt. So each icon is a plain `<a href="/trips/ics/{uid}.ics">`,
+     one file per flight leg and per stay, written by `build_trip_exports.py`
+     from this same markup. `calendar()` above still exists because the page
+     builds the events to know their UIDs — it no longer delivers them.
+
+     WHAT DOES NOT WORK. All three were shipped on 2026-08-17 and all three came
+     straight back; do not try any of them again:
+       · **`<a download>`** — puts the file in Downloads to go and find.
+       · **A `blob:` object URL**, navigated to or downloaded — a blob has no
+         filename and no served MIME type, so the browser cannot hand it to
+         Calendar and asks where to put it instead: a Save-As panel titled with
+         a raw UUID ("4b537d25-3bef-4c1b-…"). This is the one that looks right
+         in code and is the most wrong in practice.
+       · **`webcal://`** — the subscribe scheme. A read-only calendar of its
+         own, which is the complaint this whole rule exists to answer.
+     A `data:` URI is not the way out either: WebKit's navigation policy blocks
+     it outright. */
 
   /* ── Flights ── */
   function airportNames(block){
@@ -1193,11 +1201,9 @@ document.addEventListener('DOMContentLoaded',()=>{
      control: the two of them export different parts, so an "everything" button
      is one neither would press.
 
-     Every icon runs save(), which hands Calendar the one event as a FILE — the
-     share sheet on a phone, a download anywhere else — so it is IMPORTED into
-     their own calendar, editable. Never a URL of any kind: webcal:// and a
-     blob: navigation both make Calendar offer a subscription instead, which is
-     a separate read-only calendar per item and a different thing entirely.
+     Every icon is a plain link to that event's own served .ics — see the
+     delivery rule above. Nothing is built in the browser and nothing is
+     saved to disk.
 
      Clicking marks the icon added, remembered across visits — the real cost of
      exporting part by part is losing your place (owner: *"i would get lost
@@ -1216,22 +1222,23 @@ document.addEventListener('DOMContentLoaded',()=>{
   /* The icon runs the GUIDES' export, one event at a time — the code above,
      which the owner asked for by name. Built in the page from the row you are
      looking at, exactly as the guide builds a day. */
-  function calIcon(ev,file,label){
-    var b=document.createElement('button');
-    b.type='button';
-    b.className='cal-add'+(addedSet().indexOf(ev.uid)>-1?' added':'');
-    b.title=label; b.setAttribute('aria-label',label);
-    b.innerHTML=icon('calendar')||'';
-    b.addEventListener('click',function(){
-      /* save() first and synchronously — the iOS gesture chain dies if anything
-         happens between the click and the navigation, and a dead chain is a
-         download instead of the Add-to-Calendar prompt. Marking comes after. */
-      save(file,calendar([ev]));
+  function calIcon(ev,label){
+    var a=document.createElement('a');
+    /* The served file for this event. Its name IS the UID with the domain
+       stripped — build_trip_exports.py writes it by the identical rule, so
+       neither side keeps a list of filenames. No `download` attribute,
+       deliberately: that is the attribute that turns the handoff into a file in
+       Downloads instead of letting Safari pass it to Calendar. */
+    a.href='/trips/ics/'+ev.uid.replace('@guidemydays.com','')+'.ics';
+    a.className='cal-add'+(addedSet().indexOf(ev.uid)>-1?' added':'');
+    a.title=label; a.setAttribute('aria-label',label);
+    a.innerHTML=icon('calendar')||'';
+    a.addEventListener('click',function(){
       markAdded(ev.uid);
-      b.className='cal-add added';
-      b.title=label+' (already added)';
+      a.className='cal-add added';
+      a.title=label+' (already added)';
     });
-    return b;
+    return a;
   }
 
   [].slice.call(document.querySelectorAll('.trip')).forEach(function(card){
@@ -1265,9 +1272,7 @@ document.addEventListener('DOMContentLoaded',()=>{
            making every flight row twice as tall. */
         var cells=ev.row.querySelectorAll('.fc');
         (cells.length?cells[cells.length-1]:ev.row)
-          .appendChild(calIcon(ev,
-            base+'-'+slug(ev.summary+'-'+(ev.num||''))+'-'+dDate(ev.start)+'.ics',
-            'Add '+ev.summary+' to Calendar'));
+          .appendChild(calIcon(ev,'Add '+ev.summary+' to Calendar'));
       });
     });
 
@@ -1276,9 +1281,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       var ev=hotelEvent(s.el,trip,s.who,base,i);
       if(!ev) return;
       var nameEl=s.el.querySelector('.hotel-name');
-      (nameEl||s.el).appendChild(calIcon(ev,
-        base+'-'+slug((s.who||'')+'-'+ev.hotel)+'-'+dDate(ev.start)+'.ics',
-        'Add '+ev.hotel+' to Calendar'));
+      (nameEl||s.el).appendChild(calIcon(ev,'Add '+ev.hotel+' to Calendar'));
     });
   });
 })();
