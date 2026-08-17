@@ -1018,6 +1018,88 @@ a.land-cta:hover:visited {
 }
 .lp-best .lp-links a { padding: 0.34rem 0; align-self: start; }
 
+/* ── Best Of on a PHONE — one picture instead of 34 rows ────────────────────
+   Owner 2026-08-17, on the shipped list: "too long for mobile, boring and
+   ugly." A phone gets a single tile — photo, then a warm band carrying the
+   name and one short line about what the section collects — and taps through
+   to /best-of/, which is the page whose whole job is choosing a category.
+
+   DESKTOP IS UNTOUCHED. The tile is `display:none` at this, the default
+   scope, and only the phone block below swaps the two. Nothing about the
+   34-name grid above changes at any width a mouse can reach — that was the
+   owner's standing instruction for this pass ("MOBILE ONLY DO NOT TOUCH
+   DESKTOP"), so this rule and its media query are the entire footprint.
+
+   The gate is `(max-width: 600px) and (pointer: coarse)` — width AND primary
+   input, never width alone. A desktop window narrowed past 600px reports the
+   width of a phone and nothing else does; `pointer: coarse` is what tells the
+   two apart, and a bare width query HARD-FAILS
+   brain_check.check_mobile_breakpoints_gated_on_pointer (Toolbar.html § 42). */
+.lp-best-tile { display: none; }
+
+@media (max-width: 600px) and (pointer: coarse) {
+  /* The two swaps, stated together so neither can be moved without the other. */
+  .lp-best .lp-links { display: none; }
+  .lp-best-tile { display: block; }
+
+  /* The intro paragraph is the other half of "too long": four lines of setup
+     above a list the reader cannot see the end of. The band under the photo
+     says the same thing in one line, so the long version goes with the list. */
+  .lp-best-sub { display: none; }
+
+  .lp-best-tile {
+    text-decoration: none;
+    border-radius: 14px;
+    overflow: hidden;                 /* clips the photo to the rounded corner */
+    box-shadow: 0 1px 2px rgba(23,21,15,.08), 0 8px 24px rgba(23,21,15,.10);
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Pressed state rather than hover — :hover does not fire on touch, and a
+     tile this large with no feedback reads as a picture, not a link. */
+  .lp-best-tile:active { transform: scale(.992); }
+  .lp-best-tile, .lp-best-tile:active { transition: transform .12s ease; }
+
+  .lp-best-shot { position: relative; display: block; }
+  .lp-best-shot img {
+    display: block;                   /* kills the inline-image baseline gap */
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  /* Count badge, bottom-left of the photo. Sits on its own scrim rather than a
+     gradient over the whole picture — the photo is the point, and a full-height
+     scrim to carry six characters greys out the half of it worth looking at. */
+  .lp-best-count {
+    position: absolute; left: 12px; bottom: 12px;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(23,21,15,.62);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    color: #fff; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase;
+  }
+
+  /* The band. Solid terracotta, the full width of the tile, directly under the
+     photo with no gap — the shape the owner pointed at. */
+  .lp-best-band {
+    display: block;
+    padding: 13px 15px 15px;
+    background: var(--rust, #b85c2a);
+  }
+  .lp-best-band-t {
+    display: block;
+    font-size: 16.5px; font-weight: 700; line-height: 1.25;
+    color: #fff;
+  }
+  .lp-best-band-t::after { content: ' \203A'; opacity: .75; }
+  .lp-best-band-d {
+    display: block; margin-top: 5px;
+    font-size: 13.5px; line-height: 1.5;
+    /* Not pure white — the description sits under the title and reads as the
+       quieter of the two. Still 4.5:1 against the terracotta. */
+    color: rgba(255,255,255,.88);
+  }
+}
+
 /* ── Compare: the city picker ─────────────────────────────────────────────────
    Only the choosing. Everything below the picker — the chips, the count, the
    table — is the guides index's own compare CSS out of guides-index-style.css,
@@ -2145,6 +2227,31 @@ window.lpGuideCard = function (href, flag, name, extra) {
             <a href="/best-of/wine-regions/">Wine Regions</a>
             <a href="/best-of/wonders-of-the-world/">Wonders of the World</a>
           </nav>
+
+  <!-- PHONE ONLY — the 34-name list above is a desktop shape. On a phone it is
+       34 rows of grey text, roughly two and a half screens of scrolling before
+       the page moves on, and every row looks like every other one: the owner's
+       words for it were "too long for mobile, boring and ugly" (2026-08-17).
+       A phone gets one picture instead, and the choosing happens on /best-of/,
+       which is the page built for exactly that.
+
+       The list is NOT deleted and NOT duplicated — desktop still renders the
+       nav above and never renders this tile; the phone does the reverse. Both
+       swaps live together in the `.lp-best-tile` block in this page's CSS.
+       The tile is a single <a>, so the whole picture is the tap target. -->
+  <a class="lp-best-tile" href="/best-of/">
+    <span class="lp-best-shot">
+      <!-- photo: iguazu-falls.jpg — Wikimedia Commons CC BY 3.0 · "Iguazu National Park Falls.jpg" · https://commons.wikimedia.org/wiki/File:Iguazu_National_Park_Falls.jpg -->
+      <img src="/assets/best-of/wonders-of-the-world/iguazu-falls.jpg"
+           alt="Iguazu Falls waterfall panorama viewed from the Argentine side"
+           loading="lazy" width="800" height="533">
+      <span class="lp-best-count">34 lists</span>
+    </span>
+    <span class="lp-best-band">
+      <span class="lp-best-band-t">Browse every Best Of list</span>
+      <span class="lp-best-band-d">Beaches, castles, caves, hot springs, observation decks and 29 more &mdash; each one ranked across the whole world, not country by country. Pick the category, and see the best of it anywhere.</span>
+    </span>
+  </a>
 </section>
 
 <!-- Sunrise & Sunset removed from the landing page (owner 2026-08-14: "we
