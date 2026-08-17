@@ -1470,7 +1470,8 @@
 /* 2026-08-17: guide-style.css: the Trip Overview DAY N badge (.ovd-num) was hardcoded 11px, below the site's own --fs-small caption floor. Moved it and .ovd-count onto that token. guide-style.css -> v230. CACHE to v1036. */
 /* 2026-08-17: toolbar.js — 3-way merge: phone-menu one-tone + 28px band + Currency pill + Plan group + SEO migration (PAGE_ICON delta/united entries, RES_GROUPS continent links). toolbar.js -> v738. CACHE to v1037. */
 /* 2026-08-17: phone: the tile carousels become a showcase — new screens for all four toolbar.js -> v739. CACHE to v1038. */
-var CACHE = 'travel-cache-v1038';
+/* 2026-08-17: Cloudflare Web Analytics beacon added to toolbar.js, host-gated to guidemydays.com. The site is set to 'Enable with JS Snippet installation', NOT Cloudflare's automatic setup: automatic injection happens in the proxy, and the domain is on Cloudflare DNS but DNS-only, so visitors reach GitHub Pages directly and nothing passes through Cloudflare to inject into - automatic would have recorded zero for ever. toolbar.js -> v740. CACHE to v1039. */
+var CACHE = 'travel-cache-v1039';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1478,7 +1479,7 @@ var CACHE = 'travel-cache-v1038';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 230,'toolbar.js': 739, 'mobile.css': 85, 'web-travel-style.css': 60, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 230,'toolbar.js': 740, 'mobile.css': 85, 'web-travel-style.css': 60, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

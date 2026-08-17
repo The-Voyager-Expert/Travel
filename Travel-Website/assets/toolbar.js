@@ -383,6 +383,35 @@ window.TVE.home = (function () {
     meta('mobile-web-app-capable', 'yes');
     meta('apple-mobile-web-app-status-bar-style', 'default');
     meta('apple-mobile-web-app-title', 'Guide My Days');
+
+    /* ── Cloudflare Web Analytics (owner rule 2026-08-17) ──────────────────
+       Loaded here rather than written into all 856 pages: every page already
+       loads this file, so the beacon is one line instead of a fleet-wide
+       rewrite, and moving it later costs one commit.
+
+       WHY THE SNIPPET AND NOT CLOUDFLARE'S "AUTOMATIC SETUP": automatic
+       injection happens in Cloudflare's PROXY, and guidemydays.com is on
+       Cloudflare DNS but DNS-only (grey cloud) — visitors reach GitHub Pages
+       directly, no request passes through Cloudflare, so nothing can be
+       injected. The dashboard still offers automatic setup because the domain
+       is on the account, and choosing it records ZERO for ever. The site is set
+       to "Enable with JS Snippet installation" to match this. If the orange
+       cloud is ever switched on, delete this block and switch the site back to
+       automatic — running both double-counts every page view.
+
+       Host-gated on purpose: validate_mobile_render.py and validate_dark_mode.py
+       serve the real pages over a local HTTP server, so an ungated beacon would
+       report every validator run as live traffic. */
+    if (location.hostname === 'guidemydays.com') {
+      var _cfb = document.createElement('script');
+      _cfb.type = 'module';
+      _cfb.defer = true;
+      _cfb.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+      _cfb.setAttribute('data-cf-beacon',
+        '{"token": "82fb3ec5324841ae960e365ce6442b5d"}');
+      document.head.appendChild(_cfb);
+    }
+
     if ('serviceWorker' in navigator &&
         (location.protocol === 'https:' || location.hostname === 'localhost')) {
       var _hadCtl = !!navigator.serviceWorker.controller;
