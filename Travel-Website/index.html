@@ -1166,22 +1166,36 @@ a.land-cta:hover:visited {
    there is nothing to stretch — align-items:start lets each group end where its
    last link ends, and the uneven group sizes stop costing anything. */
 .lp-res { max-width: var(--lp-max, 1180px); margin: clamp(2.2rem, 5vw, 3.6rem) auto 0; }
-/* Multi-column, NOT grid. A grid puts one group per cell and every cell in a
-   row stretches to the tallest, so a 3-link group beside an 8-link one left
-   five rows of dead page. Multicol flows the groups as one stream and balances
-   the columns by height, which stacks the short groups on top of each other and
-   packs the block to roughly its own content. break-inside keeps a group whole
-   rather than splitting its links across a column boundary.
-
-   Column height is balanced by the browser, so the reading order is down a
-   column and then across — the same way the Best Of categories above read. */
-.res-grid { columns: 13rem 3; column-gap: clamp(1rem, 2.4vw, 1.8rem); }
-.res-cell { min-width: 0; break-inside: avoid; -webkit-column-break-inside: avoid; }
-/* A group landing at the top of a column keeps its heading's padding-top, which
-   would sit it lower than its neighbours. Only the very first group is pinned;
-   the rest are left, since which group starts a column changes with width. */
-.res-cell:first-child .res-head { padding-top: 0; }
-.res-head { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rust, #b85c2a); margin: 0 0 0.15rem; padding-top: 0.7rem; }
+/* Grid, NOT multicol — and this reverses the earlier note, for the reason that
+   note gave. Multicol balanced nine groups of wildly different heights, which
+   is exactly what it is for. Now every group is one closed line until it is
+   opened, so there is nothing left to balance, and multicol becomes actively
+   wrong: the browser re-flows the whole stream on every toggle, so opening
+   Trains throws six other categories into different columns under the
+   reader's cursor. A grid pins each group to a fixed cell — an opened group
+   grows downward and nothing else moves. align-items:start keeps the old
+   promise that a group ends where its last link ends. */
+.res-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; column-gap: clamp(1rem, 2.4vw, 1.8rem); row-gap: clamp(0.9rem, 2vw, 1.4rem); }
+@media (max-width: 760px) { .res-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .res-grid { grid-template-columns: minmax(0, 1fr); } }
+.res-cell { min-width: 0; }
+.res-head { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rust, #b85c2a); margin: 0 0 0.15rem; }
+/* Each group is a disclosure (owner 2026-08-17): the category name carries a
+   small plus, and opening it gives the links for all of the pages under it.
+   Fifty-two links as one wall is a page of scanning to reach one of them; nine
+   category names is one glance. Native <details>, like the contact form below
+   — keyboard accessible, and the links stay in the markup either way, so the
+   list is still total (Thirty-first non-negotiable), just behind its heading.
+   The plus is a typographic marker like the row chevron, not an icon: it is
+   ASCII + / U+2212, so nothing here comes from the icon catalogue. */
+summary.res-head { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+summary.res-head::-webkit-details-marker { display: none; }
+summary.res-head:hover { color: #a94e1c; }
+summary.res-head:focus-visible { outline: 2px solid var(--rust, #b85c2a); outline-offset: 2px; }
+.res-plus { font-size: 0.95rem; font-weight: 400; line-height: 1; opacity: 0.75; }
+.res-plus::before { content: '+'; }
+.res-cell[open] .res-plus::before { content: '\2212'; }
+.res-cell[open] .res-links { padding-bottom: 0.2rem; }
 .res-links { display: flex; flex-direction: column; }
 /* Type and rhythm are the site's list standard (.lp-links, used by the Best Of
    block directly above): 0.875rem / 500 / 0.34rem rows, chevron at .45. Set
@@ -2197,22 +2211,28 @@ window.lpGuideCard = function (href, flag, name, extra) {
      Keep this list total. A new page under essentials/ belongs in a cell here,
      or it is reachable from nowhere.
 
+     Each group is a <details> closed by default (owner 2026-08-17) — the
+     category name carries a small plus and opening it gives the links for all
+     of the pages under it. Closed is the shipped state; never "restore" the
+     nine groups to a flat open list, and never drop a link to shorten a group,
+     because behind the plus there is no length to save.
+
      Styled as the Best Of block above, not as a card: same list type, same row
      rhythm, same chevron, no panel around it. A white card here read as a
      separate widget bolted to the end of the page; on the open ground the two
      link blocks read as one page. -->
 <section class="lp-res" id="trip-resources">
   <div class="res-grid">
-    <div class="res-cell">
-      <p class="res-head">Money</p>
+    <details class="res-cell">
+      <summary class="res-head">Money<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
         <a href="/essentials/budget/">Budget</a>
         <a href="/essentials/cards-atm/">Cards &amp; ATM</a>
         <a href="/essentials/tipping/">Tipping</a>
       </div>
-    </div>
-    <div class="res-cell">
-      <p class="res-head">Flights &amp; airports</p>
+    </details>
+    <details class="res-cell">
+      <summary class="res-head">Flights &amp; airports<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
         <a href="/essentials/airlines/">Airlines</a>
         <a href="/essentials/baggage/">Baggage</a>
@@ -2223,26 +2243,26 @@ window.lpGuideCard = function (href, flag, name, extra) {
         <a href="/essentials/united-routes/">United Network</a>
         <a href="/essentials/american-routes/">American Network</a>
       </div>
-    </div>
-    <div class="res-cell">
-      <p class="res-head">Trains</p>
+    </details>
+    <details class="res-cell">
+      <summary class="res-head">Trains<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
         <a href="/essentials/european-trains/">European Trains</a>
         <a href="/essentials/train-passes/">Train Passes</a>
         <a href="/essentials/scenic-trains/">Scenic Trains</a>
         <a href="/essentials/day-trips/">Day Trips</a>
       </div>
-    </div>
-    <div class="res-cell">
-      <p class="res-head">Getting around</p>
+    </details>
+    <details class="res-cell">
+      <summary class="res-head">Getting around<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
         <a href="/essentials/cars/">Car Rental</a>
         <a href="/essentials/transit-cards/">Transit Cards</a>
         <a href="/essentials/storage/">Luggage Storage</a>
       </div>
-    </div>
-    <div class="res-cell">
-      <p class="res-head">Visas &amp; docs</p>
+    </details>
+    <details class="res-cell">
+      <summary class="res-head">Visas &amp; docs<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
         <a href="/essentials/visa/">Visas</a>
         <a href="/essentials/entry/">Entry Requirements</a>
@@ -2251,17 +2271,17 @@ window.lpGuideCard = function (href, flag, name, extra) {
         <a href="/essentials/visa-times/">Visa Processing Times</a>
         <a href="/essentials/nomad-visas/">Digital Nomad Visas</a>
       </div>
-    </div>
-    <div class="res-cell">
-      <p class="res-head">Stay &amp; eat</p>
+    </details>
+    <details class="res-cell">
+      <summary class="res-head">Stay &amp; eat<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
         <a href="/essentials/hotels/">Hotels</a>
         <a href="/essentials/neighborhoods/">Neighborhoods</a>
         <a href="/essentials/restaurants/">Restaurants</a>
       </div>
-    </div>
-    <div class="res-cell">
-      <p class="res-head">Health &amp; safety</p>
+    </details>
+    <details class="res-cell">
+      <summary class="res-head">Health &amp; safety<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
         <a href="/essentials/safety/">Safety</a>
         <a href="/essentials/vaccines/">Vaccines</a>
@@ -2270,18 +2290,18 @@ window.lpGuideCard = function (href, flag, name, extra) {
         <a href="/essentials/scams/">Scams</a>
         <a href="/essentials/mistakes/">First-timer Mistakes</a>
       </div>
-    </div>
-    <div class="res-cell">
-      <p class="res-head">Plan &amp; pack</p>
+    </details>
+    <details class="res-cell">
+      <summary class="res-head">Plan &amp; pack<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
         <a href="/essentials/sims/">Phone &amp; SIM</a>
         <a href="/essentials/apps/">Travel Apps</a>
         <a href="/essentials/tours/">Tours &amp; Tickets</a>
         <a href="/essentials/resources/">More Resources</a>
       </div>
-    </div>
-    <div class="res-cell">
-      <p class="res-head">Special trips</p>
+    </details>
+    <details class="res-cell">
+      <summary class="res-head">Special trips<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
         <a href="/essentials/cruises/">Cruises</a>
         <a href="/essentials/disney/">Disney Parks</a>
@@ -2289,7 +2309,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
         <a href="/essentials/festival-finder/">Festivals</a>
         <a href="/essentials/pickleball/">Pickleball</a>
       </div>
-    </div>
+    </details>
   </div>
 </section>
 
