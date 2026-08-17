@@ -206,12 +206,30 @@ function beenCount() {
 
    So this page now DISPLAYS the list and manages it as a whole (back up,
    restore, clear). It never edits a single city. */
+/* THE ACTION BAR IS NOT STANDING CHROME (owner rule 2026-08-17).
+   It first shipped visible whenever the reader had anything marked — which,
+   for anyone using the feature, is every visit forever. That parks a
+   destructive "Clear all" over the map permanently, one mis-tap from wiping a
+   list whose only undo is a backup link the reader may not have made yet.
+
+   It now appears only while the gold Visited display is ON. Turning that on is
+   the reader saying "I am looking at my list", which is the one moment backing
+   it up or clearing it makes sense; the rest of the time the map is a map.
+   The count on the pill still shows at all times — that is information, not a
+   control, and it is what tells a reader there is a list to act on at all. */
+function minePaintBar() {
+  var bar = document.getElementById('mine-hint');
+  if (!bar) return;
+  var pill = document.getElementById('visited-pill-mobile');
+  var on = pill && pill.getAttribute('data-on') === '1';
+  bar.style.display = (on && beenCount()) ? 'flex' : 'none';
+}
+
 function beenPaintCount() {
   var el = document.getElementById('visited-pill-count');
   var n = beenCount();
   if (el) el.textContent = n ? 'Visited · ' + n : 'Visited';
-  var bar = document.getElementById('mine-hint');
-  if (bar) bar.style.display = n ? 'flex' : 'none';
+  minePaintBar();
 }
 
 function toggleVisitedMobile(btn) {
@@ -222,6 +240,10 @@ function toggleVisitedMobile(btn) {
   btn.style.borderColor = on ? '#a07000' : '#d8c87a';
   btn.querySelector('span').style.background = on ? 'rgba(255,255,255,0.7)' : '#c8940a';
   if (window.applyVisitedFilter) window.applyVisitedFilter(on);
+  /* The bar rides this toggle — see minePaintBar. applyVisitedFilter already
+     calls beenPaintCount, but not on the pages where it has not been defined
+     yet, so paint directly rather than relying on that. */
+  minePaintBar();
 }
 
 /* ── Back up and restore ─────────────────────────────────────────────────────
