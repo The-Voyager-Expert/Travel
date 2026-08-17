@@ -1438,10 +1438,53 @@ window.TVE.home = (function () {
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:14px;font-weight:600;color:#7a3b1e!important;text-decoration:none;padding:8px 18px;border:1px solid transparent;border-radius:999px;' +
+    '.tb a,.tb a:visited{font-size:14px;font-weight:600;color:#7a3b1e!important;text-decoration:none;padding:8px 18px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
-      'transition:color .15s,background .15s}' +
+      'transition:color .15s,background .15s,border-color .15s}' +
     '.tb a:hover{color:#7a3b1e!important;background:transparent}' +
+    /* ── DESKTOP TOP STRIP = PILLS (owner 2026-08-17) ────────────────────────
+       Every tab in the top strip is a visible outlined pill AT REST, not bare
+       text that only becomes a pill once you are on that page. The strip used
+       to draw one pill — the active tab — floating in a row of plain words,
+       which read as a stray chip rather than as a set.
+
+       SCOPED TO `.tb-links>a`, NOT `.tb a`, and that is load-bearing twice
+       over. `.tb a` also matches (a) the wordmark, `.tb a.tb-brand-logo`, a
+       direct child of .tb that sets no border of its own — a bare `.tb a`
+       border draws a pill around the logo image; and (b) every row of the
+       mobile hamburger, `.tb-ham-menu a`, which sets no border either and
+       would gain 40-odd stacked chips. The child combinator keeps this to the
+       desktop tab row, which is the only thing .tb-links holds.
+
+       THE ROW STILL HAS EXACTLY ONE WIDTH IN EVERY STATE — the layout rule the
+       note on .tb a.tb-active below exists to protect. Rest and active now
+       carry the SAME box: 1px border, padding 8px 18px, radius 999px. Only the
+       border-colour and the fill change. Before this pass the rest state had
+       `border:none`, so the active tab was 2px wider than the same tab
+       unselected and the row's width tracked which page you were on. Never
+       give the rest and active pills different padding or border widths.
+
+       Fill/border follow the site's outlined-chip grammar (Twenty-fourth
+       non-negotiable): white ground and a light terracotta rim at rest, the
+       warm #fdf4ed fill and the stronger rim on hover and when active — never
+       a filled terracotta gradient.
+
+       THE DROPDOWN TRIGGER IS NOT STYLED HERE — it takes the same pill from its
+       own rule below, and that split is not a stylistic choice.
+       check_toolbar_font_size_unified locates that rule by searching
+       whitespace-collapsed source for the ddbtn class followed immediately by an
+       opening brace, and takes the FIRST hit in the file. So any selector that
+       ENDS in the ddbtn class and sits above the real rule is read as the real
+       rule, and the check hard-fails with "no font-size" against a block that
+       was never meant to carry one. Two consequences, both learned the hard way
+       in this pass: never end a selector with that class above its own rule, and
+       never write the class-plus-brace pair in a COMMENT above it either — the
+       check does not strip comments, so this very note took the match until it
+       was reworded. */
+    '.tb-links>a,.tb-links>a:visited{' +
+      'box-sizing:border-box;display:inline-flex;align-items:center;line-height:1.2;' +
+      'padding:8px 18px;border:1px solid rgba(184,92,42,.30);border-radius:999px;background:#fff}' +
+    '.tb-links>a:hover{background:#fdf4ed;border-color:rgba(184,92,42,.55)}' +
     /* SELECTED RING IS AN OUTLINE, NOT A BORDER — and that is a LAYOUT rule,
        not a style one. A border plus padding:4px 12px against the base
        padding:2px 2px makes the selected tab ~23px WIDER than the same tab
@@ -1453,14 +1496,24 @@ window.TVE.home = (function () {
        no space at all, so the row is now exactly one width in every state.
        .tb-ddbtn.tb-active below already worked this way; these two now match
        it. Never put this back to border+padding. */
-    '.tb a.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;padding:8px 18px;color:#7a3b1e!important;background:#fdf4ed;border:1px solid rgba(184,92,42,0.55);border-radius:999px;font-weight:600;line-height:1.2}' +
+    /* Border-colour ladder across the three states, now that every tab is a
+       pill: rest .30 → hover .55 → active .85. The active tab used to sit at
+       .55 against a row of bare words, where any rim at all was enough to mark
+       it; in a row of pills that same .55 is the hover value and the selected
+       tab stopped standing out. Colour only — the BOX is identical in all three
+       states, per the note above. */
+    '.tb a.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;padding:8px 18px;color:#7a3b1e!important;background:#fdf4ed;border:1px solid rgba(184,92,42,0.85);border-radius:999px;font-weight:600;line-height:1.2}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
+    /* Same pill as a plain tab (2026-08-17) — it already carried the 1px border
+       and the 999px radius, so the strip only had to stop drawing them
+       transparent. Kept in THIS rule rather than folded into the .tb-links>a
+       block above: see the note there on check_toolbar_font_size_unified. */
     '.tb-ddbtn{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:600;color:#7a3b1e!important;' +
-      'padding:8px 18px;border:1px solid transparent;border-radius:999px;background:transparent;white-space:nowrap;' +
-      'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
-    '.tb-ddbtn:hover{color:#7a3b1e!important;background:transparent}' +
-    '.tb-ddbtn.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:#fdf4ed;border:1px solid rgba(184,92,42,0.55);border-radius:999px;font-weight:600;line-height:1.2}' +
+      'padding:8px 18px;border:1px solid rgba(184,92,42,.30);border-radius:999px;background:#fff;white-space:nowrap;' +
+      'cursor:pointer;font-family:inherit;transition:color .15s,background .15s,border-color .15s}' +
+    '.tb-ddbtn:hover{color:#7a3b1e!important;background:#fdf4ed;border-color:rgba(184,92,42,.55)}' +
+    '.tb-ddbtn.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:#fdf4ed;border:1px solid rgba(184,92,42,0.85);border-radius:999px;font-weight:600;line-height:1.2}' +
     /* An OPEN dropdown gets the same terracotta ring as the active tab, so the
    menu is visibly attached to the tab it came from. It only changed text
    colour before, which was invisible against the other tabs. */
@@ -1727,7 +1780,46 @@ window.TVE.home = (function () {
     'html[data-theme="dark"] .tb-ddbtn,' +
     'html[data-theme="dark"] .tb-ddbtn:hover,' +
     'html[data-theme="dark"] .tb-ddbtn.tb-active{color:#c8a060!important}' +
-    'html[data-theme="dark"] .tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#c8a060!important}'
+    'html[data-theme="dark"] .tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#c8a060!important}' +
+    /* ── Dark-mode top-strip pills ───────────────────────────────────────────
+       The pill rest state above is a WHITE ground with a terracotta rim, which
+       is correct on the light bar and a row of white lozenges on a dark page.
+       The label is already shifted to brand gold #c8a060 by the two blocks
+       directly above, so the rim and fill follow it: no ground at rest, a faint
+       gold wash on hover, a stronger one when active. Same .30 / .55 / .85
+       border ladder, restated in gold.
+
+       Written TWICE on purpose, exactly like the colour rules above: the media
+       query catches a reader on system-dark who has never touched the toggle,
+       and the html[data-theme="dark"] copy catches one who picked dark
+       explicitly. The media-query copy is guarded with
+       html:not([data-theme="light"]) so it does not paint a reader who is on
+       system-dark but has explicitly chosen the light theme — the same
+       white-on-white trap the .also-on-this-site-pill note above records.
+       Active is stated last in each block: its selector outranks the rest-state
+       one, so order is belt and braces rather than the mechanism. */
+    '@media (prefers-color-scheme:dark){' +
+      'html:not([data-theme="light"]) .tb-links>a,' +
+      'html:not([data-theme="light"]) .tb-links>a:visited,' +
+      'html:not([data-theme="light"]) .tb-ddbtn' +
+        '{background:transparent;border-color:rgba(200,160,96,.42)}' +
+      'html:not([data-theme="light"]) .tb-links>a:hover,' +
+      'html:not([data-theme="light"]) .tb-ddbtn:hover' +
+        '{background:rgba(200,160,96,.12);border-color:rgba(200,160,96,.62)}' +
+      'html:not([data-theme="light"]) .tb a.tb-active,' +
+      'html:not([data-theme="light"]) .tb-ddbtn.tb-active' +
+        '{background:rgba(200,160,96,.16);border-color:rgba(200,160,96,.85)}' +
+    '}' +
+    'html[data-theme="dark"] .tb-links>a,' +
+    'html[data-theme="dark"] .tb-links>a:visited,' +
+    'html[data-theme="dark"] .tb-ddbtn' +
+      '{background:transparent;border-color:rgba(200,160,96,.42)}' +
+    'html[data-theme="dark"] .tb-links>a:hover,' +
+    'html[data-theme="dark"] .tb-ddbtn:hover' +
+      '{background:rgba(200,160,96,.12);border-color:rgba(200,160,96,.62)}' +
+    'html[data-theme="dark"] .tb a.tb-active,' +
+    'html[data-theme="dark"] .tb-ddbtn.tb-active' +
+      '{background:rgba(200,160,96,.16);border-color:rgba(200,160,96,.85)}'
     ;
   document.head.appendChild(styleEl);
 
