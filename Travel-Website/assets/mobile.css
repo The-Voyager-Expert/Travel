@@ -169,6 +169,14 @@ pre { white-space: pre-wrap; }
     justify-content: flex-start !important;
     gap: 4px 12px !important;
   }
+  /* …but a legend that IS the search row keeps the search's own breathing room
+     between the bar and the pills under it. The 4px row-gap above is right for
+     a wrapped row of pills and wrong for the one case where the legend's first
+     child is the search box — on Visas and Safety it put the filter pills 4px
+     under the bar while the banner sat 32px above it, which is exactly the
+     "no pill closer than the banner" rule (owner 2026-08-17). Column gap is
+     untouched, so the pills themselves are unchanged. */
+  .legend:has(> input[type="search"]) { row-gap: var(--search-gap, 32px) !important; }
 
   /* Small utility buttons (reset/print in Packing) — exempt from 40px tap target,
      the surrounding row provides enough touch area. */
@@ -447,15 +455,33 @@ pre { white-space: pre-wrap; }
   /* 11b-2. Uniform search-bar HEIGHT on every page. One value site-wide, and a bit
      taller than the filter pills below it (~40px) so the bar is never shorter than
      the pills — that mismatch looked unbalanced/odd. ID selectors (loaded after each
-     page's inline <style>) so this wins over per-page height rules. */
+     page's inline <style>) so this wins over per-page height rules.
+
+     The number itself moved OUT of here on 2026-08-17: it was a phone-only 48px
+     against a desktop 40px, which is exactly the mobile/desktop mismatch the
+     owner asked to end ("make sure all of them are the same size ... both
+     mobile and desktop"). What this block still does is win the cascade against
+     the per-page inline <style> rules — that is why it stays, and why it is
+     !important. It reads --search-h; never put a literal back. */
   #guide-search, #train-search, #lounge-search, #cur-search, #plug-search,
   #visa-search, #city-search, #byg-search, #sim-search, #tc-search,
   #guide-pick-search, #citySearch, #country-search, #place-search,
   #destFilter, #search, #best-of-search,
   input[type="search"], .filter-input, input.search {
-    height: 48px !important;
-    min-height: 48px !important;
+    height: var(--search-h, 56px) !important;
+    min-height: var(--search-h, 56px) !important;
     box-sizing: border-box !important;
+  }
+
+  /* 11b-3. …and the same TYPE SIZE as desktop. Rule 7 above sets every input to
+     16px !important to stop iOS auto-zoom, which silently held every search box
+     on every phone one step below the 17px the desktop bar uses — the one place
+     "same size on mobile and desktop" was still false after the height was
+     unified. 17px is above the 16px zoom threshold, so the protection rule 7
+     exists for is intact; this only overrides it for the search box, and wins on
+     specificity ((0,1,1) against (0,0,1)) rather than on source order. */
+  input[type="search"], .search-input, .filter-input, input.search {
+    font-size: 17px !important;
   }
 
   /* 11c. Hide iOS Safari's native magnifying glass on search inputs — it doubles
@@ -547,7 +573,11 @@ pre { white-space: pre-wrap; }
      anonymous inline-styled control divs via :has() so it covers all Best-of
      pages from shared CSS. */
   .best-of-related { max-width: 285px !important; margin: 6px auto 8px !important; justify-content: center !important; row-gap: 6px; }
-  .wrap > div:has(> #best-of-search) { max-width: 285px !important; margin: 12px auto !important; flex-wrap: wrap !important; gap: 3px 8px !important; }
+  /* margin-top/bottom deliberately NOT set: the gap above and below the search
+     is one token at every viewport (--search-gap, owner rule 2026-08-17), and
+     this rule's old `margin: 12px auto` was overriding it on all 35 Best Of
+     pages. Only the width and the wrapping are phone business. */
+  .wrap > div:has(> #best-of-search) { max-width: 285px !important; margin-left: auto !important; margin-right: auto !important; flex-wrap: wrap !important; gap: 3px 8px !important; }
   #best-of-search { width: 100% !important; flex: 1 1 100% !important; min-width: 0 !important; }
   .wrap > div:has(> #best-of-search) > span { flex: 1 1 100% !important; text-align: right !important; }
   .wrap > div:has(#regionJump) { max-width: 285px !important; margin: 8px auto 14px !important; }
@@ -595,7 +625,11 @@ pre { white-space: pre-wrap; }
      every phone. Only the vertical rhythm and the title size belong here. */
   .hero-band { padding-top: 32px; padding-bottom: 28px; }
   .hero-title { font-size: 32px; }
-  .hero-ground { padding-top: 18px; padding-bottom: 20px; margin-bottom: 0; }
+  /* The band's padding is NOT restated here: the gap above and below the search
+     is one distance at every viewport (--search-gap, owner rule 2026-08-17),
+     and this line — padding-top 18px against the desktop 22px, padding-bottom
+     20px against 28px — was the reason phone and desktop disagreed on both
+     sides at once. Nothing phone-specific is left to say. */
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

@@ -77,6 +77,31 @@ html { overflow-x: clip; }
   --rail:   1180px;
   --gutter: 32px;
 
+  /* ── Search bar — the ONE place its size and its distance from the hero band
+     are defined (owner rule 2026-08-17: "all searches moved a bit lower from
+     the head banner title ... make them bigger ... all of them the same size
+     and same distance to the title banner").
+
+     Before this the site carried neither. The bar was 40px on desktop and 48px
+     on phone (mobile.css forced its own value), the hero pill on the format-
+     exception pages was 56px desktop / 48px phone, and the gap under the band
+     ran anywhere from 0px (.an-search-wrap, .ti-search-wrap, .sc-search-wrap,
+     .controls-row, .legend) through 6px (.search-wrap, 34 Best Of pages) and
+     22px (.hero-ground) to 35px (.search-row on the 8 stats pages and
+     .train-search-row on the 5 train guides) — five different distances and
+     three different heights, every one of them a hardcoded number sitting in a
+     different file. That is why these are TOKENS: the rule the owner gave is
+     "the same", and a number copied into eighteen pages cannot stay the same.
+
+     --search-h is ONE height at every viewport, deliberately. The phone-only
+     override is what made desktop and phone disagree in the first place, so
+     mobile.css now reads this token instead of carrying 48px of its own.
+     --search-gap is read by every wrapper that opens a page under the band;
+     never re-state either number in a page or a page-family stylesheet. */
+  --search-w:   440px;
+  --search-h:   56px;
+  --search-gap: 32px;
+
   /* ── Delta routing tier colors (nonstop=green / 1-stop=blue / 2-stop=amber) ── */
   --c0: #1a5a1a; --c0bg: #e8f5e8; --c0bd: #a0d8a0;
   --c1: #1a3a8b; --c1bg: #e8f0fb; --c1bd: #a0b8e8;
@@ -605,12 +630,13 @@ a.pill-voa:visited  { color: #8a4a10; }  /* orange — visa on arrival */
 input[type="search"],
 input[type="text"],
 .search-input {
-  width: 360px; box-sizing: border-box; padding: 11px 18px; padding-left: 36px; margin-bottom: 14px;
-  font-size: 16px; font-family: var(--font); line-height: 1;
+  width: var(--search-w, 440px); height: var(--search-h, 56px); box-sizing: border-box;
+  padding: 0 20px 0 44px; margin-bottom: 14px;
+  font-size: 17px; font-family: var(--font); line-height: 1;
   border: 1.5px solid #e6e2da; border-radius: 6px;
   /* Shared magnifier icon (matches guides_index) — one place, every search box gets it.
      Pages that put a literal 🔍 in the placeholder should drop it (this replaces it). */
-  background: #ffffff var(--search-icon) no-repeat 13px center;
+  background: #ffffff var(--search-icon) no-repeat 16px center;
   color: #1a1917;
   -webkit-appearance: none; appearance: none;
   outline: none; transition: border-color .15s, box-shadow .15s;
@@ -700,7 +726,132 @@ input[type="search"]::placeholder,
 input[type="text"]::placeholder,
 .search-input::placeholder { color: var(--c-search-placeholder); }
 /* ── Search wrapper — Best-of pages ── */
-.search-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 6px 0; }
+.search-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 0 6px; }
+
+/* ── The search bar's own breathing room, ABOVE AND BELOW ────────────────────
+   One distance, every page, both viewports, and the SAME distance on both sides
+   of the bar — owner rule 2026-08-17: "no pills closer to the search bar than
+   the banner ... above and below the search bar the next thing needs to have
+   the same distance the search bar to the banner", and "I want it to be easy to
+   see and use". See --search-gap in :root for the five different distances this
+   replaced above the bar; below it the spread was just as wide (6px on the 34
+   Best Of pages, 8px on the stats pages at phone size, 14px, 16px, 18px, 20px),
+   so a filter pill row routinely sat closer to the bar than the banner did and
+   read as part of the search rather than as the page under it.
+
+   The WRAPPER owns both gaps, and the input's own margin-bottom is zeroed
+   inside it — otherwise the two stack and the bar ends up with twice as much
+   room below as above, which is the exact asymmetry this rule exists to remove.
+
+   Scoped through `.hero-band + …` rather than set on the wrapper classes
+   themselves, and that scope is the whole reason this rule is safe. Four of
+   these wrappers are GENERIC and appear on pages that have no band and no
+   search at all: `.controls-row` carries the sort/filter row on a dozen
+   essentials pages, `.legend` is the tier key on the trains and lounges pages,
+   `.filter-bar` is the route strip on Airline Networks, and `.wrap` is the page
+   rail itself. A bare `.legend { margin: 32px 0 }` would push every one of
+   those around. The adjacency is what makes this mean "the search that opens
+   the page" instead of "anything with this class".
+
+   Two shapes, because the band sits at two different depths. On most pages the
+   wrapper is the band's own next sibling. On the lounges, Visas, Neighborhoods,
+   Insurance and Airline-Networks pages the band is followed by `.wrap` and the
+   search wrapper is the FIRST thing inside it — hence the `> :first-child`
+   half. Pages whose search is not the first thing under the band at all (the
+   five train guides, which open on the continent index strip) take the same
+   token from their own stylesheet instead. */
+.hero-band + .search-wrap,
+.hero-band + .search-row,
+.hero-band + .search-box,
+.hero-band + .sc-search-wrap,
+.hero-band + .an-search-wrap,
+.hero-band + .ff-search-wrap,
+.hero-band + .ti-search-wrap,
+.hero-band + .train-search-row,
+.hero-band + .controls-row,
+.hero-band + .filter-bar,
+.hero-band + .legend,
+.hero-band + * > .search-wrap:first-child,
+.hero-band + * > .search-row:first-child,
+.hero-band + * > .search-box:first-child,
+.hero-band + * > .sc-search-wrap:first-child,
+.hero-band + * > .an-search-wrap:first-child,
+.hero-band + * > .ff-search-wrap:first-child,
+.hero-band + * > .ti-search-wrap:first-child,
+.hero-band + * > .train-search-row:first-child,
+.hero-band + * > .controls-row:first-child,
+.hero-band + * > .filter-bar:first-child,
+.hero-band + * > .legend:first-child {
+  margin-top: var(--search-gap, 32px) !important;
+  margin-bottom: var(--search-gap, 32px) !important;
+}
+.hero-band + .search-wrap > input[type="search"],
+.hero-band + .search-row > input[type="search"],
+.hero-band + .search-box > input[type="search"],
+.hero-band + .sc-search-wrap > input[type="search"],
+.hero-band + .an-search-wrap > input[type="search"],
+.hero-band + .ff-search-wrap > input[type="search"],
+.hero-band + .ti-search-wrap > input[type="search"],
+.hero-band + .train-search-row > input[type="search"],
+.hero-band + .controls-row > input[type="search"],
+.hero-band + .filter-bar > input[type="search"],
+.hero-band + .legend > input[type="search"],
+.hero-band + * > .search-wrap:first-child > input[type="search"],
+.hero-band + * > .search-row:first-child > input[type="search"],
+.hero-band + * > .search-box:first-child > input[type="search"],
+.hero-band + * > .sc-search-wrap:first-child > input[type="search"],
+.hero-band + * > .an-search-wrap:first-child > input[type="search"],
+.hero-band + * > .ff-search-wrap:first-child > input[type="search"],
+.hero-band + * > .ti-search-wrap:first-child > input[type="search"],
+.hero-band + * > .train-search-row:first-child > input[type="search"],
+.hero-band + * > .controls-row:first-child > input[type="search"],
+.hero-band + * > .filter-bar:first-child > input[type="search"],
+.hero-band + * > .legend:first-child > input[type="search"] {
+  margin-bottom: 0 !important;
+}
+/* …and the element that FOLLOWS the search carries no top margin of its own.
+   Without this the distance below the bar is the wrapper's 32px PLUS whatever
+   the next block brings, and it is different on every page: measured before
+   this rule, the stats jump-nav sat 56px below the bar, the Currencies and
+   Plug index tables 46px, the Airline-Networks carrier strip 46px — all while
+   the banner above sat at 32px. Sibling margins do NOT collapse here (these
+   wrappers are flex containers), so the two really do add up.
+
+   `+ *` and not a class list, deliberately: what comes next is a jump-nav on
+   one page, a pill row on another, a table on a third, and naming them would
+   mean editing this rule every time a page gains a block. The scope is still
+   exact — it is only ever the ONE element directly after a search that opens a
+   page under the band. */
+.hero-band + .search-wrap + *,
+.hero-band + .search-row + *,
+.hero-band + .search-box + *,
+.hero-band + .sc-search-wrap + *,
+.hero-band + .an-search-wrap + *,
+.hero-band + .ff-search-wrap + *,
+.hero-band + .ti-search-wrap + *,
+.hero-band + .train-search-row + *,
+.hero-band + .controls-row + *,
+.hero-band + .filter-bar + *,
+.hero-band + .legend + *,
+.hero-band + * > .search-wrap:first-child + *,
+.hero-band + * > .search-row:first-child + *,
+.hero-band + * > .search-box:first-child + *,
+.hero-band + * > .sc-search-wrap:first-child + *,
+.hero-band + * > .an-search-wrap:first-child + *,
+.hero-band + * > .ff-search-wrap:first-child + *,
+.hero-band + * > .ti-search-wrap:first-child + *,
+.hero-band + * > .train-search-row:first-child + *,
+.hero-band + * > .controls-row:first-child + *,
+.hero-band + * > .filter-bar:first-child + *,
+.hero-band + * > .legend:first-child + * {
+  margin-top: 0 !important;
+}
+
+/* Scams, Nomad Visas and Entry put the input in a bare, class-less <div> that
+   carries its margin as an INLINE style — which no stylesheet rule can beat.
+   Those three read the token from the inline style itself; there is nothing to
+   add here, and a `.hero-band + div` rule would silently lose to them while
+   also double-spacing every classed wrapper above. */
 
 /* ── Cards / surfaces ── */
 .card,
@@ -1668,11 +1819,21 @@ body.is-searching .hub-top { display:none!important; }
 .hero-band a,
 .hero-band a:visited { color: #fff; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.45); }
 .hero-band a:hover { color: #fff; text-decoration-color: #fff; }
+/* The ground band is the one wrapper whose gaps are PADDING rather than margin:
+   it paints a background, so the distance from the terracotta band down to the
+   search has to be inside its own box. Same token on both sides, so it lands on
+   exactly the distance every other page uses — never a margin-top here, which
+   would open a stripe of page background between the two bands.
+
+   margin-bottom is 0 deliberately: it used to be 20px, which sat OUTSIDE the
+   band and stacked on the 28px of padding inside it, so the first pill row
+   below was 48px away while the banner above was 22px away — the asymmetry the
+   owner asked to end. The whole distance below the bar is the padding now. */
 .hero-ground {
   background: var(--ground,#F2EFE8);
   margin-left: calc((100% - 100vw) / 2); margin-right: calc((100% - 100vw) / 2);
-  padding: 22px calc((100vw - 100%) / 2) 28px;
-  margin-bottom: 20px;
+  padding: var(--search-gap, 32px) calc((100vw - 100%) / 2);
+  margin-bottom: 0;
 }
 /* Why (100vw - 100%)/2 and NOT that plus the gutter: `100%` is the CONTENT box
    of the container the hero sits in, so that half-difference is already the auto
@@ -1680,7 +1841,18 @@ body.is-searching .hub-top { display:none!important; }
    edge. Adding --gutter on top pushed the hero title one gutter right of every
    line of content below it. Under the old `max-width: none` .wrap both forms
    happened to land on 32px, which is why this only surfaced with a rail. */
-.hero-ground .search-input { max-width: 440px; margin: 0 auto; display: block; }
+.hero-ground .search-input { max-width: var(--search-w, 440px); margin: 0 auto; display: block; }
+/* Matched on the INPUT, not on .search-input — Currencies, Plugs and Budget put
+   the bar in the ground band without that class, so the rule above missed them
+   and the § 14 base rule's own `margin-bottom: 14px` stayed on. The band then
+   measured 32 + 56 + 14 + 32: fourteen extra pixels below the bar that appeared
+   on no other page and in no page's own CSS. */
+.hero-ground input[type="search"] { margin-bottom: 0; }
+/* The block after the ground band brings its own margin-top on top of the
+   band's 32px of padding — the index table on Currencies and Plugs, the sort
+   row on Budget, the controls on Trusted Traveler (35px). Same reasoning, and
+   same `+ *` shape, as the rule for the margin wrappers above. */
+.hero-band + .hero-ground + * { margin-top: 0 !important; }
 /* Some pages mount the hero as a direct body child, ABOVE .wrap rather than
    inside it (the 24 essentials pages whose stray </div> orphaned the wrap until
    2026-08-16). There the band is already the full window, so it needs no bleed —
