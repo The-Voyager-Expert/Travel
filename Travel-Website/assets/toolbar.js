@@ -1833,7 +1833,7 @@ window.TVE.home = (function () {
       '--tier-rec:#4a9a4a;--tier-rec-text:#ffffff;' +
       '--tier-con:#6080c0;--tier-con-text:#ffffff;' +
       '--tier-med:#c07070;--tier-med-text:#ffffff;' +
-      '--rust:#D4663A;--border-warm:#5a5040;--track:#3a3530;' +
+      '--rust:#D4663A;--ground:#242220;--border-warm:#5a5040;--track:#3a3530;' +
       '--c-temp-hi:#e05030;--c-temp-lo:#6090e0;--c-rain:#6090b0;' +
       '--c-search-focus-border:#7a6a5a;--c-search-placeholder:#7a6a50;' +
       '--c-section-head:#c8a060;--c-terracotta:#D4663A;' +
