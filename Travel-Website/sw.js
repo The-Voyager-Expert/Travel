@@ -1,3 +1,4 @@
+/* 2026-08-17: guide-style.css comment correction only, no rule changed — the note added with the max-width:370px restore said the uncapped width tracked the stop's photo COUNT. Measured since: every stop carries EXACTLY ONE photo (3580 blocks), so that case does not exist. What actually happened is worse and uniform — the lone image took the whole 1280px strip against a fixed 220px height, a 5.8:1 sliver with the subject cropped away. Also records the source-side rule the box implies: object-fit:cover cuts the top and bottom of a too-tall source and the SIDES of a too-wide one (Munich 475x1400 keeps 20% of its height; Rome 800x91 keeps 15% of its width) — enforced at harvest, Cleanliness 888. guide-style.css min to 234. CACHE to v1044. */
 /* 2026-08-17: rule-compliance-audit — removed font-weight:bold from mobile #ics-pill-row action pills (check_pills_not_bold Rule 857). guide-style.css min to 233. CACHE to v1043. */
 /* 2026-08-17: STOP PHOTOS CHANGED SIZE FROM STOP TO STOP. 645f9349 removed `max-width:370px` from `.stop-photos img` as redundant beside height+object-fit. It is not: `height` fixes one axis only, and with `flex:1 1 0%` and no cap each image takes an equal share of the row, so the WIDTH became a function of how many photos the stop had — 1 photo = full ~700px letterbox, 2 = ~345px each, 3 = ~225px. Cap restored; every photo is the same ~370px slot again regardless of count. A lone photo sitting left-aligned in the card is the accepted trade-off, not a bug to fix by dropping the cap. Nothing failed because nothing ever pinned the photo box — check_stop_row_rhythm now pins both the desktop box (max-width 370px + height 220px) and the mobile one (flex:none + width 100% + height 290px). The 28px train/arrive-first/hotel-first inset from the same commit is untouched and stays. guide-style.css min to 232. CACHE to v1042. */
 /* 2026-08-17: guide alignment fix — on desktop, div.train / .arrive-first / .hotel-first were missing from the 28px inset rule that aligns day-block children with stop-block content, so the train block appeared wider than the photo above it. Added to the same @media (min-width:601px),(pointer:fine) block as .next/.next-tram/.next-metro. Also removed the photo max-width:370px cap (height:220px + object-fit:cover already handles proportions — the cap was causing single photos to sit left-aligned at half the card width). guide-style.css min to 231. CACHE to v1041. */
@@ -1475,7 +1476,7 @@
 /* 2026-08-17: toolbar.js — 3-way merge: phone-menu one-tone + 28px band + Currency pill + Plan group + SEO migration (PAGE_ICON delta/united entries, RES_GROUPS continent links). toolbar.js -> v738. CACHE to v1037. */
 /* 2026-08-17: phone: the tile carousels become a showcase — new screens for all four toolbar.js -> v739. CACHE to v1038. */
 /* 2026-08-17: Cloudflare Web Analytics beacon added to toolbar.js, host-gated to guidemydays.com. The site is set to 'Enable with JS Snippet installation', NOT Cloudflare's automatic setup: automatic injection happens in the proxy, and the domain is on Cloudflare DNS but DNS-only, so visitors reach GitHub Pages directly and nothing passes through Cloudflare to inject into - automatic would have recorded zero for ever. toolbar.js -> v740. CACHE to v1039. */
-var CACHE = 'travel-cache-v1043';
+var CACHE = 'travel-cache-v1044';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1483,7 +1484,7 @@ var CACHE = 'travel-cache-v1043';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 233,'toolbar.js': 740, 'mobile.css': 85, 'web-travel-style.css': 60, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 234,'toolbar.js': 740, 'mobile.css': 85, 'web-travel-style.css': 60, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
