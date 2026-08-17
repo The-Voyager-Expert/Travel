@@ -2322,7 +2322,13 @@ window.TVE.home = (function () {
        2026-08-16 (commit 8c81ba50) and their content lives on in this one page,
        so the old rows are dead links — never copy them back from that block. */
     { name: 'Flights & airports', links: [
-      ['essentials/airlines/',          'Airlines'],
+      ['essentials/north-american-airlines/', 'North American Airlines'],
+      ['essentials/latin-american-airlines/', 'Latin American Airlines'],
+      ['essentials/european-airlines/',       'European Airlines'],
+      ['essentials/middle-east-airlines/',    'Middle East Airlines'],
+      ['essentials/african-airlines/',        'African Airlines'],
+      ['essentials/asian-airlines/',          'Asian Airlines'],
+      ['essentials/oceania-airlines/',        'Airlines of Oceania'],
       ['essentials/baggage/',           'Baggage'],
       ['essentials/connections/',       'Airport Connections'],
       ['essentials/lounges-us/',        'US Lounges'],

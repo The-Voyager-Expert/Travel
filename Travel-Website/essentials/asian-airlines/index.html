@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/web-travel-style.css">
+<title>Asian Airlines</title>
+<link rel="stylesheet" href="/assets/airlines.css?v=1">
+<link rel="stylesheet" href="/assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-maxwidth="1100" data-updated="2026-08-09"></div>
+<script src="/assets/toolbar.js?v=127"></script>
+
+  <div class="hero-band">
+    <h1 class="hero-title">Asian Airlines</h1>
+    <p class="hero-sub">Asia's carriers, from the full-service names that top every service ranking to the low-cost groups that opened the continent up — the Japanese and Korean majors, the three Chinese state carriers, the Southeast Asian budget fleets and the South Asian operators. For each: headquarters, hubs, alliance, fleet size and what it is genuinely good at, plus reviews and a safety rating.</p>
+  </div>
+
+<div class="wrap">
+
+  <!-- CONTINENT INDEX — the seven airline pages read as one directory. The
+       continent is chosen here, and the page it opens is that continent's own
+       (owner 2026-08-17), not an anchor into a single worldwide list. -->
+  <nav class="cont-nav" aria-label="Airlines by continent">
+    <a class="cont-btn" href="/essentials/north-american-airlines/">North America</a>
+    <a class="cont-btn" href="/essentials/latin-american-airlines/">Latin America</a>
+    <a class="cont-btn" href="/essentials/european-airlines/">Europe</a>
+    <a class="cont-btn" href="/essentials/middle-east-airlines/">Middle East</a>
+    <a class="cont-btn" href="/essentials/african-airlines/">Africa</a>
+    <span class="cont-btn on" aria-current="page">Asia</span>
+    <a class="cont-btn" href="/essentials/oceania-airlines/">Oceania</a>
+  </nav>
+
+  <div class="al-search-wrap">
+    <input type="text" id="al-search" class="al-search" placeholder="Airline, country, hub or alliance" autocomplete="off">
+  </div>
+
+  <div class="controls filter-chip-row" id="al-alliance-filters"></div>
+
+  <div class="al-count" id="al-count"></div>
+
+<main>
+  <div id="al-results"></div>
+</main>
+
+</div><!-- /wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="/essentials/airline-networks/">US airline networks</a>
+    <a class="also-on-this-site-pill" href="/essentials/baggage/">Baggage rules</a>
+    <a class="also-on-this-site-pill" href="/essentials/connections/">Connection times</a>
+    <a class="also-on-this-site-pill" href="/essentials/lounges-us/">US lounges</a>
+    <a class="also-on-this-site-pill" href="/essentials/lounges-europe/">EU lounges</a>
+    <a class="also-on-this-site-pill" href="/essentials/trusted-traveler/">Global Entry &amp; CLEAR</a>
+    <a class="also-on-this-site-pill" href="/essentials/passport/">Passport</a>
+    <a class="also-on-this-site-pill" href="/essentials/insurance/">Travel insurance</a>
+  </div>
+</div>
+
+<script src="/assets/search-autocomplete.js?v=8"></script>
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   Asia — one record per carrier. Fields:
+     n  name          w  official website        f  country flag emoji
+     c  country       r  region                  hq headquarters city
+     hub main hubs / bases                       al alliance
+     t  type tags (full / lcc / regional / leisure / longhaul)
+     fl fleet size, approximate
+     d  what the airline is and who it suits     k  what it is known for
+     rv airlineratings.com slug — the carrier's reviews and safety rating
+
+   rv is the review slug and nothing else: the card links to
+   airlineratings.com/airlines/{rv}/reviews and /safety. Every slug was
+   fetched and matched against that page's own <h1> — the site renames carriers
+   freely, so a slug guessed from the name 404s about one time in five. A
+   carrier with no page there carries no rv, which drops the two links from its
+   card rather than shipping a dead one (Links.html § 1).
+
+   Countries render alphabetically; airlines alphabetically inside a country.
+   ───────────────────────────────────────────────────────────────────────── */
+const ALLIANCES = {
+  'Star Alliance': { cls: 'tag-star',     label: 'Star Alliance' },
+  'SkyTeam':       { cls: 'tag-skyteam',  label: 'SkyTeam' },
+  'oneworld':      { cls: 'tag-oneworld', label: 'oneworld' },
+  'Independent':   { cls: 'tag-indep',    label: 'Independent' }
+};
+
+const TYPES = {
+  full:     { cls: 'tag-full',     label: 'Full-service' },
+  lcc:      { cls: 'tag-lcc',      label: 'Low-cost' },
+  regional: { cls: 'tag-regional', label: 'Regional' },
+  leisure:  { cls: 'tag-leisure',  label: 'Leisure' },
+  longhaul: { cls: 'tag-longhaul', label: 'Long-haul' }
+};
+
+const AIRLINES = [
+
+{ n:'Azerbaijan Airlines', w:'https://www.azal.az', rv:'azal-azerbaijan-airlines', f:'🇦🇿', c:'Azerbaijan', r:'Asia',
+  hq:'Baku', hub:'Baku Heydar Aliyev (GYD)',
+  al:'Independent', t:['full'], fl:'≈35 Airbus, Boeing and Embraer',
+  d:'Azerbaijan\'s flag carrier, using Baku as a small connecting point between Europe, Russia, the Gulf and Central Asia.',
+  k:'Baku hub, Caucasus and Central Asia routes, growing European network' },
+
+{ n:'Biman Bangladesh Airlines', w:'https://www.biman-airlines.com', rv:'biman-bangladesh-airlines', f:'🇧🇩', c:'Bangladesh', r:'Asia',
+  hq:'Dhaka', hub:'Dhaka (DAC), Chittagong (CGP)',
+  al:'Independent', t:['full'], fl:'≈21 Boeing 787, 777 and Dash 8',
+  d:'Bangladesh\'s flag carrier, carrying large volumes of migrant worker traffic to the Gulf alongside routes to Europe and Southeast Asia.',
+  k:'Dhaka hub, Gulf labour routes, 787 long-haul fleet' },
+
+{ n:'Royal Brunei Airlines', w:'https://www.flyroyalbrunei.com', rv:'royal-brunei', f:'🇧🇳', c:'Brunei', r:'Asia',
+  hq:'Bandar Seri Begawan', hub:'Brunei (BWN)',
+  al:'Independent', t:['full'], fl:'≈15 Boeing 787 and Airbus A320neo',
+  d:'Brunei\'s small flag carrier, flying an all-modern fleet between Southeast Asia, Australia, the Middle East and London.',
+  k:'All-787 and A320neo fleet, London Heathrow service from a tiny nation, dry cabin policy' },
+
+{ n:'Air China', w:'https://www.airchina.com', rv:'air-china', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Beijing', hub:'Beijing Capital (PEK), Beijing Daxing (PKX), Chengdu (TFU), Shanghai (PVG)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈480 Airbus and Boeing',
+  d:'China\'s flag carrier and the only Chinese airline in Star Alliance, with the strongest network from Beijing to Europe and North America.',
+  k:'Beijing hub, state flag-carrier status, widest Chinese long-haul network to Europe' },
+
+{ n:'China Eastern Airlines', w:'https://www.ceair.com', rv:'china-eastern', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Shanghai', hub:'Shanghai Pudong (PVG), Shanghai Hongqiao (SHA), Kunming (KMG), Xi\'an (XIY)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈650 Airbus, Boeing and Comac',
+  d:'One of the world\'s largest airlines by fleet, dominant at Shanghai and the first operator of China\'s home-built Comac C919 airliner.',
+  k:'Shanghai dual-airport hub, first Comac C919 operator, huge Chinese domestic network' },
+
+{ n:'China Southern Airlines', w:'https://www.csair.com', rv:'china-southern', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Guangzhou', hub:'Guangzhou (CAN), Beijing Daxing (PKX), Shenzhen (SZX), Ürümqi (URC)',
+  al:'Independent', t:['full','longhaul'], fl:'≈650 Airbus and Boeing',
+  d:'The largest airline in Asia by fleet and passengers, using Guangzhou as the main Chinese gateway to Southeast Asia and Oceania. It left SkyTeam in 2019.',
+  k:'Guangzhou hub, "Canton Route" to Australia and New Zealand, largest fleet in Asia' },
+
+{ n:'Hainan Airlines', w:'https://www.hainanairlines.com', rv:'hainan-airlines', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Haikou', hub:'Haikou (HAK), Beijing Capital (PEK), Sanya (SYX), Xi\'an (XIY)',
+  al:'Independent', t:['full','longhaul'], fl:'≈250 Airbus and Boeing',
+  d:'China\'s largest privately founded airline and long the highest-rated Chinese carrier for cabin service, with a big Hainan island leisure base.',
+  k:'Highest service ratings among Chinese airlines, Hainan island tourism traffic, long-haul routes to Europe and North America' },
+
+{ n:'Juneyao Air', w:'https://www.juneyaoair.com', rv:'juneyao-airlines', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Shanghai', hub:'Shanghai Hongqiao (SHA), Shanghai Pudong (PVG), Nanjing (NKG)',
+  al:'Independent', t:['full'], fl:'≈100 Airbus A320 family and Boeing 787',
+  d:'A privately owned Shanghai carrier that sits between low-cost and full-service, and connects to Star Alliance itineraries as a connecting partner.',
+  k:'Shanghai base, Star Alliance connecting partner status, 787 routes to Europe' },
+
+{ n:'Spring Airlines', w:'https://en.ch.com', rv:'spring-airlines', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Shanghai', hub:'Shanghai Pudong (PVG), Shanghai Hongqiao (SHA), Shijiazhuang (SJW)',
+  al:'Independent', t:['lcc'], fl:'≈130 Airbus A320 family',
+  d:'China\'s largest low-cost carrier, flying high-density A320s on domestic routes plus short international services to Japan, Korea and Southeast Asia.',
+  k:'Cheapest fares in China, all-Airbus high-density cabins, Shanghai base' },
+
+{ n:'Xiamen Air', w:'https://www.xiamenair.com', rv:'xiamen-airlines', f:'🇨🇳', c:'China', r:'Asia',
+  hq:'Xiamen', hub:'Xiamen (XMN), Fuzhou (FOC), Hangzhou (HGH)',
+  al:'SkyTeam', t:['full'], fl:'≈200 Boeing 737 and 787',
+  d:'A profitable all-Boeing airline based in Fujian, serving the Chinese domestic market and Southeast Asia with a small long-haul programme.',
+  k:'All-Boeing fleet, Xiamen and Fuzhou bases, SkyTeam member alongside China Eastern' },
+
+{ n:'Cathay Pacific', w:'https://www.cathaypacific.com', rv:'cathay-pacific', f:'🇭🇰', c:'Hong Kong', r:'Asia',
+  hq:'Hong Kong', hub:'Hong Kong (HKG)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈180 Airbus and Boeing widebodies',
+  d:'Hong Kong\'s flag carrier and a founding oneworld member, long regarded as one of Asia\'s premium airlines and a major cargo operator.',
+  k:'Hong Kong hub, The Pier and The Wing lounges, all-widebody long-haul fleet, large freighter operation' },
+
+{ n:'HK Express', w:'https://www.hkexpress.com', rv:'hk-express', f:'🇭🇰', c:'Hong Kong', r:'Asia',
+  hq:'Hong Kong', hub:'Hong Kong (HKG)',
+  al:'Independent', t:['lcc'], fl:'≈35 Airbus A320/A321neo family',
+  d:'Hong Kong\'s only low-cost carrier, owned by Cathay Pacific and flying short-haul leisure routes across Japan, Korea and Southeast Asia.',
+  k:'Cheap Hong Kong–Japan and Korea routes, Cathay ownership, all-Airbus fleet' },
+
+{ n:'Air India', w:'https://www.airindia.com', rv:'air-india', f:'🇮🇳', c:'India', r:'Asia',
+  hq:'Gurugram', hub:'Delhi (DEL), Mumbai (BOM), Bengaluru (BLR)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈200 Airbus and Boeing',
+  d:'India\'s flag carrier, privatised in 2022 and now owned by the Tata group, in the middle of one of the largest fleet and cabin renewals in aviation history.',
+  k:'Nonstop India–North America routes, record Airbus and Boeing orders, Vistara merger, Tata ownership' },
+
+{ n:'Air India Express', w:'https://www.airindiaexpress.com', rv:'air-india-express', f:'🇮🇳', c:'India', r:'Asia',
+  hq:'Kochi', hub:'Kochi (COK), Kozhikode (CCJ), Delhi (DEL), Bengaluru (BLR)',
+  al:'Independent', t:['lcc'], fl:'≈100 Boeing 737 and Airbus A320 family',
+  d:'Air India\'s low-cost arm, focused on routes between southern India and the Gulf, carrying large volumes of Indian workers to and from the Middle East.',
+  k:'India–Gulf routes, Kerala bases, merged with AIX Connect, Air India group feed' },
+
+{ n:'Akasa Air', w:'https://www.akasaair.com', rv:'akasa-air', f:'🇮🇳', c:'India', r:'Asia',
+  hq:'Mumbai', hub:'Mumbai (BOM), Bengaluru (BLR), Delhi (DEL)',
+  al:'Independent', t:['lcc'], fl:'≈30 Boeing 737 MAX',
+  d:'India\'s newest airline, launched in 2022 with an all-737 MAX fleet and a service standard aimed above the usual low-cost baseline.',
+  k:'All-737 MAX fleet, newest Indian carrier, growing international routes to the Gulf' },
+
+{ n:'IndiGo', w:'https://www.goindigo.in', rv:'indigo', f:'🇮🇳', c:'India', r:'Asia',
+  hq:'Gurugram', hub:'Delhi (DEL), Mumbai (BOM), Bengaluru (BLR), Hyderabad (HYD)',
+  al:'Independent', t:['lcc'], fl:'≈400 Airbus A320 family and ATR',
+  d:'India\'s dominant airline, carrying more than half the domestic market on a low-cost model, with the largest aircraft order book in the world.',
+  k:'Over half of Indian domestic traffic, huge A320neo and A350 order book, dense regional ATR network' },
+
+{ n:'SpiceJet', w:'https://www.spicejet.com', rv:'spicejet', f:'🇮🇳', c:'India', r:'Asia',
+  hq:'Gurugram', hub:'Delhi (DEL), Hyderabad (HYD)',
+  al:'Independent', t:['lcc'], fl:'≈25 Boeing 737 and De Havilland Dash 8',
+  d:'An Indian low-cost carrier that once rivalled IndiGo and now flies a much reduced network after prolonged financial difficulty.',
+  k:'Indian regional routes, Dash 8 flying to small airports, low base fares' },
+
+{ n:'Garuda Indonesia', w:'https://www.garuda-indonesia.com', rv:'garuda-indonesia', f:'🇮🇩', c:'Indonesia', r:'Asia',
+  hq:'Jakarta', hub:'Jakarta Soekarno–Hatta (CGK), Denpasar Bali (DPS)',
+  al:'SkyTeam', t:['full'], fl:'≈70 Boeing and Airbus',
+  d:'Indonesia\'s flag carrier, known for its Indonesian-hospitality cabin service and for carrying Hajj pilgrims alongside Bali tourism traffic.',
+  k:'Bali routes, Garuda Indonesia Experience service concept, Hajj charter flying' },
+
+{ n:'Lion Air', w:'https://www.lionair.co.id', rv:'lion-air', f:'🇮🇩', c:'Indonesia', r:'Asia',
+  hq:'Jakarta', hub:'Jakarta Soekarno–Hatta (CGK), Surabaya (SUB), Denpasar Bali (DPS)',
+  al:'Independent', t:['lcc'], fl:'≈100 Boeing 737',
+  d:'Indonesia\'s largest private airline and the core of a low-cost group spanning Indonesia, Malaysia and Thailand across an archipelago of thousands of islands.',
+  k:'Indonesian domestic dominance, Lion Group network, very low island-hopping fares' },
+
+{ n:'All Nippon Airways', w:'https://www.ana.co.jp', rv:'all-nippon-airways-ana', f:'🇯🇵', c:'Japan', r:'Asia',
+  hq:'Tokyo', hub:'Tokyo Haneda (HND), Tokyo Narita (NRT)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈240 Airbus and Boeing',
+  d:'Japan\'s largest airline and the launch customer of the Boeing 787, consistently rated among the best carriers in the world for service and reliability.',
+  k:'Haneda slots, The Room business class, largest 787 fleet in the world, five-star service ratings' },
+
+{ n:'Japan Airlines', w:'https://www.jal.co.jp', rv:'japan-airlines', f:'🇯🇵', c:'Japan', r:'Asia',
+  hq:'Tokyo', hub:'Tokyo Haneda (HND), Tokyo Narita (NRT), Osaka Kansai (KIX)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈230 Airbus and Boeing',
+  d:'Japan\'s flag carrier and oneworld member, with a strong domestic network and a long-haul product built around a well-regarded business class.',
+  k:'Haneda hub, JAL Sky Suite, joint ventures with American, British Airways and Finnair, top on-time performance' },
+
+{ n:'Peach Aviation', w:'https://www.flypeach.com', rv:'peach-air', f:'🇯🇵', c:'Japan', r:'Asia',
+  hq:'Izumisano, Osaka', hub:'Osaka Kansai (KIX), Tokyo Narita (NRT), Naha (OKA)',
+  al:'Independent', t:['lcc'], fl:'≈40 Airbus A320 family',
+  d:'Japan\'s largest low-cost carrier, owned by ANA, flying domestic routes and short international services to Korea, Taiwan and Southeast Asia.',
+  k:'Kansai base, cheapest Japanese domestic fares, ANA group ownership' },
+
+{ n:'Zipair Tokyo', w:'https://www.zipair.net', rv:'zipair', f:'🇯🇵', c:'Japan', r:'Asia',
+  hq:'Narita, Chiba', hub:'Tokyo Narita (NRT)',
+  al:'Independent', t:['lcc','longhaul'], fl:'≈10 Boeing 787',
+  d:'Japan Airlines\' long-haul low-cost arm, flying 787s from Narita to North America, Asia and Oceania on unbundled fares with lie-flat seats available.',
+  k:'Cheap Japan–US fares, all-787 fleet, full-flat Zip Full-Flat seats on a low-cost airline' },
+
+{ n:'Air Astana', w:'https://www.airastana.com', rv:'air-astana', f:'🇰🇿', c:'Kazakhstan', r:'Asia',
+  hq:'Almaty', hub:'Almaty (ALA), Astana (NQZ)',
+  al:'Independent', t:['full'], fl:'≈50 Airbus, Boeing and Embraer including FlyArystan',
+  d:'Kazakhstan\'s flag carrier, repeatedly named the best airline in Central Asia, with a low-cost arm called FlyArystan flying the domestic market.',
+  k:'Almaty and Astana hubs, Central Asia service leadership, FlyArystan low-cost subsidiary' },
+
+{ n:'AirAsia', w:'https://www.airasia.com', rv:'airasia-malaysia', f:'🇲🇾', c:'Malaysia', r:'Asia',
+  hq:'Sepang, Selangor', hub:'Kuala Lumpur (KUL), Bangkok Don Mueang (DMK), Jakarta (CGK), Manila (MNL)',
+  al:'Independent', t:['lcc'], fl:'≈200 across the group',
+  d:'Southeast Asia\'s largest low-cost airline group, with separate Malaysian, Thai, Indonesian and Philippine operations under one brand and booking platform.',
+  k:'Kuala Lumpur base, pan-ASEAN low-cost network, AirAsia X long-haul arm, consistently rated the world\'s best low-cost carrier' },
+
+{ n:'Malaysia Airlines', w:'https://www.malaysiaairlines.com', rv:'malaysia-airlines', f:'🇲🇾', c:'Malaysia', r:'Asia',
+  hq:'Sepang, Selangor', hub:'Kuala Lumpur (KUL)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈110 including Firefly and MASwings',
+  d:'Malaysia\'s flag carrier and oneworld member, with a network centred on Southeast Asia, Australia and Northeast Asia from Kuala Lumpur.',
+  k:'Kuala Lumpur hub, Business Suite on A350s, Borneo regional flying through MASwings' },
+
+{ n:'Pakistan International Airlines', w:'https://www.piac.com.pk', rv:'pakistan-international-airlines', f:'🇵🇰', c:'Pakistan', r:'Asia',
+  hq:'Karachi', hub:'Karachi (KHI), Islamabad (ISB), Lahore (LHE)',
+  al:'Independent', t:['full'], fl:'≈30 Airbus A320 family and Boeing 777',
+  d:'Pakistan\'s state-owned flag carrier, flying domestic routes plus heavy diaspora and worker traffic to the Gulf, the UK and Europe.',
+  k:'Karachi and Islamabad hubs, Gulf and UK diaspora routes, northern Pakistan domestic flying' },
+
+{ n:'Cebu Pacific', w:'https://www.cebupacificair.com', rv:'cebu-pacific', f:'🇵🇭', c:'Philippines', r:'Asia',
+  hq:'Pasay, Metro Manila', hub:'Manila (MNL), Cebu (CEB), Clark (CRK)',
+  al:'Independent', t:['lcc'], fl:'≈90 Airbus A320 family, A330 and ATR',
+  d:'The Philippines\' largest airline, a low-cost carrier serving an archipelago of more than 7,000 islands plus high-density routes to the Gulf and Northeast Asia.',
+  k:'Philippine domestic dominance, high-density A330s to Dubai, ATR island network' },
+
+{ n:'Philippine Airlines', w:'https://www.philippineairlines.com', rv:'philippine-airlines', f:'🇵🇭', c:'Philippines', r:'Asia',
+  hq:'Pasay, Metro Manila', hub:'Manila (MNL), Cebu (CEB)',
+  al:'Independent', t:['full','longhaul'], fl:'≈70 Airbus and Boeing',
+  d:'Asia\'s oldest continuously operating airline under its original name, carrying much of the Filipino diaspora traffic to North America and the Gulf.',
+  k:'Manila hub, nonstop routes to the US West Coast and Canada, large overseas Filipino worker market' },
+
+{ n:'Scoot', w:'https://www.flyscoot.com', rv:'scoot', f:'🇸🇬', c:'Singapore', r:'Asia',
+  hq:'Singapore', hub:'Singapore Changi (SIN)',
+  al:'Independent', t:['lcc','longhaul'], fl:'≈60 Airbus A320 family, A321neo, Boeing 787 and Embraer E190-E2',
+  d:'Singapore Airlines\' low-cost arm, flying both short regional routes and 787 long-haul services, and feeding the SIA network at Changi.',
+  k:'ScootPlus cabin, 787 long-haul low-cost routes, Singapore Airlines group connections' },
+
+{ n:'Singapore Airlines', w:'https://www.singaporeair.com', rv:'singapore-airlines', f:'🇸🇬', c:'Singapore', r:'Asia',
+  hq:'Singapore', hub:'Singapore Changi (SIN)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈150 Airbus and Boeing widebodies',
+  d:'Repeatedly voted the best airline in the world, and the operator of the longest scheduled flight on earth between Singapore and New York.',
+  k:'Singapore–New York ultra-long-haul, Suites and Business on the A380, Changi hub, KrisFlyer programme' },
+
+{ n:'Air Premia', w:'https://www.airpremia.com', f:'🇰🇷', c:'South Korea', r:'Asia',
+  hq:'Seoul', hub:'Seoul Incheon (ICN)',
+  al:'Independent', t:['longhaul'], fl:'≈5 Boeing 787',
+  d:'A hybrid Korean carrier flying 787s to the United States and Europe at fares between low-cost and full-service, with a single premium economy-style cabin.',
+  k:'Cheap Korea–US long-haul, all-787 fleet, mid-market cabin positioning' },
+
+{ n:'Asiana Airlines', w:'https://flyasiana.com', rv:'asiana-airlines', f:'🇰🇷', c:'South Korea', r:'Asia',
+  hq:'Seoul', hub:'Seoul Incheon (ICN), Seoul Gimpo (GMP)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈75 Airbus and Boeing',
+  d:'South Korea\'s second flag carrier, now being absorbed into Korean Air following a merger approved in 2024.',
+  k:'Incheon hub, A380 operations, Star Alliance membership pending the Korean Air merger' },
+
+{ n:'Jeju Air', w:'https://www.jejuair.net', rv:'jeju-air', f:'🇰🇷', c:'South Korea', r:'Asia',
+  hq:'Jeju City', hub:'Seoul Incheon (ICN), Seoul Gimpo (GMP), Jeju (CJU)',
+  al:'Independent', t:['lcc'], fl:'≈40 Boeing 737',
+  d:'South Korea\'s largest low-cost carrier, built on the extremely busy Seoul–Jeju route and short international services to Japan and Southeast Asia.',
+  k:'Seoul–Jeju shuttle, cheapest Korea–Japan fares, all-737 fleet' },
+
+{ n:'Korean Air', w:'https://www.koreanair.com', rv:'korean-air', f:'🇰🇷', c:'South Korea', r:'Asia',
+  hq:'Seoul', hub:'Seoul Incheon (ICN), Seoul Gimpo (GMP)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈160 Airbus and Boeing',
+  d:'South Korea\'s flag carrier and a SkyTeam founder, with a strong transpacific network and a major cargo operation, now merging with Asiana.',
+  k:'Incheon transpacific hub, SkyTeam founder, Asiana merger, large freighter fleet' },
+
+{ n:'T\'way Air', w:'https://www.twayair.com', rv:'tway-airlines', f:'🇰🇷', c:'South Korea', r:'Asia',
+  hq:'Seoul', hub:'Seoul Incheon (ICN), Seoul Gimpo (GMP), Daegu (TAE)',
+  al:'Independent', t:['lcc'], fl:'≈35 Boeing 737 and Airbus A330',
+  d:'A Korean low-cost carrier expanding beyond short-haul into European routes handed over as a condition of the Korean Air–Asiana merger.',
+  k:'Korea–Japan and Southeast Asia routes, new A330 long-haul flying to Europe' },
+
+{ n:'SriLankan Airlines', w:'https://www.srilankan.com', rv:'srilankan-airlines', f:'🇱🇰', c:'Sri Lanka', r:'Asia',
+  hq:'Katunayake', hub:'Colombo (CMB)',
+  al:'oneworld', t:['full'], fl:'≈23 Airbus A320 family and A330',
+  d:'Sri Lanka\'s flag carrier and a oneworld member, using Colombo as a connecting point between India, the Gulf and Southeast Asia.',
+  k:'Colombo hub, Maldives and India routes, oneworld access in South Asia' },
+
+{ n:'China Airlines', w:'https://www.china-airlines.com', rv:'china-airlines', f:'🇹🇼', c:'Taiwan', r:'Asia',
+  hq:'Taoyuan', hub:'Taipei Taoyuan (TPE), Kaohsiung (KHH)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈85 Airbus and Boeing',
+  d:'Taiwan\'s flag carrier and SkyTeam member, with a large transpacific network and one of the biggest air cargo operations in the world.',
+  k:'Taipei hub, major freighter fleet, SkyTeam member in Taiwan' },
+
+{ n:'EVA Air', w:'https://www.evaair.com', rv:'eva-air', f:'🇹🇼', c:'Taiwan', r:'Asia',
+  hq:'Taoyuan', hub:'Taipei Taoyuan (TPE)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈85 Airbus and Boeing',
+  d:'A consistently top-rated Taiwanese airline, known for its Royal Laurel business class and for pioneering the premium economy cabin in Asia.',
+  k:'Royal Laurel business class, Hello Kitty themed jets, strong transpacific and European routes' },
+
+{ n:'Starlux Airlines', w:'https://www.starlux-airlines.com', rv:'starlux-airlines', f:'🇹🇼', c:'Taiwan', r:'Asia',
+  hq:'Taipei', hub:'Taipei Taoyuan (TPE)',
+  al:'Independent', t:['full','longhaul'], fl:'≈25 Airbus A321neo, A330neo and A350',
+  d:'A boutique Taiwanese airline launched in 2020 with a deliberately premium product, all-new Airbus aircraft and a first class cabin on long-haul routes.',
+  k:'Luxury positioning, all-Airbus new-generation fleet, Taipei–US West Coast routes' },
+
+{ n:'Bangkok Airways', w:'https://www.bangkokair.com', rv:'bangkok-air', f:'🇹🇭', c:'Thailand', r:'Asia',
+  hq:'Bangkok', hub:'Bangkok Suvarnabhumi (BKK), Koh Samui (USM)',
+  al:'Independent', t:['full','regional'], fl:'≈25 Airbus A320 family and ATR',
+  d:'A Thai regional airline that owns and operates Koh Samui airport, and gives every passenger lounge access regardless of cabin.',
+  k:'Koh Samui airport ownership, lounge access for all passengers, Thai and Indochina regional routes' },
+
+{ n:'Thai Airways International', w:'https://www.thaiairways.com', rv:'thai-airways-international', f:'🇹🇭', c:'Thailand', r:'Asia',
+  hq:'Bangkok', hub:'Bangkok Suvarnabhumi (BKK)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈75 Airbus and Boeing',
+  d:'Thailand\'s flag carrier, rebuilt after restructuring, with a network centred on Europe, Australia and Northeast Asia from Bangkok.',
+  k:'Bangkok hub, Royal Orchid service, long-haul routes to Europe and Australia' },
+
+{ n:'Uzbekistan Airways', w:'https://www.uzairways.com', rv:'uzbekistan-airways', f:'🇺🇿', c:'Uzbekistan', r:'Asia',
+  hq:'Tashkent', hub:'Tashkent (TAS)',
+  al:'Independent', t:['full'], fl:'≈35 Airbus and Boeing',
+  d:'Uzbekistan\'s flag carrier, the main way into Samarkand and Bukhara by air, with routes to Europe, Russia, the Gulf and East Asia.',
+  k:'Tashkent hub, Silk Road tourism traffic, 787 routes to Europe' },
+
+{ n:'VietJet Air', w:'https://www.vietjetair.com', rv:'vietjet-air', f:'🇻🇳', c:'Vietnam', r:'Asia',
+  hq:'Hanoi', hub:'Ho Chi Minh City (SGN), Hanoi (HAN), Da Nang (DAD)',
+  al:'Independent', t:['lcc'], fl:'≈105 Airbus A320/A321 family',
+  d:'Vietnam\'s largest low-cost carrier, which grew rapidly on domestic trunk routes and now flies across Asia and to Australia.',
+  k:'Vietnamese domestic network, cheap fares across Southeast Asia, all-Airbus fleet' },
+
+{ n:'Vietnam Airlines', w:'https://www.vietnamairlines.com', rv:'vietnam-airlines', f:'🇻🇳', c:'Vietnam', r:'Asia',
+  hq:'Hanoi', hub:'Hanoi (HAN), Ho Chi Minh City (SGN)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈100 Airbus and Boeing',
+  d:'Vietnam\'s flag carrier and SkyTeam member, flying a full domestic network plus long-haul routes to Europe, Australia and North America.',
+  k:'Hanoi and Ho Chi Minh City hubs, 787 and A350 long-haul fleet, SkyTeam member' },
+
+/* ═══ OCEANIA ═══ */
+
+];
+</script>
+<script src="/assets/airlines.js?v=1"></script>
+</body>
+</html>

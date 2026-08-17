@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/web-travel-style.css">
+<title>Middle East Airlines</title>
+<link rel="stylesheet" href="/assets/airlines.css?v=1">
+<link rel="stylesheet" href="/assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-maxwidth="1100" data-updated="2026-08-09"></div>
+<script src="/assets/toolbar.js?v=127"></script>
+
+  <div class="hero-band">
+    <h1 class="hero-title">Middle East Airlines</h1>
+    <p class="hero-sub">The Gulf super-connectors and their neighbours — the three carriers that rebuilt long-haul routing around a single stop, the national airlines of the smaller Gulf states, and the Levantine and Turkish operators. For each: headquarters, hubs, alliance, fleet size and what it does better than anyone, with its reviews and safety rating linked.</p>
+  </div>
+
+<div class="wrap">
+
+  <!-- CONTINENT INDEX — the seven airline pages read as one directory. The
+       continent is chosen here, and the page it opens is that continent's own
+       (owner 2026-08-17), not an anchor into a single worldwide list. -->
+  <nav class="cont-nav" aria-label="Airlines by continent">
+    <a class="cont-btn" href="/essentials/north-american-airlines/">North America</a>
+    <a class="cont-btn" href="/essentials/latin-american-airlines/">Latin America</a>
+    <a class="cont-btn" href="/essentials/european-airlines/">Europe</a>
+    <span class="cont-btn on" aria-current="page">Middle East</span>
+    <a class="cont-btn" href="/essentials/african-airlines/">Africa</a>
+    <a class="cont-btn" href="/essentials/asian-airlines/">Asia</a>
+    <a class="cont-btn" href="/essentials/oceania-airlines/">Oceania</a>
+  </nav>
+
+  <div class="al-search-wrap">
+    <input type="text" id="al-search" class="al-search" placeholder="Airline, country, hub or alliance" autocomplete="off">
+  </div>
+
+  <div class="controls filter-chip-row" id="al-alliance-filters"></div>
+
+  <div class="al-count" id="al-count"></div>
+
+<main>
+  <div id="al-results"></div>
+</main>
+
+</div><!-- /wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="/essentials/airline-networks/">US airline networks</a>
+    <a class="also-on-this-site-pill" href="/essentials/baggage/">Baggage rules</a>
+    <a class="also-on-this-site-pill" href="/essentials/connections/">Connection times</a>
+    <a class="also-on-this-site-pill" href="/essentials/lounges-us/">US lounges</a>
+    <a class="also-on-this-site-pill" href="/essentials/lounges-europe/">EU lounges</a>
+    <a class="also-on-this-site-pill" href="/essentials/trusted-traveler/">Global Entry &amp; CLEAR</a>
+    <a class="also-on-this-site-pill" href="/essentials/passport/">Passport</a>
+    <a class="also-on-this-site-pill" href="/essentials/insurance/">Travel insurance</a>
+  </div>
+</div>
+
+<script src="/assets/search-autocomplete.js?v=8"></script>
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   Middle East — one record per carrier. Fields:
+     n  name          w  official website        f  country flag emoji
+     c  country       r  region                  hq headquarters city
+     hub main hubs / bases                       al alliance
+     t  type tags (full / lcc / regional / leisure / longhaul)
+     fl fleet size, approximate
+     d  what the airline is and who it suits     k  what it is known for
+     rv airlineratings.com slug — the carrier's reviews and safety rating
+
+   rv is the review slug and nothing else: the card links to
+   airlineratings.com/airlines/{rv}/reviews and /safety. Every slug was
+   fetched and matched against that page's own <h1> — the site renames carriers
+   freely, so a slug guessed from the name 404s about one time in five. A
+   carrier with no page there carries no rv, which drops the two links from its
+   card rather than shipping a dead one (Links.html § 1).
+
+   Countries render alphabetically; airlines alphabetically inside a country.
+   ───────────────────────────────────────────────────────────────────────── */
+const ALLIANCES = {
+  'Star Alliance': { cls: 'tag-star',     label: 'Star Alliance' },
+  'SkyTeam':       { cls: 'tag-skyteam',  label: 'SkyTeam' },
+  'oneworld':      { cls: 'tag-oneworld', label: 'oneworld' },
+  'Independent':   { cls: 'tag-indep',    label: 'Independent' }
+};
+
+const TYPES = {
+  full:     { cls: 'tag-full',     label: 'Full-service' },
+  lcc:      { cls: 'tag-lcc',      label: 'Low-cost' },
+  regional: { cls: 'tag-regional', label: 'Regional' },
+  leisure:  { cls: 'tag-leisure',  label: 'Leisure' },
+  longhaul: { cls: 'tag-longhaul', label: 'Long-haul' }
+};
+
+const AIRLINES = [
+
+{ n:'Gulf Air', w:'https://www.gulfair.com', rv:'gulf-air', f:'🇧🇭', c:'Bahrain', r:'Middle East',
+  hq:'Muharraq', hub:'Bahrain (BAH)',
+  al:'Independent', t:['full'], fl:'≈35 Airbus A320neo family and Boeing 787',
+  d:'The Bahraini flag carrier, one of the oldest airlines in the Gulf, running a compact network focused on the region, South Asia and a few European cities.',
+  k:'Bahrain hub, Falcon Gold cabin, regional Gulf and Indian subcontinent routes' },
+
+{ n:'El Al', w:'https://www.elal.com', rv:'el-al-israel-airlines', f:'🇮🇱', c:'Israel', r:'Middle East',
+  hq:'Lod', hub:'Tel Aviv Ben Gurion (TLV)',
+  al:'Independent', t:['full','longhaul'], fl:'≈45 Boeing 737, 787 and 777',
+  d:'The Israeli flag carrier, known for exceptionally strict security screening and for not scheduling flights over the Jewish Sabbath.',
+  k:'Ben Gurion hub, Sabbath-free schedule, security procedures, long-haul 787 fleet' },
+
+{ n:'Royal Jordanian', w:'https://www.rj.com', rv:'royal-jordanian', f:'🇯🇴', c:'Jordan', r:'Middle East',
+  hq:'Amman', hub:'Amman Queen Alia (AMM)',
+  al:'oneworld', t:['full'], fl:'≈25 Airbus A320 family, Embraer and Boeing 787',
+  d:'Jordan\'s flag carrier and the oneworld member of the Levant, connecting Amman to Europe, the Gulf and North America.',
+  k:'Amman hub, oneworld access in the Middle East, Petra and Dead Sea tourism traffic' },
+
+{ n:'Jazeera Airways', w:'https://www.jazeeraairways.com', rv:'jazeera-airways', f:'🇰🇼', c:'Kuwait', r:'Middle East',
+  hq:'Kuwait City', hub:'Kuwait (KWI)',
+  al:'Independent', t:['lcc'], fl:'≈25 Airbus A320neo family',
+  d:'A Kuwaiti low-cost carrier with its own terminal at Kuwait airport, flying the Gulf, the Indian subcontinent and a handful of European cities.',
+  k:'Own private terminal at Kuwait, low-cost Gulf–South Asia routes, all-Airbus fleet' },
+
+{ n:'Kuwait Airways', w:'https://www.kuwaitairways.com', rv:'kuwait-airways', f:'🇰🇼', c:'Kuwait', r:'Middle East',
+  hq:'Kuwait City', hub:'Kuwait (KWI)',
+  al:'Independent', t:['full'], fl:'≈30 Airbus A320 family and A330',
+  d:'Kuwait\'s state-owned flag carrier, serving the Gulf, South Asia, Europe and North America. Alcohol is not served on board.',
+  k:'Kuwait hub, dry cabin policy, Gulf and Indian subcontinent network' },
+
+{ n:'Middle East Airlines', w:'https://www.mea.com.lb', rv:'middle-east-airlines-mea', f:'🇱🇧', c:'Lebanon', r:'Middle East',
+  hq:'Beirut', hub:'Beirut (BEY)',
+  al:'SkyTeam', t:['full'], fl:'≈20 Airbus A320neo family and A330',
+  d:'The Lebanese flag carrier, which has kept flying continuously through decades of regional instability and carries much of Lebanon\'s diaspora traffic.',
+  k:'Beirut hub, diaspora routes to Europe, Africa and the Gulf, SkyTeam member' },
+
+{ n:'Oman Air', w:'https://www.omanair.com', rv:'oman-air', f:'🇴🇲', c:'Oman', r:'Middle East',
+  hq:'Muscat', hub:'Muscat (MCT)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈50 Boeing 737, 787 and Airbus A330',
+  d:'Oman\'s flag carrier, positioned as a smaller and quieter Gulf connector than its Emirati and Qatari neighbours, with a well-regarded business class.',
+  k:'Muscat hub, joined oneworld in 2025, spacious business class, Indian subcontinent network' },
+
+{ n:'Qatar Airways', w:'https://www.qatarairways.com', rv:'qatar-airways', f:'🇶🇦', c:'Qatar', r:'Middle East',
+  hq:'Doha', hub:'Doha Hamad (DOH)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈260 Airbus and Boeing widebodies plus A320s',
+  d:'One of the most awarded airlines in the world, connecting almost everywhere through Doha and repeatedly voted the best airline overall.',
+  k:'Qsuite business class, Hamad International hub, oneworld member, very wide global network' },
+
+{ n:'flynas', w:'https://www.flynas.com', rv:'flynas', f:'🇸🇦', c:'Saudi Arabia', r:'Middle East',
+  hq:'Riyadh', hub:'Riyadh (RUH), Jeddah (JED)',
+  al:'Independent', t:['lcc'], fl:'≈60 Airbus A320neo family',
+  d:'Saudi Arabia\'s low-cost carrier, carrying domestic traffic plus large volumes of Umrah and Hajj pilgrims into Jeddah and Medina.',
+  k:'Saudi domestic network, pilgrimage traffic, all-Airbus neo fleet' },
+
+{ n:'Riyadh Air', w:'https://www.riyadhair.com', rv:'riyadh-air', f:'🇸🇦', c:'Saudi Arabia', r:'Middle East',
+  hq:'Riyadh', hub:'Riyadh (RUH)',
+  al:'Independent', t:['full','longhaul'], fl:'Boeing 787 fleet in build-up',
+  d:'A state-backed startup launched to make Riyadh a global connecting hub, part of Saudi Arabia\'s plan to grow tourism and transfer traffic.',
+  k:'New Riyadh hub, digital-first product, 787 and A321neo orders, Saudi Vision 2030 backing' },
+
+{ n:'Saudia', w:'https://www.saudia.com', rv:'saudia', f:'🇸🇦', c:'Saudi Arabia', r:'Middle East',
+  hq:'Jeddah', hub:'Jeddah (JED), Riyadh (RUH), Dammam (DMM)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈145 Airbus and Boeing',
+  d:'Saudi Arabia\'s flag carrier and the main airline for pilgrimage traffic to Mecca and Medina, alongside a full domestic and international network.',
+  k:'Hajj and Umrah operations, Jeddah hub, SkyTeam member, no alcohol on board' },
+
+{ n:'Air Arabia', w:'https://www.airarabia.com', rv:'air-arabia', f:'🇦🇪', c:'United Arab Emirates', r:'Middle East',
+  hq:'Sharjah', hub:'Sharjah (SHJ), Abu Dhabi (AUH), Ras Al Khaimah (RKT)',
+  al:'Independent', t:['lcc'], fl:'≈80 Airbus A320 family',
+  d:'The first and largest low-cost carrier in the Middle East, flying from Sharjah and several other bases across the Gulf, North Africa and South Asia.',
+  k:'Sharjah base, lowest Gulf fares, multi-country franchise operations in Morocco, Egypt and Armenia' },
+
+{ n:'Emirates', w:'https://www.emirates.com', rv:'emirates', f:'🇦🇪', c:'United Arab Emirates', r:'Middle East',
+  hq:'Dubai', hub:'Dubai (DXB)',
+  al:'Independent', t:['full','longhaul'], fl:'≈260 Airbus A380 and Boeing 777 only',
+  d:'The world\'s largest international airline by passenger kilometres, flying an all-widebody fleet through Dubai and connecting almost any two continents in one stop.',
+  k:'Largest A380 fleet in the world, Dubai hub, onboard shower spa and bar in First, no alliance but many partners' },
+
+{ n:'Etihad Airways', w:'https://www.etihad.com', rv:'etihad-airways', f:'🇦🇪', c:'United Arab Emirates', r:'Middle East',
+  hq:'Abu Dhabi', hub:'Abu Dhabi (AUH)',
+  al:'Independent', t:['full','longhaul'], fl:'≈100 Airbus and Boeing',
+  d:'The UAE\'s second flag carrier, based in Abu Dhabi, with a smaller and more premium-focused network than Emirates and US preclearance at its home airport.',
+  k:'The Residence and First Apartments, US preclearance at Abu Dhabi, Abu Dhabi stopover programme' },
+
+{ n:'flydubai', w:'https://www.flydubai.com', rv:'flydubai', f:'🇦🇪', c:'United Arab Emirates', r:'Middle East',
+  hq:'Dubai', hub:'Dubai (DXB)',
+  al:'Independent', t:['lcc'], fl:'≈90 Boeing 737',
+  d:'Dubai\'s low-cost carrier, flying to smaller cities across the Gulf, Central Asia, Africa and Eastern Europe, with fares and schedules coordinated with Emirates.',
+  k:'Emirates codeshare and connecting baggage, thin regional routes, business class on a low-cost airline' },
+
+/* ═══ AFRICA ═══ */
+
+];
+</script>
+<script src="/assets/airlines.js?v=1"></script>
+</body>
+</html>

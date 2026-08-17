@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/web-travel-style.css">
+<title>Airlines of Oceania</title>
+<link rel="stylesheet" href="/assets/airlines.css?v=1">
+<link rel="stylesheet" href="/assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-maxwidth="1100" data-updated="2026-08-09"></div>
+<script src="/assets/toolbar.js?v=127"></script>
+
+  <div class="hero-band">
+    <h1 class="hero-title">Airlines of Oceania</h1>
+    <p class="hero-sub">The airlines of Australia, New Zealand and the Pacific islands — the two domestic duopolies, the long-haul flag carriers, and the island operators that are the only way between much of the South Pacific. For each: headquarters, hubs, alliance, approximate fleet and what it is good at, with its reviews and safety rating.</p>
+  </div>
+
+<div class="wrap">
+
+  <!-- CONTINENT INDEX — the seven airline pages read as one directory. The
+       continent is chosen here, and the page it opens is that continent's own
+       (owner 2026-08-17), not an anchor into a single worldwide list. -->
+  <nav class="cont-nav" aria-label="Airlines by continent">
+    <a class="cont-btn" href="/essentials/north-american-airlines/">North America</a>
+    <a class="cont-btn" href="/essentials/latin-american-airlines/">Latin America</a>
+    <a class="cont-btn" href="/essentials/european-airlines/">Europe</a>
+    <a class="cont-btn" href="/essentials/middle-east-airlines/">Middle East</a>
+    <a class="cont-btn" href="/essentials/african-airlines/">Africa</a>
+    <a class="cont-btn" href="/essentials/asian-airlines/">Asia</a>
+    <span class="cont-btn on" aria-current="page">Oceania</span>
+  </nav>
+
+  <div class="al-search-wrap">
+    <input type="text" id="al-search" class="al-search" placeholder="Airline, country, hub or alliance" autocomplete="off">
+  </div>
+
+  <div class="controls filter-chip-row" id="al-alliance-filters"></div>
+
+  <div class="al-count" id="al-count"></div>
+
+<main>
+  <div id="al-results"></div>
+</main>
+
+</div><!-- /wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="/essentials/airline-networks/">US airline networks</a>
+    <a class="also-on-this-site-pill" href="/essentials/baggage/">Baggage rules</a>
+    <a class="also-on-this-site-pill" href="/essentials/connections/">Connection times</a>
+    <a class="also-on-this-site-pill" href="/essentials/lounges-us/">US lounges</a>
+    <a class="also-on-this-site-pill" href="/essentials/lounges-europe/">EU lounges</a>
+    <a class="also-on-this-site-pill" href="/essentials/trusted-traveler/">Global Entry &amp; CLEAR</a>
+    <a class="also-on-this-site-pill" href="/essentials/passport/">Passport</a>
+    <a class="also-on-this-site-pill" href="/essentials/insurance/">Travel insurance</a>
+  </div>
+</div>
+
+<script src="/assets/search-autocomplete.js?v=8"></script>
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   Oceania — one record per carrier. Fields:
+     n  name          w  official website        f  country flag emoji
+     c  country       r  region                  hq headquarters city
+     hub main hubs / bases                       al alliance
+     t  type tags (full / lcc / regional / leisure / longhaul)
+     fl fleet size, approximate
+     d  what the airline is and who it suits     k  what it is known for
+     rv airlineratings.com slug — the carrier's reviews and safety rating
+
+   rv is the review slug and nothing else: the card links to
+   airlineratings.com/airlines/{rv}/reviews and /safety. Every slug was
+   fetched and matched against that page's own <h1> — the site renames carriers
+   freely, so a slug guessed from the name 404s about one time in five. A
+   carrier with no page there carries no rv, which drops the two links from its
+   card rather than shipping a dead one (Links.html § 1).
+
+   Countries render alphabetically; airlines alphabetically inside a country.
+   ───────────────────────────────────────────────────────────────────────── */
+const ALLIANCES = {
+  'Star Alliance': { cls: 'tag-star',     label: 'Star Alliance' },
+  'SkyTeam':       { cls: 'tag-skyteam',  label: 'SkyTeam' },
+  'oneworld':      { cls: 'tag-oneworld', label: 'oneworld' },
+  'Independent':   { cls: 'tag-indep',    label: 'Independent' }
+};
+
+const TYPES = {
+  full:     { cls: 'tag-full',     label: 'Full-service' },
+  lcc:      { cls: 'tag-lcc',      label: 'Low-cost' },
+  regional: { cls: 'tag-regional', label: 'Regional' },
+  leisure:  { cls: 'tag-leisure',  label: 'Leisure' },
+  longhaul: { cls: 'tag-longhaul', label: 'Long-haul' }
+};
+
+const AIRLINES = [
+
+{ n:'Jetstar', w:'https://www.jetstar.com', rv:'jetstar', f:'🇦🇺', c:'Australia', r:'Oceania',
+  hq:'Melbourne, Victoria', hub:'Melbourne (MEL), Sydney (SYD), Brisbane (BNE), Gold Coast (OOL)',
+  al:'Independent', t:['lcc'], fl:'≈90 Airbus A320 family and Boeing 787',
+  d:'Qantas\' low-cost arm, flying Australian domestic routes plus low-cost long-haul services to Asia and Hawaii with 787s.',
+  k:'Cheapest Australian domestic fares, 787 low-cost long-haul, Qantas group ownership' },
+
+{ n:'Qantas', w:'https://www.qantas.com', rv:'qantas', f:'🇦🇺', c:'Australia', r:'Oceania',
+  hq:'Mascot, Sydney', hub:'Sydney (SYD), Melbourne (MEL), Brisbane (BNE), Perth (PER)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈130 mainline plus QantasLink',
+  d:'Australia\'s flag carrier, a oneworld founder and one of the oldest airlines in the world, operating some of the longest nonstop routes ever flown.',
+  k:'Perth–London nonstop, Project Sunrise ultra-long-haul, outstanding safety record, extensive outback network' },
+
+{ n:'Rex', w:'https://www.rex.com.au', f:'🇦🇺', c:'Australia', r:'Oceania',
+  hq:'Mascot, Sydney', hub:'Sydney (SYD), Melbourne (MEL), Adelaide (ADL)',
+  al:'Independent', t:['regional'], fl:'≈60 Saab 340 and Boeing 737',
+  d:'Australia\'s largest independent regional airline, serving small outback and country towns that the majors have long abandoned.',
+  k:'Regional and outback New South Wales and Queensland routes, Saab 340 fleet, community air links' },
+
+{ n:'Virgin Australia', w:'https://www.virginaustralia.com', rv:'virgin-australia', f:'🇦🇺', c:'Australia', r:'Oceania',
+  hq:'Brisbane, Queensland', hub:'Brisbane (BNE), Sydney (SYD), Melbourne (MEL), Perth (PER)',
+  al:'Independent', t:['full'], fl:'≈100 Boeing 737',
+  d:'Australia\'s second-largest airline, rebuilt after administration as a mid-market carrier flying an all-737 domestic network plus routes to the Pacific and Asia.',
+  k:'Australian domestic competition to Qantas, all-737 fleet, Qatar Airways partnership on long-haul' },
+
+{ n:'Fiji Airways', w:'https://www.fijiairways.com', rv:'fiji-airways', f:'🇫🇯', c:'Fiji', r:'Oceania',
+  hq:'Nadi', hub:'Nadi (NAN), Suva (SUV)',
+  al:'oneworld', t:['full','leisure'], fl:'≈25 Airbus A330/A350, Boeing 737 and ATR',
+  d:'Fiji\'s flag carrier and a oneworld connect member, the main air link between the South Pacific islands, Australasia and North America.',
+  k:'Nadi hub for the South Pacific, A350 routes to the US, inter-island ATR network' },
+
+{ n:'Air Tahiti Nui', w:'https://www.airtahitinui.com', rv:'air-tahiti-nui', f:'🇵🇫', c:'French Polynesia', r:'Oceania',
+  hq:'Papeete', hub:'Papeete Faa\'a (PPT)',
+  al:'Independent', t:['full','longhaul','leisure'], fl:'≈4 Boeing 787-9',
+  d:'The flag carrier of French Polynesia, flying a tiny all-787 fleet between Tahiti, Paris, Los Angeles and Auckland.',
+  k:'Tahiti long-haul routes, all-787 fleet, Paris service via Los Angeles' },
+
+{ n:'Air New Zealand', w:'https://www.airnewzealand.com', rv:'air-new-zealand', f:'🇳🇿', c:'New Zealand', r:'Oceania',
+  hq:'Auckland', hub:'Auckland (AKL), Christchurch (CHC), Wellington (WLG)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈105 Airbus, Boeing and ATR',
+  d:'New Zealand\'s flag carrier, repeatedly named among the world\'s safest and best airlines, with a domestic network reaching almost every corner of the country.',
+  k:'Skycouch and the Skynest sleep pods, Auckland Pacific hub, extensive domestic turboprop network' }
+
+];
+</script>
+<script src="/assets/airlines.js?v=1"></script>
+</body>
+</html>

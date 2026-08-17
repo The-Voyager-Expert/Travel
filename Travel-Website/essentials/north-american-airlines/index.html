@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/web-travel-style.css">
+<title>North American Airlines</title>
+<link rel="stylesheet" href="/assets/airlines.css?v=1">
+<link rel="stylesheet" href="/assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-maxwidth="1100" data-updated="2026-08-09"></div>
+<script src="/assets/toolbar.js?v=127"></script>
+
+  <div class="hero-band">
+    <h1 class="hero-title">North American Airlines</h1>
+    <p class="hero-sub">Every carrier flying under a North American flag — the three US majors and their regional feeders, the low-cost and ultra-low-cost fleets, Air Canada and WestJet, and the Mexican and Caribbean-facing operators. For each: where it is headquartered, the hubs it actually builds its schedule around, the alliance it credits to, roughly how large the fleet is and what it is genuinely good at, with a link to its own reviews and safety rating.</p>
+  </div>
+
+<div class="wrap">
+
+  <!-- CONTINENT INDEX — the seven airline pages read as one directory. The
+       continent is chosen here, and the page it opens is that continent's own
+       (owner 2026-08-17), not an anchor into a single worldwide list. -->
+  <nav class="cont-nav" aria-label="Airlines by continent">
+    <span class="cont-btn on" aria-current="page">North America</span>
+    <a class="cont-btn" href="/essentials/latin-american-airlines/">Latin America</a>
+    <a class="cont-btn" href="/essentials/european-airlines/">Europe</a>
+    <a class="cont-btn" href="/essentials/middle-east-airlines/">Middle East</a>
+    <a class="cont-btn" href="/essentials/african-airlines/">Africa</a>
+    <a class="cont-btn" href="/essentials/asian-airlines/">Asia</a>
+    <a class="cont-btn" href="/essentials/oceania-airlines/">Oceania</a>
+  </nav>
+
+  <div class="al-search-wrap">
+    <input type="text" id="al-search" class="al-search" placeholder="Airline, country, hub or alliance" autocomplete="off">
+  </div>
+
+  <div class="controls filter-chip-row" id="al-alliance-filters"></div>
+
+  <div class="al-count" id="al-count"></div>
+
+<main>
+  <div id="al-results"></div>
+</main>
+
+</div><!-- /wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="/essentials/airline-networks/">US airline networks</a>
+    <a class="also-on-this-site-pill" href="/essentials/baggage/">Baggage rules</a>
+    <a class="also-on-this-site-pill" href="/essentials/connections/">Connection times</a>
+    <a class="also-on-this-site-pill" href="/essentials/lounges-us/">US lounges</a>
+    <a class="also-on-this-site-pill" href="/essentials/lounges-europe/">EU lounges</a>
+    <a class="also-on-this-site-pill" href="/essentials/trusted-traveler/">Global Entry &amp; CLEAR</a>
+    <a class="also-on-this-site-pill" href="/essentials/passport/">Passport</a>
+    <a class="also-on-this-site-pill" href="/essentials/insurance/">Travel insurance</a>
+  </div>
+</div>
+
+<script src="/assets/search-autocomplete.js?v=8"></script>
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   North America — one record per carrier. Fields:
+     n  name          w  official website        f  country flag emoji
+     c  country       r  region                  hq headquarters city
+     hub main hubs / bases                       al alliance
+     t  type tags (full / lcc / regional / leisure / longhaul)
+     fl fleet size, approximate
+     d  what the airline is and who it suits     k  what it is known for
+     rv airlineratings.com slug — the carrier's reviews and safety rating
+
+   rv is the review slug and nothing else: the card links to
+   airlineratings.com/airlines/{rv}/reviews and /safety. Every slug was
+   fetched and matched against that page's own <h1> — the site renames carriers
+   freely, so a slug guessed from the name 404s about one time in five. A
+   carrier with no page there carries no rv, which drops the two links from its
+   card rather than shipping a dead one (Links.html § 1).
+
+   Countries render alphabetically; airlines alphabetically inside a country.
+   ───────────────────────────────────────────────────────────────────────── */
+const ALLIANCES = {
+  'Star Alliance': { cls: 'tag-star',     label: 'Star Alliance' },
+  'SkyTeam':       { cls: 'tag-skyteam',  label: 'SkyTeam' },
+  'oneworld':      { cls: 'tag-oneworld', label: 'oneworld' },
+  'Independent':   { cls: 'tag-indep',    label: 'Independent' }
+};
+
+const TYPES = {
+  full:     { cls: 'tag-full',     label: 'Full-service' },
+  lcc:      { cls: 'tag-lcc',      label: 'Low-cost' },
+  regional: { cls: 'tag-regional', label: 'Regional' },
+  leisure:  { cls: 'tag-leisure',  label: 'Leisure' },
+  longhaul: { cls: 'tag-longhaul', label: 'Long-haul' }
+};
+
+const AIRLINES = [
+
+{ n:'Air Canada', w:'https://www.aircanada.com', rv:'air-canada', f:'🇨🇦', c:'Canada', r:'North America',
+  hq:'Montreal, Quebec', hub:'Toronto Pearson (YYZ), Montreal (YUL), Vancouver (YVR), Calgary (YYC)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈360 including Rouge and Express',
+  d:"Canada's flag carrier and by far its largest international airline, with the widest long-haul network of any North American carrier outside the US big three.",
+  k:'Transatlantic and transpacific breadth, Signature Class on widebodies, strong Europe–Canada–Asia connecting traffic' },
+
+{ n:'Flair Airlines', w:'https://www.flyflair.com', rv:'flair-airlines', f:'🇨🇦', c:'Canada', r:'North America',
+  hq:'Edmonton, Alberta', hub:'Toronto Pearson (YYZ), Vancouver (YVR), Edmonton (YEG)',
+  al:'Independent', t:['lcc'], fl:'≈20 Boeing 737 MAX',
+  d:"Canada's ultra-low-cost challenger, selling bare fares on domestic trunk routes and sun destinations with everything else charged as an add-on.",
+  k:'Lowest headline fares in Canada, unbundled pricing, seasonal Mexico and Caribbean flying' },
+
+{ n:'Porter Airlines', w:'https://www.flyporter.com', rv:'porter-airlines', f:'🇨🇦', c:'Canada', r:'North America',
+  hq:'Toronto, Ontario', hub:'Toronto Billy Bishop (YTZ), Toronto Pearson (YYZ), Ottawa (YOW)',
+  al:'Independent', t:['full'], fl:'≈80 Embraer E195-E2 and De Havilland Dash 8',
+  d:'An all-economy airline that competes on comfort rather than price: no middle seats on its jets, free beer and wine, and complimentary snacks on every flight.',
+  k:'Billy Bishop downtown-island base, elevated economy product, rapid E195-E2 expansion across Canada and the US' },
+
+{ n:'WestJet', w:'https://www.westjet.com', rv:'westjet', f:'🇨🇦', c:'Canada', r:'North America',
+  hq:'Calgary, Alberta', hub:'Calgary (YYC), Toronto Pearson (YYZ), Vancouver (YVR)',
+  al:'Independent', t:['full','leisure'], fl:'≈180 including Encore and Sunwing',
+  d:"Canada's second-largest airline, built as a low-cost carrier and now a hybrid with business cabins, a Calgary long-haul base and a large sun-destination programme.",
+  k:'Calgary transatlantic hub, Dreamliner service to Europe and Asia, dominant Western Canada network' },
+
+{ n:'Aeroméxico', w:'https://www.aeromexico.com', rv:'aeromexico', f:'🇲🇽', c:'Mexico', r:'North America',
+  hq:'Mexico City', hub:'Mexico City (MEX), Monterrey (MTY), Guadalajara (GDL)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈150 including Connect',
+  d:"Mexico's flag carrier and the only Mexican airline with a meaningful long-haul network, tightly joined to Delta through a transborder joint venture.",
+  k:'Mexico City hub connections, Delta partnership, Dreamliner routes to Europe and Asia' },
+
+{ n:'VivaAerobus', w:'https://www.vivaaerobus.com', rv:'viva-aerobus', f:'🇲🇽', c:'Mexico', r:'North America',
+  hq:'Monterrey, Nuevo León', hub:'Monterrey (MTY), Mexico City Felipe Ángeles (NLU), Guadalajara (GDL)',
+  al:'Independent', t:['lcc'], fl:'≈90 Airbus A320 family',
+  d:'An ultra-low-cost carrier flying dense domestic Mexican routes plus cross-border service to the US, with fares built around a very low base and paid extras.',
+  k:'Cheapest domestic fares in Mexico, big Felipe Ángeles presence, fast-growing US routes' },
+
+{ n:'Volaris', w:'https://www.volaris.com', rv:'volaris', f:'🇲🇽', c:'Mexico', r:'North America',
+  hq:'Mexico City', hub:'Mexico City (MEX), Guadalajara (GDL), Tijuana (TIJ), Cancún (CUN)',
+  al:'Independent', t:['lcc'], fl:'≈145 Airbus A320 family',
+  d:'The largest Mexican airline by passengers, an ultra-low-cost carrier aimed heavily at the visiting-friends-and-relatives market between Mexico and the United States.',
+  k:'Tijuana cross-border terminal, dense US–Mexico network, aggressive fare pricing' },
+
+{ n:'Alaska Airlines', w:'https://www.alaskaair.com', rv:'alaska-airlines', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'SeaTac, Washington', hub:'Seattle (SEA), Portland (PDX), Anchorage (ANC), Los Angeles (LAX), San Francisco (SFO), Honolulu (HNL)',
+  al:'oneworld', t:['full'], fl:'≈330 with Hawaiian and Horizon',
+  d:'The dominant West Coast carrier, known for a loyal following, a well-regarded frequent flyer programme and unmatched service within Alaska itself.',
+  k:'West Coast network depth, Hawaiian Airlines merger adding widebodies and Pacific routes, top-rated Mileage Plan' },
+
+{ n:'Allegiant Air', w:'https://www.allegiant.com', rv:'allegiant-air', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Las Vegas, Nevada', hub:'Las Vegas (LAS), Orlando Sanford (SFB), Punta Gorda (PGD), Nashville (BNA)',
+  al:'Independent', t:['lcc','leisure'], fl:'≈120 Airbus A320 family',
+  d:'A leisure specialist that connects small and mid-sized US cities directly to holiday destinations, usually only a few times a week and with no connecting traffic.',
+  k:'Small-city nonstops to Florida, Las Vegas and Phoenix, low frequencies, package holiday model' },
+
+{ n:'American Airlines', w:'https://www.aa.com', rv:'american-airlines', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Fort Worth, Texas', hub:'Dallas/Fort Worth (DFW), Charlotte (CLT), Chicago O\'Hare (ORD), Miami (MIA), Philadelphia (PHL), Phoenix (PHX), Washington National (DCA), New York (JFK/LGA)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈980 mainline',
+  d:'One of the largest airlines in the world by fleet and passengers, with the strongest US network into Latin America and the Caribbean out of its Miami hub.',
+  k:'Dallas/Fort Worth mega-hub, Miami gateway to Latin America, joint ventures with British Airways, Iberia, Japan Airlines and Qantas' },
+
+{ n:'Breeze Airways', w:'https://www.flybreeze.com', rv:'breeze-airways', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Cottonwood Heights, Utah', hub:'Charleston (CHS), Provo (PVU), Norfolk (ORF), Tampa (TPA)',
+  al:'Independent', t:['lcc'], fl:'≈40 Airbus A220-300 and Embraer E190/195',
+  d:'A newer carrier founded by JetBlue\'s creator, flying point-to-point between mid-sized cities that previously had no nonstop link at all.',
+  k:'Underserved city pairs, A220 first-class seating on a low-cost airline, no hub connections' },
+
+{ n:'Delta Air Lines', w:'https://www.delta.com', rv:'delta-air-lines', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Atlanta, Georgia', hub:'Atlanta (ATL), Detroit (DTW), Minneapolis–St Paul (MSP), Salt Lake City (SLC), New York (JFK/LGA), Boston (BOS), Los Angeles (LAX), Seattle (SEA)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈990 mainline',
+  d:'A founding SkyTeam member consistently ranked at the top of US airlines for operational reliability, running the world\'s busiest hub at Atlanta.',
+  k:'Atlanta mega-hub, Delta One suites, joint ventures with Air France-KLM, Virgin Atlantic, Korean Air, LATAM and Aeroméxico' },
+
+{ n:'Frontier Airlines', w:'https://www.flyfrontier.com', rv:'frontier-airlines', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Denver, Colorado', hub:'Denver (DEN), Las Vegas (LAS), Orlando (MCO), Philadelphia (PHL)',
+  al:'Independent', t:['lcc'], fl:'≈150 Airbus A320neo family',
+  d:'An ultra-low-cost carrier built around a very low base fare and paid extras, with a young fuel-efficient fleet and animal tail art on every aircraft.',
+  k:'Rock-bottom base fares, all-Airbus neo fleet, Denver base, everything unbundled' },
+
+{ n:'Hawaiian Airlines', w:'https://www.hawaiianairlines.com', rv:'hawaiian-airlines', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Honolulu, Hawaii', hub:'Honolulu (HNL), Kahului (OGG)',
+  al:'oneworld', t:['full','longhaul','leisure'], fl:'≈60 Airbus A330/A321neo and Boeing 787',
+  d:'The largest airline serving Hawaii, carrying both inter-island traffic and long-haul routes to the US mainland, Japan, Korea and Oceania. Now part of Alaska Air Group.',
+  k:'Inter-island network, Hawaii–Asia routes, Boeing 787 Leihōkū suites, Amazon cargo A330 flying' },
+
+{ n:'JetBlue Airways', w:'https://www.jetblue.com', rv:'jetblue-airways', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Long Island City, New York', hub:'New York JFK (JFK), Boston (BOS), Fort Lauderdale (FLL), Orlando (MCO), San Juan (SJU)',
+  al:'Independent', t:['full'], fl:'≈290 Airbus A220/A320 family',
+  d:'A US carrier positioned between the low-cost and legacy models, with more legroom in standard economy than any other big US airline and a premium transatlantic product.',
+  k:'Mint business class on London and Paris routes, free wifi on every flight, best-in-class economy pitch' },
+
+{ n:'Southwest Airlines', w:'https://www.southwest.com', rv:'southwest-airlines', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Dallas, Texas', hub:'Point-to-point; largest bases Chicago Midway (MDW), Denver (DEN), Las Vegas (LAS), Baltimore (BWI), Dallas Love (DAL), Phoenix (PHX)',
+  al:'Independent', t:['lcc'], fl:'≈800 Boeing 737',
+  d:'The largest domestic carrier in the United States by passengers, running a single-type 737 fleet on a point-to-point network rather than through connecting hubs.',
+  k:'All-737 operation, huge US domestic reach, no long-haul flying, its own booking channel only' },
+
+{ n:'Spirit Airlines', w:'https://www.spirit.com', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Dania Beach, Florida', hub:'Fort Lauderdale (FLL), Orlando (MCO), Detroit (DTW), Las Vegas (LAS)',
+  al:'Independent', t:['lcc'], fl:'≈210 Airbus A320 family',
+  d:'The original US ultra-low-cost carrier, with the lowest base fares in the market and charges for carry-ons, seat selection and everything else.',
+  k:'Florida and Caribbean leisure routes, high-density cabins, fully unbundled fares' },
+
+{ n:'Sun Country Airlines', w:'https://www.suncountry.com', rv:'sun-country-airlines', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Minneapolis, Minnesota', hub:'Minneapolis–St Paul (MSP)',
+  al:'Independent', t:['lcc','leisure'], fl:'≈60 Boeing 737',
+  d:'A hybrid airline that combines seasonal leisure flying from the Upper Midwest with charter work and a dedicated cargo operation for Amazon.',
+  k:'Minneapolis winter sun routes, charter and cargo mix, seasonal schedule that shifts with demand' },
+
+{ n:'United Airlines', w:'https://www.united.com', rv:'united-airlines', f:'🇺🇸', c:'United States', r:'North America',
+  hq:'Chicago, Illinois', hub:'Chicago O\'Hare (ORD), Denver (DEN), Houston Bush (IAH), Newark (EWR), San Francisco (SFO), Los Angeles (LAX), Washington Dulles (IAD)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈1,000 mainline',
+  d:'The US carrier with the broadest international route map, particularly across the Pacific from San Francisco and into Europe, Africa and India from Newark and Washington.',
+  k:'Widest US long-haul network, Polaris business class, transpacific strength, Star Alliance backbone' },
+
+/* ═══ LATIN AMERICA & CARIBBEAN ═══ */
+
+];
+</script>
+<script src="/assets/airlines.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/web-travel-style.css">
+<title>African Airlines</title>
+<link rel="stylesheet" href="/assets/airlines.css?v=1">
+<link rel="stylesheet" href="/assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-maxwidth="1100" data-updated="2026-08-09"></div>
+<script src="/assets/toolbar.js?v=127"></script>
+
+  <div class="hero-band">
+    <h1 class="hero-title">African Airlines</h1>
+    <p class="hero-sub">The airlines that actually connect Africa — Ethiopian's Addis hub, the North African flag carriers, the South African operators, and the regional fleets that fill in where nobody else flies. For each: headquarters, hubs, alliance, approximate fleet and what it is good at, with its own reviews and safety rating.</p>
+  </div>
+
+<div class="wrap">
+
+  <!-- CONTINENT INDEX — the seven airline pages read as one directory. The
+       continent is chosen here, and the page it opens is that continent's own
+       (owner 2026-08-17), not an anchor into a single worldwide list. -->
+  <nav class="cont-nav" aria-label="Airlines by continent">
+    <a class="cont-btn" href="/essentials/north-american-airlines/">North America</a>
+    <a class="cont-btn" href="/essentials/latin-american-airlines/">Latin America</a>
+    <a class="cont-btn" href="/essentials/european-airlines/">Europe</a>
+    <a class="cont-btn" href="/essentials/middle-east-airlines/">Middle East</a>
+    <span class="cont-btn on" aria-current="page">Africa</span>
+    <a class="cont-btn" href="/essentials/asian-airlines/">Asia</a>
+    <a class="cont-btn" href="/essentials/oceania-airlines/">Oceania</a>
+  </nav>
+
+  <div class="al-search-wrap">
+    <input type="text" id="al-search" class="al-search" placeholder="Airline, country, hub or alliance" autocomplete="off">
+  </div>
+
+  <div class="controls filter-chip-row" id="al-alliance-filters"></div>
+
+  <div class="al-count" id="al-count"></div>
+
+<main>
+  <div id="al-results"></div>
+</main>
+
+</div><!-- /wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="/essentials/airline-networks/">US airline networks</a>
+    <a class="also-on-this-site-pill" href="/essentials/baggage/">Baggage rules</a>
+    <a class="also-on-this-site-pill" href="/essentials/connections/">Connection times</a>
+    <a class="also-on-this-site-pill" href="/essentials/lounges-us/">US lounges</a>
+    <a class="also-on-this-site-pill" href="/essentials/lounges-europe/">EU lounges</a>
+    <a class="also-on-this-site-pill" href="/essentials/trusted-traveler/">Global Entry &amp; CLEAR</a>
+    <a class="also-on-this-site-pill" href="/essentials/passport/">Passport</a>
+    <a class="also-on-this-site-pill" href="/essentials/insurance/">Travel insurance</a>
+  </div>
+</div>
+
+<script src="/assets/search-autocomplete.js?v=8"></script>
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   Africa — one record per carrier. Fields:
+     n  name          w  official website        f  country flag emoji
+     c  country       r  region                  hq headquarters city
+     hub main hubs / bases                       al alliance
+     t  type tags (full / lcc / regional / leisure / longhaul)
+     fl fleet size, approximate
+     d  what the airline is and who it suits     k  what it is known for
+     rv airlineratings.com slug — the carrier's reviews and safety rating
+
+   rv is the review slug and nothing else: the card links to
+   airlineratings.com/airlines/{rv}/reviews and /safety. Every slug was
+   fetched and matched against that page's own <h1> — the site renames carriers
+   freely, so a slug guessed from the name 404s about one time in five. A
+   carrier with no page there carries no rv, which drops the two links from its
+   card rather than shipping a dead one (Links.html § 1).
+
+   Countries render alphabetically; airlines alphabetically inside a country.
+   ───────────────────────────────────────────────────────────────────────── */
+const ALLIANCES = {
+  'Star Alliance': { cls: 'tag-star',     label: 'Star Alliance' },
+  'SkyTeam':       { cls: 'tag-skyteam',  label: 'SkyTeam' },
+  'oneworld':      { cls: 'tag-oneworld', label: 'oneworld' },
+  'Independent':   { cls: 'tag-indep',    label: 'Independent' }
+};
+
+const TYPES = {
+  full:     { cls: 'tag-full',     label: 'Full-service' },
+  lcc:      { cls: 'tag-lcc',      label: 'Low-cost' },
+  regional: { cls: 'tag-regional', label: 'Regional' },
+  leisure:  { cls: 'tag-leisure',  label: 'Leisure' },
+  longhaul: { cls: 'tag-longhaul', label: 'Long-haul' }
+};
+
+const AIRLINES = [
+
+{ n:'Air Algérie', w:'https://airalgerie.dz', rv:'air-algerie', f:'🇩🇿', c:'Algeria', r:'Africa',
+  hq:'Algiers', hub:'Algiers (ALG)',
+  al:'Independent', t:['full'], fl:'≈60 Boeing and Airbus',
+  d:'Algeria\'s state-owned flag carrier, with a large domestic network across the Sahara and heavy traffic to France and the rest of Western Europe.',
+  k:'Saharan domestic routes, Algeria–France diaspora traffic, Algiers hub' },
+
+{ n:'TAAG Angola Airlines', w:'https://www.taag.com', rv:'taag-angola-airlines', f:'🇦🇴', c:'Angola', r:'Africa',
+  hq:'Luanda', hub:'Luanda (LAD)',
+  al:'Independent', t:['full','longhaul'], fl:'≈15 Boeing 737 and 777, Dash 8',
+  d:'Angola\'s flag carrier, the main air link between southern Africa, Brazil and Portugal, with a domestic network across a country with poor road connections.',
+  k:'Luanda hub, Lusophone routes to Lisbon and São Paulo, Angolan domestic network' },
+
+{ n:'EgyptAir', w:'https://www.egyptair.com', rv:'egyptair-and-egyptair-express', f:'🇪🇬', c:'Egypt', r:'Africa',
+  hq:'Cairo', hub:'Cairo (CAI)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈70 Airbus and Boeing',
+  d:'One of the oldest airlines in the world and the first African carrier to join Star Alliance, connecting Europe and the Gulf to Africa through Cairo.',
+  k:'Cairo hub, Nile Valley and Red Sea tourism traffic, Star Alliance access across North Africa' },
+
+{ n:'Ethiopian Airlines', w:'https://www.ethiopianairlines.com', rv:'ethiopian-airways', f:'🇪🇹', c:'Ethiopia', r:'Africa',
+  hq:'Addis Ababa', hub:'Addis Ababa Bole (ADD), Lomé (LFW)',
+  al:'Star Alliance', t:['full','longhaul'], fl:'≈150 Airbus, Boeing and De Havilland',
+  d:'Africa\'s largest and most profitable airline, serving more destinations on the continent than any other and connecting Africa to Asia and the Americas through Addis Ababa.',
+  k:'Largest African network, Addis Ababa hub, free stopover in Ethiopia, large cargo operation' },
+
+{ n:'Kenya Airways', w:'https://www.kenya-airways.com', rv:'kenya-airways', f:'🇰🇪', c:'Kenya', r:'Africa',
+  hq:'Nairobi', hub:'Nairobi Jomo Kenyatta (NBO)',
+  al:'SkyTeam', t:['full','longhaul'], fl:'≈35 Boeing 737, 787 and Embraer',
+  d:'Kenya\'s flag carrier and East Africa\'s SkyTeam member, the main gateway for safari traffic into the Maasai Mara and the wider region.',
+  k:'Nairobi hub, safari and East African tourism traffic, 787 routes to Europe and Asia' },
+
+{ n:'Air Mauritius', w:'https://www.airmauritius.com', rv:'air-mauritius', f:'🇲🇺', c:'Mauritius', r:'Africa',
+  hq:'Port Louis', hub:'Mauritius (MRU)',
+  al:'Independent', t:['full','longhaul','leisure'], fl:'≈12 Airbus A330neo, A350 and ATR',
+  d:'The Mauritian flag carrier, carrying most of the island\'s long-haul leisure traffic from Europe, India and South Africa.',
+  k:'Indian Ocean island routes, A350 long-haul fleet, Réunion and Rodrigues regional flying' },
+
+{ n:'Royal Air Maroc', w:'https://www.royalairmaroc.com', rv:'royal-air-maroc', f:'🇲🇦', c:'Morocco', r:'Africa',
+  hq:'Casablanca', hub:'Casablanca (CMN)',
+  al:'oneworld', t:['full','longhaul'], fl:'≈60 Boeing 737, 787 and Embraer',
+  d:'Morocco\'s flag carrier and Africa\'s oneworld member, using Casablanca as a link between Europe, West Africa and North and South America.',
+  k:'Casablanca hub, West Africa network, oneworld access in North Africa, free Morocco stopover' },
+
+{ n:'Air Peace', w:'https://www.flyairpeace.com', rv:'air-peace', f:'🇳🇬', c:'Nigeria', r:'Africa',
+  hq:'Lagos', hub:'Lagos (LOS), Abuja (ABV)',
+  al:'Independent', t:['full'], fl:'≈30 Boeing 737, Embraer 195-E2 and 777',
+  d:'Nigeria\'s largest airline, dominant on domestic routes and expanding into long-haul flying to London and the Gulf.',
+  k:'Nigerian domestic network, Lagos and Abuja bases, London Gatwick long-haul service' },
+
+{ n:'RwandAir', w:'https://www.rwandair.com', rv:'rwand-air', f:'🇷🇼', c:'Rwanda', r:'Africa',
+  hq:'Kigali', hub:'Kigali (KGL)',
+  al:'Independent', t:['full'], fl:'≈12 Airbus A330, Boeing 737 and CRJ',
+  d:'Rwanda\'s fast-growing flag carrier, building Kigali into a small but well-run connecting point across East, Central and West Africa.',
+  k:'Kigali hub, gorilla-trekking tourism traffic, pan-African network from a small fleet' },
+
+{ n:'Airlink', w:'https://www.flyairlink.com', rv:'airlink', f:'🇿🇦', c:'South Africa', r:'Africa',
+  hq:'Johannesburg', hub:'Johannesburg (JNB), Cape Town (CPT)',
+  al:'Independent', t:['regional'], fl:'≈65 Embraer regional jets',
+  d:'Southern Africa\'s largest regional airline, flying to small towns, safari airstrips and neighbouring countries that mainline carriers do not serve.',
+  k:'Kruger, Skukuza and safari-lodge airports, southern African regional reach, all-Embraer fleet' },
+
+{ n:'FlySafair', w:'https://www.flysafair.co.za', rv:'flysafair', f:'🇿🇦', c:'South Africa', r:'Africa',
+  hq:'Johannesburg', hub:'Johannesburg (JNB), Cape Town (CPT), Durban (DUR)',
+  al:'Independent', t:['lcc'], fl:'≈35 Boeing 737',
+  d:'South Africa\'s largest domestic airline, a low-cost carrier that took over the market after the decline of SAA and several failed competitors.',
+  k:'South African domestic dominance, consistently strong on-time record, cheap Johannesburg–Cape Town fares' },
+
+{ n:'South African Airways', w:'https://www.flysaa.com', rv:'south-african-airways-saa', f:'🇿🇦', c:'South Africa', r:'Africa',
+  hq:'Johannesburg', hub:'Johannesburg (JNB), Cape Town (CPT)',
+  al:'Star Alliance', t:['full'], fl:'≈15 Airbus A320 family and A330',
+  d:'South Africa\'s flag carrier, now a much smaller airline after business rescue, flying a rebuilt regional African network plus a few long-haul routes.',
+  k:'Johannesburg hub, regional African routes, Star Alliance membership retained through restructuring' },
+
+{ n:'Air Tanzania', w:'https://www.airtanzania.co.tz', rv:'air-tanzania', f:'🇹🇿', c:'Tanzania', r:'Africa',
+  hq:'Dar es Salaam', hub:'Dar es Salaam (DAR), Kilimanjaro (JRO)',
+  al:'Independent', t:['full'], fl:'≈12 Airbus A220, Boeing 787 and Dash 8',
+  d:'Tanzania\'s state-owned flag carrier, rebuilt around new aircraft to carry safari and Zanzibar tourism traffic directly.',
+  k:'Kilimanjaro and Zanzibar routes, A220 and 787 fleet renewal, domestic Tanzanian network' },
+
+{ n:'Tunisair', w:'https://www.tunisair.com', rv:'tunisair', f:'🇹🇳', c:'Tunisia', r:'Africa',
+  hq:'Tunis', hub:'Tunis (TUN)',
+  al:'Independent', t:['full'], fl:'≈30 Airbus A320 family',
+  d:'Tunisia\'s flag carrier, flying mainly to France, Italy and the Gulf, with heavy summer traffic from European holidaymakers and the Tunisian diaspora.',
+  k:'Tunis hub, France and Italy routes, Mediterranean summer leisure traffic' },
+
+/* ═══ ASIA ═══ */
+
+];
+</script>
+<script src="/assets/airlines.js?v=1"></script>
+</body>
+</html>
