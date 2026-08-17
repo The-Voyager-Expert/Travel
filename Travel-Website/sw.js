@@ -1418,7 +1418,8 @@
 /* 2026-08-17: airline networks: PAGE_ICON drops the three retired carrier pages toolbar.js -> v700. CACHE to v984. */
 /* 2026-08-17: cars: rental section divided by continent, 16 operators added, a review on every company and a Trustpilot link on 26 of them. Page only, no asset ?v= change, so the CACHE bump is what carries it to returning readers. */
 /* 2026-08-17: best of: the phone gets 34 cover photos and a picture tile on the landing page. Pages only, no asset ?v= change, so the CACHE bump is what carries it to returning readers. toolbar.js -> v701. CACHE to v986. */
-var CACHE = 'travel-cache-v986';
+/* 2026-08-17: the train guide divided by continent — four new pages (asian-, americas-, african-, oceania-trains) plus European-Trains refactored onto two NEW shared assets, trains.css and trains.js, which carry the card system and the filter/jump-nav/typeahead behaviour for all five. Both are added to MIN_VERSIONS at 1 so a later edit to either can bust a cached copy — without a floor, a returning browser keeps serving the first version it ever fetched and no future fix reaches it. The five pages are precached too, and every operator card gained a review block, so CACHE moves as well. CACHE to v987. */
+var CACHE = 'travel-cache-v987';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1426,7 +1427,7 @@ var CACHE = 'travel-cache-v986';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 224,'toolbar.js': 701, 'mobile.css': 82, 'web-travel-style.css': 52, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8 };
+var MIN_VERSIONS = { 'guide-style.css': 224,'toolbar.js': 701, 'mobile.css': 82, 'web-travel-style.css': 52, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 1, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
