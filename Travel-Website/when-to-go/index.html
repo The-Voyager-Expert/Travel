@@ -252,6 +252,7 @@ a.cf-card:hover { border-color: var(--rust); box-shadow: 0 3px 10px rgba(192,78,
 .cf-presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
 .cf-preset { padding: 5px 12px; border: 1px solid var(--border2); border-radius: 14px; background: var(--surface); font-size: 12px; cursor: pointer; color: var(--muted); font-family: inherit; transition: border-color .15s, color .15s; }
 .cf-preset:hover { border-color: var(--accent, #c8a44e); color: var(--text); }
+.cf-preset.on { border-color: var(--rust, #C04E1A); color: var(--rust, #C04E1A); }
 /* City search */
 .cf-city-search { width: 200px; padding: 7px 10px; border: 1.5px solid var(--border2); border-radius: 6px; font-family: inherit; font-size: 16px; color: var(--text); background: var(--bg); }
 .cf-city-search::placeholder { color: var(--muted); }
@@ -621,7 +622,14 @@ a.cf-card:hover .cf-guide-pill { border-color: var(--rust, #C04E1A); }
       minV.textContent = conv(minC) + '°' + unit();
       maxV.textContent = conv(maxC) + '°' + unit();
     }
+    var activePreset = null;
+    function paintPresets() {
+      [].forEach.call(document.querySelectorAll('.cf-preset'), function (b) {
+        b.classList.toggle('on', b.dataset.preset === activePreset);
+      });
+    }
     function readSlider(e) {
+      activePreset = null; paintPresets();
       minC = parseFloat(minI.value); maxC = parseFloat(maxI.value);
       if (minC > maxC) {
         if (e && e.target === minI) { maxC = minC; maxI.value = maxC; }
@@ -673,10 +681,11 @@ a.cf-card:hover .cf-guide-pill { border-color: var(--rust, #C04E1A); }
       if (!btn) return;
       var p = PRESETS[btn.dataset.preset];
       if (!p) return;
+      activePreset = btn.dataset.preset;
       if (p.month !== undefined) month = p.month;
       minC = p.minC; maxC = p.maxC;
       rainFilter = p.rain;
-      paintMonths(); fillInputs(); paintRainFilter(); renderResults();
+      paintMonths(); fillInputs(); paintRainFilter(); paintPresets(); renderResults();
     });
 
     /* City name search */
@@ -1126,8 +1135,25 @@ a.cf-card:hover .cf-guide-pill { border-color: var(--rust, #C04E1A); }
         : 'No matches';
 
       if (!hits.length) {
-        resultsEl.innerHTML = '<div class="empty-state">No destinations have a typical high of ' +
-          lo + '–' + hi + '°' + u + ' in ' + MONTHS_LONG[month] + '.<br>Try widening the range.</div>';
+        var emptyMsg;
+        if (citySearch) {
+          var cs2 = citySearch.toLowerCase();
+          var cityMatches = keys.filter(function (k) {
+            return (CLIM[k].city || k).toLowerCase().indexOf(cs2) >= 0;
+          });
+          if (!cityMatches.length) {
+            emptyMsg = '“' + citySearch + '” isn’t in the climate dataset.';
+          } else {
+            var matchName = CLIM[cityMatches[0]].city || cityMatches[0];
+            var matchTemp = conv(CLIM[cityMatches[0]].hi[month]);
+            emptyMsg = matchName + ' is ' + matchTemp + '°' + u + ' in ' + MONTHS_LONG[month] +
+              ' — outside the ' + lo + '–' + hi + '°' + u + ' range.<br>Adjust the sliders to include it.';
+          }
+        } else {
+          emptyMsg = 'No destinations have a typical high of ' + lo + '–' + hi + '°' + u +
+            ' in ' + MONTHS_LONG[month] + '.<br>Try widening the range.';
+        }
+        resultsEl.innerHTML = '<div class="empty-state">' + emptyMsg + '</div>';
         updateHash();
         renderCompare();
         return;
