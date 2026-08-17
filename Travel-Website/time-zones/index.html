@@ -34,9 +34,16 @@ input.search:focus { border-color: var(--c-search-focus-border); box-shadow: non
 .pill:hover, .pill.active { font-family: inherit; background: var(--bg, #f5f4f0); border-color: var(--rust, #C04E1A); color: var(--text, #3d3a32); }
 /* The distance sort is dead until the reader has searched a city — it stays
    visible so they can see what a search unlocks, but it does not respond. */
-.pill:disabled { opacity: .45; cursor: default; }
+/* pointer-events:none is load-bearing, not decoration: a disabled button
+   swallows its own click entirely — the event is never dispatched, not even to
+   the row — so without this the dead pill is a hole in the page. With it the
+   click lands on #region-pills, which focuses the search. */
+.pill:disabled { opacity: .45; cursor: default; pointer-events: none; }
 .pill:disabled:hover { background: var(--surface, #fff); border-color: var(--border2, #e6e2da); color: #6a6660; }
 a.pill:visited { color: #6a6660; }
+/* The sort pill shares the row with the region filters but is not one of them —
+   a gap says so without a divider or a second row. */
+.sort-pill { margin-left: 14px; }
 
 /* Desktop — ROUNDED PILLS, spaced, in the toolbar's own grammar (owner 2026-08-17:
    "this is ugly the all is a big square try to make these pill look better").
@@ -110,15 +117,18 @@ a.pill:visited { color: #6a6660; }
   /* Controls: search full-width on top, pills below */
   .controls { flex-direction: column; align-items: center; gap: 8px; }
   input.search { max-width: 100%; box-sizing: border-box; }
-  /* Region + sort pills as clean uniform grids so they line up together instead
-     of ragged flex-wrap (region was 4+2 with Europe running to the edge). */
+  /* One glued 3-across grid, so the row lines up instead of ragged flex-wrap
+     (region was 4+2 with Europe running to the edge). */
   #region-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; align-self: stretch; }
-  #sort-pills   { display: grid; grid-template-columns: 1fr 1fr; gap: 0; align-self: stretch; }
-  #region-pills .pill, #sort-pills .pill {
+  #region-pills .pill {
     width: 100%; justify-content: center; padding: 4px 6px;
     height: 46px; border-radius: 0; font-size: 12px; line-height: 1.12;
     white-space: normal; text-align: center;
   }
+  /* Seventh item in a 3-across grid would sit alone in the left third. The sort
+     pill is a different kind of control anyway, so it takes the full width and
+     reads as its own line — and drops the desktop gap that separates it. */
+  #region-pills .sort-pill { grid-column: 1 / -1; margin-left: 0; }
   /* Grid: 2 columns on phones ≥ 360px, 1 column on very small */
   .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   /* Cards: tighten up */
@@ -206,12 +216,27 @@ a.pill:visited { color: #6a6660; }
 
   <div class="hero-band">
     <h1 class="hero-title">Time Zones</h1>
-    <p class="hero-sub">Live local time in every destination on the site. Search a city or a country and every card is re-measured from there, so you can see at a glance whether it is a reasonable hour to call a hotel, whether a shop is still open, or what time you actually land. Filter by region, sort A–Z, or sort by how far each clock sits from the city you searched.</p>
+    <p class="hero-sub">Live local time in every destination on the site. Search a city or a country and every card is re-measured from there, so you can see at a glance whether it is a reasonable hour to call a hotel, whether a shop is still open, or what time you actually land. The grid re-sorts to put the clocks closest to your searched city first, and the region pills narrow it.</p>
   </div>
   <div class="hero-ground">
     <input class="search search-input" id="search" type="search" placeholder="City or country" aria-label="Search by city or country" autocomplete="off">
   </div>
 
+  <!-- ONE ROW, and A–Z is RETIRED (owner 2026-08-17: "A to Z does not make
+       sense? remove that" · "time zone is always in relationship to the city
+       searched" · "we have all already so a to z is very useless add on" ·
+       "move closest to the city up to the same row as the rest").
+
+       A–Z was never a choice — it is the grid's resting order, the one you are
+       already looking at, so it shipped as a permanently-selected pill sitting
+       next to a permanently-dead one and said nothing. Alphabetical is now
+       simply what the grid does until a city is searched.
+
+       The distance sort keeps its pill, on the region row, and it TURNS ITSELF
+       ON when a city is picked — the reader searched a place, so the clocks
+       nearest that place come first without a second click. That is what "not
+       working" meant: it did work, but only if you found the dead pill, and it
+       stayed dead-looking until you searched. Clicking it drops back to A–Z. -->
   <div class="controls">
     <div class="pills" id="region-pills">
       <button class="pill active" data-region="all">All</button>
@@ -220,9 +245,6 @@ a.pill:visited { color: #6a6660; }
       <button class="pill" data-region="europe">Europe</button>
       <button class="pill" data-region="asiapac">Asia · Pacific</button>
       <button class="pill" data-region="other">M.E. &amp; Africa</button>
-    </div>
-    <div class="pills" id="sort-pills">
-      <button class="pill sort-pill active" data-sort="alpha" aria-label="Sort alphabetically">A–Z</button>
       <button class="pill sort-pill" data-sort="time" id="sort-time" disabled>Closest to your city</button>
     </div>
   </div>
@@ -505,17 +527,18 @@ function setHome(city) {
   /* Deliberately NOT persisted — a remembered city is a preselected city on the
      next visit, which is the thing this page must never do. */
 
-  /* Sorting by distance is meaningless before a city has been searched. */
+  /* Sorting by distance is meaningless before a city has been searched — but the
+     moment one IS searched it is the whole point of the page (owner 2026-08-17:
+     "time zone is always in relationship to the city searched"), so the pill
+     turns itself on rather than waiting for a second click on a control the
+     reader had no reason to notice. Picking nothing drops straight back to the
+     grid's resting alphabetical order. */
   var timePill = document.querySelector('.sort-pill[data-sort="time"]');
   if (timePill) {
     timePill.disabled = !city;
     timePill.textContent = city ? 'Closest to ' + city.name : 'Closest to your city';
-    if (!city && activeSort === 'time') {
-      activeSort = 'alpha';
-      document.querySelectorAll('.sort-pill').forEach(function (p) { p.classList.remove('active'); });
-      var alphaPill = document.querySelector('.sort-pill[data-sort="alpha"]');
-      if (alphaPill) alphaPill.classList.add('active');
-    }
+    activeSort = city ? 'time' : 'alpha';
+    timePill.classList.toggle('active', !!city);
   }
 }
 
@@ -649,11 +672,23 @@ function render() {
   }).join('');
 }
 
+/* The row now carries two KINDS of pill, so each handler matches on its own
+   attribute — `.pill` alone would let the sort pill set activeRegion to
+   undefined and empty the grid. */
 document.getElementById('region-pills').addEventListener('click', function(e) {
-  var btn = e.target.closest('.pill');
-  if (!btn) return;
+  var btn = e.target.closest('.pill[data-region]');
+  if (!btn) {
+    /* A disabled button swallows its own click, and `pointer-events:none` sends
+       it here instead — so the dead sort pill points at the one thing that
+       brings it to life rather than doing nothing at all. */
+    if (!HOME_TZ && e.target.closest('#region-pills')) {
+      var s = document.getElementById('search');
+      if (s) s.focus();
+    }
+    return;
+  }
   activeRegion = btn.dataset.region;
-  document.querySelectorAll('#region-pills .pill').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('#region-pills .pill[data-region]').forEach(function(p) { p.classList.remove('active'); });
   btn.classList.add('active');
   render();
 });
@@ -662,12 +697,14 @@ document.getElementById('region-pills').addEventListener('click', function(e) {
    thing the search does is name the reference city, on pick (see the
    TVESearch.attach onPick at the foot of the page). */
 
-document.getElementById('sort-pills').addEventListener('click', function(e) {
+/* One sort control and it TOGGLES: on when a city is picked, off back to the
+   grid's alphabetical resting order. There is no A–Z pill to turn on instead —
+   it was the state you were already in. */
+document.getElementById('region-pills').addEventListener('click', function(e) {
   var btn = e.target.closest('.sort-pill');
-  if (!btn) return;
-  activeSort = btn.dataset.sort;
-  document.querySelectorAll('.sort-pill').forEach(function(p) { p.classList.remove('active'); });
-  btn.classList.add('active');
+  if (!btn || btn.disabled) return;
+  activeSort = (activeSort === 'time') ? 'alpha' : 'time';
+  btn.classList.toggle('active', activeSort === 'time');
   render();
 });
 
