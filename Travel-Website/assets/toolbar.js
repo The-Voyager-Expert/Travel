@@ -2408,15 +2408,18 @@ window.TVE.home = (function () {
       ['essentials/scams/',             'Scams'],
       ['essentials/mistakes/',          'First-timer Mistakes']
     ] },
-    /* Packing is under essentials/ so it is in (owner: "all of them under this
-       folder"), even though it is also a top-strip tab. plugs, currencies and
-       time-zones are NOT under essentials/ — they moved to the site root on
-       2026-08-16 — so they stay tabs only and appear in no group. */
-    { name: 'Plan & pack', links: [
+    /* Packing is NOT here (owner 2026-08-17: "remove packing from the plan and
+       pack ... there is no pack there"). It is a top-strip tab, reachable from
+       every page of the site, so a second copy inside a category is the same
+       link twice — and with it gone the group is 'Plan', which is what the
+       landing page's own Trip Resources block has always called it. The two
+       surfaces list the same four pages; never re-add packing to either.
+       plugs, currencies and time-zones are NOT under essentials/ — they moved
+       to the site root on 2026-08-16 — so they stay tabs only, no group. */
+    { name: 'Plan', links: [
       ['essentials/sims/',              'Phone & SIM'],
       ['essentials/apps/',              'Travel Apps'],
       ['essentials/tours/',             'Tours & Tickets'],
-      ['essentials/packing/',           'Packing Checklist'],
       ['essentials/resources/',         'More Resources']
     ] },
     { name: 'Special trips', links: [
