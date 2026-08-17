@@ -573,13 +573,12 @@ window.TVE.home = (function () {
      Guides pill instead of its own: Time Zones, Weather, Before You Go, When
      to Go, Currency, Plug Adaptor, and the site root as well.
 
-     `_pageKey` is the rule that replaces it: last non-empty path segment,
-     `.html` stripped, so '/time-zones/' and '/guides/index.html' key to
-     'time-zones' and 'guides' rather than both collapsing to 'index.html'.
-     The PAGE_ICON table further down has the identical bug from the same URL
-     migration — `.pop()` on a directory href stored every nav icon under ''
-     and drew the whole pill strip as one repeated shape. Whoever fixes that
-     one should key it here too rather than carry a second copy of the rule.
+     Same broken expression, same cause, as the PAGE_ICON bug that stored every
+     nav icon under '' and drew the whole pill strip as identical clocks. That
+     one was fixed by `_pageKey` — last non-empty path segment, `.html`
+     stripped — so the active state goes through the same helper rather than a
+     second copy of the rule, and the two cannot drift apart again. _pageKey is
+     declared once at this scope; the PAGE_ICON block below reuses it.
 
      Guide pages are unchanged: '/guides/athens.html' keys to 'athens', which
      no toolbar entry claims, so a guide still lights no tab. */
@@ -1262,9 +1261,39 @@ window.TVE.home = (function () {
    `.tb a{padding:2px 2px}` (class+element) outranks a bare `.tb-brand-logo`
    (class only) and silently ate every padding value set here — computed
    padding was 2px on all sides no matter what this rule said. */
+    /* CENTRED, 300px (owner rule 2026-08-17, on the official-logo swap: "decide
+       what is the best size and placement… if toolbar needs to go lower it is
+       okay"). It was left-aligned at 196px on a 64px inset that tracked the
+       width of the first pill — a number that went stale every time that pill's
+       label changed, and that put a symmetric lockup off-axis above a CENTRED
+       tab row. Centre needs no such number and is the placement the mobile bar
+       has always used, so the two breakpoints finally agree.
+       300px is the size, not a cap the image never reaches: the type is only
+       the middle band of this lockup, so the word "Guide" renders at the same
+       optical weight the old 196px wordmark had while the pin and the plane
+       are still large enough to read. The bottom padding is the gap down to
+       the pills. */
     '.tb a.tb-brand-logo{display:block;flex:0 0 100%;line-height:0;text-decoration:none;' +
-      'padding:8px 10px 30px 64px;background:transparent;width:100%;box-sizing:border-box}' +
-    '.tb a.tb-brand-logo img{display:block;width:100%;max-width:196px;height:auto;margin:0 auto 0 0}' +
+      'padding:10px 10px 26px;background:transparent;width:100%;box-sizing:border-box}' +
+    '.tb a.tb-brand-logo img{display:block;width:100%;max-width:300px;height:auto;margin:0 auto}' +
+    /* Light/dark logo swap. EVERY SELECTOR HERE CARRIES THE FULL `.tb a
+       .tb-brand-logo img` PREFIX and that is not verbosity — the sizing rule
+       directly above is (0,2,2), so the obvious short form
+       `html[data-theme="dark"] .tb-logo-light{display:none}` is (0,2,1), loses
+       the cascade, and BOTH logos render stacked. Same trap the `.tb a` padding
+       note further up records. With `img.tb-logo-x` these are (0,3,2) and win.
+       Three theme states, two rules: the media query covers a reader who never
+       chose (no data-theme attribute at all), and `:not([data-theme="light"])`
+       is what stops it overriding a reader who chose light on a dark OS. The
+       explicit rule then wins in both directions. */
+    '.tb a.tb-brand-logo img.tb-logo-dark{display:none}' +
+    '@media(prefers-color-scheme:dark){' +
+      'html:not([data-theme="light"]) .tb a.tb-brand-logo img.tb-logo-light{display:none}' +
+      'html:not([data-theme="light"]) .tb a.tb-brand-logo img.tb-logo-dark{display:block}}' +
+    'html[data-theme="dark"] .tb a.tb-brand-logo img.tb-logo-light{display:none}' +
+    'html[data-theme="dark"] .tb a.tb-brand-logo img.tb-logo-dark{display:block}' +
+    'html[data-theme="light"] .tb a.tb-brand-logo img.tb-logo-light{display:block}' +
+    'html[data-theme="light"] .tb a.tb-brand-logo img.tb-logo-dark{display:none}' +
     /* MOBILE ONLY (owner 2026-08-10): the bar turns beige with dark-terracotta
    traces, and the wordmark is CENTRED in the row. Everything else keeps its
    position — hamburger left, theme toggle right — so the logo is absolutely
@@ -1299,13 +1328,20 @@ window.TVE.home = (function () {
          days lower in mobile"). The wordmark is absolutely positioned with no
          `top`, so its vertical seat IS this padding — it sat hard against the
          top of the bar, above the optical centre of the hamburger and the theme
-         toggle that flank it. 14px drops it onto their line. The image renders
-         ~37px tall at its 150-168px cap, so 14 + 37 = 51px still clears the
-         bar's 56px min-height and the bar does not grow. */
-      '.tb a.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:14px 0 0;flex:none;pointer-events:none;text-align:center}' +
-      '.tb a.tb-brand-logo img{max-width:168px;margin:0 auto;display:inline-block;pointer-events:auto}' +
+         toggle that flank it. 14px drops it onto their line.
+         10px since the official logo landed (2026-08-17): the lockup is 3.14:1
+         where the old wordmark was 4.09:1, so at the same width it is ~30%
+         taller and 14px pushed it past the bar's floor. THE ABSOLUTE POSITION
+         IS THE TRAP HERE — an out-of-flow element adds nothing to its parent's
+         height, so a logo too tall for the bar does not grow it, it hangs out
+         the bottom and the page's first heading overlaps it. The bar's own
+         min-height (see the .tb rule in this block) is what has to move, and it
+         moved with these numbers in the same pass. Measured at 393px: 10 + 56
+         = 66px inside a 78px floor. */
+      '.tb a.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:10px 0 0;flex:none;pointer-events:none;text-align:center}' +
+      '.tb a.tb-brand-logo img{max-width:186px;margin:0 auto;display:inline-block;pointer-events:auto}' +
     '}' +
-    '@media (max-width: 600px) and (pointer: coarse) {.tb a.tb-brand-logo img{max-width:150px}}' +
+    '@media (max-width: 600px) and (pointer: coarse) {.tb a.tb-brand-logo img{max-width:176px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     /* Gutter matches the .tb-links tab gap exactly (owner 2026-08-10: every space
    in the bar the same) — both use the SAME clamp() so they stay equal at every
@@ -1599,7 +1635,14 @@ window.TVE.home = (function () {
          follows dark mode instead of pinning a light strip over a dark page.
          The hamburger panel is position:fixed at top:64px and clears this. */
       /* Owner rule 2026-08-15: mobile toolbar scrolls with the page (not fixed/sticky). */
-      '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:var(--c-page-bg,#f5f4f0);box-shadow:none}' +
+      /* min-height 56 -> 78 (owner rule 2026-08-17, official-logo swap: "if
+         toolbar needs to go lower in your opinion it is okay"). This floor is
+         the ONLY thing holding the bar open around the wordmark, which is
+         absolutely positioned in this block and therefore contributes nothing
+         to the bar's height — see the note on .tb-brand-logo above. It has to
+         clear the logo's seat plus its rendered height (10 + 56 at the 176px
+         phone cap) with a few px to spare, and it moves whenever either does. */
+      '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:78px;border-bottom:none;background:var(--c-page-bg,#f5f4f0);box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
@@ -2599,10 +2642,36 @@ window.TVE.home = (function () {
   tveBrandLogo.href = base || './';
   tveBrandLogo.setAttribute('aria-label', 'Guide My Days — home');
   var _bImg = document.createElement('img');
-  _bImg.src = base + 'images/logos/guidemydays-wordmark-serif-script-swoosh.png';
+  /* THE OFFICIAL LOGO (owner rule 2026-08-17). Built from the one master by
+     Brain/scripts/build/build_brand_assets.py — never swapped for another file
+     in images/logos/, which holds the retired 2026-08-10 concept sheet. The
+     lockup is 3.14:1, not the old wordmark's 4.09:1: it carries the pin, the
+     dashed route and the plane below and above the type, so at any given width
+     it stands ~30% taller. Every size below was retuned for that. */
+  _bImg.src = base + 'images/logo/guidemydays-logo.png';
+  _bImg.className = 'tb-logo-light';
   _bImg.alt = 'Guide My Days';
-  _bImg.width = 630; _bImg.height = 154;
+  _bImg.width = 900; _bImg.height = 287;
   tveBrandLogo.appendChild(_bImg);
+  /* TWO FILES, ONE SHOWN — the dark one is not a nicety. "Guide" and "Days" are
+     navy #011536 and the dark ground is #1a1917: 1.1:1, so in dark mode those
+     two words disappear and the logo reads as a floating orange squiggle. The
+     variant repaints only the navy, to this theme's own --text token. The old
+     wordmark carried the identical defect and nobody caught it because it was
+     small; at 300px it is the first thing on the page.
+     Swapped in CSS, not by a theme listener: the theme can change three ways
+     (stored preference, the toggle, the OS switching under a reader who never
+     chose) and only the cascade sees all three without a subscription. Both
+     carry width/height so the box is reserved either way and nothing jumps.
+     alt='' — the light copy already names the site, and a screen reader reading
+     "Guide My Days" twice is worse than the swap being invisible to it. */
+  var _bImgDark = document.createElement('img');
+  _bImgDark.src = base + 'images/logo/guidemydays-logo-dark.png';
+  _bImgDark.className = 'tb-logo-dark';
+  _bImgDark.alt = '';
+  _bImgDark.setAttribute('aria-hidden', 'true');
+  _bImgDark.width = 900; _bImgDark.height = 287;
+  tveBrandLogo.appendChild(_bImgDark);
 
   /* Wordmark lives INSIDE the bar. Desktop is unchanged: .tb wraps and the logo
      takes a full-width first line, so it still sits above the tabs. MOBILE puts
@@ -8824,6 +8893,7 @@ window.TVE.home = (function () {
     var PAGE_ICON = {
       /* Air */
       'connections': 'hourglass', 'lounges-us': 'coffee', 'lounges-europe': 'coffee',
+      'delta-routes': 'flight-nav', 'united-routes': 'flight-nav',
       'airline-networks': 'flight-nav', 'airlines': 'plane',
       /* Stats — every regional page plus the overview and the records page */
       'stats': 'chart', 'africa': 'chart', 'asia': 'chart', 'canada': 'chart',
