@@ -881,11 +881,36 @@ a.land-cta:hover:visited {
      brain_check § picker-select-gold-color enforces it. */
   font: inherit; color: var(--accent); padding: 0; cursor: pointer; height: 100%;
 }
+/* The airport field must sit EXACTLY like the three selects beside it, and for a
+   long time it did not — the words rode 7px high inside the pill and started in
+   the middle of it while every neighbour started next to its icon. Owner,
+   2026-08-17: "do you see the words inside the airport" · "this seems to be
+   impossible with airport and looks awful".
+
+   Two separate causes, and the vertical one is why this survived three attempts
+   to fix it: the offending declaration is NOT in this stylesheet. A site-wide
+   input rule gives every <input> `margin-bottom: 14px`, and `.fnd-ctl` is a flex
+   row with `align-items: center`, which centres the MARGIN box — 39px of input
+   plus 14px of margin is 53px centred in a 39px content box, so the input lands
+   at -7px. Nothing about that reads as a centring bug in a diff, and the finder's
+   own CSS looks correct on its own. `margin: 0` is the whole fix; never drop it
+   thinking it is redundant, because the rule it cancels lives elsewhere.
+
+   The horizontal half was this block's own doing: `text-align: center` here
+   against `start` on `.fnd-ctl select` three rules up. Both now measure
+   identically against the month select — text starts at 43px from the pill edge,
+   1px clear top and bottom, icon midpoint dead level with the text. */
 .fnd-ctl input {
   flex: 1 1 auto; min-width: 0; border: 0; outline: none; background: transparent;
   font: inherit; font-weight: normal; color: var(--accent); padding: 0; cursor: text; height: 100%;
-  text-align: center;
+  margin: 0;
+  text-align: start;
 }
+/* A disabled Routing select still has to read as a control, not as damage. */
+.fnd-ctl:has(select:disabled) { opacity: 0.55; }
+.fnd-ctl select:disabled { cursor: not-allowed; }
+.fnd-stops-note { margin: 0.3rem 0 0; font-size: 0.78rem; color: var(--muted, #6a6660); }
+.fnd-stops-note[hidden] { display: none; }
 .fnd-more {
   margin-top: clamp(0.7rem, 1.6vw, 1rem); border: 1px solid var(--border, #e3ddd2);
   background: transparent; color: var(--text, #3d3a32); font: inherit; font-weight: 600;
@@ -910,9 +935,14 @@ a.land-cta:hover:visited {
    the link goes browser-purple. Same reason the .byg-col rule below is a hex. */
 .fnd-res-list a:visited { color: #3d3a32; }
 .fnd-lede { font-size: 0.95rem; color: var(--muted, #6a6660); margin: -0.3rem 0 clamp(1rem, 2.2vw, 1.5rem); }
-/* Country alone on its row — 73 options need the width. */
+/* Country takes the wide half — 73 options need the width — and the Europe-only
+   Trains control takes the narrow one when it is showing. */
 .fnd-row-1 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); margin-top: clamp(0.6rem, 1.4vw, 1rem); }
 @media (max-width: 560px) { .fnd-row-1 { grid-template-columns: 1fr; } }
+/* .fnd-field is display:flex, and a class rule beats the [hidden] UA rule — so
+   without this the Trains field is visible on every continent while its own
+   `hidden` attribute says otherwise. Same trap `.fnd-ctl[hidden]` above solves. */
+.fnd-field[hidden] { display: none !important; }
 
 .fnd-go-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; margin-top: clamp(1rem, 2.2vw, 1.5rem); }
 .fnd-go {
@@ -1726,15 +1756,10 @@ window.lpGuideCard = function (href, flag, name, extra) {
       <p id="fnd-home-note" class="fnd-home-note"></p>
       <!-- kept for filter engine compat; defaults to any distance -->
       <select id="fnd-far" hidden aria-hidden="true"><option value=""></option></select>
-      <div class="fnd-ctl fnd-stops-ctl" style="margin-top:0.4rem">
-        <span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-boarding-pass"/></svg></span>
-        <select id="fnd-stops">
-          <option value="">Any routing</option>
-          <option value="nonstop">Nonstop</option>
-          <option value="1stop">One connection</option>
-          <option value="2stop">Two connections</option>
-        </select>
-      </div>
+      <!-- Connections moved OUT of this field on 2026-08-17 — see the Routing
+           field in the advanced panel. It hung here under the airport box and
+           `syncHome` hid it outright whenever the reader set a home that was not
+           Seattle, so choosing an airport made a control disappear. -->
     </div>
   </div>
 
@@ -1820,23 +1845,67 @@ window.lpGuideCard = function (href, flag, name, extra) {
 
         <div class="fnd-field">
           <label for="fnd-budget">Budget</label>
+          <!-- Real money, from /essentials/budget/ — that page IS the site's
+               budget data (hotel + food, per person per day) and this reads it
+               rather than keeping a second copy. The four-tier COST_DATA scale
+               that stood here (Budget/Moderate/Expensive/Premium) answered a
+               different question — a "tier" is a label, and a visitor with a
+               number in mind could not use it. Bands are the midpoint of the
+               two ranges the page publishes, summed. -->
           <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-budget"/></svg></span><select id="fnd-budget">
             <option value="">Any budget</option>
-            <option value="Budget">Budget</option>
-            <option value="Moderate">Moderate</option>
-            <option value="Expensive">Expensive</option>
-            <option value="Premium">Premium</option>
+            <option value="u100">Under $100 a day</option>
+            <option value="100-150">$100 to $150 a day</option>
+            <option value="150-200">$150 to $200 a day</option>
+            <option value="o200">$200 a day or more</option>
           </select></div>
         </div>
 
         <div class="fnd-field">
           <label for="fnd-safety">Safety</label>
+          <!-- The State Department levels, from /essentials/safety/ — the page
+               that already sorts all 237 guides into L1/L2/L3/L4 against the
+               advisories. The invented four-word scale that stood here ("Very
+               safe", "Moderate") was a second opinion about the same guides,
+               and the two disagreed: Abu Dhabi read "Very Safe" here and sits
+               in Level 3 there. One source, and it is the published one.
+
+               A floor, not an exact match — "Level 1 or 2" means at least as
+               safe as Level 2, which is what an advisory level is for. -->
           <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-safety-guide"/></svg></span><select id="fnd-safety">
             <option value="">Any advisory level</option>
-            <option value="Very Safe">Very safe only</option>
-            <option value="Safe">Very safe or safe</option>
-            <option value="Moderate">Moderate and above</option>
+            <option value="1">Level 1 only &mdash; normal precautions</option>
+            <option value="2">Level 1 or 2 &mdash; increased caution</option>
+            <option value="3">Level 1, 2 or 3 &mdash; reconsider travel</option>
           </select></div>
+        </div>
+
+        <!-- ── Routing — brought back, and moved here (owner, 2026-08-17) ────
+             "we used to have connections and disappeared — add back but put
+             here on the second layer of the filters with all the new filters
+             you created."
+
+             It never left the page; it was hidden. The control used to hang
+             under the airport box in the main row, and `syncHome` set
+             `hidden = true` on it the moment the reader chose a home that was
+             not Seattle — so picking your own airport made a filter vanish with
+             no message. It now lives with the other advanced filters.
+
+             WHY it was hidden is still true and is not thrown away: FMAP is a
+             real Delta itinerary out of SEA, so "Nonstop" is a fact about
+             flying from Seattle and is unknowable from Puerto Deseado. Rather
+             than disappear, it now DISABLES and says so — a greyed control with
+             a reason is a filter the reader knows exists; a missing one is a
+             bug report. -->
+        <div class="fnd-field">
+          <label for="fnd-stops">Routing</label>
+          <div class="fnd-ctl fnd-stops-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-boarding-pass"/></svg></span><select id="fnd-stops">
+            <option value="">Any routing</option>
+            <option value="nonstop">Nonstop</option>
+            <option value="1stop">One connection</option>
+            <option value="2stop">Two connections</option>
+          </select></div>
+          <p class="fnd-stops-note" id="fnd-stops-note" hidden>Measured from Seattle only.</p>
         </div>
       </div>
 
@@ -1919,6 +1988,33 @@ window.lpGuideCard = function (href, flag, name, extra) {
             <option value="uruguay">Uruguay (1)</option>
             <option value="vietnam">Vietnam (2)</option>
             <option value="virgin-islands">Virgin Islands (1)</option>
+          </select></div>
+        </div>
+
+        <!-- ── Trains: EUROPE ONLY, and it shows itself ─────────────────────
+             Owner, 2026-08-17: "under country if the person end up in the
+             filter in a country in europe add train filter."
+
+             It appears the moment the reader's selection lands in Europe —
+             Continent set to Europe, or a European country picked — and hides
+             again when it does not, because outside Europe a train day is a
+             one-off (Melbourne to Ballarat) rather than a way of travelling,
+             and a control that is almost always empty reads as broken.
+
+             Hiding it CLEARS it. A filter that keeps narrowing the list from
+             behind a hidden control is the exact bug the "More ways to filter
+             (n)" counter exists to prevent, and it would be invisible here.
+
+             The data is data-train on the guide's own card in
+             /guides/index.html — already there, already correct, nothing
+             fetched from the train guide to get it. It marks a guide whose
+             itinerary contains a day reached by train (the .train-header row);
+             32 of the 96 European guides carry it. -->
+        <div class="fnd-field" id="fnd-train-field" hidden>
+          <label for="fnd-train">Trains</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-train"/></svg></span><select id="fnd-train">
+            <option value="">Any</option>
+            <option value="1">Has a day by train</option>
           </select></div>
         </div>
       </div>
@@ -2454,6 +2550,10 @@ window.lpGuideCard = function (href, flag, name, extra) {
             rel: rel,
             folder: rel.split('/')[0],
             lang: (card.getAttribute('data-lang') || '').split(/\s+/),
+            /* data-train marks a guide whose itinerary has a day reached by
+               train. It is already on the card; the continent train guides are
+               never fetched to work it out. */
+            train: card.getAttribute('data-train') === '1',
             country: country ? (country.getAttribute('data-country') || '') : '',
             countryName: label ? (label.textContent.split('·')[0] || '').replace(/[\u{1F1E6}-\u{1F1FF}]/gu, '').trim() : '',
             flag: flagEl ? flagEl.textContent.trim() : ''
@@ -2466,11 +2566,17 @@ window.lpGuideCard = function (href, flag, name, extra) {
         }
         cache = {
           themes: grab('THEME_DATA'), days: grab('DAYS_DATA'),
-          /* Budget, advisory level and flight routing all already exist on the
-             guides index and are read from it rather than duplicated here — the
-             same reason the themes and day counts are. FMAP is every leg from
-             SEA: {m: total minutes, t: "9h 45m", r: nonstop|1stop|2stop}. */
-          cost: grab('COST_DATA'), safety: grab('SAFETY_DATA'), fmap: grab('FMAP'),
+          /* FMAP is every leg from SEA: {m: total minutes, t: "9h 45m",
+             r: nonstop|1stop|2stop}.
+
+             COST_DATA and SAFETY_DATA used to be grabbed here too, and both
+             were gone: the listing no longer carries either literal, so the
+             grabs returned {} and the Budget and Safety filters — which looked
+             them up by folder name, itself emptied by the 2026-08-16 flatten —
+             matched zero guides for every value a reader could pick. Budget now
+             reads /essentials/budget/ and Safety reads /essentials/safety/,
+             which are the pages that actually publish those two facts. */
+          fmap: grab('FMAP'),
           guides: guides, cont: cont, climate: null
         };
         /* Climate is a second file and only matters if a warmth pill is used, so
@@ -4621,11 +4727,11 @@ function render() {
   if (!when || !weather || !length || !far || !out) return;
 
   var adv = ['fnd-type', 'fnd-lang', 'fnd-cont', 'fnd-stops',
-             'fnd-budget', 'fnd-safety', 'fnd-country'].map(function (id) {
+             'fnd-budget', 'fnd-safety', 'fnd-country', 'fnd-train'].map(function (id) {
     return document.getElementById(id);
   });
   var fType = adv[0], fLang = adv[1], fCont = adv[2], fStops = adv[3],
-      fBudget = adv[4], fSafety = adv[5], fCountry = adv[6];
+      fBudget = adv[4], fSafety = adv[5], fCountry = adv[6], fTrain = adv[7];
 
   var BANDS = { hot: [28, 99], warm: [22, 28], mild: [15, 22], cool: [8, 15], cold: [-99, 8] };
   var LEN = {
@@ -4710,9 +4816,122 @@ function render() {
     return mins === null ? null
       : { mins: mins, exact: false, home: h.code, text: '~' + HOME.fmt(mins), atHome: false };
   }
-  /* Ordered, so "Moderate and above" means Very Safe + Safe + Moderate rather
-     than Moderate exactly — a floor, which is what an advisory level is. */
-  var SAFE_RANK = { 'Very Safe': 1, 'Safe': 2, 'Moderate': 3, 'Caution': 4, 'High Risk': 5 };
+  /* ── Budget and advisory level, read from the pages that publish them ─────
+     /essentials/budget/ is the site's budget data and /essentials/safety/ is
+     the site's advisory data. Both are parsed straight out of those pages for
+     the same reason the listing itself is: a copy here would drift the moment
+     either page is re-audited, and drift in this direction is silent — the
+     filter keeps answering, with last month's numbers.
+
+     Fetched ONCE and only when a reader actually sets one of the two filters.
+     Nobody who never opens the advanced panel pays for either. */
+  var BUDGET = null, ADVISORY = null;
+  var budgetPending = null, advPending = null;
+
+  /* One key for three spellings of the same city: "Big Island" on the budget
+     page, "big-island.html" as the guide's filename, "Big Island" on the card.
+     Accents are folded — the budget page writes "Sao Paulo" and the card writes
+     "São Paulo", and without the fold nine cities miss silently. */
+  function bkey(s) {
+    return String(s).normalize ? String(s).normalize('NFD').replace(/[̀-ͯ]/g, '')
+                                   .toLowerCase().replace(/[^a-z0-9]/g, '')
+                               : String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+  /* The guide's own slug, e.g. "sao-paulo". NOT g.folder — guides are flat
+     files since the 2026-08-16 URL migration, so g.folder is "sao-paulo.html"
+     and every lookup keyed on it misses. That is exactly what had happened to
+     the Budget and Safety filters this replaces: both looked up COST_DATA /
+     SAFETY_DATA by folder, matched nothing, and returned an empty list for
+     every value the reader could pick. */
+  function slugOf(g) { return g.rel.split('/').pop().replace(/\.html$/, ''); }
+
+  function loadBudget() {
+    if (BUDGET) return Promise.resolve(BUDGET);
+    if (budgetPending) return budgetPending;
+    budgetPending = fetch('/essentials/budget/')
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        var m = {};
+        /* The page's own CITIES array: {name, hotel: "80-120", food: "30-50"},
+           both per person per day. A band is the midpoint of each range, summed
+           — the single number the page's own Total column shows. */
+        var re = /name:\s*"([^"]+)"\s*,\s*hotel:\s*"(\d+)\s*-\s*(\d+)"\s*,\s*food:\s*"(\d+)\s*-\s*(\d+)"/g, x;
+        while ((x = re.exec(html))) {
+          m[bkey(x[1])] = (+x[2] + +x[3]) / 2 + (+x[4] + +x[5]) / 2;
+        }
+        BUDGET = m;
+        return m;
+      })
+      .catch(function () { BUDGET = {}; return BUDGET; });
+    return budgetPending;
+  }
+
+  function loadAdvisory() {
+    if (ADVISORY) return Promise.resolve(ADVISORY);
+    if (advPending) return advPending;
+    advPending = fetch('/essentials/safety/')
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        var m = {}, doc = new DOMParser().parseFromString(html, 'text/html');
+        /* Four grids, one per level, each holding .city-row links straight to
+           the guide — so the join is on the guide's own filename and cannot
+           mis-key the way a city-name match can. */
+        [1, 2, 3, 4].forEach(function (lv) {
+          var g = doc.getElementById('grid-l' + lv);
+          if (!g) return;
+          [].forEach.call(g.querySelectorAll('.city-row'), function (a) {
+            var f = (a.getAttribute('href') || '').split('/').pop();
+            if (f) m[f] = lv;
+          });
+        });
+        ADVISORY = m;
+        return m;
+      })
+      .catch(function () { ADVISORY = {}; return ADVISORY; });
+    return advPending;
+  }
+
+  var BUDGET_BAND = {
+    'u100':    function (n) { return n < 100; },
+    '100-150': function (n) { return n >= 100 && n < 150; },
+    '150-200': function (n) { return n >= 150 && n < 200; },
+    'o200':    function (n) { return n >= 200; }
+  };
+
+  /* Which countries the Trains control belongs to. Read off the same CONTINENT
+     table every other filter uses, so a country added to Europe there turns the
+     control on here with no second list to remember. Held on its own because
+     the reveal has to answer synchronously as the reader changes a select. */
+  var CONT = null;
+
+  /* Called at the TOP of run(), before state() is read, and it must stay there.
+
+     Leaving Europe has to clear the Trains value — a hidden control that keeps
+     filtering is invisible to the reader and to the "(n)" counter. The obvious
+     shape, clearing it and calling run() again, is a RACE and it shipped broken
+     for one round of testing: the outer run had already captured `tr: "1"`, the
+     inner run registered its _lpData callback first, and the outer one resolved
+     last and painted the stale list over the fresh one. Switching Europe+trains
+     to Asia rendered 9 guides — the Asian ones with a train day — under a list
+     that no longer had a Trains filter on it.
+
+     So: no nested run, no second render. Fix the controls first, then let the
+     one run that follows read them. */
+  function syncTrain() {
+    var field = document.getElementById('fnd-train-field');
+    if (!field) return;
+    /* First interaction can land before the listing is parsed. Fetch it, and
+       re-run once when it arrives so the control appears then. */
+    if (!CONT && window._lpData) {
+      window._lpData().then(function (d) { if (d && !CONT) { CONT = d.cont; run(); } });
+    }
+    var ct = val(fCont), co = val(fCountry);
+    var euro = ct ? ct === 'Europe'
+             : co ? (CONT && CONT[co]) === 'Europe'
+             : false;
+    field.hidden = !euro;
+    if (!euro && fTrain) fTrain.value = '';
+  }
 
   var MON = ['January','February','March','April','May','June','July',
              'August','September','October','November','December'];
@@ -4736,12 +4955,12 @@ function render() {
       mo:  when.value === '' ? null : parseInt(when.value, 10),
       wx:  weather.value, len: length.value, fr: far.value,
       ty:  val(fType), lg: val(fLang), ct: val(fCont), st: val(fStops),
-      bd:  val(fBudget), sf: val(fSafety), co: val(fCountry)
+      bd:  val(fBudget), sf: val(fSafety), co: val(fCountry), tr: val(fTrain)
     };
   }
   function anySet(s) {
     return s.mo !== null || s.wx || s.len || s.fr || s.ty || s.lg ||
-           s.ct || s.st || s.bd || s.sf || s.co;
+           s.ct || s.st || s.bd || s.sf || s.co || s.tr;
   }
 
   function matches(d, s) {
@@ -4750,13 +4969,22 @@ function render() {
       if (s.ct && d.cont[g.country] !== s.ct) return false;
       if (s.lg && g.lang.indexOf(s.lg) === -1) return false;
       if (s.ty && (d.themes[g.name] || []).indexOf(s.ty) === -1) return false;
+      if (s.tr === '1' && !g.train) return false;
+      /* Same rule as climate and distance: a guide the budget page does not
+         price is DROPPED from a priced answer rather than padded into it. 205
+         of the 237 are priced. */
       if (s.bd) {
-        var c = d.cost[g.folder];
-        if (!c || c.tier !== s.bd) return false;
+        var t = BUDGET ? (BUDGET[bkey(g.name)] !== undefined ? BUDGET[bkey(g.name)]
+                                                             : BUDGET[bkey(slugOf(g))])
+                       : undefined;
+        if (t === undefined) return false;
+        if (!BUDGET_BAND[s.bd](t)) return false;
       }
+      /* A floor: "Level 1 or 2" keeps everything at that level or better. A
+         guide with no advisory row is dropped, same rule. */
       if (s.sf) {
-        var sv = d.safety[g.folder];
-        if (!sv || !SAFE_RANK[sv.level] || SAFE_RANK[sv.level] > SAFE_RANK[s.sf]) return false;
+        var lv = ADVISORY && ADVISORY[g.rel.split('/').pop()];
+        if (!lv || lv > +s.sf) return false;
       }
       if (s.len) {
         var n = Number(d.days[g.name]);
@@ -4822,8 +5050,13 @@ function render() {
         var test = {
           mo: s.mo, wx: s.wx, len: s.len, fr: s.fr,
           ty: s.ty, lg: s.lg, ct: s.ct, st: s.st,
-          bd: s.bd, sf: s.sf, co: s.co
+          bd: s.bd, sf: s.sf, co: s.co, tr: s.tr
         };
+        /* Trains only exists inside Europe. Testing a non-European option with
+           it still set would disable every one of them and leave the reader
+           stuck in Europe with no way out but Clear everything. */
+        if (pair.field === 'co' && d.cont[opt.value] !== 'Europe') test.tr = '';
+        if (pair.field === 'ct' && opt.value !== 'Europe') test.tr = '';
         test[pair.field] = opt.value;
         opt.disabled = matches(d, test).length === 0;
       });
@@ -4849,9 +5082,59 @@ function render() {
     return lpGuideCard(g.url, g.flag, g.name, flt);
   }
 
+  /* The two on-demand datasets. A filter is not applied against an empty map —
+     that would silently return nothing and read as "no guide matches" — so the
+     run waits for whichever the reader actually set. */
+  function needData(s) {
+    var jobs = [];
+    if (s.bd && !BUDGET)   jobs.push(loadBudget());
+    if (s.sf && !ADVISORY) jobs.push(loadAdvisory());
+    return jobs.length ? Promise.all(jobs) : null;
+  }
+
+  /* pruneSelects disables the Country and Continent options that would return
+     nothing. Clearing every filter takes the early return below, which never
+     re-ran it — so the greying stayed on a form with no filters left, and the
+     reader was looking at 53 countries marked unavailable when all 237 guides
+     were. Clearing the filters clears the greying with them. */
+  function unprune() {
+    [fCont, fCountry].forEach(function (el) {
+      if (el) [].forEach.call(el.options, function (o) { o.disabled = false; });
+    });
+  }
+
+  /* Set by "Find My Destinations" and cleared by "Clear everything".
+
+     Owner, 2026-08-17: "this should give me tons of guides … i have to have the
+     right to leave all Any if i don't [care] about these." Leaving every field
+     on Any is a real answer to the four questions, not an unfinished form — and
+     pressing the button is the reader saying so out loud.
+
+     Until this existed the button DID NOTHING in that state. run() bailed at
+     the guard below, so with the home airport set and every select on Any — the
+     screenshot the owner sent — clicking it produced no list, no count, and no
+     message. Nothing on screen said why, because nothing on screen had changed.
+
+     A flag rather than an argument on purpose: run is handed to
+     addEventListener, Promise.then and loadAir, all of which call it with an
+     argument of their own (an Event, an array, nothing). A `force` parameter
+     would read every change event as a forced run. */
+  var forced = false;
+
   function run() {
+    syncTrain();
     var s = state();
-    if (!anySet(s)) { out.hidden = true; out.innerHTML = ''; syncChrome(s); return; }
+    /* The guard still holds for a plain change event: clearing your last filter
+       should put the page back, not dump 237 cards you did not ask for. */
+    if (!anySet(s) && !forced) { unprune(); out.hidden = true; out.innerHTML = ''; syncChrome(s); return; }
+
+    var pending = needData(s);
+    if (pending) {
+      out.hidden = false;
+      out.innerHTML = '<p class="fnd-res-head">Searching&hellip;</p>';
+      pending.then(run);
+      return;
+    }
 
     out.hidden = false;
     out.innerHTML = '<p class="fnd-res-head">Searching&hellip;</p>';
@@ -4868,13 +5151,14 @@ function render() {
                         '<a href="/guides/">Browse all guides</a> instead.</p>';
         return;
       }
+      CONT = CONT || d.cont;
       var hits = matches(d, s);
       pruneSelects(d, s);
 
       /* A month on its own narrows nothing — every guide is open every month.
          Say that, rather than returning all 237 as though it were an answer. */
       var monthOnly = (s.mo !== null && !s.wx && !s.len && !s.fr && !s.ty &&
-                       !s.lg && !s.ct && !s.st && !s.bd && !s.sf && !s.co);
+                       !s.lg && !s.ct && !s.st && !s.bd && !s.sf && !s.co && !s.tr);
 
       /* "guides", not "destinations". The site has one unit and it is the
          guide; a count of destinations implies the filter returned places, and
@@ -4899,14 +5183,17 @@ function render() {
      it — otherwise a visitor sees a short list and nothing on screen explaining
      why it is short. The count rides on the button. */
   function syncChrome(s) {
-    var n = [s.ty, s.lg, s.ct, s.bd, s.sf, s.co].filter(Boolean).length;
+    var n = [s.ty, s.lg, s.ct, s.bd, s.sf, s.co, s.tr].filter(Boolean).length;
     var btn = document.getElementById('fnd-more');
     if (btn) {
       btn.textContent = n ? 'More ways to filter (' + n + ')' : 'More ways to filter';
       btn.classList.toggle('on', n > 0);
     }
     var reset = document.getElementById('fnd-reset');
-    if (reset) reset.hidden = !anySet(s);
+    /* Showing after a forced run too, or the reader who pressed the button with
+       everything on Any has 237 cards on screen and no control that puts them
+       away again. */
+    if (reset) reset.hidden = !anySet(s) && !forced;
   }
 
   var all = [when, weather, length, far].concat(adv).filter(Boolean);
@@ -4917,12 +5204,14 @@ function render() {
      sets four fields and then wonders why nothing happened. */
   var go = document.getElementById('fnd-go');
   if (go) go.addEventListener('click', function () {
+    forced = true;
     run();
     if (!out.hidden) out.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   });
 
   var reset = document.getElementById('fnd-reset');
   if (reset) reset.addEventListener('click', function () {
+    forced = false;
     all.forEach(function (el) { el.value = ''; });
     run();
   });
@@ -4968,11 +5257,15 @@ function render() {
       } else {
         homeIn.value = '';
       }
+      /* Disabled and explained, never hidden — see the Routing field's own
+         comment in the markup. Hiding it is what made the owner report the
+         control as missing after setting an airport. */
       if (fStops) {
-        var stopsCtl = fStops.closest ? fStops.closest('.fnd-stops-ctl') : null;
         var seaHome = HOME.isDefault() || HOME.get().code === defaultCode;
-        if (stopsCtl) stopsCtl.hidden = !seaHome;
-        if (!seaHome && fStops.value) fStops.value = '';
+        var stopsNote = document.getElementById('fnd-stops-note');
+        fStops.disabled = !seaHome;
+        if (stopsNote) stopsNote.hidden = seaHome;
+        if (!seaHome && fStops.value) { fStops.value = ''; run(); }
       }
     }
 
