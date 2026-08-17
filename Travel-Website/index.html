@@ -1392,19 +1392,40 @@ a.land-cta:hover:visited {
     object-fit: cover;
     object-position: top center;
   }
-  .lp-pack-shot img { aspect-ratio: 367 / 422; }
-  /* The map crop carries its own pills at the bottom, so it ends on a finished
-     edge and takes no fade — one would grey out the "Visited · 22" pill, which
-     is the single most important thing in the picture. */
-  .lp-map-shot img { aspect-ratio: 393 / 491; }
-  .lp-byg-shot img { aspect-ratio: 373 / 534; }
-  /* The When to Go crop ends ON its result line — "95 places · high 18–27°C in
-     August" — which is the whole payoff of moving the sliders above it, so it
-     is a finished edge and takes no fade either. */
-  .lp-wtg-shot img { aspect-ratio: 373 / 622; }
-  /* Only the two crops that stop mid-content fade: packing ends just under a
-     category header, Before You Go part-way into its first answer card. */
-  .lp-pack-shot::after, .lp-byg-shot::after {
+  /* ── The step carousels ───────────────────────────────────────────────────
+     Four of the five tiles walk 3 screens instead of showing one: packing, When
+     to Go, Before You Go and the world map. Each screen is one STEP of actually
+     using the page, in order, so the tile answers "what is this for" by showing
+     the thing being used rather than describing it.
+
+     THE PLUG TILE IS DELIBERATELY NOT ONE (owner 2026-08-17). There is no
+     sequence to walk there — three sockets are three sockets, and paging
+     between them would be motion for its own sake.
+
+     EVERY STEP SETS ITS OWN ASPECT RATIO, from JS, because the crops are
+     genuinely different heights: a month grid is not a page of results. A fixed
+     ratio with object-fit:cover would silently crop whichever step is tallest,
+     and the cropped part is always the bottom — which is where the payoff sits
+     (the result count, the gold pins). So there is no aspect-ratio here at all;
+     the markup carries step 1's and the script rewrites it as it pages.
+
+     The map is the one whose steps span TWO pages — map, then a guide, then the
+     map again — because the middle step is the thing the owner kept having to
+     explain: you mark a place on its guide, not here. */
+  .lp-steps-nav {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 0.55rem; margin-top: 0.55rem;
+  }
+  .lp-steps-count {
+    margin-right: auto;
+    font-size: 12px; font-weight: 600; letter-spacing: .04em;
+    color: var(--muted, #6a6660); font-variant-numeric: tabular-nums;
+  }
+  /* Only a step whose crop stops mid-content fades. Set per step by the script,
+     never blanket — a fade over a finished edge greys out the payoff, which on
+     the map step is the gold count and on When to Go is the result line. */
+  .lp-pack-shot.is-cut::after, .lp-byg-shot.is-cut::after,
+  .lp-map-shot.is-cut::after, .lp-wtg-shot.is-cut::after {
     content: '';
     position: absolute; left: 0; right: 0; bottom: 0; height: 56px;
     background: linear-gradient(to bottom, rgba(245,242,236,0), #f5f2ec);
@@ -3172,9 +3193,9 @@ window.lpGuideCard = function (href, flag, name, extra) {
 <section class="lp-pack">
   <a class="lp-pack-tile" href="/essentials/packing/">
     <span class="lp-pack-shot">
-      <img src="/assets/landing/packing-preview.png"
-           alt="The packing checklist part-way through a seven-day trip: 47 of 212 items packed, 22 per cent, with the trip-length stepper and the reset, print and hide-packed buttons"
-           loading="lazy" width="1101" height="1266">
+      <img src="/assets/landing/steps/pack-1.png"
+           alt="The packing checklist trip-length control, set to one day, with the note that clothing quantities update to match"
+           loading="lazy" width="1101" height="423">
     </span>
     <span class="lp-pack-band">
       <span class="lp-pack-band-t">Pack with the checklist</span>
@@ -3197,9 +3218,9 @@ window.lpGuideCard = function (href, flag, name, extra) {
 <section class="lp-map">
   <a class="lp-map-tile" href="/maps/world/">
     <span class="lp-map-shot">
-      <img src="/assets/landing/world-map-preview.png"
-           alt="The world map over Europe: gold pins on the cities this reader has marked as visited, terracotta pins on the rest, and a Visited · 22 count at the bottom"
-           loading="lazy" width="1179" height="1473">
+      <img src="/assets/landing/steps/map-1.png"
+           alt="The world map over Europe with a terracotta pin on every city that has a guide"
+           loading="lazy" width="1179" height="1680">
     </span>
     <span class="lp-map-band">
       <span class="lp-map-band-t">Keep the map of where you have been</span>
@@ -3222,9 +3243,9 @@ window.lpGuideCard = function (href, flag, name, extra) {
 <section class="lp-wtg">
   <a class="lp-wtg-tile" href="/when-to-go/">
     <span class="lp-wtg-shot">
-      <img src="/assets/landing/when-to-go-preview.png"
-           alt="The When to Go filters: a month grid with August selected, daytime-high sliders set to 18–27°C, and the result line reading 95 places"
-           loading="lazy" width="1119" height="1866">
+      <img src="/assets/landing/steps/wtg-1.png"
+           alt="The When to Go month grid, with August selected"
+           loading="lazy" width="1101" height="735">
     </span>
     <span class="lp-wtg-band">
       <span class="lp-wtg-band-t">Pick the weather, not the place</span>
@@ -3249,9 +3270,9 @@ window.lpGuideCard = function (href, flag, name, extra) {
 <section class="lp-byg">
   <a class="lp-byg-tile" href="/before-you-go/">
     <span class="lp-byg-shot">
-      <img src="/assets/landing/before-you-go-preview.png"
-           alt="Before You Go with Lisbon searched: the headline reads Lisbon in August, the month strip has August selected, and the first answer card begins below"
-           loading="lazy" width="1119" height="1602">
+      <img src="/assets/landing/steps/byg-1.png"
+           alt="Before You Go on arrival: the headline, and an empty search box reading City or country"
+           loading="lazy" width="1101" height="1260">
     </span>
     <span class="lp-byg-band">
       <span class="lp-byg-band-t">One city, one month, everything</span>
@@ -3259,6 +3280,110 @@ window.lpGuideCard = function (href, flag, name, extra) {
     </span>
   </a>
 </section>
+
+<script>
+/* ── The step carousels on the four tool tiles ───────────────────────────────
+   PHONE ONLY, by construction rather than by a second gate: the sections
+   themselves are display:none above the phone breakpoint, so nothing here is
+   ever seen on a desktop. The arrows still get built there, which is harmless
+   and is the price of not duplicating the media query in JS where it would
+   silently drift from the one in CSS.
+
+   Each entry is [file, width, height, endsMidContent, title, description].
+   The WIDTH AND HEIGHT ARE REAL and are what set each step's aspect ratio —
+   the crops are genuinely different shapes and a shared ratio would crop
+   whichever is tallest, always from the bottom, which is exactly where the
+   payoff sits (the result count, the gold pins).
+
+   The arrows are `.lp-hero-arrow`, the same control the hero and Best Of
+   carousels use — reused, never restyled, so the three cannot drift apart.
+   They are appended AFTER the tile because the tile is a single <a>: a button
+   inside an anchor is invalid markup and makes every tap a guess between
+   paging and opening the page.
+
+   No JavaScript, no carousel: each tile keeps step 1 in its markup and reads
+   as the single-screenshot tile it was before, with no dead buttons. */
+(function () {
+  var STEPS = {
+    'lp-pack': [
+      ['pack-1', 1101, 423, 0, 'Set how many days', 'The clothing counts resize themselves to match the trip &mdash; nothing else to configure.'],
+      ['pack-2', 1101, 1260, 1, 'The quantities follow', 'Seven days in, socks and underwear say <em>pack = 7</em>. Change the number and every count moves with it.'],
+      ['pack-3', 1101, 693, 0, 'Tick as you go', '212 items across 18 categories, with a running count of what is left. Hide what is done, or print the lot.']
+    ],
+    'lp-wtg': [
+      ['wtg-1', 1101, 735, 0, 'Pick the month you can travel', 'Not the place &mdash; the month. That is the one thing most people actually know first.'],
+      ['wtg-2', 1101, 990, 0, 'Say what weather you want', 'A daytime temperature band, and how much rain you will put up with.'],
+      ['wtg-3', 1101, 1290, 1, 'Get every city that matches', '95 places, this time. Each one links straight into its guide.']
+    ],
+    'lp-byg': [
+      ['byg-1', 1101, 1260, 1, 'Search a city', 'The page starts empty on purpose. Nothing is preselected, because nobody is going where the site guesses.'],
+      ['byg-2', 1101, 1200, 1, 'Set the month', 'The headline rewrites to that city in that month, and everything under it follows.'],
+      ['byg-3', 1101, 1410, 1, 'Everything for that trip', 'The weather you will get, the visa, how safe it is, what a day costs, which plug to pack, whether the tap water is fine.']
+    ],
+    'lp-map': [
+      ['map-1', 1179, 1680, 0, 'Every guide is a pin', '237 destinations on one map, all of them terracotta until you have been.'],
+      ['map-2', 1143, 486, 0, 'Mark it on the guide', 'The <em>I&rsquo;ve Been</em> pill sits on each guide, where you have just decided you have been there.'],
+      ['map-3', 1179, 1893, 0, 'It turns gold, and counts', 'Gold for the places you have done, terracotta for the ones still ahead &mdash; with the running total at the bottom.']
+    ]
+  };
+
+  Object.keys(STEPS).forEach(function (key) {
+    var sec = document.querySelector('.' + key);
+    if (!sec) return;
+    var rows = STEPS[key];
+    if (!rows || rows.length < 2) return;
+    var tile  = sec.querySelector('a');
+    var shot  = sec.querySelector('[class$="-shot"]');
+    var img   = shot && shot.querySelector('img');
+    var title = sec.querySelector('[class$="-band-t"]');
+    var desc  = sec.querySelector('[class$="-band-d"]');
+    if (!tile || !shot || !img || !title || !desc) return;
+
+    var at = 0;
+    var count = document.createElement('span');
+    count.className = 'lp-steps-count';
+
+    function paint(i) {
+      var r = rows[((i % rows.length) + rows.length) % rows.length];
+      img.src = '/assets/landing/steps/' + r[0] + '.png';
+      img.width = r[1]; img.height = r[2];
+      /* Set as a style, not an attribute — the CSS deliberately declares no
+         aspect-ratio for these, so this is the only thing holding the box. */
+      img.style.aspectRatio = r[1] + ' / ' + r[2];
+      img.alt = r[4];
+      shot.classList.toggle('is-cut', !!r[3]);
+      title.innerHTML = r[4];
+      desc.innerHTML = r[5];
+      count.textContent = (((i % rows.length) + rows.length) % rows.length + 1) + ' / ' + rows.length;
+    }
+    function warm(i) {
+      var r = rows[((i % rows.length) + rows.length) % rows.length];
+      if (r) { var im = new Image(); im.src = '/assets/landing/steps/' + r[0] + '.png'; }
+    }
+    function button(label, step) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'lp-hero-arrow';
+      b.setAttribute('aria-label', label);
+      b.innerHTML = step < 0
+        ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>'
+        : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+      b.addEventListener('click', function () {
+        at = ((at + step) % rows.length + rows.length) % rows.length;
+        paint(at); warm(at + step);
+      });
+      return b;
+    }
+    paint(0); warm(1);
+    var nav = document.createElement('div');
+    nav.className = 'lp-steps-nav';
+    nav.appendChild(count);
+    nav.appendChild(button('Previous step', -1));
+    nav.appendChild(button('Next step', 1));
+    tile.parentNode.insertBefore(nav, tile.nextSibling);
+  });
+})();
+</script>
 
 <!-- Sunrise & Sunset removed from the landing page (owner 2026-08-14: "we
      moved these to other places, no need there anymore"). It has its own
