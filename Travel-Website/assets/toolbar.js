@@ -1666,7 +1666,7 @@ window.TVE.home = (function () {
       '.tb-ham-menu .tb-ham-grp{border:0}' +
       '.tb-ham-menu .tb-ham-grp>summary{list-style:none;display:flex;align-items:center;' +
         'justify-content:space-between;gap:10px;padding:11px 24px;min-height:44px;' +
-        'box-sizing:border-box;font-size:15px;font-weight:600;color:#C04E1A;cursor:pointer;' +
+        'box-sizing:border-box;font-size:15px;font-weight:600;color:#3d3a32;cursor:pointer;' +
         '-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none}' +
       /* Both spellings — WebKit needs its own pseudo-element and ignores the
          standard one, and Firefox does the reverse. Miss either and the browser
@@ -1677,7 +1677,11 @@ window.TVE.home = (function () {
       '.tb-ham-menu .tb-ham-grp>summary:focus-visible{outline:2px solid #C04E1A;outline-offset:-2px}' +
       /* A typographic marker, not an icon: ASCII + and U+2212 MINUS, so nothing
          here comes from the icon catalogue (Twenty-eighth non-negotiable). */
-      '.tb-ham-grp-plus{font-size:19px;font-weight:400;line-height:1;flex-shrink:0}' +
+      '.tb-ham-grp-plus{font-size:19px;font-weight:400;line-height:1;flex-shrink:0;color:#C04E1A}' +
+      /* The one piece of terracotta left, and it is a rule, not a row: 3px tall,
+         the width of a word rather than the menu, sitting in the row gutter where
+         the categories start. It replaces nine coloured headings with one mark. */
+      '.tb-ham-menu .tb-ham-grp-bar{height:3px;width:34px;border-radius:2px;background:#C04E1A;margin:14px 24px 10px}' +
       '.tb-ham-grp-plus::before{content:"+"}' +
       '.tb-ham-menu .tb-ham-grp[open]>summary .tb-ham-grp-plus::before{content:"\\2212"}' +
       /* Indented one step from the category name, the way a child row reads on
@@ -2393,10 +2397,17 @@ window.TVE.home = (function () {
     ] }
   ];
 
-  RES_GROUPS.forEach(function (grp) {
-    var gsep = document.createElement('div');
-    gsep.className = 'tb-ham-sep';
-    hamMenu.appendChild(gsep);
+  var grpBar = document.createElement('div');
+  grpBar.className = 'tb-ham-grp-bar';
+  grpBar.setAttribute('aria-hidden', 'true');
+  hamMenu.appendChild(grpBar);
+
+  RES_GROUPS.forEach(function (grp, gi) {
+    if (gi) {
+      var gsep = document.createElement('div');
+      gsep.className = 'tb-ham-sep';
+      hamMenu.appendChild(gsep);
+    }
 
     /* Native <details>, like the landing block and the contact form: keyboard
        accessible, works with scripting off, and the links stay in the markup
