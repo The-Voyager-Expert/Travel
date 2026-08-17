@@ -1,3 +1,4 @@
+/* 2026-08-17: best-of-audit — animal-encounters: Argentina (Península Valdés — UNESCO, southern right whales + orca beachings), India (Ranthambore Bengal Tiger Safari), Rwanda (Volcanoes NP mountain gorilla trekking) added; cross-category data rebuilt — 1893 entries. best-of-cross-data.js to 20. CACHE to v1048. */
 /* 2026-08-17: mobile-ux-fix — --ground:#242220 added to dark token set in web-travel-style.css and toolbar.js — fixes BRIGHT SURFACE on .hero-ground in dark mode (~12 essentials pages). toolbar.js to 741, web-travel-style.css to 62. CACHE to v1047. */
 /* 2026-08-17: mobile-ux-fix — trains.css dark mode: op-review-label LOW CONTRAST (#D4663A on --surface → var(--text)). trains.css to 5. CACHE to v1046. */
 /* 2026-08-17: ONE search bar, everywhere (owner rule) — "all searches ... make them bigger ... all of them the same size and same distance to the title banner", "no pill closer to the search bar than the banner", "easy to see and use". 440 x 56 at 17px from three new :root tokens (--search-w / --search-h / --search-gap), replacing 360x40 desktop / 48px phone and a gap that ran 0-35px above the bar and 6-20px below it across 15 different wrapper classes. One height and one type size at EVERY viewport: mobile.css no longer carries its own 48px, and its blanket 16px !important input rule is overridden for the search box only (17px is still above the iOS auto-zoom threshold). The gap is now equal above and below on all ~80 banner pages. mobile.css min to 86, web-travel-style.css to 61, guides-index-style.css to 13, trains.css to 4. CACHE to v1045. */
@@ -1479,7 +1480,7 @@
 /* 2026-08-17: toolbar.js — 3-way merge: phone-menu one-tone + 28px band + Currency pill + Plan group + SEO migration (PAGE_ICON delta/united entries, RES_GROUPS continent links). toolbar.js -> v738. CACHE to v1037. */
 /* 2026-08-17: phone: the tile carousels become a showcase — new screens for all four toolbar.js -> v739. CACHE to v1038. */
 /* 2026-08-17: Cloudflare Web Analytics beacon added to toolbar.js, host-gated to guidemydays.com. The site is set to 'Enable with JS Snippet installation', NOT Cloudflare's automatic setup: automatic injection happens in the proxy, and the domain is on Cloudflare DNS but DNS-only, so visitors reach GitHub Pages directly and nothing passes through Cloudflare to inject into - automatic would have recorded zero for ever. toolbar.js -> v740. CACHE to v1039. */
-var CACHE = 'travel-cache-v1047';
+var CACHE = 'travel-cache-v1048';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1487,7 +1488,7 @@ var CACHE = 'travel-cache-v1047';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 234,'toolbar.js': 741, 'mobile.css': 86, 'web-travel-style.css': 62, 'guides-index-style.css': 13, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 234,'toolbar.js': 741, 'mobile.css': 86, 'web-travel-style.css': 62, 'guides-index-style.css': 13, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 20, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
