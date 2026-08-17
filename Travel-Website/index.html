@@ -127,29 +127,37 @@
   grid-template-areas: "a a b" "a a c" "d d c";
   gap: clamp(0.4rem, 0.8vw, 0.6rem);
   aspect-ratio: 1 / 0.82;
-}
-/* Below ~62rem the hero stacks, so the mosaic stops competing with the copy for
-   width and gets the full rail to itself. It is NOT hidden here — it used to be
-   (display:none), which cost a phone every photograph on the front door and left
-   the daily rotation running where nobody could see it. What it drops is the
-   3-column arrangement: at phone width the tall "c" cell would be a ribbon, so
-   the same four tiles re-map to an even 2×2. The names survive the re-map, which
-   is why the tiles need no rule of their own — only the template changes.
+  /* THE ROWS ARE PINNED, AND THEY MUST STAY PINNED.
 
-   This block MUST stay after the base .lp-hero-art rule above: same specificity,
-   so source order decides, and above it the base template silently wins back the
-   three columns on a phone. */
+     They used to be implicit, which meant the browser sized them from the
+     intrinsic aspect ratios of whichever four photographs were in the mosaic —
+     fine while the four never changed, and a bug the moment they do. Measured at
+     1440px, the original four resolved to 110.6 / 121.9 / 172.4; a different four
+     resolved to 110.6 / 136.0 / 158.3, so the big tile grew and the wide tile
+     shrank and the whole composition shifted under the reader on every turn of
+     the carousel. The ratios below ARE those original numbers (1 : 1.102 : 1.559),
+     so the shape is now the shape it always looked like and no photograph can
+     move it. Never drop these back to auto. */
+  grid-template-rows: 1fr 1.102fr 1.559fr;
+  /* Columns too, and for exactly the same reason: left implicit they were sized
+     from the photographs, and a wider picture in the small cell pushed the big
+     cell from 342px down to 323px. The original three resolved to equal thirds
+     (165.95 / 165.95 / 165.98 at 1440px), so equal thirds is what they are. */
+  grid-template-columns: 1fr 1fr 1fr;
+}
+/* Below ~62rem the hero stacks to one column and the mosaic gets the full rail.
+   The MOSAIC ITSELF IS UNCHANGED HERE — same three columns, same proportions,
+   just narrower. It is deliberately NOT re-mapped to a 2×2: that was tried and
+   it is not what this page has ever looked like on a phone.
+
+   Worth knowing, because the file used to claim the opposite: the rule here was
+   once `.lp-hero-art { display: none; }`, and it never once took effect. It sits
+   before the base `.lp-hero-art` rule above at equal specificity, so source order
+   handed the win to `display: grid` and phones always got the mosaic. Deleting a
+   rule that never applied changes nothing on screen, which is the only reason it
+   is safe to delete. */
 @media (max-width: 62rem) {
   .lp-hero { grid-template-columns: 1fr; }
-  .lp-hero-art {
-    grid-template-areas: "a b" "c d";
-    grid-template-columns: 1fr 1fr;
-    /* Both axes pinned. Without the explicit rows the two tracks size to their
-       own content and the square comes out 302px over 438px — the 2×2 reads as
-       two different blocks rather than one. */
-    grid-template-rows: 1fr 1fr;
-    aspect-ratio: 1 / 0.92;
-  }
 }
 .lp-hero-art a {
   position: relative;
@@ -165,6 +173,48 @@
   transition: transform .5s cubic-bezier(.2,.6,.2,1);
 }
 .lp-hero-art a:hover img { transform: scale(1.06); }
+/* Carousel arrows. Injected by the script, so they exist only when they work —
+   a mosaic with no JavaScript shows four photographs and no dead buttons. They
+   sit under the mosaic on its right, deliberately quiet: the photographs are the
+   content and a pair of heavy chevrons over them would read as the subject. */
+.lp-hero-nav {
+  display: flex; justify-content: flex-end; gap: 0.4rem;
+  margin-top: clamp(0.4rem, 0.8vw, 0.6rem);
+  /* .lp-hero is a two-column grid and the script inserts this as a third child,
+     so without an explicit column it auto-places into row 2 column 1 — under the
+     headline, nowhere near the photographs it drives. Column 2 puts it directly
+     beneath the mosaic. The phone override sits in the max-width block below,
+     where the hero collapses to one column and column 2 no longer exists. */
+  grid-column: 2;
+}
+.lp-hero-arrow {
+  width: 2rem; height: 2rem; padding: 0;
+  display: grid; place-items: center;
+  background: #fff;
+  border: 1px solid rgba(192, 78, 26, .30);
+  border-radius: 999px;
+  color: var(--brand, #a94e1c);
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease;
+}
+.lp-hero-arrow:hover, .lp-hero-arrow:focus-visible { background: #fdf4ed; border-color: rgba(192, 78, 26, .55); }
+.lp-hero-arrow svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* Phone: the hero is ONE column here, and `grid-column: 2` on a one-column grid
+   does not fall back — it creates an implicit second column and the mosaic gets
+   half the width, rendering at 97px a tile. It must be reset to column 1.
+
+   This has to sit AFTER the .lp-hero-nav rule above, not inside the earlier
+   max-width block: same specificity, so source order decides, and up there the
+   base rule silently wins and the phone keeps the invented column. */
+@media (max-width: 62rem) {
+  .lp-hero-nav { grid-column: 1; }
+}
+/* A finger needs a bigger target than a cursor: 40px, matching the stop controls
+   inside a guide (Thirty-third non-negotiable) rather than the 32px desktop dot. */
+@media (max-width: 600px) and (pointer: coarse) {
+  .lp-hero-arrow { width: 2.5rem; height: 2.5rem; }
+  .lp-hero-nav { gap: 0.55rem; }
+}
 .lp-hero-art span {
   position: absolute; left: 0; right: 0; bottom: 0;
   padding: 1.6em 0.85em 0.6em;
@@ -1762,13 +1812,12 @@ window.lpGuideCard = function (href, flag, name, extra) {
        Each tile links into the guide the photo came from, so it is navigation
        rather than decoration. Lazy + async so it never blocks first paint.
 
-       The four change every day: seven sets of four, picked by the reader's own
-       calendar day, so a returning reader sees a different corner of the fleet
-       each visit and the same one all day rather than a reshuffle per refresh.
-       The markup carries set 0 so the block is complete with no JavaScript at
-       all; the script below only swaps when today is a different set, and the
-       swap lands before layout, so loading="lazy" means the set-0 files are
-       never fetched on the other six days. -->
+       The four on screen are a turn of a carousel that walks all 237 guides,
+       four at a time, and the reader's own calendar day picks which turn it
+       opens on — so the front door shows different cities each morning, and the
+       same ones all day rather than reshuffling on every refresh. The four tiles
+       below are both the no-JavaScript fallback and the shape the carousel
+       paints into; see the script under this block. -->
   <div class="lp-hero-art" aria-label="Photographs from four guides">
     <a href="/guides/santorini.html" style="grid-area:a">
       <img src="/guides/santorini/photos/800px-amoudi-bay.jpg" alt="Amoudi Bay, Santorini" loading="lazy" decoding="async">
@@ -1788,80 +1837,363 @@ window.lpGuideCard = function (href, flag, name, extra) {
     </a>
   </div>
   <script>
-  /* Daily rotation of the hero mosaic. Seven sets of four; each row is
-     [guide slug, photo filename, label, alt]. Set 0 is what the markup already
-     holds, so day 0 does nothing and the block never flickers.
+  /* THE HERO CAROUSEL — every guide on the site takes a turn on the front door.
 
-     ORDER INSIDE A SET IS NOT ARBITRARY — the four positions are four different
-     shapes, and object-fit:cover crops to them. Position 3 lands in the tall "c"
-     cell and must be a VERTICAL subject: a tower, a spire, a facade. A panorama
-     put there is cropped to its middle and loses its subject entirely — the
-     first draft had Hanoi's West Lake pagoda in it and rendered as a pond with
-     no pagoda in frame. Position 4 is the wide bottom cell and wants the
-     opposite: a panorama, a skyline, a river. Position 1 is the big cell and
-     takes the strongest picture; position 2 is a small landscape.
+     One row per guide: [slug, photo filename, city, alt, aspect-ratio]. 237 of
+     them, four on screen at a time, so the mosaic walks the whole fleet in 60
+     turns. The markup above holds the first four as a no-JavaScript fallback and
+     as the shape the carousel paints into — the tiles, their links and their
+     captions are never rebuilt, only their contents swapped, so the grid and the
+     hover behaviour stay exactly what they were before the carousel existed.
 
-     Every path here was checked against disk AND looked at in the cell it lands
-     in. A wrong filename or a wrong case fails silently — it 404s and leaves an
-     empty tile — so a new set is added by listing guides/<slug>/photos/ and
-     copying the name, never by guessing it from the sight's name. */
+     WHICH FOUR YOU GET DEPENDS ON THE DAY. The reader's own calendar day picks
+     the starting turn, so the front door is a different set of cities each
+     morning and the same set all day — not a reshuffle on every refresh, which
+     reads as flicker rather than freshness. From there it advances on its own.
+
+     THE PHOTOS ARE THE GUIDES' OWN. Every file already lives in the repo under
+     guides/<slug>/photos/, downloaded from Wikimedia Commons when that guide was
+     built and recorded in its photo-provenance.json. Nothing here was sourced
+     for the landing page, which is how the original four worked and is the whole
+     reason each tile can link straight into the guide the picture came from.
+
+     PICKED BY EYE, NOT BY FILENAME. A scorer proposed a photo per guide and then
+     every one of the 237 was looked at in a contact sheet, because the filenames
+     lie often enough to matter: "kings-college-chapel-cambridge" is a painting of
+     the altarpiece, "playa-delfines-cancun" is a hotel block, and the pick for
+     Seattle was a garden in Portland. 188 of the 237 were overridden by hand.
+     If you change one, LOOK at it — do not trust the name.
+
+     SLOT ORDER IS COMPUTED, NOT AUTHORED. Grid area "c" is a tall cell and "d" a
+     wide one, and object-fit:cover crops to them, so each turn sorts its four by
+     the aspect ratio carried in the data: tallest into "c", widest into "d". That
+     is why a panorama never lands in the tall cell and lose its subject. */
   (function () {
-    var SETS = [
-      [['santorini','800px-amoudi-bay.jpg','Santorini','Amoudi Bay, Santorini'],
-       ['kyoto','800px-150124-gion-kyoto-japan01s3.jpg','Kyoto','Gion, Kyoto'],
-       ['petra','800px-ad-deir-the-monastery-el-deir-petra-jordan.jpg','Petra','The Monastery, Petra'],
-       ['marrakech','800px-a01-marrakech-koutoubia.jpg','Marrakech','Koutoubia, Marrakech']],
-
-      [['rome','800px-colosseo-2020.jpg','Rome','The Colosseum, Rome'],
-       ['venice','800px-venice-gondola-grand-canal.jpg','Venice','Gondola on the Grand Canal, Venice'],
-       ['paris','800px-tour-eiffel-wikimedia-commons.jpg','Paris','The Eiffel Tower, Paris'],
-       ['prague','800px-charles-bridge.jpg','Prague','Charles Bridge, Prague']],
-
-      [['reykjavik','800px-aurora-over-the-sun-voyager.jpg','Reykjavik','Aurora over the Sun Voyager, Reykjavik'],
-       ['dubrovnik','800px-dubrovnik-zidine-01.jpg','Dubrovnik','The city walls, Dubrovnik'],
-       ['bergen','800px-bryggen-bergen-the-german-wharf.jpg','Bergen','Bryggen, Bergen'],
-       ['edinburgh','800px-edinburgh-castle-rock.jpg','Edinburgh','Edinburgh Castle on its rock']],
-
-      [['cusco','800px-machu-picchu.jpg','Cusco','Machu Picchu'],
-       ['cape-town','800px-cape-town-table-mountain.jpg','Cape Town','Table Mountain, Cape Town'],
-       ['cairo','800px-giza-pyramids.jpg','Cairo','The Pyramids of Giza'],
-       ['rio-de-janeiro','800px-sugarloaf.jpg','Rio de Janeiro','Sugarloaf Mountain, Rio de Janeiro']],
-
-      [['istanbul','800px-blue-mosque-istanbul.jpg','Istanbul','The Blue Mosque, Istanbul'],
-       ['bali','800px-tegallalang-rice-terraces-bali.jpg','Bali','Tegallalang rice terraces, Bali'],
-       ['hanoi','800px-st-joseph-s-cathedral-hanoi-vietnam.jpg','Hanoi','St Joseph Cathedral, Hanoi'],
-       ['sydney','800px-opera-house.jpg','Sydney','The Opera House, Sydney']],
-
-      [['banff','800px-moraine-lake-17092005.jpg','Banff','Moraine Lake, Banff'],
-       ['queenstown','800px-the-remarkables-queenstown-nz-8167990319.jpg','Queenstown','The Remarkables, Queenstown'],
-       ['new-york','800px-brooklyn-bridge-postdlf.jpg','New York','Brooklyn Bridge, New York'],
-       ['budapest','800px-hungarian-parliament-building-2015.jpg','Budapest','The Parliament building, Budapest']],
-
-      [['athens','800px-the-parthenon-in-athens.jpg','Athens','The Parthenon, Athens'],
-       ['barcelona','800px-casa-batllo.jpg','Barcelona','Casa Batllo, Barcelona'],
-       ['lisbon','800px-belem-tower-lisbon-portugal.jpg','Lisbon','Belem Tower, Lisbon'],
-       ['florence','800px-florence-duomo-from-michelangelo-hill.jpg','Florence','The Duomo from Piazzale Michelangelo, Florence']]
+    var G = [
+      ['abu-dhabi','800px-emirates-palace-abu-dhabi.jpg','Abu Dhabi','Emirates Palace Abu Dhabi',1.53],
+      ['aix-en-provence','800px-cours-mirabeau.jpg','Aix-en-Provence','Cours Mirabeau',1.5],
+      ['alaska','800px-matanuska-glacier-from-the-air.jpg','Alaska','Matanuska Glacier',1.33],
+      ['alesund','800px-aalesund-seen-from-aksla.jpg','Alesund','Ålesund seen from Aksla viewpoint',1.5],
+      ['amalfi','800px-amalfi-duomo-di-sant-andrea.jpg','Amalfi','Amalfi Cathedral',1.21],
+      ['amsterdam','800px-herengracht-amsterdam-in-the-blue-hour.jpg','Amsterdam','Herengracht canal',1.54],
+      ['annecy','800px-palais-de-lile-annecy.jpg','Annecy','Palais de l\'Isle',1.33],
+      ['aracaju','800px-mirante-da-13-de-julho.jpg','Aracaju','Mirante da Treze de Julho, Aracaju',1.33],
+      ['arenal','800px-arenal-volcano.jpg','Arenal','Arenal Volcano cone rising above the national park lava fields',2.0],
+      ['aruba','800px-natural-pool.jpg','Aruba','Natural Pool, Arikok National Park',2.56],
+      ['athens','800px-the-parthenon-in-athens.jpg','Athens','Parthenon',1.42],
+      ['atlanta','800px-piedmont-park-lake-clara-meer-skyline.jpg','Atlanta','Piedmont Park',0.8],
+      ['austin','800px-congress-bridge.jpg','Austin','Congress Avenue Bridge over Lady Bird Lake',1.33],
+      ['azores','800px-sete-cidades-twin-lakes.jpg','Azores','Sete Cidades twin volcanic crater lakes',1.33],
+      ['bahamas','800px-atlantis-paradise-island-bahamas-2024.jpg','Bahamas','Atlantis Paradise Island resort',1.78],
+      ['bali','800px-tegallalang-rice-terraces-bali.jpg','Bali','Tegalalang rice terraces',1.51],
+      ['banff','800px-moraine-lake-17092005.jpg','Banff','Moraine Lake',1.33],
+      ['bangkok','800px-bangkok-wat-arun-p1130114.jpg','Bangkok','Wat Arun Temple of Dawn Bangkok',0.75],
+      ['barbados','800px-bathsheba.jpg','Barbados','Bathsheba Soup Bowl — Atlantic boulders and coastline, Barbados',1.54],
+      ['barcelona','800px-casa-batllo.jpg','Barcelona','Casa Batlló facade',1.33],
+      ['beijing','800px-mutianyu.jpg','Beijing','Great Wall at Mutianyu',0.73],
+      ['bend','800px-sparks-lake-oregon-2012-01.jpg','Bend','Sparks Lake',1.33],
+      ['bergen','800px-bryggen-bergen-the-german-wharf.jpg','Bergen','Bryggen',1.46],
+      ['berlin','800px-brandenburger-tor-abends.jpg','Berlin','Brandenburg Gate',1.5],
+      ['bhutan','800px-tigers-nest.jpg','Bhutan','Tiger\'s Nest',1.53],
+      ['big-island','800px-a227-akaka-falls-state-park.jpg','Big Island','ʻAkaka Falls, Akaka Falls State Park, Hawaiʻi Island',1.5],
+      ['bilbao','800px-guggenheim-bilbao-aerial-view.jpg','Bilbao','Guggenheim Museum Bilbao',1.5],
+      ['bologna','800px-piazza-maggiore-bologna.jpg','Bologna','Piazza Maggiore',1.86],
+      ['bora-bora','800px-bora-bora-lagoon-aerial.jpg','Bora Bora','Bora Bora lagoon aerial view',1.88],
+      ['bordeaux','800px-place-de-la-bourse-bordeaux.jpg','Bordeaux','Place de la Bourse',1.33],
+      ['boston','800px-boston-skyline-prudential.jpg','Boston','Boston skyline with Prudential Tower',1.5],
+      ['boulder','800px-flatirons-winter-sunrise-edit-3.jpg','Boulder','Flatirons at sunrise, Colorado',3.01],
+      ['bruges','800px-markt.jpg','Bruges','Markt',0.59],
+      ['brussels','800px-bruxelles-grand-place.jpg','Brussels','Grand-Place',1.51],
+      ['budapest','800px-hungarian-parliament-building-2015.jpg','Budapest','Hungarian Parliament Building Budapest',1.5],
+      ['buenos-aires','800px-caminito.jpg','Buenos Aires','Caminito, La Boca',1.5],
+      ['busan','800px-gwangalli-beach-and-gwangan-bridge.jpg','Busan','Gwangalli Beach with the Gwangan Bridge spanning the bay behind the café-lined seafront',1.78],
+      ['cairo','800px-giza-pyramids.jpg','Cairo','Giza Pyramid Complex',1.63],
+      ['cambridge','800px-cambridge-backs.jpg','Cambridge','The Backs Cambridge',1.42],
+      ['cancun','800px-tulum-beach.jpg','Cancun','Tulum Caribbean beach below the cliffside ruins',1.5],
+      ['cannes','800px-vue-de-cannes-depuis-le-suquet.jpg','Cannes','View of Cannes from Le Suquet',6.61],
+      ['cape-cod','800px-nauset-light.jpg','Cape Cod','Nauset Light Beach',1.33],
+      ['cape-town','800px-cape-town-table-mountain.jpg','Cape Town','Table Mountain',1.33],
+      ['capri','800px-faraglioni-di-capri-autunno.jpg','Capri','The three Faraglioni sea stacks seen from the Capri cliffs',1.33],
+      ['carmel-by-the-sea','800px-bixby-creek-bridge.jpg','Carmel-by-the-Sea','Bixby Creek Bridge',1.5],
+      ['cascais','800px-praia-do-guincho-cropped.jpg','Cascais','Praia do Guincho, Cascais',1.86],
+      ['cayman-islands','800px-seven-mile-beach-facing-north.jpg','Cayman Islands','Seven Mile Beach, Grand Cayman',1.5],
+      ['charlotte','800px-whitewater-center.jpg','Charlotte','U.S. National Whitewater Center',1.5],
+      ['chiang-mai','800px-wat-phra-that-doi-suthep-chiang-mai.jpg','Chiang Mai','Doi Suthep',1.25],
+      ['chicago','800px-chicago-skyline-from-promontory-point.jpg','Chicago','Chicago skyline from Promontory Point, Hyde Park',1.33],
+      ['chongqing','800px-yangtze-river-cableway.jpg','Chongqing','Yangtze River Cableway',1.5],
+      ['cinque-terre','800px-panorama-of-manarola.jpg','Cinque Terre','Manarola',1.63],
+      ['coeur-dalene','800px-mist-on-lake-coeur-d-alene-id-31542918598.jpg','Coeur d\'Alene','Lake Coeur d\'Alene · Idaho',1.78],
+      ['colmar','800px-petite-venise.jpg','Colmar','Petite Venise Colmar',1.56],
+      ['cologne','800px-hohenzollernbruecke-koeln.jpg','Cologne','Hohenzollern Bridge',1.33],
+      ['colombo','800px-colombo-galle-face-green.jpg','Colombo','Galle Face Green beachside promenade Colombo Indian Ocean',1.34],
+      ['columbia','800px-south-carolina-state-house.jpg','Columbia','South Carolina State House, Columbia',1.33],
+      ['copenhagen','800px-nyhavn-copenhagen.jpg','Copenhagen','Nyhavn',1.5],
+      ['corfu','800px-palaiokastritsa-bay-in-corfu.jpg','Corfu','Paleokastritsa',1.33],
+      ['crete','800px-preveli-beach.jpg','Crete','Preveli Beach palm lagoon, Crete',1.49],
+      ['curacao','800px-queen-emma-bridge.jpg','Curacao','Queen Emma Bridge and Handelskade waterfront, Willemstad',1.29],
+      ['curitiba','800px-estufa-principal-do-jardim-botanico-de-curitiba-01.jpg','Curitiba','Crystal Palace–style greenhouse at Jardim Botânico de Curitiba',1.39],
+      ['cusco','800px-plaza-de-armas.jpg','Cusco','Plaza de Armas, Cusco',1.93],
+      ['dallas','800px-dallas-arboretum-and-botanical-gardens.jpg','Dallas','Dallas Arboretum and Botanical Garden',1.78],
+      ['denver','800px-red-rocks-amphitheatre.jpg','Denver','Red Rocks Amphitheatre',1.33],
+      ['doha','800px-corniche-doha-qatar.jpg','Doha','Doha Corniche',1.52],
+      ['dubai','800px-dubai-skyline-from-offshore-la-mer.jpg','Dubai','Dubai skyline from La Mer',1.33],
+      ['dublin','800px-trinity-college-library-long-room.jpg','Dublin','Trinity College Long Room',1.78],
+      ['dubrovnik','800px-dubrovnik-zidine-01.jpg','Dubrovnik','Dubrovnik city walls and terracotta roofscape',1.5],
+      ['edinburgh','800px-edinburgh-castle-rock.jpg','Edinburgh','Edinburgh Castle',1.5],
+      ['florence','800px-florence-duomo-from-michelangelo-hill.jpg','Florence','Brunelleschi\'s Dome',1.38],
+      ['florianopolis','800px-mirante-lagoa-conceicao.jpg','Florianopolis','Panoramic view from Mirante da Lagoa da Conceição over the lagoon',1.33],
+      ['florida-keys','800px-mallory-square-sunset.jpg','Florida Keys','Mallory Square Sunset',0.75],
+      ['fortaleza','800px-iracema-beach-fortaleza.jpg','Fortaleza','Praia de Iracema beach Ponte dos Ingleses sunset Fortaleza',0.75],
+      ['foz-do-iguacu','800px-iguacu-falls.jpg','Foz do Iguacu','Parque Nacional Iguazú — falls system panorama from the Argentine side circuits',1.5],
+      ['frankfurt','800px-romerberg-frankfurt-abends.jpg','Frankfurt','Römerberg · Frankfurt',1.5],
+      ['galapagos-islands','800px-coast-of-north-seymour-island-in-the-galapagos.jpg','Galapagos Islands','Rocky coastline of North Seymour Island with sea lions, Galápagos',1.33],
+      ['geneva','800px-geneva-jet-deau.jpg','Geneva','Jet d\'Eau',0.75],
+      ['glacier-national-park','800px-saint-mary-lake-and-wildgoose-island.jpg','Glacier National Park','Wild Goose Island as a small forested speck in St. Mary Lake with mountain peaks behind',1.5],
+      ['glasgow','800px-glasgow-cathedral-exterior.jpg','Glasgow','Glasgow Cathedral',1.09],
+      ['gothenburg','800px-haga-nygata.jpg','Gothenburg','Haga Nygata',1.51],
+      ['granada','800px-mirador-san-nicolas.jpg','Granada','Alhambra from Mirador San Nicolás',1.33],
+      ['hamburg','800px-elbphilharmonie-abendsonne.jpg','Hamburg','Elbphilharmonie',1.33],
+      ['hanoi','800px-tran-quoc-pagoda-on-west-lake.jpg','Hanoi','Tran Quoc Pagoda on West Lake, Hanoi',1.5],
+      ['helsinki','800px-helsingin-tuomiokirkko-helsinki-cathedral.jpg','Helsinki','Helsinki Cathedral',1.26],
+      ['hilton-head-island','800px-harbour-town-july-2007.jpg','Hilton Head Island','Harbour Town Lighthouse',1.33],
+      ['hiroshima','800px-torii-and-itsukushima-shrine.jpg','Hiroshima','Itsukushima Shrine torii gate',1.31],
+      ['hoi-an','800px-hoi-an-vietnam-japanese-covered-bridge.jpg','Hoi An','Japanese Covered Bridge',1.33],
+      ['hong-kong','800px-victoria-peak-skyline.jpg','Hong Kong','Victoria Peak',2.31],
+      ['istanbul','800px-blue-mosque-istanbul.jpg','Istanbul','Blue Mosque',1.33],
+      ['joao-pessoa','800px-praia-da-ponta-do-seixas-e-estacao-cabo-branco-joao-pessoa.jpg','Joao Pessoa','Ponta do Seixas and Estação Cabo Branco',2.16],
+      ['kauai','800px-waimea-canyon.jpg','Kauai','Waimea Canyon, Kauai',3.28],
+      ['keywest','800px-higgs-beach-key-west-florida-usa-panoramio.jpg','Key West','Higgs Beach, Key West',1.33],
+      ['kotor','800px-bay-of-kotor.jpg','Kotor','Bay of Kotor from the water',1.33],
+      ['krakow','800px-zamek-krolewski-wawel.jpg','Krakow','Wawel Castle',1.78],
+      ['kyoto','800px-golden-pavilion-kinkaku-ji.jpg','Kyoto','Kinkaku-ji Golden Pavilion, Kyoto',0.67],
+      ['la-jolla','800px-090207-lajollacove.jpg','La Jolla','La Jolla Cove and its sheltered turquoise water',1.33],
+      ['lagos','800px-ponta-da-piedade-lagos-cliff-view.jpg','Lagos','Ponta da Piedade',0.75],
+      ['lake-como','800px-view-of-lake-como-from-villa-monastero-varenna.jpg','Lake Como','Lake Como view from Villa Monastero garden, Varenna',1.33],
+      ['lake-tahoe','800px-emerald-bay-lake-tahoe.jpg','Lake Tahoe','Emerald Bay',1.5],
+      ['las-vegas','800px-the-bellagio-fountains.jpg','Las Vegas','Fountains of Bellagio',1.47],
+      ['lecce','800px-santa-croce.jpg','Lecce','Basilica di Santa Croce',0.68],
+      ['lille','800px-lille-grand-place.jpg','Lille','Grand Place Lille',2.96],
+      ['lima','800px-miraflores-lima-peru.jpg','Lima','Malecón de Miraflores, Lima',1.5],
+      ['lisbon','800px-belem-tower-lisbon-portugal.jpg','Lisbon','Lisbon',1.48],
+      ['ljubljana','800px-triple-bridge.jpg','Ljubljana','Triple Bridge',1.5],
+      ['london','800px-tower-bridge-from-shad-thames.jpg','London','Tower Bridge · Thames',2.01],
+      ['los-angeles','800px-getty.jpg','Los Angeles','Getty Center',1.33],
+      ['los-cabos','800px-el-arco-cabo-san-lucas.jpg','Los Cabos','El Arco, Cabo San Lucas',2.17],
+      ['luang-prabang','800px-mountains-mekong-river-and-dwellings-seen-from-mount-phou-si-at-dusk-in-luang-prabang-laos.jpg','Luang Prabang','View from Mount Phousi at dusk over the Mekong River and Luang Prabang old town',1.5],
+      ['lucerne','800px-kapellbrucke.jpg','Lucerne','Chapel Bridge &amp; Water Tower',1.51],
+      ['luxembourg','800px-bock.jpg','Luxembourg','Bock Casemates',1.38],
+      ['lyon','800px-place-bellecour-a-lyon.jpg','Lyon','Place Bellecour, Lyon',1.51],
+      ['maceio','800px-falesias-praia-do-gunga.jpg','Maceio','Sandstone cliffs at Praia do Gunga, Alagoas',1.33],
+      ['machupicchu','800px-peru-machu-picchu-sunrise.jpg','Machu Picchu','Huayna Picchu peak rising above Machu Picchu citadel at sunrise',0.75],
+      ['madeira','800px-pico-do-arieiro-2013.jpg','Madeira','Pico do Arieiro summit above clouds Madeira volcanic peaks',2.56],
+      ['madrid','800px-plaza-mayor-de-madrid.jpg','Madrid','Plaza Mayor',1.78],
+      ['malaga','800px-castillo-gibralfaro.jpg','Malaga','Castillo de Gibralfaro',1.5],
+      ['maldives','800px-maldives-local-island.jpg','Maldives','Small island in the Maldives',1.5],
+      ['malibu','800px-el-matador-state-beach.jpg','Malibu','El Matador State Beach Malibu',1.33],
+      ['manuel-antonio','800px-main-beach-manuel-antonio-national-park-costa-rica.jpg','Manuel Antonio','Playa Manuel Antonio inside Manuel Antonio National Park, Costa Rica',1.33],
+      ['marco-island','800px-marco-island-beach-marco-island-florida-panoramio.jpg','Marco Island','Marco Island beach, Gulf of Mexico',1.5],
+      ['marktoberdorf','800px-neuschwanstein.jpg','Neuschwanstein','Neuschwanstein Castle from the Marienbrücke',1.5],
+      ['marrakech','800px-a01-marrakech-koutoubia.jpg','Marrakech','Koutoubia Mosque',1.5],
+      ['marseille','800px-notre-dame.jpg','Marseille','Basilica of Notre-Dame de la Garde rising above Marseille on its hill',1.52],
+      ['maui','800px-haleakala.jpg','Maui','Haleakalā crater summit, Maui',3.59],
+      ['melbourne','800px-melbourne-au-flinders-street-railway-station-2019-202623.jpg','Melbourne','Flinders Street Station',1.34],
+      ['miami','800px-ocean-drive-art-deco.jpg','Miami','Art Deco buildings on Ocean Drive',1.78],
+      ['milan','800px-milan-cathedral-from-piazza-del-duomo.jpg','Milan','Milan Cathedral',1.33],
+      ['monaco','800px-port-hercule.jpg','Monaco','Port Hercule Monaco',1.33],
+      ['montevideo','800px-la-rambla.jpg','Montevideo','La Rambla',1.47],
+      ['montreal','800px-habitat-67-2019-dllu-01.jpg','Montreal','Habitat 67, Montreal',1.22],
+      ['munich','800px-nymphenburg-palace.jpg','Munich','Nymphenburg Palace',1.5],
+      ['muscat','800px-muttrah-corniche-2018.jpg','Muscat','Muttrah Corniche',1.33],
+      ['mykonos','800px-the-four-windmills-in-mykonos.jpg','Mykonos','Windmills of Mykonos',1.48],
+      ['napa','800px-rhine-house-beringer-vineyards.jpg','Napa','Rhine House, Beringer Vineyards',1.4],
+      ['naples','800px-napoli-piazza-plebiscito.jpg','Naples','Piazza del Plebiscito',1.33],
+      ['naples-florida','800px-delnor-wiggins-sp-beach01.jpg','Naples, Florida','Delnor-Wiggins Pass State Park beach',1.33],
+      ['nashville','800px-ryman-auditorium.jpg','Nashville','Ryman Auditorium',1.5],
+      ['natal','800px-praia-de-genipabu-natal.jpg','Natal','Praia de Genipabu',1.33],
+      ['new-orleans','800px-jackson-square-sunset-christmas-in-new-orleans.jpg','New Orleans','Jackson Square',1.4],
+      ['new-york','800px-view-of-empire-state-building-from-rockefeller-center-new-york-city-dllu.jpg','New York','View from Top of the Rock toward the Empire State Building',1.33],
+      ['nice','800px-promenade-des-anglais.jpg','Nice','Promenade des Anglais',1.33],
+      ['oahu','800px-diamond-head.jpg','Oahu','Diamond Head State Monument from Waikiki',1.5],
+      ['oaxaca','800px-cascada-petrificada-hierve-el-agua.jpg','Oaxaca','Hierve el Agua',1.5],
+      ['olinda','800px-farol-e-panoramica-de-olinda.jpg','Olinda','Farol de Olinda',1.33],
+      ['orcas-island','800px-mt-baker-through-obstruction-pass.jpg','Orcas Island','Mount Baker visible through Obstruction Pass',1.55],
+      ['orlando','800px-cinderella-castle-magic-kingdom-2024.jpg','Orlando','Cinderella Castle',0.8],
+      ['osaka','800px-dotonbori-osaka-at-night-november-2016.jpg','Osaka','Dotonbori',0.82],
+      ['oslo','800px-oslo-opera-house-01.jpg','Oslo','Oslo Opera House marble roof sloping to the Oslofjord',1.77],
+      ['oxford','800px-radcliffe-camera.jpg','Oxford','Radcliffe Camera',0.75],
+      ['palawan','800px-sabang-beach-in-puerto-princesa-palawan.jpg','Palawan','Sabang Beach black-sand shore',1.5],
+      ['palm-desert','800px-palm-springs-aerial-tramway.jpg','Palm Desert','Palm Springs Aerial Tramway ascending Chino Canyon',1.6],
+      ['palo-alto','800px-sf-painted-ladies.jpg','Palo Alto','Painted Ladies row at Alamo Square',2.46],
+      ['paris','800px-tour-eiffel-wikimedia-commons.jpg','Paris','Eiffel Tower seen from the Champ de Mars',0.6],
+      ['pasadena','800px-california-landmark-no-871-the-gamble-house-panoramio.jpg','Pasadena','Gamble House',1.5],
+      ['pensacola','800px-pensacola-beach.jpg','Pensacola','Pensacola Beach white sand and turquoise water',1.33],
+      ['petra','800px-al-khazneh-the-treasury-in-petra.jpg','Petra','Al-Khazneh · The Treasury · Petra',0.77],
+      ['philadelphia','800px-independence-hall-philadelphia.jpg','Philadelphia','Independence Hall',1.33],
+      ['phoenix','800px-phoenix-from-s-mountain.jpg','Phoenix','Valley of the Sun panorama from South Mountain Park',1.33],
+      ['phuket','800px-laem-phromthep-phuket.jpg','Phuket','Promthep Cape, Phuket',1.33],
+      ['pisa','800px-leaning-tower-pisa.jpg','Pisa','Leaning Tower of Pisa',1.51],
+      ['pokhara','800px-phewa-lake-talbarahi-temple.jpg','Pokhara','Phewa Lake and Tal Barahi Temple',1.33],
+      ['portland','800px-mttaborportlandhood.jpg','Portland','Mount Tabor Park',1.17],
+      ['porto','800px-cais-da-ribeira-e-ponte-luis-i-from-gaia.jpg','Porto','Cais de Gaia',1.5],
+      ['porto-alegre','800px-usina-do-gasometro-em-porto-alegre.jpg','Porto Alegre','Usina do Gasômetro cultural center and chimney on the Guaíba waterfront',1.33],
+      ['prague','800px-charles-bridge.jpg','Prague','Charles Bridge',1.78],
+      ['puerto-rico','800px-el-morro.jpg','Puerto Rico','Castillo San Felipe del Morro, Old San Juan',1.33],
+      ['puerto-vallarta','800px-muelle-playa-los-muertos-atardecer.jpg','Puerto Vallarta','Los Muertos Pier',1.33],
+      ['quebec-city','800px-chateau-frontenac-quebec-city-canada.jpg','Quebec City','Château Frontenac',0.96],
+      ['queenstown','800px-roys-peak-mountain-near-lake-wanaka.jpg','Queenstown','Roy\'s Peak',1.5],
+      ['recife','800px-praia-de-boa-viagem-recife.jpg','Recife','Praia de Boa Viagem, Recife',1.51],
+      ['reykjavik','800px-hallgrimskirkja-mai-2026.jpg','Reykjavik','Hallgrímskirkja',1.14],
+      ['rhodes','800px-lindos-rhodes-3.jpg','Rhodes','Lindos village, Rhodes',1.67],
+      ['rio-de-janeiro','800px-sugarloaf.jpg','Rio de Janeiro','Sugarloaf Mountain – cable car and Guanabara Bay',1.5],
+      ['rome','800px-colosseo-2020.jpg','Rome','Colosseum',1.43],
+      ['rotterdam','800px-erasmusbrug.jpg','Rotterdam','Erasmusbrug',1.73],
+      ['salvador','800px-pelourinho-salvador-bahia-2019-1504.jpg','Salvador','Pelourinho historic center colorful colonial buildings',1.25],
+      ['salzburg','800px-1790-salzburg-festung-hohensalzburg.jpg','Salzburg','Hohensalzburg Fortress',1.33],
+      ['san-diego','800px-hotel-del-coronado.jpg','San Diego','Hotel del Coronado',1.6],
+      ['san-francisco','800px-goldengatebridge-001.jpg','San Francisco','Golden Gate Bridge',1.33],
+      ['san-jose','800px-san-jose-municipal-rose-garden.jpg','San Jose','San Jose Municipal Rose Garden',1.5],
+      ['san-jose-costa-rica','800px-poas-volcano-crater.jpg','San Jose, Costa Rica','Poás Volcano acid crater lake with steam',1.33],
+      ['san-juan-island','800px-lime-kiln-lighthouse-02.jpg','San Juan Island','Lime Kiln Lighthouse above Haro Strait',1.5],
+      ['san-sebastian','800px-kontxa-bay.jpg','San Sebastian','Beach of La Concha bay',1.5],
+      ['santa-barbara','800px-old-mission-santa-barbara-california.jpg','Santa Barbara','Old Mission Santa Barbara',1.35],
+      ['santa-cruz','800px-santa-cruz-california-boardwalk.jpg','Santa Cruz','Santa Cruz Beach Boardwalk aerial view from the shore',2.04],
+      ['santa-fe','800px-cathedral-basilica-of-st-francis-of-assisi.jpg','Santa Fe','Cathedral Basilica of Saint Francis',1.0],
+      ['santa-monica','800px-pier.jpg','Santa Monica','Santa Monica Pier',0.67],
+      ['santiago','800px-cerro-san-cristobal-mirador-el-hundimiento-vista-a-santiago-04.jpg','Santiago','Panoramic view of the city and Andes from Cerro San Cristóbal',1.6],
+      ['santorini','800px-blue-dome-santorini.jpg','Santorini','Oia blue domes',1.58],
+      ['sao-luis','800px-lencois.jpg','Sao Luis','Lençóis Maranhenses dunes and lagoons',1.5],
+      ['sao-paulo','800px-masp-brazil.jpg','Sao Paulo','MASP exterior on Avenida Paulista',1.56],
+      ['sarasota','800px-siesta-key-beach.jpg','Sarasota','Siesta Key Beach with white sand',1.49],
+      ['sardinia','800px-arcipelago-maddalena-budelli.jpg','Sardinia','La Maddalena archipelago Budelli island view',1.33],
+      ['scottsdale','800px-unique-saguaro-cactus-at-sunrise-in-the-arizona-desert.jpg','Scottsdale','McDowell Sonoran Preserve',1.46],
+      ['seattle','800px-kerry-park-skyline.jpg','Seattle','Kerry Park',1.5],
+      ['sedona','800px-cathedral-rock-sedona.jpg','Sedona','Cathedral Rock Sunset',1.33],
+      ['seoul','800px-gyeonghoeru-royal-banquet-hall-at-gyeongbokgung-palace-seoul.jpg','Seoul','Gyeongbokgung Palace',1.5],
+      ['seville','800px-plaza-de-espana-seville.jpg','Seville','Plaza de España',1.26],
+      ['seychelles','800px-anse-source-argent-la-digue.jpg','Seychelles','Anse Source d\'Argent La Digue',1.39],
+      ['shanghai','800px-bund.jpg','Shanghai','The Bund waterfront promenade with colonial facades and Pudong skyline',1.33],
+      ['sicily','800px-teatro-antico-taormina.jpg','Sicily','Ancient Theatre of Taormina with Mount Etna',1.33],
+      ['siena','800px-piazza-del-campo-siena-2011.jpg','Siena','Piazza del Campo',1.5],
+      ['singapore','800px-supertrees-35543679270.jpg','Singapore','OCBC Skyway',1.58],
+      ['sint-maarten','800px-maho-beach.jpg','Sint Maarten','Maho Beach with aircraft on final approach overhead, Sint Maarten',1.5],
+      ['sintra','800px-pena-palace-below.jpg','Sintra','Pena Palace, Sintra',0.61],
+      ['sorrento','800px-marina-grande-sorrento.jpg','Sorrento','Marina Grande',1.33],
+      ['split','800px-peristyle.jpg','Split','Peristyle of Diocletian\'s Palace',0.74],
+      ['stockholm','800px-stortorget-i-gamla-stan-i-stockholm-2.jpg','Stockholm','Stortorget',1.5],
+      ['strasbourg','800px-straburg-la-petite-france-place-benjamin-zix.jpg','Strasbourg','La Petite France',1.39],
+      ['stuttgart','800px-stuttgartschlossplatz.jpg','Stuttgart','Schlossplatz',1.33],
+      ['sydney','800px-opera-house.jpg','Sydney','Sydney Opera House sails from the harbour',1.63],
+      ['taipei','800px-elephant-mountain.jpg','Taipei','Elephant Mountain',0.94],
+      ['tallinn','800px-oldtownpanorama.jpg','Tallinn','Tallinn Old Town panorama',0.73],
+      ['tbilisi','800px-narikala-fortress-in-tbilisi.jpg','Tbilisi','Narikala Fortress',1.5],
+      ['tenerife','800px-pico-del-teide.jpg','Tenerife','Mount Teide — volcanic peak',1.33],
+      ['tokyo','800px-sensoji-temple-asakusa-tokyo.jpg','Tokyo','Senso-ji Temple — Kaminarimon gate and Nakamise approach',1.33],
+      ['toledo','800px-mirador-valle.jpg','Toledo','Mirador del Valle panorama of Toledo across the Tagus',2.84],
+      ['toronto','800px-torontos-cn-tower.jpg','Toronto','CN Tower',0.67],
+      ['tromso','800px-eismeerkathedrale.jpg','Tromso','Arctic Cathedral',0.75],
+      ['turin','800px-mole-antonelliana-torino.jpg','Turin','Mole Antonelliana tower rising above Turin\'s rooftops',0.75],
+      ['turks-and-caicos','800px-chalk-sound.jpg','Turks and Caicos','Chalk Sound turquoise lagoon with limestone cays, Providenciales',1.5],
+      ['valletta','800px-upper-barrakka-gardens-valletta.jpg','Valletta','Upper Barrakka Gardens',0.63],
+      ['vancouver','800px-skyline-of-vancouver-viewed-from-stanley-park.jpg','Vancouver','Vancouver skyline viewed from Stanley Park',1.5],
+      ['venice','800px-venice-gondola-grand-canal.jpg','Venice','Gondola on the Grand Canal, Venice',0.77],
+      ['verona','800px-arena-di-verona-2.jpg','Verona','Arena di Verona',1.5],
+      ['victoria','800px-bc-parliament.jpg','Victoria','BC Parliament Buildings',1.5],
+      ['vienna','800px-wien-schloss-schoenbrunn.jpg','Vienna','Schönbrunn Palace garden facade',1.59],
+      ['virgin-islands','800px-magens-bay.jpg','Virgin Islands','Magens Bay beach viewed from above, St. Thomas USVI',1.71],
+      ['washington-dc','800px-lincoln-memorial.jpg','Washington, DC','Lincoln Memorial',2.02],
+      ['wellington','800px-cable-car-wellington.jpg','Wellington','Wellington Cable Car',1.33],
+      ['whistler','800px-cloudraker-sky-bridge-at-whistler-peak.jpg','Whistler','Cloudraker Skybridge suspension bridge at the summit',1.33],
+      ['yellowstone','800px-grand-prismatic-spring.jpg','Yellowstone','Grand Prismatic Spring rainbow colours',1.57],
+      ['zakynthos','800px-navagio-beach-zakynthos.jpg','Zakynthos','Navagio Beach, Zakynthos',0.75],
+      ['zhangjiajie','800px-misty-rock-formations-in-tianzi-mountain.jpg','Zhangjiajie','Tianzi Mountain',1.33],
+      ['zurich','800px-grossmuenster-zuerich.jpg','Zurich','Grossmünster',1.48]
     ];
 
-    /* The reader's own calendar day, not UTC — the set turns over at their
-       midnight. Date.UTC on the local Y/M/D gives a whole number of days with
-       no DST drift, which a plain Date.now()/86400000 does not. */
+    var art = document.querySelector('.lp-hero-art');
+    if (!art || !G.length) return;
+    var tiles = art.querySelectorAll(':scope > a');
+    if (tiles.length !== 4) return;
+
+    var PER = 4, TURNS = Math.ceil(G.length / PER), turn = 0;
+
+    /* The reader's local calendar day. Date.UTC on the local Y/M/D gives a whole
+       number of days with no DST drift, which Date.now()/86400000 does not. */
     var now = new Date();
     var day = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
-    var set = SETS[((day % SETS.length) + SETS.length) % SETS.length];
-    if (set === SETS[0]) return;
+    turn = ((day % TURNS) + TURNS) % TURNS;
 
-    var tiles = document.querySelectorAll('.lp-hero-art > a');
-    if (tiles.length !== set.length) return;
-    for (var i = 0; i < tiles.length; i++) {
-      var t = tiles[i], row = set[i];
-      var img = t.querySelector('img'), cap = t.querySelector('span');
-      if (!img || !cap) continue;
-      t.href = '/guides/' + row[0] + '.html';
-      img.src = '/guides/' + row[0] + '/photos/' + row[1];
-      img.alt = row[3];
-      cap.textContent = row[2];
+    function four(t) {
+      var out = [];
+      for (var i = 0; i < PER; i++) out.push(G[(t * PER + i) % G.length]);
+      /* tallest -> the tall cell "c", widest -> the wide cell "d" */
+      var by = out.slice().sort(function (a, b) { return a[4] - b[4]; });
+      var tall = by[0], wide = by[by.length - 1];
+      var rest = out.filter(function (x) { return x !== tall && x !== wide; });
+      return [rest[0], rest[1], tall, wide];
     }
+
+    function paint(t) {
+      var set = four(t);
+      for (var i = 0; i < PER; i++) {
+        var row = set[i], a = tiles[i], img = a.querySelector('img'), cap = a.querySelector('span');
+        if (!row || !img || !cap) continue;
+        a.href = '/guides/' + row[0] + '.html';
+        img.src = '/guides/' + row[0] + '/photos/' + row[1];
+        img.alt = row[3] || row[2];
+        cap.textContent = row[2];
+      }
+    }
+
+    /* Warm the next turn's files so an advance does not show empty tiles. */
+    function prefetch(t) {
+      four(t).forEach(function (row) {
+        if (!row) return;
+        var im = new Image();
+        im.src = '/guides/' + row[0] + '/photos/' + row[1];
+      });
+    }
+
+    function go(step) {
+      turn = ((turn + step) % TURNS + TURNS) % TURNS;
+      paint(turn);
+      prefetch(turn + 1);
+    }
+
+    paint(turn);
+    prefetch(turn + 1);
+
+    /* Controls. Built here rather than authored above so the block degrades to a
+       plain four-photo mosaic with no dead buttons when this script does not run. */
+    var nav = document.createElement('div');
+    nav.className = 'lp-hero-nav';
+    function button(label, step) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'lp-hero-arrow';
+      b.setAttribute('aria-label', label);
+      b.innerHTML = step < 0
+        ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>'
+        : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+      b.addEventListener('click', function () { stop(); go(step); });
+      return b;
+    }
+    nav.appendChild(button('Previous four guides', -1));
+    nav.appendChild(button('Next four guides', 1));
+    art.parentNode.insertBefore(nav, art.nextSibling);
+
+    /* Auto-advance, but never against the reader: it stops for good on the first
+       click, holds while the pointer or keyboard focus is inside the mosaic, and
+       never starts at all when the reader has asked for reduced motion. */
+    var timer = null, calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+    function start() { if (!timer && !(calm && calm.matches)) timer = setInterval(function () { go(1); }, 6000); }
+    function pause() { if (timer) { clearInterval(timer); timer = null; } }
+    function stop()  { pause(); start = function () {}; }
+    ['mouseenter', 'focusin'].forEach(function (ev) { art.addEventListener(ev, pause); });
+    ['mouseleave', 'focusout'].forEach(function (ev) { art.addEventListener(ev, start); });
+    nav.addEventListener('mouseenter', pause);
+    nav.addEventListener('mouseleave', start);
+    document.addEventListener('visibilitychange', function () { document.hidden ? pause() : start(); });
+    start();
   })();
   </script>
 </header>
