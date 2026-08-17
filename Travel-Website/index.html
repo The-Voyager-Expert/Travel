@@ -1048,6 +1048,125 @@ a.land-cta:hover:visited {
 }
 .lp-best .lp-links a { padding: 0.34rem 0; align-self: start; }
 
+/* Each category names itself AND says what it collects (owner 2026-08-17).
+   A column of 34 bare nouns tells you how to spell a category, never whether
+   it is the one you want — "Hard-to-Reach Places" and "Unique Hotels" both
+   need a line before they mean anything. The sentence is the same one the
+   category page opens with, so the two cannot drift.
+
+   Wider tracks: the row is now two lines, so 190px columns would break the
+   summary every three words. 330px gives three columns on the 1180px rail and
+   drops to two, then one, on the way down. */
+.lp-best .lp-links { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 0 1.6rem; }
+.lp-best .lp-links a {
+  /* The base row is `display:flex` + `justify-content:space-between`, built
+     for ONE label and a chevron. Left as flex the name and the summary become
+     two side-by-side flex items sharing the row, and the name — now in a
+     narrow column of its own — breaks mid-word: "Amusem / ent Parks".
+     A two-column grid instead: the text stacks down column 1, the chevron
+     holds column 2 across both rows so it stays level with the name it points
+     at rather than drifting to the block's centre. */
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  column-gap: 0.5rem;
+  padding: 0.6rem 0.1em;
+}
+.lp-best .lp-links a > span { grid-column: 1; }
+.lp-best .lp-links a::after { grid-column: 2; grid-row: 1 / span 2; }
+.lp-best-n { font-weight: 600; }
+.lp-best-d {
+  margin-top: 0.15rem;
+  font-size: 0.78rem; font-weight: 400; line-height: 1.5;
+  color: var(--muted, #6a6660);
+}
+/* The row's hover recolours the whole anchor. The summary is deliberately the
+   quieter half and stays quiet — otherwise a hovered row is two lines of
+   terracotta and the name stops being the thing you are aiming at. */
+.lp-best .lp-links a:hover .lp-best-d { color: var(--muted, #6a6660); }
+
+/* ── Best Of on a PHONE — one picture instead of 34 rows ────────────────────
+   Owner 2026-08-17, on the shipped list: "too long for mobile, boring and
+   ugly." A phone gets a single tile — photo, then a warm band carrying the
+   name and one short line about what the section collects — and taps through
+   to /best-of/, which is the page whose whole job is choosing a category.
+
+   DESKTOP IS UNTOUCHED. The tile is `display:none` at this, the default
+   scope, and only the phone block below swaps the two. Nothing about the
+   34-name grid above changes at any width a mouse can reach — that was the
+   owner's standing instruction for this pass ("MOBILE ONLY DO NOT TOUCH
+   DESKTOP"), so this rule and its media query are the entire footprint.
+
+   The gate is `(max-width: 600px) and (pointer: coarse)` — width AND primary
+   input, never width alone. A desktop window narrowed past 600px reports the
+   width of a phone and nothing else does; `pointer: coarse` is what tells the
+   two apart, and a bare width query HARD-FAILS
+   brain_check.check_mobile_breakpoints_gated_on_pointer (Toolbar.html § 42). */
+.lp-best-tile { display: none; }
+
+@media (max-width: 600px) and (pointer: coarse) {
+  /* The two swaps, stated together so neither can be moved without the other. */
+  .lp-best .lp-links { display: none; }
+  .lp-best-tile { display: block; }
+
+  /* The intro paragraph is the other half of "too long": four lines of setup
+     above a list the reader cannot see the end of. The band under the photo
+     says the same thing in one line, so the long version goes with the list. */
+  .lp-best-sub { display: none; }
+
+  .lp-best-tile {
+    text-decoration: none;
+    border-radius: 14px;
+    overflow: hidden;                 /* clips the photo to the rounded corner */
+    box-shadow: 0 1px 2px rgba(23,21,15,.08), 0 8px 24px rgba(23,21,15,.10);
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Pressed state rather than hover — :hover does not fire on touch, and a
+     tile this large with no feedback reads as a picture, not a link. */
+  .lp-best-tile:active { transform: scale(.992); }
+  .lp-best-tile, .lp-best-tile:active { transition: transform .12s ease; }
+
+  .lp-best-shot { position: relative; display: block; }
+  .lp-best-shot img {
+    display: block;                   /* kills the inline-image baseline gap */
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  /* Count badge, bottom-left of the photo. Sits on its own scrim rather than a
+     gradient over the whole picture — the photo is the point, and a full-height
+     scrim to carry six characters greys out the half of it worth looking at. */
+  .lp-best-count {
+    position: absolute; left: 12px; bottom: 12px;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(23,21,15,.62);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    color: #fff; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase;
+  }
+
+  /* The band. Solid terracotta, the full width of the tile, directly under the
+     photo with no gap — the shape the owner pointed at. */
+  .lp-best-band {
+    display: block;
+    padding: 13px 15px 15px;
+    background: var(--rust, #C04E1A);
+  }
+  .lp-best-band-t {
+    display: block;
+    font-size: 16.5px; font-weight: 700; line-height: 1.25;
+    color: #fff;
+  }
+  .lp-best-band-t::after { content: ' \203A'; opacity: .75; }
+  .lp-best-band-d {
+    display: block; margin-top: 5px;
+    font-size: 13.5px; line-height: 1.5;
+    /* Not pure white — the description sits under the title and reads as the
+       quieter of the two. Still 4.5:1 against the terracotta. */
+    color: rgba(255,255,255,.88);
+  }
+}
+
 /* ── Best Of on a PHONE — one picture instead of 34 rows ────────────────────
    Owner 2026-08-17, on the shipped list: "too long for mobile, boring and
    ugly." A phone gets a single tile — photo, then a warm band carrying the
@@ -2280,40 +2399,40 @@ window.lpGuideCard = function (href, flag, name, extra) {
   cave, and the question is which one is worth the flight. Each entry names the city it
   sits in and links into that city&rsquo;s guide.</p>
           <nav class="lp-links">
-            <a href="/best-of/amusement-parks/">Amusement Parks</a>
-            <a href="/best-of/animal-encounters/">Animal Encounters</a>
-            <a href="/best-of/aquariums/">Aquariums</a>
-            <a href="/best-of/architecture/">Architecture</a>
-            <a href="/best-of/art-museums/">Art Museums</a>
-            <a href="/best-of/beaches/">Beaches</a>
-            <a href="/best-of/castles/">Castles</a>
-            <a href="/best-of/cathedrals/">Cathedrals</a>
-            <a href="/best-of/caves/">Caves</a>
-            <a href="/best-of/gardens/">Gardens</a>
-            <a href="/best-of/hard-to-reach-places/">Hard-to-Reach Places</a>
-            <a href="/best-of/hot-springs/">Hot Springs</a>
-            <a href="/best-of/islands/">Islands</a>
-            <a href="/best-of/kids-friendly-places/">Kid-Friendly</a>
-            <a href="/best-of/kids-museums/">Kids Museums</a>
-            <a href="/best-of/lakes/">Lakes</a>
-            <a href="/best-of/most-luxurious-hotels/">Luxurious Hotels</a>
-            <a href="/best-of/mountains-and-rock-formations/">Mountains &amp; Rock</a>
-            <a href="/best-of/museums/">Museums</a>
-            <a href="/best-of/national-parks-by-country/">National Parks</a>
-            <a href="/best-of/natural-phenomena/">Natural Phenomena</a>
-            <a href="/best-of/observation-decks/">Observation Decks</a>
-            <a href="/best-of/resorts/">Resorts</a>
-            <a href="/best-of/safari/">Safari</a>
-            <a href="/best-of/scuba-diving/">Scuba Diving</a>
-            <a href="/best-of/ski-resorts/">Ski Resorts</a>
-            <a href="/best-of/surfing/">Surfing</a>
-            <a href="/best-of/ultra-luxurious-resorts/">Ultra Luxurious Resorts</a>
-            <a href="/best-of/unesco-sites/">UNESCO Sites</a>
-            <a href="/best-of/unique-hotels/">Unique Hotels</a>
-            <a href="/best-of/unique-museums/">Unique Museums</a>
-            <a href="/best-of/volcanoes/">Volcanoes</a>
-            <a href="/best-of/wine-regions/">Wine Regions</a>
-            <a href="/best-of/wonders-of-the-world/">Wonders of the World</a>
+            <a href="/best-of/amusement-parks/"><span class="lp-best-n">Amusement Parks</span><span class="lp-best-d">The world's best theme parks, and which rides justify the queue</span></a>
+            <a href="/best-of/animal-encounters/"><span class="lp-best-n">Animal Encounters</span><span class="lp-best-d">Where to see wild animals — the parks and reserves worth travelling for</span></a>
+            <a href="/best-of/aquariums/"><span class="lp-best-n">Aquariums</span><span class="lp-best-d">The world's best aquariums, and what each collection is built around</span></a>
+            <a href="/best-of/architecture/"><span class="lp-best-n">Architecture</span><span class="lp-best-d">The world's most remarkable buildings, and what makes each one significant</span></a>
+            <a href="/best-of/art-museums/"><span class="lp-best-n">Art Museums</span><span class="lp-best-d">The world's great art museums, and the works people come for</span></a>
+            <a href="/best-of/beaches/"><span class="lp-best-n">Beaches</span><span class="lp-best-d">The best beaches in the world, picked for sand and setting — not the resorts behind them</span></a>
+            <a href="/best-of/castles/"><span class="lp-best-n">Castles</span><span class="lp-best-d">The best castles to visit, from open ruins to furnished palaces</span></a>
+            <a href="/best-of/cathedrals/"><span class="lp-best-n">Cathedrals</span><span class="lp-best-d">The world's great cathedrals, and what to look for once inside</span></a>
+            <a href="/best-of/caves/"><span class="lp-best-n">Caves</span><span class="lp-best-d">The best caves to visit, from hour-long walkways to serious expeditions</span></a>
+            <a href="/best-of/gardens/"><span class="lp-best-n">Gardens</span><span class="lp-best-d">The world's best botanical gardens, and the season each one peaks</span></a>
+            <a href="/best-of/hard-to-reach-places/"><span class="lp-best-n">Hard-to-Reach Places</span><span class="lp-best-d">The most remote places you can travel to, and what it takes to get there</span></a>
+            <a href="/best-of/hot-springs/"><span class="lp-best-n">Hot Springs</span><span class="lp-best-d">The world's best hot springs, and the bathing rules that catch visitors out</span></a>
+            <a href="/best-of/islands/"><span class="lp-best-n">Islands</span><span class="lp-best-d">The best islands in the world, chosen on geography rather than resort count</span></a>
+            <a href="/best-of/kids-friendly-places/"><span class="lp-best-n">Kid-Friendly</span><span class="lp-best-d">The best places to travel with kids, and the ages each one suits</span></a>
+            <a href="/best-of/kids-museums/"><span class="lp-best-n">Kids Museums</span><span class="lp-best-d">The best children's museums, and what the exhibits let kids actually do</span></a>
+            <a href="/best-of/lakes/"><span class="lp-best-n">Lakes</span><span class="lp-best-d">The world's most striking lakes, and the geology behind each colour</span></a>
+            <a href="/best-of/most-luxurious-hotels/"><span class="lp-best-n">Luxurious Hotels</span><span class="lp-best-d">The world's most luxurious hotels, and what separates them from the merely expensive</span></a>
+            <a href="/best-of/mountains-and-rock-formations/"><span class="lp-best-n">Mountains &amp; Rock</span><span class="lp-best-d">The world's most famous peaks and rock formations, and how close you can get</span></a>
+            <a href="/best-of/museums/"><span class="lp-best-n">Museums</span><span class="lp-best-d">The world's great museums, and what each holds that nowhere else does</span></a>
+            <a href="/best-of/national-parks-by-country/"><span class="lp-best-n">National Parks</span><span class="lp-best-d">The standout national park in each country, and the season to see it</span></a>
+            <a href="/best-of/natural-phenomena/"><span class="lp-best-n">Natural Phenomena</span><span class="lp-best-d">Where and when to see the northern lights, migrations and other rare phenomena</span></a>
+            <a href="/best-of/observation-decks/"><span class="lp-best-n">Observation Decks</span><span class="lp-best-d">The best observation decks and viewpoints, and which ones need booking ahead</span></a>
+            <a href="/best-of/resorts/"><span class="lp-best-n">Resorts</span><span class="lp-best-d">The best resorts in the world, where the property itself is the destination</span></a>
+            <a href="/best-of/safari/"><span class="lp-best-n">Safari</span><span class="lp-best-d">The best safari destinations in Africa, and when each one peaks</span></a>
+            <a href="/best-of/scuba-diving/"><span class="lp-best-n">Scuba Diving</span><span class="lp-best-d">The world's best dive sites, and the experience level each one demands</span></a>
+            <a href="/best-of/ski-resorts/"><span class="lp-best-n">Ski Resorts</span><span class="lp-best-d">The world's best ski resorts, and what each mountain is actually strong at</span></a>
+            <a href="/best-of/surfing/"><span class="lp-best-n">Surfing</span><span class="lp-best-d">The world's best surf breaks, and the swell season that makes each work</span></a>
+            <a href="/best-of/ultra-luxurious-resorts/"><span class="lp-best-n">Ultra Luxurious Resorts</span><span class="lp-best-d">The world's most exclusive resorts, and how you physically get to them</span></a>
+            <a href="/best-of/unesco-sites/"><span class="lp-best-n">UNESCO Sites</span><span class="lp-best-d">The UNESCO World Heritage Sites worth the journey — and there are over a thousand that aren't</span></a>
+            <a href="/best-of/unique-hotels/"><span class="lp-best-n">Unique Hotels</span><span class="lp-best-d">The world's most unusual hotels — lighthouses, caves, treehouses and ice</span></a>
+            <a href="/best-of/unique-museums/"><span class="lp-best-n">Unique Museums</span><span class="lp-best-d">The world's strangest museums, and why each one came to exist</span></a>
+            <a href="/best-of/volcanoes/"><span class="lp-best-n">Volcanoes</span><span class="lp-best-d">The best volcanoes to visit, and which ones depend on current activity</span></a>
+            <a href="/best-of/wine-regions/"><span class="lp-best-n">Wine Regions</span><span class="lp-best-d">The world's best wine regions, and whether you can walk in or must book</span></a>
+            <a href="/best-of/wonders-of-the-world/"><span class="lp-best-n">Wonders of the World</span><span class="lp-best-d">The wonders of the world, and what visiting each is actually like now</span></a>
           </nav>
 
   <!-- PHONE ONLY — the 34-name list above is a desktop shape. On a phone it is
