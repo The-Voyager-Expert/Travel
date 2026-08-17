@@ -1647,6 +1647,53 @@ window.TVE.home = (function () {
       '.tb-ham-menu a:active{background:rgba(0,0,0,.04)}' +
       '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 24px}' +
       '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 24px 2px}' +
+      /* ── The nine category groups (owner rule 2026-08-17) ──────────────────
+         Terracotta wherever the reference design used blue — the category name
+         and its +/− — and the pages underneath in the black this menu already
+         uses for every other row (#3d3a32, the colour set by `.tb-ham-menu a`
+         directly above). Owner: "use our terracota colors where he used blue …
+         on the categories below do not use terracota match the black already
+         in the toolbar."
+
+         There is no heading over this tier and no label naming it. The nine
+         category names ARE the rows, at the same level as the tabs above them.
+
+         The group name is a summary, not a link — these nine categories have no
+         page of their own, so the row's only job is to disclose. That is also
+         why it is 15px/600 rather than the 14px/400 of a link: it has to read
+         as a heading with a control on it, not as a destination you failed to
+         reach. */
+      '.tb-ham-menu .tb-ham-grp{border:0}' +
+      '.tb-ham-menu .tb-ham-grp>summary{list-style:none;display:flex;align-items:center;' +
+        'justify-content:space-between;gap:10px;padding:11px 24px;min-height:44px;' +
+        'box-sizing:border-box;font-size:15px;font-weight:600;color:#C04E1A;cursor:pointer;' +
+        '-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none}' +
+      /* Both spellings — WebKit needs its own pseudo-element and ignores the
+         standard one, and Firefox does the reverse. Miss either and the browser
+         paints its native disclosure triangle beside our +. */
+      '.tb-ham-menu .tb-ham-grp>summary::-webkit-details-marker{display:none}' +
+      '.tb-ham-menu .tb-ham-grp>summary::marker{content:""}' +
+      '.tb-ham-menu .tb-ham-grp>summary:active{background:rgba(0,0,0,.04)}' +
+      '.tb-ham-menu .tb-ham-grp>summary:focus-visible{outline:2px solid #C04E1A;outline-offset:-2px}' +
+      /* A typographic marker, not an icon: ASCII + and U+2212 MINUS, so nothing
+         here comes from the icon catalogue (Twenty-eighth non-negotiable). */
+      '.tb-ham-grp-plus{font-size:19px;font-weight:400;line-height:1;flex-shrink:0}' +
+      '.tb-ham-grp-plus::before{content:"+"}' +
+      '.tb-ham-menu .tb-ham-grp[open]>summary .tb-ham-grp-plus::before{content:"\\2212"}' +
+      /* Indented one step from the category name, the way a child row reads on
+         the reference design. The selector carries .tb-ham-menu so it outranks
+         `.tb-ham-menu a` (0,2,1 beats 0,1,1) — without it the shared rule's
+         padding wins and every page in a group sits flush with its heading. */
+      '.tb-ham-menu .tb-ham-grp-links a,.tb-ham-menu .tb-ham-grp-links a:visited{' +
+        'display:block;padding:11px 24px 11px 40px;min-height:44px;box-sizing:border-box;' +
+        'font-size:14px;font-weight:400;color:#3d3a32!important}' +
+      /* The page you are on, inside its own group. Deliberately NOT the .tb-active
+         pill the tabs use: that rule is display:inline-flex with a 1.5px border and
+         a 12px margin, which on an indented child paints a chip that no longer
+         lines up with the rows above or below it. Weight and a terracotta rule down
+         the left mark the row in place, without moving it. */
+      '.tb-ham-menu .tb-ham-grp-links a.tb-grp-current{font-weight:700;' +
+        'box-shadow:inset 2px 0 0 #C04E1A}' +
     '}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
     '@media (pointer: fine){.tb-theme-toggle{position:absolute;top:10px;right:16px;margin-right:0}}' +
@@ -2233,6 +2280,150 @@ window.TVE.home = (function () {
       hamMenu.appendChild(a2);
       firstItem = false;
     }
+  });
+
+  /* ── The nine category groups — MOBILE MENU ONLY (owner rule 2026-08-17) ────
+     Every page under essentials/ — all 45 of them — grouped nine ways, each
+     group a closed disclosure whose name carries a plus. Owner: "i want you to
+     remove from there and move to the toolbar with similar look of this page",
+     pointing at the Rick Steves mobile nav; then "no essentials Money then
+     comes what is under, safety and healthy then comes what is under".
+
+     So there is NO wrapper heading. The nine names sit at the same level as the
+     tabs above them, separated by the same hairline, and nothing labels the tier
+     "Trip Resources" or "Essentials" — the category name is the whole row.
+
+     THIS IS NOT IN `ITEMS`, DELIBERATELY. That array feeds the desktop tab row
+     as well, so nine groups there would put nine dropdowns on a top strip that
+     has no space for one (Nineteenth non-negotiable). This list is read only by
+     the hamburger builder, which runs inside the 1260px + coarse-pointer gate —
+     the desktop bar never sees it. It is also the one hand-maintained list in
+     this menu since the 2026-08-15 sweep that made the menu exactly ITEMS; that
+     note below still governs Best Of and Also-on-this-site, which do not come
+     back. This tier is the owner's exception to it, not a reopening of it.
+
+     KEEP THIS LIST TOTAL. A new page under essentials/ belongs in a group here
+     or it is reachable from nowhere on a phone — the landing page block that
+     used to carry it is hidden at this width. The labels are the site's own
+     (they came from the landing block), never the page <title>.
+
+     Car Rental is ONE row, not eight. The landing block gives it seven
+     continent sub-rows, but those are anchors into the same page — a second
+     disclosure level inside a phone menu to reach #rc-europe is a tier of
+     nesting for no new page. Every page is still one tap from here. */
+  var RES_GROUPS = [
+    { name: 'Money', links: [
+      ['essentials/budget/',            'Budget'],
+      ['essentials/cards-atm/',         'Cards & ATM'],
+      ['essentials/tipping/',           'Tipping']
+    ] },
+    /* Airline Networks replaces the Delta / United / American Network rows the
+       landing block still carries. Those three pages left the deployed tree on
+       2026-08-16 (commit 8c81ba50) and their content lives on in this one page,
+       so the old rows are dead links — never copy them back from that block. */
+    { name: 'Flights & airports', links: [
+      ['essentials/airlines/',          'Airlines'],
+      ['essentials/baggage/',           'Baggage'],
+      ['essentials/connections/',       'Airport Connections'],
+      ['essentials/lounges-us/',        'US Lounges'],
+      ['essentials/lounges-europe/',    'EU Lounges'],
+      ['essentials/airline-networks/',  'Airline Networks']
+    ] },
+    /* The four regional train guides reach the nav for the first time here —
+       until now they were linked only from inside the European trains page. */
+    { name: 'Trains', links: [
+      ['essentials/european-trains/',   'European Trains'],
+      ['essentials/african-trains/',    'African Trains'],
+      ['essentials/americas-trains/',   'Americas Trains'],
+      ['essentials/asian-trains/',      'Asian Trains'],
+      ['essentials/oceania-trains/',    'Oceania Trains'],
+      ['essentials/train-passes/',      'Train Passes'],
+      ['essentials/scenic-trains/',     'Scenic Trains'],
+      ['essentials/day-trips/',         'Day Trips']
+    ] },
+    { name: 'Getting around', links: [
+      ['essentials/cars/',              'Car Rental'],
+      ['essentials/transit-cards/',     'Transit Cards'],
+      ['essentials/storage/',           'Luggage Storage']
+    ] },
+    { name: 'Visas & docs', links: [
+      ['essentials/visa/',              'Visas'],
+      ['essentials/entry/',             'Entry Requirements'],
+      ['essentials/passport/',          'Passport'],
+      ['essentials/trusted-traveler/',  'Trusted Traveler'],
+      ['essentials/visa-times/',        'Visa Processing Times'],
+      ['essentials/nomad-visas/',       'Digital Nomad Visas']
+    ] },
+    { name: 'Stay & eat', links: [
+      ['essentials/hotels/',            'Hotels'],
+      ['essentials/neighborhoods/',     'Neighborhoods'],
+      ['essentials/restaurants/',       'Restaurants']
+    ] },
+    { name: 'Health & safety', links: [
+      ['essentials/safety/',            'Safety'],
+      ['essentials/vaccines/',          'Vaccines'],
+      ['essentials/tap-water/',         'Tap Water'],
+      ['essentials/insurance/',         'Insurance'],
+      ['essentials/scams/',             'Scams'],
+      ['essentials/mistakes/',          'First-timer Mistakes']
+    ] },
+    /* Packing is under essentials/ so it is in (owner: "all of them under this
+       folder"), even though it is also a top-strip tab. plugs, currencies and
+       time-zones are NOT under essentials/ — they moved to the site root on
+       2026-08-16 — so they stay tabs only and appear in no group. */
+    { name: 'Plan & pack', links: [
+      ['essentials/sims/',              'Phone & SIM'],
+      ['essentials/apps/',              'Travel Apps'],
+      ['essentials/tours/',             'Tours & Tickets'],
+      ['essentials/packing/',           'Packing Checklist'],
+      ['essentials/resources/',         'More Resources']
+    ] },
+    { name: 'Special trips', links: [
+      ['essentials/cruises/',           'Cruises'],
+      ['essentials/disney/',            'Disney Parks'],
+      ['essentials/sports-calendar/',   'Sports Calendar'],
+      ['essentials/festival-finder/',   'Festivals'],
+      ['essentials/pickleball/',        'Pickleball']
+    ] }
+  ];
+
+  RES_GROUPS.forEach(function (grp) {
+    var gsep = document.createElement('div');
+    gsep.className = 'tb-ham-sep';
+    hamMenu.appendChild(gsep);
+
+    /* Native <details>, like the landing block and the contact form: keyboard
+       accessible, works with scripting off, and the links stay in the markup
+       whether the group is open or closed. */
+    var det = document.createElement('details');
+    det.className = 'tb-ham-grp';
+
+    var sum = document.createElement('summary');
+    sum.className = 'tb-ham-grp-head';
+    sum.appendChild(document.createTextNode(grp.name));
+    var plus = document.createElement('span');
+    plus.className = 'tb-ham-grp-plus';
+    plus.setAttribute('aria-hidden', 'true');
+    sum.appendChild(plus);
+    det.appendChild(sum);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'tb-ham-grp-links';
+    grp.links.forEach(function (l) {
+      var a = document.createElement('a');
+      a.href = base + l[0];
+      a.textContent = l[1];
+      /* The group holding the page you are on opens itself, and that page is
+         marked — the reader lands in the menu already at their own position
+         instead of having to remember which of nine groups they came from. */
+      if (_isCurrent(a.getAttribute('href'))) {
+        a.classList.add('tb-grp-current');
+        det.open = true;
+      }
+      wrap.appendChild(a);
+    });
+    det.appendChild(wrap);
+    hamMenu.appendChild(det);
   });
 
   /* ── Best Of + Also-on-this-site sections — REMOVED (owner rule 2026-08-15)
