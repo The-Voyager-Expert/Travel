@@ -313,10 +313,10 @@ a.trip-jump-pill:visited { color: #3d3a32; }
    no whole-trip control: the two of them export different parts, so an
    "everything" button is one neither would press.
 
-   Each icon is an <a href="webcal://…"> straight to Calendar. Nothing here
-   writes a file, which is the whole fix: a control with no URL of its own has
-   to fall back to building a blob, and the blob is what the reader was then
-   asked to save.
+   Each icon builds that one part's .ics in the page and hands it to Calendar
+   as a FILE — the share sheet on a phone, a download anywhere else. Never as a
+   URL of any kind (webcal:// or a blob: navigation): a URL is what Calendar
+   offers to SUBSCRIBE to. See the save() comment for the whole rule.
 
    The .added state is remembered in localStorage, because the real cost of
    per-part exporting is losing track — owner: *"i would get lost which one i
@@ -922,15 +922,12 @@ document.addEventListener('DOMContentLoaded',()=>{
    appended to the title to make it "informative"; the calendar month view has
    room for a route and nothing more, and the detail is one tap away.
 
-   Owner rule 2026-08-16: **a row opens the calendar — it never hands over a
-   file to save and open by hand.** The old desktop path was an `<a download>`
-   click, so every add was three steps: save to Downloads, find it, double-click
-   it. Now every row is exactly ONE event (each flight leg is its own row, as
-   each stay already was) and a click opens that event pre-filled in Google
-   Calendar — one tab, one Save. iOS keeps the blob navigation, which already
-   opens the Add-to-Calendar prompt with no save step. The .ics file path
-   survives as the last row only, labelled as a file, for the whole set at once
-   and for anything the direct path cannot reach.
+   Owner rule 2026-08-16: **every part of the trip is exactly ONE event and
+   carries its own icon** — each flight leg, as each stay already did — so the
+   two of them take only what is theirs. Owner rule 2026-08-17: **that icon
+   ADDS the event; it never offers a subscription.** Which of the two you get is
+   decided by what Calendar is handed — a file imports, a URL subscribes — and
+   the whole rule is written out at save() below.
 
    The pre-trip-audit routine writes the same files to Trip-Exports/ on every
    run, so they are already sitting there when you want them — this page is the
@@ -1004,34 +1001,52 @@ document.addEventListener('DOMContentLoaded',()=>{
     L.push('END:VCALENDAR');
     return L.join('\r\n')+'\r\n';
   }
-  /* Copied from the guide export in toolbar.js (_injectICSExport), which has
-     been through several rounds of fixes on real devices — do not "improve" it:
-       · iOS gets the blob URL by NAVIGATION, with no download attribute. Safari
-         reads the text/calendar MIME and routes to the Add to Calendar prompt.
-         A download attribute produces a share sheet instead, and a data: URI is
-         blocked outright by WebKit's navigation policy.
-       · The object URL is revoked after 1500ms, not immediately — revoking at
-         once can cancel the download that was just started. */
   var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-  /* No Google anywhere in this file, by owner rule (2026-08-16): the calendar
-     here is Apple Calendar, on a Mac and on an iPhone.
+  /* ── Delivery — hand Calendar a FILE, never a URL (owner, 2026-08-17) ──────
+     No Google anywhere in this file, by owner rule (2026-08-16): the calendar
+     here is Apple Calendar, on a Mac and on an iPhone. And no webcal:// —
+     webcal means SUBSCRIBE, which builds a separate read-only calendar instead
+     of putting the event in your own (owner: "it is not subscribe, calendar is
+     another thing").
 
-     And no webcal:// either. webcal means SUBSCRIBE, and a subscription is a
-     separate read-only calendar — a different thing from the event being in
-     your own calendar (owner: "it is not subscribe, calendar is another
-     thing"). This function IS the guides' delivery, and the owner asked for it
-     by name: "go get guides calendar from last week, get the code from there."
-     It has been fixed on real devices several times and it is the path that
-     ADDS. Do not "improve" it. Nothing between the click and the navigation
-     below: any async step breaks the iOS user-gesture chain and turns the
-     Add-to-Calendar prompt back into a download. */
+     THE RULE THAT DECIDES WHICH ONE YOU GET, and it is not the file contents:
+       · Calendar handed a **URL** offers to SUBSCRIBE to it.
+       · Calendar handed a **FILE** IMPORTS it — the event lands in your own
+         calendar, editable. That is "add".
+     A blob: object URL is still a URL. So `window.location.href = blobURL`,
+     which this function did until today and which the guide export in
+     toolbar.js still does, is the subscribe path on iOS: Safari sees the
+     text/calendar navigation, hands the URL to Calendar, and Calendar asks to
+     subscribe (owner, 2026-08-17: "it is ask if I want to subscribe and it the
+     wrong behavior"). The comment it replaced claimed that navigation "routes
+     to the Add to Calendar prompt" — it does not, and the claim was inherited
+     from the guide export rather than measured. **Never navigate to a
+     text/calendar URL.**
+
+     So iPhone gets the .ics as a real File through the share sheet, where
+     Calendar accepts it as an import — no download, no file to hunt, and no
+     subscription. Cancelling the sheet does nothing (the AbortError is
+     swallowed on purpose: falling back to a download would hand over the file
+     the owner just declined). Anything without file sharing — desktop Chrome,
+     older Safari — takes the <a download>, which is also a file and also
+     imports.
+
+     Nothing async before the share call: it must run inside the click's own
+     user-gesture, or WebKit rejects it outright. The object URL is revoked
+     after 1500ms, not immediately — revoking at once can cancel the download
+     that was just started. */
   function save(name,ics){
-    var url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));
+    var blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
     if(isIOS){
-      window.location.href=url;
-      return;
+      var file=null;
+      try { file=new File([blob],name,{type:'text/calendar'}); } catch(e){}
+      if(file && navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
+        navigator.share({files:[file]})['catch'](function(){});
+        return;
+      }
     }
+    var url=URL.createObjectURL(blob);
     var a=document.createElement('a');
     a.href=url; a.download=name;
     document.body.appendChild(a); a.click();
@@ -1180,12 +1195,11 @@ document.addEventListener('DOMContentLoaded',()=>{
      control: the two of them export different parts, so an "everything" button
      is one neither would press.
 
-     Every icon runs save() — the guides' own export, which the owner asked for
-     by name ("go get guides calendar from last week, get the code from there").
-     It ADDS the event: on iPhone the blob navigation opens the Add-to-Calendar
-     prompt and the event lands in their own calendar. Never webcal:// here —
-     that subscribes, which builds a separate read-only calendar per item and is
-     a different thing entirely.
+     Every icon runs save(), which hands Calendar the one event as a FILE — the
+     share sheet on a phone, a download anywhere else — so it is IMPORTED into
+     their own calendar, editable. Never a URL of any kind: webcal:// and a
+     blob: navigation both make Calendar offer a subscription instead, which is
+     a separate read-only calendar per item and a different thing entirely.
 
      Clicking marks the icon added, remembered across visits — the real cost of
      exporting part by part is losing your place (owner: *"i would get lost
