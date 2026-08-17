@@ -1416,7 +1416,8 @@
 /* 2026-08-17: trips: METHOD:PUBLISH removed from the exported .ics — it declared the file a published calendar, which is what Apple Calendar offers to subscribe to / add as a calendar of its own toolbar.js -> v698. CACHE to v982. */
 /* 2026-08-17: toolbar: desktop top strip renders as pills toolbar.js -> v699. CACHE to v983. */
 /* 2026-08-17: airline networks: PAGE_ICON drops the three retired carrier pages toolbar.js -> v700. CACHE to v984. */
-var CACHE = 'travel-cache-v984';
+/* 2026-08-17: cars: rental section divided by continent, 16 operators added, a review on every company and a Trustpilot link on 26 of them. Page only, no asset ?v= change, so the CACHE bump is what carries it to returning readers. */
+var CACHE = 'travel-cache-v985';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
