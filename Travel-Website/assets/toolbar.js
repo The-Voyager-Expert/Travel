@@ -1628,15 +1628,28 @@ window.TVE.home = (function () {
         'overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
-      '.tb-ham-menu a,.tb-ham-menu a:visited{display:block;font-size:14px;color:#3d3a32!important;text-decoration:none;' +
-        'padding:10px 24px;border-bottom:none;-webkit-tap-highlight-color:transparent;cursor:pointer;touch-action:manipulation}' +
+      /* ONE ROW SHAPE, above and below the terracotta band (owner rule 2026-08-17).
+         The tabs were 14px/400 and the nine categories below them 15px/600 — at
+         the same #3d3a32 ink the heavier block reads as a second, darker black,
+         which is what the owner saw in the panel: "do you see two different
+         tones of black?" ... "i want the top to look the same of the bottom."
+         So the tab rows take the category row's box AND its type, value for
+         value: 15px/600, 11px 24px, 44px minimum, border-box. Change one of the
+         two and the two-tone comes straight back — they move together.
+         This does NOT reach the links inside a category. .tb-ham-grp-links a
+         sets 14px and 400 explicitly, and it must keep doing so: those rows are
+         a tier down and are the one place a lighter face is the point. */
+      '.tb-ham-menu a,.tb-ham-menu a:visited{display:block;font-size:15px;font-weight:600;' +
+        'color:#3d3a32!important;text-decoration:none;padding:11px 24px;min-height:44px;' +
+        'box-sizing:border-box;border-bottom:none;-webkit-tap-highlight-color:transparent;' +
+        'cursor:pointer;touch-action:manipulation}' +
       /* LOCKED — pill matches desktop .tb-active chip shape (border-radius:14px,
          padding:4px 12px), sized to hug the word only, not full row width.
          Text stays the normal row color — only the border marks it active.
          margin-left:12px so icon at 12+12=24px aligns with inactive item text at 24px.
          Mirrored in mobile.css. Memory: feedback_hamburger_active_pill. */
       '.tb-ham-menu a.tb-active{display:inline-flex;align-items:center;justify-content:center;color:#3d3a32!important;background:transparent;' +
-        'border:1.5px solid #C04E1A;border-radius:14px;margin:6px 12px;padding:4px 12px;font-weight:600}' +
+        'border:1.5px solid #C04E1A;border-radius:14px;margin:6px 12px;padding:4px 12px;min-height:0;font-weight:600}' +
       /* "new" badge in the hamburger — inline-flex so the badge sits beside the
          label rather than wrapping. Placed after the .tb-active rule above so an
          item that is both active and new keeps the pill AND shows the badge. */
@@ -1659,10 +1672,12 @@ window.TVE.home = (function () {
          category names ARE the rows, at the same level as the tabs above them.
 
          The group name is a summary, not a link — these nine categories have no
-         page of their own, so the row's only job is to disclose. That is also
-         why it is 15px/600 rather than the 14px/400 of a link: it has to read
-         as a heading with a control on it, not as a destination you failed to
-         reach. */
+         page of their own, so the row's only job is to disclose. 15px/600 is now
+         the shape of EVERY row in this panel, tabs included (owner rule
+         2026-08-17). It used to be the heading weight set against 14px/400 tabs,
+         and that contrast read as two different blacks on one #3d3a32 ink. What
+         marks this tier is the terracotta band above it and the + on the right —
+         never a heavier face than the rows above. Keep the two rules in step. */
       '.tb-ham-menu .tb-ham-grp{border:0}' +
       '.tb-ham-menu .tb-ham-grp>summary{list-style:none;display:flex;align-items:center;' +
         'justify-content:space-between;gap:10px;padding:11px 24px;min-height:44px;' +
