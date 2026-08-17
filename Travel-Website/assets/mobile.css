@@ -151,13 +151,13 @@ pre { white-space: pre-wrap; }
     white-space: nowrap;
   }
 
-  /* Both of these sit OUTSIDE .wrap, so they carry the gutter themselves. They
-     used to hardcode 14px "to match .wrap" while rule 5 above forced .wrap to
-     16px — the stamp and the strip have been 2px left of the content they align
-     to ever since. --gutter is the single value now (16px on phone), so they
-     cannot drift again; the !important is only here to outrank rule 5's own. */
+  /* The stamp sits OUTSIDE .wrap, so it carries the gutter itself. It used to
+     hardcode 14px "to match .wrap" while rule 5 above forced .wrap to 16px, so
+     it sat 2px left of the content it aligns to. --gutter is the single value
+     now (16px on phone), so it cannot drift again; the !important is only here
+     to outrank rule 5's own. (.also-strip shared this line until 2026-08-17,
+     when the strip was retired site-wide — see web-travel-style.css.) */
   body > .title-updated { padding-left: var(--gutter) !important; padding-right: var(--gutter) !important; }
-  .also-strip { padding-left: var(--gutter) !important; padding-right: var(--gutter) !important; }
 
   /* Legend containers keep their layout on mobile; per-page inline @media
      handles pill sizing (Form B grid on Safety-Guide/Tap-Water, single-
@@ -345,46 +345,14 @@ pre { white-space: pre-wrap; }
     width: 100% !important;
   }
 
-  /* ── "Also on this site" strip (Trip-Essentials) — Form B glued row ─────────
-     The desktop rule in web-travel-style.css is `flex-wrap:wrap; gap:6px`, which
-     on a 393px phone leaves a ragged right edge and strands the last pill alone
-     at a third of the width. Form B (owner rule 2026-07-28) wants glued tiles
-     that reach both margins, so mobile re-lays the same markup out here.
-
-     flex-grow (not a 6-col grid) is deliberate. The guide-side twin —
-     .also-on-this-site-pills in guide-style.css — now uses the same `flex: 1 1 28%`
-     form (ported 2026-08-08; the old 6-col grid was dropped because grid-column
-     set via CSS :nth-child is silently ignored on iOS Safari, requiring JS to fix
-     orphan rows — that workaround is gone). flex-basis 28% keeps 3 pills per row
-     at typical label lengths and lets a long label take a row to itself rather than
-     truncating.
-
-     Trip-Essentials pages load web-travel-style.css + mobile.css and never
-     guide-style.css, so stating the treatment in both files is a consequence of
-     the stylesheet split, not duplication that check_css_duplication would flag
-     (that validator compares page-level inline CSS, not shared files). */
-  .also-links {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 0 !important;
-    width: 100% !important;
-  }
-  .also-links .also-on-this-site-pill {
-    flex: 1 1 28% !important;
-    height: 46px !important;
-    padding: 4px 8px !important;
-    font-size: 12px !important;
-    line-height: 1.15 !important;
-    white-space: normal !important;
-    text-align: center !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    justify-content: center !important;
-    gap: 0 !important;
-    border-radius: 6px !important;
-    box-sizing: border-box !important;
-  }
+  /* ── RETIRED 2026-08-17 — the phone treatment of the "Also on this site"
+     strip (owner rule). The .also-links Form B glued row and its per-pill
+     sizing are DELETED along with the strip itself, which no longer exists on
+     any page that is not a guide. A guide's own footer pill grid is unaffected:
+     it is .also-on-this-site-pills in guide-style.css, guides load neither this
+     file nor web-travel-style.css, and its `flex: 1 1 28%` form stays exactly
+     as it is. Enforced by brain_check.check_no_also_strip_outside_guides — do
+     not restore these rules. */
 
   /* ── filter-chip-row — the universal "stretch my chips to full width" class ──
      Add this class to ANY filter container (div, nav, etc.) whose chips should

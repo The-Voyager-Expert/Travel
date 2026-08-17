@@ -121,14 +121,15 @@ a.cf-spill-pill:visited { color: #3d3a32; }  /* literal: var() is inert in :visi
 .cf-mon:hover { font-family: inherit; border-color: var(--rust); background: var(--bg,#f5f4f0); font-weight: 600; }
 .cf-mon.on { font-family: inherit; background: var(--surface,#ffffff); color: var(--rust,#C04E1A); border-color: var(--rust); }
 
-/* Desktop-only: canonical squared+touching for the two sibling-pill rows only
-   (Weather by city / When to go + Forecast & Research 6-link row). Scoped to
-   the Climate-Finder wrappers (.cf-sibling-row / .cf-research-row) so it
-   doesn't leak into Weather.html or Festival-Finder which use the same
-   .sibling-pill class. Left-aligned per owner ("leave where it is"). */
+/* Desktop-only: canonical squared+touching for the Forecast & Research 6-link
+   row. Scoped to the Climate-Finder wrapper (.cf-research-row) so it doesn't
+   leak into Weather or Festival-Finder, which use the same .sibling-pill class.
+   Left-aligned per owner ("leave where it is"). It covered .cf-sibling-row too
+   until 2026-08-17, when that row went with every other end-of-page cross-link
+   strip on the site. */
 @media (min-width: 601px), (pointer: fine) {
-  .cf-sibling-row, .cf-research-row { gap: 0 !important; }
-  .cf-sibling-row .sibling-pill, .cf-research-row .sibling-pill {
+  .cf-research-row { gap: 0 !important; }
+  .cf-research-row .sibling-pill {
     height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1;
     color: var(--text, #3d3a32); background: var(--surface, #fff);
     border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0;
@@ -149,7 +150,7 @@ a.cf-spill-pill:visited { color: #3d3a32; }  /* literal: var() is inert in :visi
      label — and color:#fff is a hard-fail on these classes
      (check_guide_pill_css_canonical). This rule keeps only what it is for:
      border, shadow, transform. Do not add a background or a colour here. */
-  .cf-sibling-row a.sibling-pill:hover, .cf-research-row a.sibling-pill:hover {
+  .cf-research-row a.sibling-pill:hover {
     border-color: var(--rust);
     box-shadow: none; transform: none;}
 }
@@ -219,9 +220,8 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
     white-space: normal !important; line-height: 1.12 !important;
   }
   .cf-results { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-  .cf-sibling-row { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0 !important; width: 100%; margin: 12px 0 0 !important; }
   .cf-research-row { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; width: 100%; }
-  .cf-sibling-row .sibling-pill, .cf-research-row .sibling-pill {
+  .cf-research-row .sibling-pill {
     height: 46px !important; border-radius: 0 !important; font-size: 12px !important;
     padding: 4px 6px !important; display: flex !important; align-items: center !important;
     justify-content: center !important; text-align: center !important;
@@ -412,13 +412,17 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
 
   <!-- Forecast & Research moved to the foot (owner 2026-08-14). These are six
        links OFF the site; they sat above the month row, ahead of the tool the
-       page exists for. Nothing else moved and the markup is unchanged. -->
+       page exists for. Nothing else moved and the markup is unchanged.
+
+       The "Also on this site" head and its .cf-sibling-row (Festival finder /
+       Sports calendar) that stood above this block were REMOVED 2026-08-17
+       (owner rule) with every other end-of-page cross-link strip on the site.
+       This page had hand-built one out of inline styles rather than .also-strip,
+       which is why it survived the sweep of the other 65 and had to be found by
+       its label. Do not put it back — brain_check.check_no_also_strip_outside_guides
+       hard-fails on the label as well as on the classes. The six links BELOW are
+       not that: they go off-site, and they stay. -->
   <div style="margin:14px 0 14px;">
-    <div style="font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Also on this site</div>
-    <div class="cf-sibling-row" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
-      <a href="/essentials/festival-finder/" class="sibling-pill">Festival finder</a>
-      <a href="/essentials/sports-calendar/" class="sibling-pill">Sports calendar</a>
-    </div>
     <div style="font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Forecast &amp; Research</div>
     <div class="cf-research-row" style="display:flex;flex-wrap:wrap;gap:6px;">
       <a href="https://forecast.weather.gov" target="_blank" rel="noopener" class="sibling-pill">Weather.gov</a>

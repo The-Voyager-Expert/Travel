@@ -79,9 +79,9 @@ function render() {
   var noResults = list.length === 0;
 
   // No-results state: only the title, the search box and the message remain.
+  // (This also used to hide #also-on-this-site; the strip was retired site-wide
+  //  on 2026-08-17 and there is nothing left below the results to hide.)
   document.getElementById('al-alliance-filters').style.display = noResults ? 'none' : '';
-  var also = document.getElementById('also-on-this-site');
-  if (also) also.style.display = noResults ? 'none' : '';
 
   if (noResults) {
     cnt.textContent = '';
