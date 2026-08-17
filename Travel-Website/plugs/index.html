@@ -5962,8 +5962,18 @@ html{scroll-behavior:smooth;}
      native fragment navigation, which drops the compositor layer of the fixed
      "← Back to {City}" pill (toolbar.js) so it goes invisible until a later
      repaint. This matches the 14 other pill-pages, which all scroll via
-     scrollIntoView() and never touch the URL hash. */
-  function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView();}}
+     scrollIntoView() and never touch the URL hash.
+
+     behavior:'instant' is REQUIRED here for the same reason it is on the
+     deep-link settle loop below — but the symptom is worse. This page is
+     ~128,000px tall (138 countries x 210px image boxes), so a bare
+     scrollIntoView() under html{scroll-behavior:smooth} above ANIMATES the
+     whole distance: clicking Argentina in the index (absolute y 82,409) left
+     the reader at y 31,656 twenty-six seconds later, still crawling past
+     Bosnia, with the renderer pinned the entire time. The index row and the
+     search box's Enter key both land here, so every one of the 138 countries
+     was affected and the far ones were unusable. Do not drop the argument. */
+  function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView({behavior:'instant',block:'start'});}}
   // whole row is clickable (rows show a pointer cursor) — tap anywhere to open that country
   rows.forEach(function(r){r.addEventListener('click',function(e){var a=r.querySelector('a[href^="#"]');if(!a)return;e.preventDefault();jumpTo(a.getAttribute('href'));});});
   /* Re-scroll to the incoming #Country deep-link (stripped in <head> to dodge the
