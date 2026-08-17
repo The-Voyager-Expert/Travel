@@ -2352,7 +2352,13 @@ window.TVE.home = (function () {
       ['essentials/day-trips/',         'Day Trips']
     ] },
     { name: 'Getting around', links: [
-      ['essentials/cars/',              'Car Rental'],
+      ['essentials/worldwide-car-rental/',          'Worldwide Car Rental'],
+      ['essentials/european-car-rental/',           'Car Rental in Europe'],
+      ['essentials/north-american-car-rental/',     'Car Rental in North America'],
+      ['essentials/latin-american-car-rental/',     'Car Rental in Latin America'],
+      ['essentials/asia-pacific-car-rental/',       'Car Rental in Asia & Pacific'],
+      ['essentials/africa-middle-east-car-rental/', 'Car Rental in Africa & Middle East'],
+      ['essentials/private-transfers/',             'Private Transfers'],
       ['essentials/transit-cards/',     'Transit Cards'],
       ['essentials/storage/',           'Luggage Storage']
     ] },
