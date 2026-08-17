@@ -420,13 +420,15 @@ var CITIES = [
   {name:'Cape Town',       country:'South Africa',         tz:'Africa/Johannesburg',            region:'other',     flag:'🇿🇦', url:'/guides/cape-town.html'},
 ];
 
-/* HOME_TZ — null until the reader searches for their own city. There is no
-   starting base (owner 2026-08-16): not the owner's city, and not the browser's
-   own zone either. Everything measured AGAINST home — the ± chip on each card
-   and the "Closest to home" sort — stays off the page until a base exists, so
-   the grid never shows a difference from a place the reader never chose. Each
+/* HOME_TZ — null on arrival, EVERY time. NOTHING is ever preselected here
+   (owner 2026-08-17: "no cities starting ANYWHERE"): not the owner's city, not
+   the browser's own zone, and — since a saved pick put Melbourne in the search
+   box on a later visit and read exactly like a default — nothing remembered
+   from last time either. The page does not persist the choice at all; the only
+   thing that selects is the reader acting now, by searching or by following a
+   #City link they clicked. Everything measured against a reference — the ± chip
+   on each card and the distance sort — stays off the page until then. Each
    card's own local time and UTC offset are absolute and always render. */
-var HOME_KEY = 'gmd_tz_home';
 var HOME_TZ = null, HOME_LABEL = '';
 
 function _deviceTZ() {
@@ -437,15 +439,8 @@ function _deviceTZ() {
 function setHome(city) {
   HOME_TZ    = city ? city.tz : null;
   HOME_LABEL = city ? ((city.flag ? city.flag + ' ' : '') + city.name) : '';
-  try {
-    if (city) localStorage.setItem(HOME_KEY, city.name);
-    else      localStorage.removeItem(HOME_KEY);
-  } catch (e) {}
-
-  /* The searched city IS the reference, and the search box is where it shows —
-     there is no row on the page declaring it (owner 2026-08-17). */
-  var searchEl = document.getElementById('search');
-  if (searchEl && city && document.activeElement !== searchEl) searchEl.value = city.name;
+  /* Deliberately NOT persisted — a remembered city is a preselected city on the
+     next visit, which is the thing this page must never do. */
 
   /* Sorting by distance is meaningless before a city has been searched. */
   var timePill = document.querySelector('.sort-pill[data-sort="time"]');
@@ -662,14 +657,12 @@ document.getElementById('grid').addEventListener('click', function(e) {
   _hashHome = match;
 })();
 
-/* A #City deep link wins over the saved base; otherwise restore what the reader
-   set last time. Nothing is assumed when there is neither — setHome(null) is the
-   empty, search-only state. */
+/* A #City deep link is the ONLY thing that can arrive with a reference already
+   set, and it is a link the reader clicked. There is nothing else — no saved
+   pick, no device zone, no city (owner 2026-08-17: "no cities starting
+   ANYWHERE"). With no hash, setHome(null) is the empty, search-only state. */
 (function initHome() {
-  if (_hashHome) { setHome(_hashHome); return; }
-  var saved = null;
-  try { saved = localStorage.getItem(HOME_KEY); } catch (e) {}
-  setHome(saved ? CITIES.filter(function (c) { return c.name === saved; })[0] || null : null);
+  setHome(_hashHome || null);
 })();
 
 render();
@@ -814,17 +807,17 @@ function renderSun() {
   if(input){
     /* The page's ONLY search, and it does ONE thing: name the city everything
        else is measured against. It never filters — all 237 cities stay on
-       screen, re-measured against the pick. The pick LEAVES THE CITY IN THE
-       BOX: with the Home base row gone, this field is the only place the
-       reference is named (owner 2026-08-17). */
+       screen, re-measured against the pick. The box EMPTIES on pick and that is
+       the shipped behaviour: leaving the city sitting in it was tried for one
+       commit and reverted (owner 2026-08-17: "search bar was working great"). */
     TVESearch.attach(input,{
       items:items,
       onPick:function(it){
         var city=src.filter(function(c){ return c.name===it.name; })[0];
         if(!city) return;
         setHome(city);
-        input.value=city.name;   /* the reference stays visible — it replaced the row */
-        input.blur();
+        input.value='';   /* the box empties on pick — owner 2026-08-17, reverting
+                             the one commit that left the city sitting in it */
         render();
       }
     });
