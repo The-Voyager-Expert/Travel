@@ -8573,8 +8573,7 @@ window.TVE.home = (function () {
     var PAGE_ICON = {
       /* Air */
       'connections': 'hourglass', 'lounges-us': 'coffee', 'lounges-europe': 'coffee',
-      'delta-routes': 'flight-nav', 'united-routes': 'flight-nav',
-      'american-routes': 'flight-nav', 'airlines': 'plane',
+      'airline-networks': 'flight-nav', 'airlines': 'plane',
       /* Stats — every regional page plus the overview and the records page */
       'stats': 'chart', 'africa': 'chart', 'asia': 'chart', 'canada': 'chart',
       'caribbean': 'chart', 'europe': 'chart', 'oceania': 'chart',
