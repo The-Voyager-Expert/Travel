@@ -981,7 +981,16 @@ document.addEventListener('DOMContentLoaded',()=>{
   function calendar(events){
     if(!events.length) return '';
     var now=dStamp(new Date());
-    var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Guide My Days//Trips//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+    /* NO METHOD line. `METHOD:PUBLISH` declares the file a *published calendar*,
+       and Apple Calendar answers a published calendar by offering to SUBSCRIBE
+       to it / add it as a calendar of its own — which is what put each booking
+       in a separate calendar of its own instead of in the reader's (owner
+       2026-08-17: "they all have their own calendars", "it is ask if I want to
+       subscribe"). A VCALENDAR with no METHOD is a plain set of events, and
+       plain events are IMPORTED into the calendar you already use. Never add
+       METHOD back, and never add X-WR-CALNAME / NAME / REFRESH-INTERVAL, which
+       are the same claim by another name. */
+    var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Guide My Days//Trips//EN','CALSCALE:GREGORIAN'];
     events.forEach(function(e){
       L.push('BEGIN:VEVENT');
       L.push('UID:'+e.uid);
