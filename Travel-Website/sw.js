@@ -1449,7 +1449,8 @@
 /* 2026-08-17: phone: the plug tile shows two wall sockets and one plug toolbar.js -> v722. CACHE to v1015. */
 /* 2026-08-17: phone: the plug tile shows the C and G sockets and a pins-forward Type M plug toolbar.js -> v723. CACHE to v1016. */
 /* 2026-08-17: plugs: the index-table country jump is instant again — a bare scrollIntoView() under scroll-behavior:smooth animated across a 128,000px page and never arrived toolbar.js -> v724. CACHE to v1017. */
-var CACHE = 'travel-cache-v1017';
+/* 2026-08-17: phone: a packing tile on the landing page, a screenshot of the checklist mid-use toolbar.js -> v725. CACHE to v1018. */
+var CACHE = 'travel-cache-v1018';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1457,7 +1458,7 @@ var CACHE = 'travel-cache-v1017';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 227,'toolbar.js': 724, 'mobile.css': 85, 'web-travel-style.css': 57, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 227,'toolbar.js': 725, 'mobile.css': 85, 'web-travel-style.css': 57, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
