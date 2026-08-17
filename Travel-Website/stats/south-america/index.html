@@ -23,6 +23,29 @@
   .stats-nav a:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); color: #3d3a32; }
   .stats-nav a.active { background: var(--bg, #f5f4f0); border: 1.5px solid #C04E1A; color: #3d3a32; }
 }
+/* THE DECLARED COLUMN COUNT ABOVE DOES NOT RENDER WITHOUT THIS, and the gap is
+   1.8px. white-space:nowrap makes each pill's min-content its whole label, and
+   the default min-width:auto floors the flex base size there — so one label
+   wider than a column drops the row to N-1 and leaves the last pill alone on a
+   line, stretched full width. "Homeownership" is 98.9px of text + 28px padding
+   + 3px border = 129.9px against a 111.6px column. That was enough to break
+   Europe, Asia, Oceania and South America at 10-up and Africa at 9-up, while
+   Canada (8-up) and the Caribbean (7-up) have room and are deliberately left
+   alone. It costs nothing visually: every pill is width-forced by the flex
+   basis and its label centred, so that padding only ever acted as the floor.
+
+   Gated at 1140px, NOT folded into the block above: min-width:0 also removes
+   the floor that makes the strip wrap gracefully in a narrow window, and the
+   block above fires on (pointer: fine) at ANY width. Unqualified it holds 10
+   columns down to a 420px window — 36px pills with every label spilling out.
+   Measured: labels stay inside the pill down to ~990px of nav content, so
+   1140px of window (1061px of content, a 7px margin per pill) is the floor
+   with room to spare. Below it the pills wrap ragged, which is the correct
+   trade — ragged reads fine, overflowing text does not. */
+@media (min-width: 1140px) {
+  .stats-nav a { min-width: 0; }
+}
+
 .bar-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 36px; padding-bottom: 14px; overflow: hidden; scroll-margin-top: 56px; }
 .cat-sec-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border2); background: var(--surface); }
 .bar-rank { width: 20px; font-size: 11px; color: var(--muted); font-weight: 600; text-align: right; flex-shrink: 0; }
