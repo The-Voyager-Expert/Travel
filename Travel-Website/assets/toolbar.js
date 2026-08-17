@@ -1678,10 +1678,13 @@ window.TVE.home = (function () {
       /* A typographic marker, not an icon: ASCII + and U+2212 MINUS, so nothing
          here comes from the icon catalogue (Twenty-eighth non-negotiable). */
       '.tb-ham-grp-plus{font-size:19px;font-weight:400;line-height:1;flex-shrink:0;color:#C04E1A}' +
-      /* The one piece of terracotta left, and it is a rule, not a row: 3px tall,
-         the width of a word rather than the menu, sitting in the row gutter where
-         the categories start. It replaces nine coloured headings with one mark. */
-      '.tb-ham-menu .tb-ham-grp-bar{height:3px;width:34px;border-radius:2px;background:#C04E1A;margin:14px 24px 10px}' +
+      /* The one piece of terracotta left, and it is a band, not a rule: full-bleed
+         to both edges of the panel, opening the categories the way the reference
+         design opens a section. No side margin and no border-radius — either one
+         reads as a stray underline again, which is what the first 34px version
+         did. It carries no label: the owner ruled out a heading over this tier,
+         so the band marks where the categories start and says nothing. */
+      '.tb-ham-menu .tb-ham-grp-bar{height:6px;background:#C04E1A;margin:14px 0 0}' +
       '.tb-ham-grp-plus::before{content:"+"}' +
       '.tb-ham-menu .tb-ham-grp[open]>summary .tb-ham-grp-plus::before{content:"\\2212"}' +
       /* Indented one step from the category name, the way a child row reads on
