@@ -1698,8 +1698,15 @@ window.TVE.home = (function () {
          design opens a section. No side margin and no border-radius — either one
          reads as a stray underline again, which is what the first 34px version
          did. It carries no label: the owner ruled out a heading over this tier,
-         so the band marks where the categories start and says nothing. */
-      '.tb-ham-menu .tb-ham-grp-bar{height:14px;background:#C04E1A;margin:14px 0 0}' +
+         so the band marks where the categories start and says nothing.
+         HEIGHT IS 28px — the owner doubled it from 14px on 2026-08-17 ("i want
+         that double as it is now"), in the pass that gave the rows above and
+         below it one 15px/600 shape. With the two blocks identical, the band is
+         the only thing separating them: at 14px it read as a thick rule between
+         them, at 28px it reads as the block of colour it is meant to be.
+         Full-bleed and radius-free still govern — double the height, never the
+         side margin. */
+      '.tb-ham-menu .tb-ham-grp-bar{height:28px;background:#C04E1A;margin:14px 0 0}' +
       '.tb-ham-grp-plus::before{content:"+"}' +
       '.tb-ham-menu .tb-ham-grp[open]>summary .tb-ham-grp-plus::before{content:"\\2212"}' +
       /* Indented one step from the category name, the way a child row reads on
