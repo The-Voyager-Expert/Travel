@@ -8,29 +8,11 @@
 <style>/* .wrap — fluid width from web-travel-style.css */
 /* ── Page header — from web-travel-style.css ── */
 .page-desc { font-size: 12px; color: var(--muted); margin: -8px 0 14px; }
-/* ── Seattle home row ── */
-.home-row {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-.home-label { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
-.home-city  { font-size: 30px; font-weight: 400; color: var(--text); }
-/* ONE search on this page — the hero's. Picking a city there sets the home base;
-   this row never had a second box and must not grow one back (owner 2026-08-16:
-   "why do i have 2 searches"). Two identical "City or country" pills, one to
-   filter and one to set home, is the confusion that caused it. */
-.home-left { min-width: 0; }
-.home-hint { font-size: 15px; color: var(--muted); }
-.home-right { text-align: right; }
-.home-time  { font-size: 42px; font-weight: 700; color: var(--rust); font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1; }
-.home-day   { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 3px; }
+/* NO "Home base" row (owner 2026-08-17: "remove home base it should not be
+   there" · "i dont need to decide for them"). The reader searches a city or a
+   country and every card is re-measured from there — the reference is the city
+   left standing in the search box, never a card on the page declaring somebody's
+   home. There is ONE search here and it must never grow a second box. */
 /* ── Controls ── */
 .controls { display: flex; flex-direction: column; gap: 14px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
 input.search {
@@ -49,9 +31,9 @@ input.search:focus { border-color: var(--c-search-focus-border); box-shadow: non
   background: #fff; font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; color: var(--muted, #6a6660);
   cursor: pointer; transition: all .15s; white-space: nowrap;
 }
-.pill:hover, .pill.active { font-family: inherit; background: var(--bg, #f5f4f0); border-color: var(--rust, #b85c2a); color: var(--text, #3d3a32); }
-/* "Closest to home" is dead until a home base exists — it stays visible so the
-   reader can see what setting a base unlocks, but it does not respond. */
+.pill:hover, .pill.active { font-family: inherit; background: var(--bg, #f5f4f0); border-color: var(--rust, #C04E1A); color: var(--text, #3d3a32); }
+/* The distance sort is dead until the reader has searched a city — it stays
+   visible so they can see what a search unlocks, but it does not respond. */
 .pill:disabled { opacity: .45; cursor: default; }
 .pill:disabled:hover { background: var(--surface, #fff); border-color: var(--border2, #e6e2da); color: #6a6660; }
 a.pill:visited { color: #6a6660; }
@@ -62,9 +44,14 @@ a.pill:visited { color: #6a6660; }
    with gap:0 (touching borders). Squared corners, height 36px. */
 @media (min-width: 601px), (pointer: fine) {
   .pills { justify-content: center; gap: 0; }
-  .pills .pill { height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); }
-  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
-  .pills .pill.active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
+  .pills .pill { flex: 0 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); }
+  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); color: var(--text, #3d3a32); }
+  /* Selected reads as terracotta LABEL on white, exactly as the Airlines and
+     Train strips do — not a grey-filled box with black text, which was the
+     heavy squared shape the owner called ugly (2026-08-17). */
+  .pills .pill.active,
+  .pills .pill.active:hover,
+  .pills .pill.active:focus { background: var(--surface, #ffffff); border: 1.5px solid var(--rust); color: var(--rust, #C04E1A); }
 }
 /* ── Grid ── */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 10px; }
@@ -76,8 +63,8 @@ a.pill:visited { color: #6a6660; }
 .card-link { color: inherit; cursor: pointer; text-decoration: none;
   transition: border-color .15s, box-shadow .15s, transform .08s; }
 .card-link:hover, .card-link:visited, .card-link:focus { text-decoration: none; color: inherit; }
-.card-link:hover  { border-color: var(--rust); box-shadow: 0 3px 10px rgba(184,92,42,.12); }
-.card-link:active { border-color: var(--rust); box-shadow: 0 1px 3px rgba(184,92,42,.10); transform: scale(.97) translateY(1px); }
+.card-link:hover  { border-color: var(--rust); box-shadow: 0 3px 10px rgba(192,78,26,.12); }
+.card-link:active { border-color: var(--rust); box-shadow: 0 1px 3px rgba(192,78,26,.10); transform: scale(.97) translateY(1px); }
 .card-top    { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
 .card-top-left { display: flex; align-items: center; gap: 6px; }
 .card-flag   { font-size: 15px; line-height: 1; flex-shrink: 0; }
@@ -111,11 +98,6 @@ a.pill:visited { color: #6a6660; }
     height: 46px; border-radius: 0; font-size: 12px; line-height: 1.12;
     white-space: normal; text-align: center;
   }
-  /* Home row: stack left and right blocks vertically */
-  .home-row { flex-direction: column; align-items: flex-start; gap: 8px; }
-  .home-right { align-self: stretch; display: flex; align-items: baseline; gap: 10px; }
-  .home-time { font-size: 36px; }
-  .home-day  { font-size: 12px; }
   /* Grid: 2 columns on phones ≥ 360px, 1 column on very small */
   .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   /* Cards: tighten up */
@@ -130,13 +112,13 @@ a.pill:visited { color: #6a6660; }
 }
 @media (prefers-color-scheme: dark) {
   .pills .pill       { color: var(--text); }
-  .pills .pill.active { color: var(--text); }
+  .pills .pill.active { color: var(--rust); }
   #search.search-input { background: var(--surface, #2a2825) var(--search-icon, none) no-repeat 13px center; color: var(--text, #e8e2d9); }
   .vs-sea.ahead  { background: #0a1e0a; color: #4aaa4a; }
   .vs-sea.behind { background: #240e00; color: #c8840a; }
 }
 :root[data-theme="dark"] .pills .pill        { color: var(--text); }
-:root[data-theme="dark"] .pills .pill.active  { color: var(--text); }
+:root[data-theme="dark"] .pills .pill.active  { color: var(--rust); }
 :root[data-theme="dark"] #search.search-input { background: var(--surface, #2a2825) var(--search-icon, none) no-repeat 13px center; color: var(--text, #e8e2d9); }
 :root[data-theme="dark"] .vs-sea.ahead  { background: #0a1e0a; color: #4aaa4a; }
 :root[data-theme="dark"] .vs-sea.behind { background: #240e00; color: #c8840a; }
@@ -151,7 +133,7 @@ a.pill:visited { color: #6a6660; }
 
   <div class="hero-band">
     <h1 class="hero-title">Time Zones</h1>
-    <p class="hero-sub">Live local time in every destination on the site, shown against your home base, so you can see at a glance whether it is a reasonable hour to call a hotel, whether a shop is still open, or what time you actually land. Filter by region, sort A–Z, or sort by how far each city's clock sits from home.</p>
+    <p class="hero-sub">Live local time in every destination on the site. Search a city or a country and every card is re-measured from there, so you can see at a glance whether it is a reasonable hour to call a hotel, whether a shop is still open, or what time you actually land. Filter by region, sort A–Z, or sort by how far each clock sits from the city you searched.</p>
   </div>
   <div class="hero-ground">
     <input class="search search-input" id="search" type="search" placeholder="City or country" aria-label="Search by city or country" autocomplete="off">
@@ -168,28 +150,16 @@ a.pill:visited { color: #6a6660; }
     </div>
     <div class="pills" id="sort-pills">
       <button class="pill sort-pill active" data-sort="alpha" aria-label="Sort alphabetically">A–Z</button>
-      <button class="pill sort-pill" data-sort="time" disabled>Closest to home</button>
+      <button class="pill sort-pill" data-sort="time" id="sort-time" disabled>Closest to your city</button>
     </div>
   </div>
 
-  <!-- No starting home base (owner 2026-08-16). The row opens as a search and
-       stays that way until the reader names their own city — nothing is assumed,
-       not a hardcoded city and not the browser's zone. The input is the SAME
-       component as every other search on the site: class="search search-input",
-       standard 360px pill, standard magnifier, TVESearch typeahead wired at the
-       foot of the page exactly like the hero search. -->
-  <div class="home-row" id="home-row">
-    <div class="home-left">
-      <div class="home-label">Home base</div>
-      <div class="home-city" id="home-city" hidden></div>
-      <div class="home-hint" id="home-hint">Pick a city in the search above</div>
-    </div>
-    <div class="home-right" id="home-right" hidden>
-      <div class="home-time" id="sea-time">--:--</div>
-      <div class="home-day"  id="sea-day"></div>
-    </div>
-  </div>
-
+  <!-- No "Home base" row (owner 2026-08-17: "remove home base it should not be
+       there" · "i dont need to decide for them"). Nothing is assumed and nothing
+       is declared on the reader's behalf: they search a city or a country, and
+       the 237 cards are re-measured from there. The searched city stays in the
+       box, which is where the reference is read off — never a card announcing
+       somebody's home. Still exactly ONE search on this page. -->
   <div class="grid" id="grid"></div>
 
 
@@ -472,17 +442,16 @@ function setHome(city) {
     else      localStorage.removeItem(HOME_KEY);
   } catch (e) {}
 
-  var cityEl  = document.getElementById('home-city');
-  var hintEl  = document.getElementById('home-hint');
-  var rightEl = document.getElementById('home-right');
-  if (cityEl)  { cityEl.textContent = HOME_LABEL; cityEl.hidden = !city; }
-  if (hintEl)  { hintEl.hidden = !!city; }
-  if (rightEl) { rightEl.hidden = !city; }
+  /* The searched city IS the reference, and the search box is where it shows —
+     there is no row on the page declaring it (owner 2026-08-17). */
+  var searchEl = document.getElementById('search');
+  if (searchEl && city && document.activeElement !== searchEl) searchEl.value = city.name;
 
-  /* Sorting by distance from home is meaningless with no home. */
+  /* Sorting by distance is meaningless before a city has been searched. */
   var timePill = document.querySelector('.sort-pill[data-sort="time"]');
   if (timePill) {
     timePill.disabled = !city;
+    timePill.textContent = city ? 'Closest to ' + city.name : 'Closest to your city';
     if (!city && activeSort === 'time') {
       activeSort = 'alpha';
       document.querySelectorAll('.sort-pill').forEach(function (p) { p.classList.remove('active'); });
@@ -503,12 +472,6 @@ function formatTime(tz, date) {
     timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false
   }).format(date);
   return s.replace(/^24:/, '00:');
-}
-
-function formatFullDay(tz, date) {
-  return new Intl.DateTimeFormat('en-US', {
-    timeZone: tz, weekday: 'long', month: 'short', day: 'numeric'
-  }).format(date);
 }
 
 function formatShortDay(tz, date) {
@@ -565,10 +528,6 @@ function render() {
   var now  = new Date();
   var grid = document.getElementById('grid');
 
-  if (HOME_TZ) {
-    document.getElementById('sea-time').textContent = formatTime(HOME_TZ, now);
-    document.getElementById('sea-day').textContent  = formatFullDay(HOME_TZ, now);
-  }
   /* THE SEARCH DOES NOT FILTER (owner 2026-08-16: "it needs to show all time
      zone based on wherever the person searched ALL in relate to"). Searching a
      city names the REFERENCE, not a subset — every city on the site stays on
@@ -863,7 +822,8 @@ function renderSun() {
         var city=src.filter(function(c){ return c.name===it.name; })[0];
         if(!city) return;
         setHome(city);
-        input.value='';
+        input.value=city.name;   /* the reference stays visible — it replaced the row */
+        input.blur();
         render();
       }
     });
