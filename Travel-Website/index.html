@@ -1145,6 +1145,11 @@ a.land-cta:hover:visited {
    two apart, and a bare width query HARD-FAILS
    brain_check.check_mobile_breakpoints_gated_on_pointer (Toolbar.html § 42). */
 .lp-best-tile { display: none; }
+/* The arrow row is built by script whichever viewport is loaded, so it needs the
+   same default-off as the tile it drives. Without this it renders on desktop as
+   two buttons floating under a tile that is display:none — paging a picture
+   nobody can see. Shown as flex in the phone block below. */
+.lp-best-nav { display: none; }
 
 @media (max-width: 600px) and (pointer: coarse) {
   /* The two swaps, stated together so neither can be moved without the other. */
@@ -1200,6 +1205,30 @@ a.land-cta:hover:visited {
     color: #fff;
   }
   .lp-best-band-t::after { content: ' \203A'; opacity: .75; }
+
+  /* Category name, bottom-RIGHT of the photo, mirroring the count on the left.
+     It exists because of the arrows: paging through pictures with nothing naming
+     them leaves the reader looking at a nice photograph of an unknown category.
+     Same pill as the count so the two read as one pair, not two ideas. */
+  .lp-best-name {
+    position: absolute; right: 12px; bottom: 12px;
+    max-width: 62%;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(23,21,15,.62);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    color: #fff; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase;
+    text-align: right;
+  }
+
+  /* The arrows, same control as the hero carousel's — .lp-hero-arrow is reused
+     rather than restyled, so the two never drift apart. They sit BELOW the tile
+     and outside its <a>: a button nested in an anchor is invalid and, worse,
+     makes every tap ambiguous between paging and opening the page. */
+  .lp-best-nav {
+    display: flex; justify-content: flex-end; gap: 0.55rem;
+    margin-top: 0.55rem;
+  }
   .lp-best-band-d {
     display: block; margin-top: 5px;
     font-size: 13.5px; line-height: 1.5;
@@ -2964,6 +2993,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
            alt="Iguazu Falls waterfall panorama viewed from the Argentine side"
            loading="lazy" width="800" height="533">
       <span class="lp-best-count">34 categories</span>
+      <span class="lp-best-name">Wonders of the World</span>
     </span>
     <span class="lp-best-band">
       <span class="lp-best-band-t">Browse all 34 categories</span>
@@ -3032,16 +3062,50 @@ window.lpGuideCard = function (href, flag, name, extra) {
     var tile = document.querySelector('.lp-best-tile');
     if (!tile || !B.length) return;
     var img = tile.querySelector('.lp-best-shot img');
+    var name = tile.querySelector('.lp-best-name');
     if (!img) return;
 
     /* The reader's local calendar day — Date.UTC on the local Y/M/D is a whole
        number of days with no DST drift, unlike Date.now()/86400000. */
     var n = new Date();
     var day = Math.floor(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) / 86400000);
-    var row = B[((day % B.length) + B.length) % B.length];
-    if (!row || img.getAttribute('src') === row[0]) return;
-    img.src = row[0];
-    img.alt = row[1];
+    var at = ((day % B.length) + B.length) % B.length;
+
+    function paint(i) {
+      var row = B[i];
+      if (!row) return;
+      img.src = row[0];
+      img.alt = row[1];
+      if (name) name.textContent = row[2];
+    }
+    function warm(i) { var r = B[((i % B.length) + B.length) % B.length];
+                       if (r) { var im = new Image(); im.src = r[0]; } }
+    paint(at); warm(at + 1);
+
+    /* Arrows — the hero carousel's control, reused class and all. Built here so
+       the tile degrades to a single daily picture with no dead buttons when this
+       script does not run, and appended AFTER the tile because the tile is one
+       <a>: a button inside it would be invalid and would make every tap a guess
+       between paging and opening the page. */
+    var nav = document.createElement('div');
+    nav.className = 'lp-best-nav';
+    function button(label, step) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'lp-hero-arrow';
+      b.setAttribute('aria-label', label);
+      b.innerHTML = step < 0
+        ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>'
+        : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+      b.addEventListener('click', function () {
+        at = ((at + step) % B.length + B.length) % B.length;
+        paint(at); warm(at + step);
+      });
+      return b;
+    }
+    nav.appendChild(button('Previous category', -1));
+    nav.appendChild(button('Next category', 1));
+    tile.parentNode.insertBefore(nav, tile.nextSibling);
   })();
   </script>
 </section>
