@@ -1438,10 +1438,10 @@ window.TVE.home = (function () {
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:14px;font-weight:600;color:#7a3b1e!important;text-decoration:none;padding:8px 18px;' +
+    '.tb a,.tb a:visited{font-size:14px;font-weight:600;color:#C04E1A!important;text-decoration:none;padding:8px 18px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s,border-color .15s}' +
-    '.tb a:hover{color:#7a3b1e!important;background:transparent}' +
+    '.tb a:hover{color:#C04E1A!important;background:transparent}' +
     /* ── DESKTOP TOP STRIP = PILLS (owner 2026-08-17) ────────────────────────
        Every tab in the top strip is a visible outlined pill AT REST, not bare
        text that only becomes a pill once you are on that page. The strip used
@@ -1502,18 +1502,18 @@ window.TVE.home = (function () {
        it; in a row of pills that same .55 is the hover value and the selected
        tab stopped standing out. Colour only — the BOX is identical in all three
        states, per the note above. */
-    '.tb a.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;padding:8px 18px;color:#7a3b1e!important;background:#fdf4ed;border:1px solid rgba(192,78,26,0.85);border-radius:999px;font-weight:600;line-height:1.2}' +
+    '.tb a.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;padding:8px 18px;color:#C04E1A!important;background:#fdf4ed;border:1px solid rgba(192,78,26,0.85);border-radius:999px;font-weight:600;line-height:1.2}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
     /* Same pill as a plain tab (2026-08-17) — it already carried the 1px border
        and the 999px radius, so the strip only had to stop drawing them
        transparent. Kept in THIS rule rather than folded into the .tb-links>a
        block above: see the note there on check_toolbar_font_size_unified. */
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:600;color:#7a3b1e!important;' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:600;color:#C04E1A!important;' +
       'padding:8px 18px;border:1px solid rgba(192,78,26,.30);border-radius:999px;background:#fff;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s,border-color .15s}' +
-    '.tb-ddbtn:hover{color:#7a3b1e!important;background:#fdf4ed;border-color:rgba(192,78,26,.55)}' +
-    '.tb-ddbtn.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:#fdf4ed;border:1px solid rgba(192,78,26,0.85);border-radius:999px;font-weight:600;line-height:1.2}' +
+    '.tb-ddbtn:hover{color:#C04E1A!important;background:#fdf4ed;border-color:rgba(192,78,26,.55)}' +
+    '.tb-ddbtn.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;color:#C04E1A!important;background:#fdf4ed;border:1px solid rgba(192,78,26,0.85);border-radius:999px;font-weight:600;line-height:1.2}' +
     /* An OPEN dropdown gets the same terracotta ring as the active tab, so the
    menu is visibly attached to the tab it came from. It only changed text
    colour before, which was invisible against the other tabs. */
@@ -1522,7 +1522,7 @@ window.TVE.home = (function () {
        Opening a dropdown grew its button by ~23px, which was enough to reflow
        the whole row on the click. Measured: closed 1283.9px / open 1306.9px
        before, 1260.9px / 1260.9px after. */
-    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:transparent;'+
+    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){box-sizing:border-box;display:inline-flex;align-items:center;color:#C04E1A!important;background:transparent;'+
       'outline:1.5px solid rgba(192,78,26,0.85);outline-offset:5px;border-radius:14px}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
@@ -1606,7 +1606,7 @@ window.TVE.home = (function () {
       '.tb-ham{display:flex;align-items:center;gap:3px;cursor:pointer;' +
         'border:none;-webkit-appearance:none;appearance:none;box-shadow:none;outline:none;' +
         '-webkit-tap-highlight-color:transparent;' +
-        'padding:10px 14px 10px 8px;font-size:13px;color:#7a3b1e;flex-shrink:0;margin-left:auto;line-height:1;min-height:44px}' +
+        'padding:10px 14px 10px 8px;font-size:13px;color:#C04E1A;flex-shrink:0;margin-left:auto;line-height:1;min-height:44px}' +
       '.tb-ham:hover,.tb-ham:focus,.tb-ham:active{box-shadow:none !important;outline:none !important}' +
       /* min-height:0 overrides mobile.css's universal 40px tap-target `a{}` rule — this
          is an <a> linking to Guides-Index.html, and without the override the inflated
@@ -1705,7 +1705,7 @@ window.TVE.home = (function () {
     /* ── Theme toggle button ─────────────────────────────────────────────── */
     '@media (pointer: fine){.tb-theme-toggle{position:absolute;top:10px;right:16px;margin-right:0}}' +
     '.tb-theme-toggle{flex-shrink:0;margin-left:0;margin-right:10px;width:40px;height:40px;border-radius:50%;' +
-      'border:1.5px solid rgba(122,59,30,.55);background:transparent;color:#7a3b1e;' +
+      'border:1.5px solid rgba(122,59,30,.55);background:transparent;color:#C04E1A;' +
       'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
       'transition:background .15s,border-color .15s;outline:none;padding:0;' +
       '-webkit-appearance:none;font-family:inherit;line-height:0}' +
@@ -2141,7 +2141,7 @@ window.TVE.home = (function () {
      file that meant "the guides listing" moved to guides/index.html; this one
      deliberately did not. Toolbar.html § 4. */
   hamLabel.href = base + 'index.html';
-  hamLabel.style.cssText = 'text-decoration:none;color:#7a3b1e;';
+  hamLabel.style.cssText = 'text-decoration:none;color:#C04E1A;';
   bar.appendChild(hamLabel);
 
   var hamBtn = document.createElement('div');
@@ -2150,7 +2150,7 @@ window.TVE.home = (function () {
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:transparent;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#7a3b1e;flex-shrink:0;';
+  hamBtn.style.cssText = 'background:transparent;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#C04E1A;flex-shrink:0;';
   hamBtn.innerHTML = '<svg width="25" height="18" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="currentColor"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="currentColor"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="currentColor"/></svg>';
   bar.appendChild(hamBtn);
 
@@ -3457,7 +3457,7 @@ window.TVE.home = (function () {
     dlBtn.style.cssText =
       'flex:1;padding:8px 16px;border:none;border-radius:6px;' +
       'background:#C04E1A;' +
-      'font-size:13px;font-weight:700;color:#7a3b1e;cursor:pointer;font-family:inherit;';
+      'font-size:13px;font-weight:700;color:#C04E1A;cursor:pointer;font-family:inherit;';
 
     function _closeICS() { overlay.style.display = 'none'; document.body.style.overflow = ''; }
     /* No click-outside-to-close: on iOS the native date picker dismissal
@@ -7994,7 +7994,7 @@ window.TVE.home = (function () {
       'font-size:14px;color:#3d3a32;font-family:inherit;cursor:pointer;' +
       '-webkit-appearance:none}' +
       '.tve-bo-row:last-child{border-bottom:none}' +
-      '.tve-bo-row--on{background:rgba(200,164,74,.10);color:#7a3b1e;font-weight:700}' +
+      '.tve-bo-row--on{background:rgba(200,164,74,.10);color:#C04E1A;font-weight:700}' +
       'body.tve-ham-open #tve-bo-jump{display:none!important}' +
       '@media (min-width: 601px), (pointer: fine) {#tve-bo-jump,#tve-bo-ov{display:none!important}}';
     document.head.appendChild(css);
@@ -8143,7 +8143,7 @@ window.TVE.home = (function () {
       /* Terracotta, not grey (owner 2026-08-10). #a8a09a was quiet enough that
          readers were missing that the three stop actions exist at all; the
          brand terracotta reads as "there is something here" without shouting.
-         Dark mode lifts to #d4874a: #C04E1A sits at 2.6:1 on the #2a2825 card,
+         Dark mode lifts to #D4663A: #C04E1A sits at 2.6:1 on the #2a2825 card,
          the same lift the pullquote border and .free-flag already take.
 
          ONE LANGUAGE ACROSS ALL THREE ICONS: outline = off, SOLID = on, and
@@ -8158,7 +8158,7 @@ window.TVE.home = (function () {
       'display:inline-flex;align-items:center;flex-shrink:0;transition:color .15s;}' +
       '.tve-share-stop-btn svg{transition:fill .15s;}' +
       '.tve-share-stop-btn:hover svg,.tve-share-stop-btn:focus-visible svg{fill:currentColor;}' +
-      '@media (prefers-color-scheme:dark){.tve-share-stop-btn{color:#d4874a;}}' +
+      '@media (prefers-color-scheme:dark){.tve-share-stop-btn{color:#D4663A;}}' +
       '.tve-share-stop-btn:focus-visible{outline:2px solid #C04E1A;' +
       'outline-offset:2px;border-radius:3px;}';
     (document.head || document.documentElement).appendChild(_ssCss);
@@ -9010,7 +9010,7 @@ window.TVE.home = (function () {
          reach it, so the un-fill has to name the path. A CSS rule outranks a
          presentation attribute, so no !important is needed. */
       '.tve-wl-btn.tve-wl-saved:hover svg path{fill:none;}' +
-      '@media (prefers-color-scheme:dark){.tve-wl-btn{color:#d4874a;}}' +
+      '@media (prefers-color-scheme:dark){.tve-wl-btn{color:#D4663A;}}' +
       '.tve-wl-btn:focus-visible{outline:2px solid ' + STAR_COLOR + ';outline-offset:2px;border-radius:3px;}' +
 
       /* Floating FAB — sits directly above the day-jump pill (bottom:24px+36px+8px=68px).
@@ -9025,7 +9025,7 @@ window.TVE.home = (function () {
       'transition:transform .12s,box-shadow .12s;}' +
       '#tve-wl-fab:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.28);}' +
       '#tve-wl-fab.tve-wl-fab-on{display:inline-flex;}' +
-      '#tve-wl-fab-cnt{background:' + STAR_COLOR + ';color:#7a3b1e;border-radius:10px;' +
+      '#tve-wl-fab-cnt{background:' + STAR_COLOR + ';color:#C04E1A;border-radius:10px;' +
       'font-size:11px;font-weight:700;padding:0 6px;min-width:18px;text-align:center;line-height:18px;}' +
 
       /* Panel — anchored above the FAB (68px + 36px FAB + 16px gap) */
@@ -9062,7 +9062,7 @@ window.TVE.home = (function () {
       '.tve-wl-copy{font-size:12px;font-weight:600;color:#C04E1A;background:none;' +
       'border:1px solid #C04E1A;border-radius:5px;padding:4px 11px;cursor:pointer;' +
       'font-family:inherit;transition:background .12s,color .12s;}' +
-      '.tve-wl-copy:hover{background:#C04E1A;color:#7a3b1e;}' +
+      '.tve-wl-copy:hover{background:#C04E1A;color:#C04E1A;}' +
       '.tve-wl-empty{padding:24px 14px;text-align:center;color:#a8a09a;' +
       'font-size:13px;line-height:1.6;font-family:inherit;}' +
       /* Mobile: align with scroll-top FAB (bottom:62px+36px+10px=108px) */
@@ -9424,9 +9424,9 @@ window.TVE.home = (function () {
       '.tve-note-btn:hover svg,.tve-note-btn:focus-visible svg{fill:currentColor;}' +
       '.tve-note-btn.tve-note-has{color:#C04E1A;}' +
       '.tve-note-btn.tve-note-has svg{fill:currentColor;}' +
-      '.tve-note-btn.tve-note-has:hover{color:#7a3b1e;}' +
+      '.tve-note-btn.tve-note-has:hover{color:#C04E1A;}' +
       '@media (prefers-color-scheme:dark){' +
-        '.tve-note-btn,.tve-note-btn.tve-note-has{color:#d4874a;}' +
+        '.tve-note-btn,.tve-note-btn.tve-note-has{color:#D4663A;}' +
         '.tve-note-btn.tve-note-has:hover{color:#e8a468;}}' +
       '.tve-note-btn:focus-visible{outline:2px solid #C04E1A;outline-offset:2px;border-radius:3px;}' +
 
@@ -9453,7 +9453,7 @@ window.TVE.home = (function () {
       '.tve-note-save{font-size:12px;font-weight:600;color:#C04E1A;background:none;' +
       'border:1px solid #C04E1A;border-radius:5px;padding:5px 12px;cursor:pointer;' +
       'font-family:inherit;flex-shrink:0;transition:background .12s,color .12s;}' +
-      '.tve-note-save:hover{background:#C04E1A;color:#7a3b1e;}' +
+      '.tve-note-save:hover{background:#C04E1A;color:#C04E1A;}' +
 
       /* MY TRIP NOTES card — mirrors .overview-section / .overview-title */
       '#tve-notes-card{display:none;background:var(--c-card-bg,#fff);' +
