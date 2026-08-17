@@ -1141,12 +1141,17 @@ a.lounge-arrival-chip:visited { color: #C04E1A; }
 .stop-block + .next,
 .stop-block + .next-tram,
 .stop-block + .next-metro { margin-top: 0; }
-/* Inset the transit banner to align with the inset stop cards (same 28px each
-   side) so it sits in the same column as the card above it. Desktop only —
-   mobile cards + banners stay full-width. */
+/* Inset the transit banners and train block to align with the inset stop cards
+   (same 28px each side) so they sit in the same column as the cards. Desktop
+   only — mobile cards + banners stay full-width. div.train and the
+   arrive-first / hotel-first banners are day-block children (not stop-block
+   children) so they need this rule explicitly; .next banners were already here. */
 @media (min-width: 601px), (pointer: fine) {
   .day-block > .next,
   .day-block > .next-tram,
+  .day-block > div.train,
+  .day-block > .arrive-first,
+  .day-block > .hotel-first,
   .day-block > .next-metro {
     margin-left: 28px;
     margin-right: 28px;
@@ -1792,11 +1797,9 @@ a.lounge-arrival-chip:visited { color: #C04E1A; }
      alt="{plain subject name}"          — short, no "photo of" prefix
 
    Source images: ~800×600 JPEG, quality 80, ~60-90 KB each (Retina-crisp at
-   ~370×220 CSS px slot desktop / 390×290 mobile). `max-width: 370px` caps
-   each image at the phone-card slot — a single photo stays phone-card-sized
-   instead of stretching to the full row width (~730px), while 2+ photos
-   sit side-by-side at the same ~370px slot. Without this cap, `flex: 1` on
-   a lone child stretches the image to a wide letterbox strip on desktop. */
+   ~370×220 CSS px slot desktop / 390×290 mobile). `height: 220px` with
+   `object-fit: cover` keeps photos at a fixed height regardless of how wide
+   the card is — single or multiple photos both fill the same height row. */
 .stop-photos {
   display: flex;
   gap: 10px;
@@ -1807,7 +1810,6 @@ a.lounge-arrival-chip:visited { color: #C04E1A; }
 .stop-photos img {
   flex: 1 1 0%;
   min-width: 0;
-  max-width: 370px;
   height: 220px;
   border-radius: 8px;
   object-fit: cover;
