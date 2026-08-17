@@ -4353,10 +4353,15 @@
     if (!raw) return null;
     var d; try { d = JSON.parse(raw); } catch (e) { return null; }
     var l = d.level;
-    if (l === 1 || l === '1' || l === 'Safe' || l === 'safe' || l === 'Low' || l === 'low') return 1;
-    if (l === 2 || l === '2' || l === 'Moderate' || l === 'moderate') return 2;
-    if (l === 3 || l === '3' || l === 'High' || l === 'high') return 3;
-    if (l === 4 || l === '4') return 4;
+    /* 'Very Safe' and 'Caution' are the site's own vocabulary — SAFETY_DATA is
+       Safe x118, Very Safe x78, Moderate x38, Caution x3, and nothing else.
+       Unmapped they came back null, which scored the 78 safest cities as
+       unknown and let "Safe destinations only" keep the 3 Caution ones. */
+    if (typeof l === 'string') l = l.toLowerCase();
+    if (l === 1 || l === '1' || l === 'very safe' || l === 'safe' || l === 'low') return 1;
+    if (l === 2 || l === '2' || l === 'moderate') return 2;
+    if (l === 3 || l === '3' || l === 'caution' || l === 'high') return 3;
+    if (l === 4 || l === '4' || l === 'high risk') return 4;
     return null;
   }
 
