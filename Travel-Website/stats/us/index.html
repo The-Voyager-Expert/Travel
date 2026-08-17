@@ -74,7 +74,21 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
 .cmp-input:focus { outline:none; border-color:var(--rust); }
 .cmp-btn { height:36px; padding:0 18px; background:var(--surface,#ffffff); color: var(--rust,#C04E1A); border:none; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600; white-space:nowrap; }
 .cmp-btn::after { content: '›'; margin-left: 6px; font-size: 16px; }
-.cmp-btn:hover { background:#8A3F18; }
+.cmp-btn:hover { background:#8A3F18; color:#fff; }
+/* The hover fill is a DARK brown, so its label has to be white — 7.49:1. It was
+   inheriting the terracotta rest ink, which on #8A3F18 is 1.55:1 in light and 2.05:1
+   in dark: the button's own label was unreadable the whole time the pointer was on it.
+   No validator caught it because none of them hover. */
+/* Rest ink in dark: --rust is #D4663A there, only 4.03:1 on the #2a2825 surface —
+   under AA for 13px text. #c8a060 is the site's dark action ink (--c-action-text) at
+   6.06:1. Scoped :not(:hover) so it cannot outrank the white hover label above —
+   `html[data-theme="dark"] .cmp-btn` is more specific than `.cmp-btn:hover`, which is
+   the same trap the also-on-this-site pill hit (CLAUDE.md, theme override scoped
+   :not(:hover):not(:active):not(:focus-visible)). */
+@media (prefers-color-scheme: dark) {
+  .cmp-btn:not(:hover) { color: var(--c-action-text, #c8a060); }
+}
+html[data-theme="dark"] .cmp-btn:not(:hover) { color: var(--c-action-text, #c8a060); }
 .cmp-btn-clear { height:36px; padding:0 14px; background:none; border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:13px; color:var(--muted); }
 #compare-result { display:none; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:20px; overflow-x:auto; }
 #compare-result.active { display:block; }
