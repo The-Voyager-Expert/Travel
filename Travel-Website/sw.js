@@ -1446,7 +1446,8 @@
 /* 2026-08-17: the "Also on this site" strip is retired on every page that is not a guide (owner rule) — 53 essentials, 9 stats, Sunrise & Sunset, Time Zones and When to Go, which had hand-built one out of inline styles and so survived the class-based sweep. Desktop and phone both: the block was one piece of markup with no viewport gate. .also-strip / .also-strip-head / .also-links are deleted from web-travel-style.css and mobile.css in the same pass rather than left dead, because CSS that still describes the strip is how the next crib talks itself into re-adding the markup. Guides are untouched — a guide's footer card is <div class="extras-section" id="also-on-this-site"> in guide-style.css and shares only the id. brain_check.check_no_also_strip_outside_guides (Rule 877) hard-fails on the four wrapper spellings AND on the label as an element's whole text, and replaces check_also_strip_classes / _gutter / _outside_wrap, all three deleted with the thing they enforced. mobile.css -> v85, web-travel-style.css -> v57. CACHE to v1012. */
 /* 2026-08-17: phone: plug tile on the landing page, under the Best Of one toolbar.js -> v720. CACHE to v1013. */
 /* 2026-08-17: the Plan group drops Packing — it is a top-strip tab, not a category row toolbar.js -> v721. CACHE to v1014. */
-var CACHE = 'travel-cache-v1014';
+/* 2026-08-17: phone: the plug tile shows two wall sockets and one plug toolbar.js -> v722. CACHE to v1015. */
+var CACHE = 'travel-cache-v1015';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1454,7 +1455,7 @@ var CACHE = 'travel-cache-v1014';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 227,'toolbar.js': 721, 'mobile.css': 85, 'web-travel-style.css': 57, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 227,'toolbar.js': 722, 'mobile.css': 85, 'web-travel-style.css': 57, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
