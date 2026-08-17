@@ -1216,7 +1216,7 @@ a.land-cta:hover:visited {
    of one photograph, because the question a reader has is "which of these is
    it" and three shapes answer that faster than a sentence.
    Same gate as the Best Of tile — width AND pointer, never width alone. */
-.lp-plug, .lp-pack { display: none; }
+.lp-plug, .lp-pack, .lp-map { display: none; }
 
 @media (max-width: 600px) and (pointer: coarse) {
   /* The gap is deliberately larger than the rhythm inside either tile. At 14px
@@ -1333,8 +1333,13 @@ a.land-cta:hover:visited {
      never the ring. The fade over the last stretch is what says "and it keeps
      going": the crop ends just under a category header, and without it the cut
      reads as a rendering fault rather than as more list below. */
-  .lp-pack { display: block; max-width: var(--lp-max, 1180px); margin: 34px auto 0; }
-  .lp-pack-tile {
+  /* Both screenshot tiles share every rule below — one selector list, never a
+     second copy of the block (check_css_duplication). Only two things differ
+     per tile and they are stated separately at the end: the image's aspect
+     ratio, which is the crop it was captured at, and whether the crop ends
+     mid-content and therefore needs the fade. */
+  .lp-pack, .lp-map { display: block; max-width: var(--lp-max, 1180px); margin: 34px auto 0; }
+  .lp-pack-tile, .lp-map-tile {
     display: block;
     text-decoration: none;
     border-radius: 14px;
@@ -1342,17 +1347,22 @@ a.land-cta:hover:visited {
     box-shadow: 0 1px 2px rgba(23,21,15,.08), 0 8px 24px rgba(23,21,15,.10);
     -webkit-tap-highlight-color: transparent;
   }
-  .lp-pack-tile:active { transform: scale(.992); }
-  .lp-pack-tile, .lp-pack-tile:active { transition: transform .12s ease; }
+  .lp-pack-tile:active, .lp-map-tile:active { transform: scale(.992); }
+  .lp-pack-tile, .lp-pack-tile:active,
+  .lp-map-tile, .lp-map-tile:active { transition: transform .12s ease; }
 
-  .lp-pack-shot { position: relative; display: block; background: #f5f2ec; }
-  .lp-pack-shot img {
+  .lp-pack-shot, .lp-map-shot { position: relative; display: block; background: #f5f2ec; }
+  .lp-pack-shot img, .lp-map-shot img {
     display: block;
     width: 100%;
-    aspect-ratio: 367 / 422;
     object-fit: cover;
     object-position: top center;
   }
+  .lp-pack-shot img { aspect-ratio: 367 / 422; }
+  /* The map crop carries its own pills at the bottom, so it ends on a finished
+     edge and takes no fade — one would grey out the "Visited · 22" pill, which
+     is the single most important thing in the picture. */
+  .lp-map-shot img { aspect-ratio: 393 / 491; }
   .lp-pack-shot::after {
     content: '';
     position: absolute; left: 0; right: 0; bottom: 0; height: 56px;
@@ -1360,10 +1370,10 @@ a.land-cta:hover:visited {
     pointer-events: none;
   }
 
-  .lp-pack-band { display: block; padding: 13px 15px 15px; background: var(--rust, #C04E1A); }
-  .lp-pack-band-t { display: block; font-size: 16.5px; font-weight: 700; line-height: 1.25; color: #fff; }
-  .lp-pack-band-t::after { content: ' \203A'; opacity: .75; }
-  .lp-pack-band-d {
+  .lp-pack-band, .lp-map-band { display: block; padding: 13px 15px 15px; background: var(--rust, #C04E1A); }
+  .lp-pack-band-t, .lp-map-band-t { display: block; font-size: 16.5px; font-weight: 700; line-height: 1.25; color: #fff; }
+  .lp-pack-band-t::after, .lp-map-band-t::after { content: ' \203A'; opacity: .75; }
+  .lp-pack-band-d, .lp-map-band-d {
     display: block; margin-top: 5px;
     font-size: 13.5px; line-height: 1.5;
     color: rgba(255,255,255,.88);
@@ -3089,6 +3099,31 @@ window.lpGuideCard = function (href, flag, name, extra) {
     <span class="lp-pack-band">
       <span class="lp-pack-band-t">Pack with the checklist</span>
       <span class="lp-pack-band-d">212 items across 18 categories, and the clothing counts resize themselves to the number of days you set. Tick as you go, hide what is done, or print the whole thing.</span>
+    </span>
+  </a>
+</section>
+
+<!-- PHONE ONLY — the world-map tile, third of the three and built the same way.
+     The picture is the map itself with a reader's own list on it: gold pins for
+     the cities marked, terracotta for the ones still ahead, and the running
+     count on the pill at the bottom. That contrast IS the feature — a map of
+     all-terracotta pins is just an index, and shows nothing a reader could not
+     already see on the guides index.
+
+     Regenerate it the same way: seed a run of tve-visited-{slug} keys, turn the
+     Visited pill on (gold only paints while that filter is active), remove the
+     add-to-home-screen banner, and capture the map element at 393px / 3× with
+     the view set over Europe, where the pins separate instead of clustering. -->
+<section class="lp-map">
+  <a class="lp-map-tile" href="/maps/world/">
+    <span class="lp-map-shot">
+      <img src="/assets/landing/world-map-preview.png"
+           alt="The world map over Europe: gold pins on the cities this reader has marked as visited, terracotta pins on the rest, and a Visited · 22 count at the bottom"
+           loading="lazy" width="1179" height="1473">
+    </span>
+    <span class="lp-map-band">
+      <span class="lp-map-band-t">Keep the map of where you have been</span>
+      <span class="lp-map-band-d">Every guide carries an I&rsquo;ve Been pill. Tap it as you travel and that city turns gold on the world map, counted as the list grows &mdash; so the places you have done and the ones still ahead sit on the same screen.</span>
     </span>
   </a>
 </section>
