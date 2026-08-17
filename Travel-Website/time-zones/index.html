@@ -38,20 +38,41 @@ input.search:focus { border-color: var(--c-search-focus-border); box-shadow: non
 .pill:disabled:hover { background: var(--surface, #fff); border-color: var(--border2, #e6e2da); color: #6a6660; }
 a.pill:visited { color: #6a6660; }
 
-/* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Formatting/Formatting.html#src-desktoppill.
-   Two pill groups (6 region + 2 sort) — not enough pills to fill a row,
-   so each group is a natural-width horizontal strip CENTERED on its own line
-   with gap:0 (touching borders). Squared corners, height 36px. */
+/* Desktop — ROUNDED PILLS, spaced, in the toolbar's own grammar (owner 2026-08-17:
+   "this is ugly the all is a big square try to make these pill look better").
+   The glued squared strip is retired here: with only 6 short region labels it read
+   as a row of boxes, and "All" — a three-letter label in a 36px squared box with a
+   1.5px terracotta rim — was a big empty square.
+
+   Values are the desktop toolbar tab's, field for field (Thirty-fifth non-negotiable
+   / Toolbar.html § 5): white ground, 999px radius, 8px 18px, and the rim ladder
+   .30 rest → .55 hover → .85 active with the warm #fdf4ed fill on the last two.
+   Terracotta INK on the selected pill, never a filled gradient.
+   THE BOX IS IDENTICAL IN ALL THREE STATES — same border width, same padding, same
+   radius; colour alone differs. Otherwise the row's width tracks which pill is
+   selected and the strip shifts under the pointer. */
 @media (min-width: 601px), (pointer: fine) {
-  .pills { justify-content: center; gap: 0; }
-  .pills .pill { flex: 0 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); }
-  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); color: var(--text, #3d3a32); }
-  /* Selected reads as terracotta LABEL on white, exactly as the Airlines and
-     Train strips do — not a grey-filled box with black text, which was the
-     heavy squared shape the owner called ugly (2026-08-17). */
+  .pills { justify-content: center; gap: 8px; }
+  .pills .pill {
+    flex: 0 0 auto; box-sizing: border-box; height: 34px; padding: 0 18px;
+    font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32;
+    border-radius: 999px; margin-left: 0;
+    background: var(--surface, #ffffff); border: 1px solid rgba(192,78,26,.30);
+  }
+  .pills .pill:hover { background: #fdf4ed; border-color: rgba(192,78,26,.55); color: #3d3a32; }
   .pills .pill.active,
   .pills .pill.active:hover,
-  .pills .pill.active:focus { background: var(--surface, #ffffff); border: 1.5px solid var(--rust); color: var(--rust, #C04E1A); }
+  .pills .pill.active:focus {
+    background: #fdf4ed; border: 1px solid rgba(192,78,26,.85);
+    color: var(--rust, #C04E1A); font-weight: 600;
+  }
+  /* The dead distance sort keeps the pill shape at a faint rim so it reads as a
+     control waiting on a search, not as a second selected chip. */
+  .pills .pill:disabled,
+  .pills .pill:disabled:hover {
+    background: var(--surface, #ffffff); border-color: rgba(192,78,26,.16);
+    color: #9a958c; font-weight: 500; opacity: 1;
+  }
 }
 /* ── Grid ── */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 10px; }
@@ -110,15 +131,42 @@ a.pill:visited { color: #6a6660; }
 @media (max-width: 359px) {
   .grid { grid-template-columns: 1fr; }
 }
+/* The rest pill's ground is the page SURFACE, not a literal #fff — the base rule
+   above hardcodes white, which on a dark phone left light text on a white chip.
+   Correctness, not styling: it is set on every viewport. */
 @media (prefers-color-scheme: dark) {
-  .pills .pill       { color: var(--text); }
+  .pills .pill       { color: var(--text); background: var(--surface, #2a2825); }
   .pills .pill.active { color: var(--rust); }
   #search.search-input { background: var(--surface, #2a2825) var(--search-icon, none) no-repeat 13px center; color: var(--text, #e8e2d9); }
   .vs-sea.ahead  { background: #0a1e0a; color: #4aaa4a; }
   .vs-sea.behind { background: #240e00; color: #c8840a; }
 }
-:root[data-theme="dark"] .pills .pill        { color: var(--text); }
+/* The desktop three-step ladder, redrawn in the dark terracotta. The light
+   #fdf4ed fill is a cream card on a dark page, so hover and active become
+   translucent tints of #D4663A at the same .30 / .55 / .85 rim ordering. Doubled
+   condition because the desktop scope above is an OR list, which cannot be
+   `and`-ed in one query. */
+@media (prefers-color-scheme: dark) and (min-width: 601px),
+       (prefers-color-scheme: dark) and (pointer: fine) {
+  .pills .pill { background: transparent; border-color: rgba(212,102,58,.34); }
+  .pills .pill:hover { background: rgba(212,102,58,.12); border-color: rgba(212,102,58,.58); color: var(--text); }
+  .pills .pill.active,
+  .pills .pill.active:hover,
+  .pills .pill.active:focus { background: rgba(212,102,58,.16); border: 1px solid rgba(212,102,58,.85); color: var(--rust, #D4663A); }
+  .pills .pill:disabled,
+  .pills .pill:disabled:hover { background: transparent; border-color: rgba(212,102,58,.14); color: #8a837a; }
+}
+:root[data-theme="dark"] .pills .pill        { color: var(--text); background: var(--surface, #2a2825); }
 :root[data-theme="dark"] .pills .pill.active  { color: var(--rust); }
+@media (min-width: 601px), (pointer: fine) {
+  :root[data-theme="dark"] .pills .pill { background: transparent; border-color: rgba(212,102,58,.34); }
+  :root[data-theme="dark"] .pills .pill:hover { background: rgba(212,102,58,.12); border-color: rgba(212,102,58,.58); color: var(--text); }
+  :root[data-theme="dark"] .pills .pill.active,
+  :root[data-theme="dark"] .pills .pill.active:hover,
+  :root[data-theme="dark"] .pills .pill.active:focus { background: rgba(212,102,58,.16); border: 1px solid rgba(212,102,58,.85); color: var(--rust, #D4663A); }
+  :root[data-theme="dark"] .pills .pill:disabled,
+  :root[data-theme="dark"] .pills .pill:disabled:hover { background: transparent; border-color: rgba(212,102,58,.14); color: #8a837a; }
+}
 :root[data-theme="dark"] #search.search-input { background: var(--surface, #2a2825) var(--search-icon, none) no-repeat 13px center; color: var(--text, #e8e2d9); }
 :root[data-theme="dark"] .vs-sea.ahead  { background: #0a1e0a; color: #4aaa4a; }
 :root[data-theme="dark"] .vs-sea.behind { background: #240e00; color: #c8840a; }
