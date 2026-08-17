@@ -122,17 +122,34 @@
   gap: clamp(1.5rem, 4vw, 3.5rem);
   align-items: center;
 }
-/* Below ~62rem the mosaic would squeeze the copy, so it drops away entirely
-   rather than shrinking to postage stamps. */
-@media (max-width: 62rem) {
-  .lp-hero { grid-template-columns: 1fr; }
-  .lp-hero-art { display: none; }
-}
 .lp-hero-art {
   display: grid;
   grid-template-areas: "a a b" "a a c" "d d c";
   gap: clamp(0.4rem, 0.8vw, 0.6rem);
   aspect-ratio: 1 / 0.82;
+}
+/* Below ~62rem the hero stacks, so the mosaic stops competing with the copy for
+   width and gets the full rail to itself. It is NOT hidden here — it used to be
+   (display:none), which cost a phone every photograph on the front door and left
+   the daily rotation running where nobody could see it. What it drops is the
+   3-column arrangement: at phone width the tall "c" cell would be a ribbon, so
+   the same four tiles re-map to an even 2×2. The names survive the re-map, which
+   is why the tiles need no rule of their own — only the template changes.
+
+   This block MUST stay after the base .lp-hero-art rule above: same specificity,
+   so source order decides, and above it the base template silently wins back the
+   three columns on a phone. */
+@media (max-width: 62rem) {
+  .lp-hero { grid-template-columns: 1fr; }
+  .lp-hero-art {
+    grid-template-areas: "a b" "c d";
+    grid-template-columns: 1fr 1fr;
+    /* Both axes pinned. Without the explicit rows the two tracks size to their
+       own content and the square comes out 302px over 438px — the 2×2 reads as
+       two different blocks rather than one. */
+    grid-template-rows: 1fr 1fr;
+    aspect-ratio: 1 / 0.92;
+  }
 }
 .lp-hero-art a {
   position: relative;
@@ -1856,7 +1873,15 @@ window.lpGuideCard = function (href, flag, name, extra) {
   <!-- Real photography from real guides — a travel site whose front door had no
        pictures was the single biggest thing making it feel like a directory.
        Each tile links into the guide the photo came from, so it is navigation
-       rather than decoration. Lazy + async so it never blocks first paint. -->
+       rather than decoration. Lazy + async so it never blocks first paint.
+
+       The four change every day: seven sets of four, picked by the reader's own
+       calendar day, so a returning reader sees a different corner of the fleet
+       each visit and the same one all day rather than a reshuffle per refresh.
+       The markup carries set 0 so the block is complete with no JavaScript at
+       all; the script below only swaps when today is a different set, and the
+       swap lands before layout, so loading="lazy" means the set-0 files are
+       never fetched on the other six days. -->
   <div class="lp-hero-art" aria-label="Photographs from four guides">
     <a href="/guides/santorini.html" style="grid-area:a">
       <img src="/guides/santorini/photos/800px-amoudi-bay.jpg" alt="Amoudi Bay, Santorini" loading="lazy" decoding="async">
@@ -1875,6 +1900,83 @@ window.lpGuideCard = function (href, flag, name, extra) {
       <span>Marrakech</span>
     </a>
   </div>
+  <script>
+  /* Daily rotation of the hero mosaic. Seven sets of four; each row is
+     [guide slug, photo filename, label, alt]. Set 0 is what the markup already
+     holds, so day 0 does nothing and the block never flickers.
+
+     ORDER INSIDE A SET IS NOT ARBITRARY — the four positions are four different
+     shapes, and object-fit:cover crops to them. Position 3 lands in the tall "c"
+     cell and must be a VERTICAL subject: a tower, a spire, a facade. A panorama
+     put there is cropped to its middle and loses its subject entirely — the
+     first draft had Hanoi's West Lake pagoda in it and rendered as a pond with
+     no pagoda in frame. Position 4 is the wide bottom cell and wants the
+     opposite: a panorama, a skyline, a river. Position 1 is the big cell and
+     takes the strongest picture; position 2 is a small landscape.
+
+     Every path here was checked against disk AND looked at in the cell it lands
+     in. A wrong filename or a wrong case fails silently — it 404s and leaves an
+     empty tile — so a new set is added by listing guides/<slug>/photos/ and
+     copying the name, never by guessing it from the sight's name. */
+  (function () {
+    var SETS = [
+      [['santorini','800px-amoudi-bay.jpg','Santorini','Amoudi Bay, Santorini'],
+       ['kyoto','800px-150124-gion-kyoto-japan01s3.jpg','Kyoto','Gion, Kyoto'],
+       ['petra','800px-ad-deir-the-monastery-el-deir-petra-jordan.jpg','Petra','The Monastery, Petra'],
+       ['marrakech','800px-a01-marrakech-koutoubia.jpg','Marrakech','Koutoubia, Marrakech']],
+
+      [['rome','800px-colosseo-2020.jpg','Rome','The Colosseum, Rome'],
+       ['venice','800px-venice-gondola-grand-canal.jpg','Venice','Gondola on the Grand Canal, Venice'],
+       ['paris','800px-tour-eiffel-wikimedia-commons.jpg','Paris','The Eiffel Tower, Paris'],
+       ['prague','800px-charles-bridge.jpg','Prague','Charles Bridge, Prague']],
+
+      [['reykjavik','800px-aurora-over-the-sun-voyager.jpg','Reykjavik','Aurora over the Sun Voyager, Reykjavik'],
+       ['dubrovnik','800px-dubrovnik-zidine-01.jpg','Dubrovnik','The city walls, Dubrovnik'],
+       ['bergen','800px-bryggen-bergen-the-german-wharf.jpg','Bergen','Bryggen, Bergen'],
+       ['edinburgh','800px-edinburgh-castle-rock.jpg','Edinburgh','Edinburgh Castle on its rock']],
+
+      [['cusco','800px-machu-picchu.jpg','Cusco','Machu Picchu'],
+       ['cape-town','800px-cape-town-table-mountain.jpg','Cape Town','Table Mountain, Cape Town'],
+       ['cairo','800px-giza-pyramids.jpg','Cairo','The Pyramids of Giza'],
+       ['rio-de-janeiro','800px-sugarloaf.jpg','Rio de Janeiro','Sugarloaf Mountain, Rio de Janeiro']],
+
+      [['istanbul','800px-blue-mosque-istanbul.jpg','Istanbul','The Blue Mosque, Istanbul'],
+       ['bali','800px-tegallalang-rice-terraces-bali.jpg','Bali','Tegallalang rice terraces, Bali'],
+       ['hanoi','800px-st-joseph-s-cathedral-hanoi-vietnam.jpg','Hanoi','St Joseph Cathedral, Hanoi'],
+       ['sydney','800px-opera-house.jpg','Sydney','The Opera House, Sydney']],
+
+      [['banff','800px-moraine-lake-17092005.jpg','Banff','Moraine Lake, Banff'],
+       ['queenstown','800px-the-remarkables-queenstown-nz-8167990319.jpg','Queenstown','The Remarkables, Queenstown'],
+       ['new-york','800px-brooklyn-bridge-postdlf.jpg','New York','Brooklyn Bridge, New York'],
+       ['budapest','800px-hungarian-parliament-building-2015.jpg','Budapest','The Parliament building, Budapest']],
+
+      [['athens','800px-the-parthenon-in-athens.jpg','Athens','The Parthenon, Athens'],
+       ['barcelona','800px-casa-batllo.jpg','Barcelona','Casa Batllo, Barcelona'],
+       ['lisbon','800px-belem-tower-lisbon-portugal.jpg','Lisbon','Belem Tower, Lisbon'],
+       ['florence','800px-florence-duomo-from-michelangelo-hill.jpg','Florence','The Duomo from Piazzale Michelangelo, Florence']]
+    ];
+
+    /* The reader's own calendar day, not UTC — the set turns over at their
+       midnight. Date.UTC on the local Y/M/D gives a whole number of days with
+       no DST drift, which a plain Date.now()/86400000 does not. */
+    var now = new Date();
+    var day = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+    var set = SETS[((day % SETS.length) + SETS.length) % SETS.length];
+    if (set === SETS[0]) return;
+
+    var tiles = document.querySelectorAll('.lp-hero-art > a');
+    if (tiles.length !== set.length) return;
+    for (var i = 0; i < tiles.length; i++) {
+      var t = tiles[i], row = set[i];
+      var img = t.querySelector('img'), cap = t.querySelector('span');
+      if (!img || !cap) continue;
+      t.href = '/guides/' + row[0] + '.html';
+      img.src = '/guides/' + row[0] + '/photos/' + row[1];
+      img.alt = row[3];
+      cap.textContent = row[2];
+    }
+  })();
+  </script>
 </header>
 
 <!-- ═══ FIND YOUR NEXT DESTINATION ══════════════════════════════════════════
