@@ -1,0 +1,551 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   trains.css — the continent train guides, shared.
+
+   Five pages ride this file: /essentials/european-trains/, /asian-trains/,
+   /americas-trains/, /african-trains/, /oceania-trains/. It was extracted
+   verbatim from european-trains' inline <style> on 2026-08-17, when the guide
+   was divided by continent (owner rule) — copying ~400 lines into four new
+   pages would have been four identical rule bodies per selector, which is
+   exactly what check_css_duplication.py exists to stop.
+
+   LOAD ORDER MATTERS. Link it after web-travel-style.css and BEFORE
+   mobile.css, in the slot the inline <style> used to occupy. mobile.css
+   carries !important rules that are meant to win over these.
+
+   Page-specific CSS still belongs in the page's own <style> — this file holds
+   only what all five continents genuinely agree on.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* WRAP */
+  /* .wrap — fluid width from web-travel-style.css */
+  /* HEADER — from web-travel-style.css */
+  /* BOOKING AGGREGATORS SECTION */
+  .aggregators-section {
+    background: transparent;
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0 20px;
+    margin-bottom: 0;
+  }
+  .agg-inner { max-width: 940px; margin: 0 auto; padding: 0 32px; }
+  .agg-title {
+    font-size: var(--fs-sub,12px);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .agg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+    gap: 10px;
+  }
+  .agg-card {
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 12px 14px;
+    text-decoration: none;
+    transition: box-shadow .18s, transform .18s, border-color .15s;
+    display: block;
+  }
+  .agg-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(138,108,26,0.10);
+  }
+  .agg-name { font-weight: 600; color: var(--text, #1a1917); font-size: var(--fs-body,14px); margin-bottom: 3px; }
+  .agg-desc { font-size: var(--fs-body,14px); color: var(--muted); line-height: 1.4; }
+  .agg-link { display: inline-block; margin-top: 5px; font-size: var(--fs-body,14px); color: var(--text, #1a1917); text-decoration: none; }
+  .agg-link:visited { color: #3d3a32; }
+  /* FILTERS */
+  .train-search-row { text-align: center; margin: 35px auto 14px; }
+  .controls {
+    max-width: none;
+    margin: 0 auto;
+    padding: 10px 32px;
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .filter-label {
+    font-size: var(--fs-sub,12px);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border: 1px solid var(--border2, #e6e2da);
+    color: var(--muted, #6a6660);
+    font-weight: 400;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+.filter-btn:hover { font-family: inherit;
+    background: var(--bg,#f5f4f0);
+    border-color: var(--rust);
+  }
+.filter-btn.active { font-family: inherit;
+    background: var(--surface,#ffffff);
+    color: var(--rust,#b85c2a);
+    border-color: var(--rust);
+  }
+  /* pills-to-badge: rest-state badge family colors */
+  .filter-btn[data-ftype="high-speed"] { background:#fdf0e8; color:#7a3a1a; border-color:rgba(122,58,26,0.4); }
+  .filter-btn[data-ftype="intercity"]  { background:#fde8e8; color:#8a1a1a; border-color:rgba(138,26,26,0.4); }
+  .filter-btn[data-ftype="regional"]   { background:#e8f5e8; color:#1a5a1a; border-color:rgba(26,90,26,0.4); }
+  .filter-btn[data-ftype="night"]      { background:#f3e8ff; color:#7c3aed; border-color:rgba(124,58,237,0.4); }
+  .filter-btn[data-ftype="private"]    { background:rgba(160,40,110,0.08); color:#8a2168; border-color:rgba(160,40,110,0.4); }
+  .filter-btn[data-ftype="pass"]       { background:#fff8e0; color:#7a5800; border-color:rgba(122,88,0,0.4); }
+  .filter-btn[data-ftype="scenic"]     { background:rgba(138,108,26,0.07); color:var(--muted); border-color:var(--border2); }
+  .filter-btn[data-ftype]:not([data-ftype="all"]).active { background:var(--surface,#ffffff); border-color:var(--rust); color: var(--rust,#b85c2a); box-shadow: 0 0 0 2px rgba(184,92,42,0.35); }
+  /* :visited */
+  .book-link.primary:visited   { color:#3d3a32; }
+  .book-link.secondary:visited { color:#6a6660; }
+
+  /* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Formatting/Formatting.html#src-desktoppill.
+     8 .filter-btn pills → full-width proportional stretch, squared corners,
+     touching borders, black text, terracotta hover, muted-grey #f0ede8 .active
+     (chained). Country .jump-btn also gets canonical shape (natural-width strip,
+     squared, touching, canonical hover + .active). Mobile grid untouched. */
+  @media (min-width: 601px), (pointer: fine) {
+    .controls { gap: 0; }
+    .filter-btn { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); }
+    .filter-btn:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+    .filter-btn.active,
+    .filter-btn.active:hover,
+    .filter-btn.active:focus { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); }
+    .filter-btn[data-ftype="high-speed"] { background:#fdf0e8; color:#7a3a1a; border-color:rgba(122,58,26,0.4); }
+    .filter-btn[data-ftype="intercity"]  { background:#fde8e8; color:#8a1a1a; border-color:rgba(138,26,26,0.4); }
+    .filter-btn[data-ftype="regional"]   { background:#e8f5e8; color:#1a5a1a; border-color:rgba(26,90,26,0.4); }
+    .filter-btn[data-ftype="night"]      { background:#f3e8ff; color:#7c3aed; border-color:rgba(124,58,237,0.4); }
+    .filter-btn[data-ftype="private"]    { background:rgba(160,40,110,0.08); color:#8a2168; border-color:rgba(160,40,110,0.4); }
+    .filter-btn[data-ftype="pass"]       { background:#fff8e0; color:#7a5800; border-color:rgba(122,88,0,0.4); }
+    .filter-btn[data-ftype="scenic"]     { background:rgba(138,108,26,0.07); color:var(--muted); border-color:var(--border2); }
+    .filter-btn[data-ftype]:not([data-ftype="all"]).active { background:#f0ede8; border-color:var(--border); color:var(--muted); }
+    .jump-nav { gap: 0 !important; }
+    .jump-btn { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border: 1.5px solid var(--border2, #e6e2da); border-radius: 0 !important; margin-left: 0; background: var(--surface, #ffffff); }
+    .jump-btn:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); box-shadow: none; transform: none; }
+    .jump-btn.active,
+    .jump-btn.active:hover,
+    .jump-btn.active:focus { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); box-shadow: none; }
+    .legend { display: flex !important; flex-wrap: wrap !important; justify-content: center !important; gap: 0 !important; }
+    .legend-item { flex: 0 1 auto; border-radius: 4px; border-radius: 0 !important; border-width: 1px; padding: 3px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; text-transform: uppercase; }
+  }
+  /* MAIN CONTENT */
+  main { padding: 20px 32px 32px; max-width: none; margin: 0 auto; }
+  /* COUNTRY SECTION */
+  .country-section { margin-bottom: 20px; margin-top: 24px; }
+  /* .country-header / .country-name canonical place+color+size+font now shared in web-travel-style.css + mobile.css (owner rule 2026-07-29) */
+  .country-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .country-flag { font-size: 22px; line-height: 1; }
+  .country-count {
+    font-size: var(--fs-sub,12px);
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 10px;
+    border-radius: 12px;
+    margin-left: auto;
+  }
+  /* TRAIN CARDS */
+  .trains-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; align-items: stretch; }
+  .train-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    transition: box-shadow .18s, transform .18s, border-color .15s;
+  }
+  .train-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(138,108,26,0.10); transform: translateY(-1px); }
+  .train-card.hidden { display: none; }
+  .card-top {
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--surface2);
+  }
+  .train-meta { flex: 1; min-width: 0; }
+  .train-name { font-size: var(--fs-body,14px); font-weight: 600; color: var(--text, #1a1917); line-height: 1.2; margin-bottom: 3px; }
+  .train-operator { font-size: var(--fs-body,14px); color: var(--muted); letter-spacing: 0.3px; }
+  .type-badge {
+    flex-shrink: 0;
+    font-size: var(--fs-sub,12px);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  .type-highspeed { background: #fdf0e8; color: #7a3a1a; border: 1px solid rgba(122,58,26,0.4); }
+  .type-night     { background: #f3e8ff; color: #7c3aed; border: 1px solid rgba(124,58,237,0.4); }
+  .type-intercity { background: #fde8e8; color: #8a1a1a; border: 1px solid rgba(138,26,26,0.4); }
+  .type-regional  { background: #e8f5e8; color: #1a5a1a; border: 1px solid rgba(26,90,26,0.4); }
+  .type-private   { background: rgba(160,40,110,0.08); color: #8a2168; border: 1px solid rgba(160,40,110,0.4); }
+  .type-pass      { background: #fff8e0; color: #7a5800; border: 1px solid rgba(122,88,0,0.4); }
+  .type-scenic    { background: rgba(138,108,26,0.07); color: var(--muted); border: 1px solid rgba(106,102,96,0.4); }
+  .card-body { padding: 14px 18px; flex: 1; display: flex; flex-direction: column; }
+  .info-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: flex-start; }
+  .info-icon { font-size: var(--fs-sub,12px); flex-shrink: 0; margin-top: 1px; width: 18px; text-align: center; }
+  .info-content { flex: 1; font-size: var(--fs-body,14px); color: var(--text, #1a1917); }
+  .info-label {
+    font-size: var(--fs-sub,12px);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .country-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .ctag {
+    font-family: inherit;
+    font-size: var(--fs-sub,12px);
+    font-weight: 400;
+    background: var(--tag-bg);
+    border: 1.5px solid var(--border2, #e6e2da);
+    color: var(--text, #1a1917);
+    padding: 2px 7px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .ctag.origin { border-color: rgba(184,134,90,0.4); background: var(--warm); color: #8a4a10; }  /* ORANGE canonical */
+  .ctag.cross  { border-color: rgba(26,58,139,0.4); background: #e8f0fb; color: var(--navy); }
+  .ctag.stop   { border-color: rgba(26,90,26,0.4); background: #e8f5e8; color: #1a5a1a; }
+  .routes-list { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+  .route-item { font-size: var(--fs-body,14px); color: var(--muted); display: flex; align-items: center; gap: 5px; }
+  .route-item::before { content: '↔'; color: var(--border); flex-shrink: 0; }
+  .booking-section { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); }
+  .booking-label {
+    font-size: var(--fs-sub,12px);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 7px;
+    display: block;
+  }
+  .booking-links { display: flex; flex-wrap: wrap; gap: 6px; }
+  .book-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    font-size: var(--fs-sub,12px);
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: all 0.15s;
+    border: 1px solid;
+  }
+  .book-link.primary   { background: var(--surface, #ffffff); color: var(--text, #1a1917); border-color: var(--border); }
+  .book-link.primary:hover, .book-link.primary:focus { background: var(--bg, #f5f4f0); border-color: var(--rust); color: var(--text, #1a1917); }
+  .book-link.secondary { background: var(--surface, #ffffff); color: var(--muted); border-color: var(--border); }
+  .book-link.secondary:hover, .book-link.secondary:focus { color: var(--text, #1a1917); border-color: var(--rust); }
+  .book-link:focus { outline: none; }
+  .section-divider { display: flex; align-items: center; gap: 16px; margin: 12px 0 8px; }
+  .section-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+  .section-divider-text { font-size: var(--fs-sub,12px); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .multi-section { margin-bottom: 16px; }
+  .multi-header { font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+  .multi-sub { color: var(--muted); font-size: var(--fs-sub,12px); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+  .legend-item { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.5; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border2, #e6e2da); white-space: nowrap; cursor: pointer; user-select: none; transition: box-shadow 0.15s, opacity 0.15s; }
+  .legend-item:hover { box-shadow: 0 0 0 2px rgba(184,92,42,0.35); }
+  .legend-item.active { border-color: var(--rust) !important; border-width: 2px; box-shadow: 0 0 0 2px rgba(184,92,42,0.25); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  /* Legend items — canonical family trios; dots use sphere mid tones per Badge spec 2026-07-29.
+     (Class name `.beige` kept as legacy alias; colors are the ORANGE family since the rename.) */
+  .legend-item.beige  { background:var(--warm); color:#a67b5b; border-color:rgba(166,123,91,0.45); }
+  .legend-item.beige  .legend-dot { background:#f5a623 !important; }  /* 🟠 sphere mid */
+  .legend-item.blue   { background:#e8f0fb; color:var(--navy); border-color:#c5d5ee; }
+  .legend-item.blue   .legend-dot { background:#4a90e2 !important; }  /* 🔵 sphere mid */
+  .legend-item.green  { background:#e8f5e8; color:#1a5a1a; border-color:rgba(26,90,26,0.4); }
+  .legend-item.green  .legend-dot { background:#5eb833 !important; }  /* 🟢 sphere mid */
+  .legend-item.red    { background:#fdf0e8; color:#7a3a1a; border-color:rgba(122,58,26,0.4); }
+  .legend-item.red    .legend-dot { background:#e01818 !important; }  /* 🔴 sphere mid */
+  .legend-item.purple { background:#f3e8ff; color:#7c3aed; border-color:rgba(124,58,237,0.4); }
+  .legend-item.purple .legend-dot { background:#a05be8 !important; }  /* 🟣 sphere mid */
+  .legend-item.yellow { background:#fff8e0; color:#7a5800; border-color:rgba(122,88,0,0.4); }
+  .legend-item.yellow .legend-dot { background:#f5c518 !important; }  /* 🟡 sphere mid */
+  .legend-item.grey   { background:rgba(138,108,26,0.07); color:var(--muted); border-color:var(--border2); }
+  .legend-item.grey   .legend-dot { background:#3a3632 !important; }  /* ⚫ mid */
+  .legend-item.pink   { background:rgba(160,40,110,0.08); color:#8a2168; border-color:rgba(160,40,110,0.4); }
+  .legend-item.pink   .legend-dot { background:#f688b8 !important; }  /* 🩷 heart mid */
+  /* PINK bar accent (H) — left 4px bar on tinted card, for callouts/panels. Bar is sphere mid. */
+  .bar-pink { display:block; background:rgba(246,136,184,0.08); border-radius:8px; padding:10px 14px 10px 18px; border-left:4px solid #f688b8; color:#8a2168; }
+  /* hide inline footer and toolbar.js injected footnote */
+  footer, .tb-footnote { display: none !important; }
+  .country-section.all-hidden { display: none; }
+  /* uniform gutter */
+  @media (max-width: 600px) and (pointer: coarse) {
+  html, 
+  .wrap { overflow-x: hidden !important; }
+  #train-search { width: 100%; }
+    /* body already supplies a 20px side gutter — drop main's extra 24px so the
+       single-column cards fill the width instead of a narrow 301px ribbon */
+    main { padding-left: 0; padding-right: 0; }
+    .trains-grid { grid-template-columns: 1fr; }
+    /* Compact the route cards on phones — tighter padding, gaps, and fonts so
+       the long single-column list scrolls less (~27% shorter than the original). */
+    .trains-grid { gap: 9px; }
+    .card-top { padding: 8px 12px 7px; gap: 8px; }
+    .train-name { font-size: 13px; margin-bottom: 2px; }
+    .train-operator { font-size: var(--fs-sub,12px); }
+    .type-badge { font-size: 12px; padding: 1px 6px; }
+    .card-body { padding: 9px 12px; }
+    .info-row { margin-bottom: 5px; gap: 7px; }
+    .info-icon { margin-top: 0; }
+    .info-label { margin-bottom: 1px; font-size: 12px; }
+    .info-content { font-size: 13px; }
+    .country-tags { gap: 4px; margin-top: 3px; }
+    .ctag { font-size: 12px; padding: 1px 6px; }
+    .routes-list { gap: 3px; margin-top: 3px; }
+    .route-item { font-size: 13px; }
+    .agg-grid { grid-template-columns: repeat(2, 1fr); }
+    /* Filter strip — left-aligned so the reordered chips pack onto two rows
+       (All / High-Speed / Intercity / Regional · Night Train / Private Operator /
+       Rail Pass) instead of three centered rows. Chip size is unchanged — the
+       order does the work. .controls.controls outweighs mobile.css's !important. */
+    /* Filter strip — uniform 3-across glued grid, matching the other filter
+       panels. .controls.controls outweighs mobile.css's !important. */
+    .controls.controls { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; align-items: stretch !important; margin-top: 2px !important; padding-right: 0 !important; padding-bottom: 8px !important; max-width: 100% !important; width: 100% !important; }
+    .filter-label { display: none; }
+    .controls #train-count { grid-column: 1 / -1 !important; }
+    .controls .filter-btn {
+      height: 46px !important;
+      display: flex !important; align-items: center !important; justify-content: center !important;
+      text-align: center !important; white-space: normal !important; line-height: 1.12 !important;
+      border: 2px solid var(--border, #d8d4cc) !important;
+      border-radius: 0 !important; font-size: 12px !important; padding: 4px 6px !important;
+    }
+    /* Guides-Index border technique — overlap adjacent borders with margin. */
+    /* Country jump nav — Form B glued 3-across grid on mobile, matching the
+       filter strip above. Shared mobile.css overrides the `display: none`
+       from the pre-2026-07-28 rule; keep it visible as a nav grid. */
+    .jump-nav { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; width: 100% !important; margin: 8px 0 !important; padding: 0 !important; }
+    .jump-nav .jump-btn { height: 46px !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; white-space: normal !important; line-height: 1.12 !important; border: 2px solid var(--border, #d8d4cc) !important; border-radius: 0 !important; font-size: 12px !important; padding: 4px 6px !important; }
+  }
+  #train-search{width:360px;max-width:100%;box-sizing:border-box;margin:0;font-size:16px;border:1.5px solid var(--border2, #e6e2da);border-radius:6px;color:var(--text, #1a1917);outline:none;transition:border-color .15s,box-shadow .15s;flex-shrink:0;}
+  #train-search:focus{border-color: var(--c-search-focus-border); box-shadow: none;}
+  #train-search::placeholder{color:var(--c-search-placeholder);}
+  #train-noresult{display:none;padding:8px 4px;font-size:13px;color:var(--muted);}
+  .train-count{font-size:13px;color:var(--muted);margin-left:8px;white-space:nowrap;}
+  /* country jump nav */
+  .jump-nav{max-width:none;margin:8px auto 4px;padding:0 32px 6px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;}
+  .jump-btn{display:inline-flex;align-items:center;justify-content:center;font-size:var(--fs-sub,12px);font-weight: 400;color:var(--muted);text-decoration:none;padding:4px 11px;border:1px solid var(--border);border-radius:6px;background:var(--surface);white-space:nowrap;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .08s;}
+  .jump-btn:visited{color:#6a6660;}
+  .jump-btn:hover{border-color:var(--rust);box-shadow:0 2px 8px rgba(184,92,42,.12);transform:translateY(-1px);}
+  .jump-btn.active{border-color:var(--rust);box-shadow:0 2px 8px rgba(184,92,42,.12);}
+  .jump-btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  .country-section{scroll-margin-top:16px;}
+  .multi-section{scroll-margin-top:16px;}
+  @media (max-width: 600px) and (pointer: coarse) {
+    .jump-nav{padding:0 14px 6px;}
+  }
+/* Discontinued route notices — class keeps color out of inline style so dark mode can flip it */
+.route-warn { color: #dc2626; }
+@media (prefers-color-scheme: dark) {
+  .filter-btn { color: var(--text); }
+  .jump-btn { color: var(--text); }
+  .ctag.origin { color: #c8a060; }
+  .legend-item.beige { color: #c8a060; }
+  .filter-btn.active { background: var(--surface2, #1e1c1a); color: var(--text); border-color: var(--border2); }
+  .filter-btn[data-ftype="high-speed"] { background: #2a0e00; color: #e07050; border-color: rgba(224,112,80,.35); }
+  .filter-btn[data-ftype="intercity"]  { background: #2a0808; color: #e06060; border-color: rgba(224,96,96,.35); }
+  .filter-btn[data-ftype="regional"]   { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+  .filter-btn[data-ftype="night"]      { background: #2d1b5e; color: #c084fc; border-color: rgba(192,132,252,.35); }
+  .filter-btn[data-ftype="private"]    { background: #2a0818; color: #e070b8; border-color: rgba(224,112,184,.35); }
+  .filter-btn[data-ftype="pass"]       { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+  .legend-item.blue  { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
+  .legend-item.green { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+  .ctag.cross { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
+  .type-highspeed { background: #2a0e00; color: #e07050; border-color: rgba(224,112,80,.35); }
+  .type-intercity { background: #2a0808; color: #e06060; border-color: rgba(224,96,96,.35); }
+  .type-regional  { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+  .type-night     { background: #2d1b5e; color: #c084fc; border-color: rgba(192,132,252,.35); }
+  .type-pass      { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+  .type-private   { background: #2a0818; color: #e070b8; border-color: rgba(224,112,184,.35); }
+  .route-warn { color: #f07070; }
+}
+:root[data-theme="dark"] .filter-btn.active { background: var(--surface2, #1e1c1a); color: var(--text); border-color: var(--border2); }
+:root[data-theme="dark"] .filter-btn[data-ftype="high-speed"] { background: #2a0e00; color: #e07050; border-color: rgba(224,112,80,.35); }
+:root[data-theme="dark"] .filter-btn[data-ftype="intercity"]  { background: #2a0808; color: #e06060; border-color: rgba(224,96,96,.35); }
+:root[data-theme="dark"] .filter-btn[data-ftype="regional"]   { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+:root[data-theme="dark"] .filter-btn[data-ftype="night"]      { background: #2d1b5e; color: #c084fc; border-color: rgba(192,132,252,.35); }
+:root[data-theme="dark"] .filter-btn[data-ftype="private"]    { background: #2a0818; color: #e070b8; border-color: rgba(224,112,184,.35); }
+:root[data-theme="dark"] .filter-btn[data-ftype="pass"]       { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+:root[data-theme="dark"] .legend-item.blue  { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
+:root[data-theme="dark"] .legend-item.green { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+:root[data-theme="dark"] .ctag.cross { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
+:root[data-theme="dark"] .type-highspeed { background: #2a0e00; color: #e07050; border-color: rgba(224,112,80,.35); }
+:root[data-theme="dark"] .type-intercity { background: #2a0808; color: #e06060; border-color: rgba(224,96,96,.35); }
+:root[data-theme="dark"] .type-regional  { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
+:root[data-theme="dark"] .type-night     { background: #2d1b5e; color: #c084fc; border-color: rgba(192,132,252,.35); }
+:root[data-theme="dark"] .type-pass      { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
+:root[data-theme="dark"] .type-private   { background: #2a0818; color: #e070b8; border-color: rgba(224,112,184,.35); }
+:root[data-theme="dark"] .route-warn { color: #f07070; }
+/* ── OPERATOR REVIEW ──────────────────────────────────────────────────────
+   The "what it is actually like to ride" paragraph every company card
+   carries (owner rule 2026-08-17). It sits between the routes and the
+   booking strip, inside .card-body, and is deliberately quieter than the
+   facts above it: this is judgement, and it should not out-shout the
+   timetable. Left rule in rust ties it to the drawn-mark family without
+   adding another badge colour to a card that already carries a type badge.
+
+   .op-review is a <div>; .op-review-label is the small caps head; the text
+   is a plain <p class="op-review-text">. No icon — the Twenty-eighth
+   non-negotiable means an icon here would have to come from Site-Icons.html,
+   and a rule + label reads cleanly without one. */
+.op-review {
+  margin-top: 10px;
+  padding: 9px 0 9px 11px;
+  border-left: 2px solid var(--rust, #b85c2a);
+}
+.op-review-label {
+  font-size: var(--fs-sub, 12px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rust, #b85c2a);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 3px;
+}
+.op-review-text {
+  font-size: var(--fs-body, 14px);
+  line-height: 1.5;
+  color: var(--text, #1a1917);
+  margin: 0;
+}
+@media (max-width: 600px) and (pointer: coarse) {
+  .op-review { margin-top: 7px; padding: 7px 0 7px 9px; }
+  .op-review-label { font-size: 12px; margin-bottom: 2px; }
+  .op-review-text { font-size: 13px; line-height: 1.45; }
+}
+
+/* ── CONTINENT INDEX ──────────────────────────────────────────────────────
+   The strip that turns five standalone pages into one guide (owner rule
+   2026-08-17: "divide the train pages by continents index button"). Same
+   shape as .jump-btn so the page reads as one control system, but it sits
+   above the search rather than under it, and the current continent is
+   .on — not .active, which the jump nav's scroll-spy owns and would
+   overwrite on every scroll. */
+.cont-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  max-width: none;
+  margin: 16px auto 0;
+  padding: 0 32px;
+}
+.cont-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-sub, 12px);
+  font-weight: 400;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 5px 13px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  white-space: nowrap;
+  transition: border-color .15s, box-shadow .15s, transform .08s;
+}
+.cont-btn:visited { color: #6a6660; }
+.cont-btn:hover {
+  border-color: var(--rust);
+  box-shadow: 0 2px 8px rgba(184,92,42,.12);
+  transform: translateY(-1px);
+}
+.cont-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.cont-btn.on {
+  border-color: var(--rust);
+  color: var(--rust, #b85c2a);
+  font-weight: 500;
+  cursor: default;
+}
+.cont-btn.on:hover { transform: none; box-shadow: none; }
+
+/* Desktop canonical strip — natural-width, squared, touching borders, exactly
+   as .filter-btn and .jump-btn get above. */
+@media (min-width: 601px), (pointer: fine) {
+  .cont-nav { gap: 0; }
+  .cont-btn {
+    flex: 0 1 auto;
+    height: 36px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #3d3a32;
+    border: 1.5px solid var(--border2, #e6e2da);
+    border-radius: 0;
+    background: var(--surface, #ffffff);
+  }
+  .cont-btn:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); box-shadow: none; transform: none; }
+  .cont-btn.on,
+  .cont-btn.on:hover,
+  .cont-btn.on:focus { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); box-shadow: none; }
+}
+@media (max-width: 600px) and (pointer: coarse) {
+  .cont-nav {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0 !important;
+    width: 100% !important;
+    margin: 10px 0 0 !important;
+    padding: 0 !important;
+  }
+  .cont-btn {
+    height: 46px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: normal !important;
+    line-height: 1.12 !important;
+    border: 2px solid var(--border, #d8d4cc) !important;
+    border-radius: 0 !important;
+    font-size: 12px !important;
+    padding: 4px 6px !important;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .cont-btn { color: var(--text); }
+  .cont-btn.on { background: var(--surface2, #1e1c1a); color: var(--text); border-color: var(--border2); }
+}
+:root[data-theme="dark"] .cont-btn { color: var(--text); }
+:root[data-theme="dark"] .cont-btn.on { background: var(--surface2, #1e1c1a); color: var(--text); border-color: var(--border2); }
