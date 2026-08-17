@@ -7504,7 +7504,16 @@ window.TVE.home = (function () {
       var row = document.getElementById('ics-pill-row');
       if (!row) return;
 
-      var country = cg && cg._by_slug && cg._by_slug[curr];
+      /* `_by_slug` is keyed by FILENAME ("paris.html") — `curr` is _pageKey(), which
+         strips the extension ("paris"). They matched until the URL migration gave
+         _pageKey its `.replace(/\.html$/i, '')`; since then the lookup has returned
+         undefined on all 237 guides and this function has bailed one line later, so
+         the 💱 Currency pill silently stopped rendering site-wide. Nothing errors —
+         an unknown country is a legitimate reason to render no pill, which is why it
+         looked like a page with no converter rather than a bug. Try both spellings so
+         it cannot break again from either side. */
+      var bySlug = (cg && cg._by_slug) || {};
+      var country = bySlug[curr] || bySlug[curr + '.html'];
       var c = country && cur && cur.rates && cur.rates[_curFold(country)];
       if (!c || !c.rate || c.iso === 'USD') return;
 
