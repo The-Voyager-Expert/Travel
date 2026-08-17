@@ -1196,6 +1196,23 @@ summary.res-head:focus-visible { outline: 2px solid var(--rust, #b85c2a); outlin
 .res-plus::before { content: '+'; }
 .res-cell[open] .res-plus::before { content: '\2212'; }
 .res-cell[open] .res-links { padding-bottom: 0.2rem; }
+/* One row may open a SECOND level: the continent blocks of the page behind it.
+   Its own class rather than .res-plus, because .res-cell[open] .res-plus is a
+   DESCENDANT selector — sharing the class would flip this marker to a minus the
+   moment the category above it opened, whatever this row was doing. Same shape
+   one step down: the label stays a link to the page, the +/− only discloses. */
+.res-sub > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.34rem 0; border-bottom: 1px solid var(--line, #e8e4dc); }
+.res-sub > summary::-webkit-details-marker { display: none; }
+html[data-theme="dark"] .res-sub > summary { border-bottom-color: rgba(232,228,220,0.09); }
+.res-sub > summary > a { flex: 1; padding: 0; border-bottom: 0; }
+.res-sub > summary > a::after { content: none; }
+.res-sub > summary:hover > a { color: var(--rust, #C04E1A); }
+.res-sub > summary:focus-visible { outline: 2px solid var(--rust, #C04E1A); outline-offset: 2px; }
+.res-subplus { font-size: 0.95rem; font-weight: 400; line-height: 1; opacity: 0.75; color: var(--muted, #6a6660); }
+.res-subplus::before { content: '+'; }
+.res-sub[open] > summary .res-subplus::before { content: '\2212'; }
+.res-sublinks { display: flex; flex-direction: column; padding-left: 0.85rem; }
+.res-sublinks a { font-size: 0.82rem; font-weight: 400; }
 .res-links { display: flex; flex-direction: column; }
 /* Type and rhythm are the site's list standard (.lp-links, used by the Best Of
    block directly above): 0.875rem / 500 / 0.34rem rows, chevron at .45. Set
@@ -2234,7 +2251,22 @@ window.lpGuideCard = function (href, flag, name, extra) {
     <details class="res-cell">
       <summary class="res-head">Flights &amp; airports<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
-        <a href="/essentials/airlines/">Airlines</a>
+        <!-- Airlines is grouped by continent on the page, and the reader who
+             wants Asian carriers is asking a continent question before an
+             airline one. The plus lands them in the right section of the same
+             page — the row itself still opens the page whole. -->
+        <details class="res-sub">
+          <summary><a href="/essentials/airlines/">Airlines</a><span class="res-subplus" aria-hidden="true"></span></summary>
+          <div class="res-sublinks">
+            <a href="/essentials/airlines/#al-north-america">North America</a>
+            <a href="/essentials/airlines/#al-latin-america-and-caribbean">Latin America</a>
+            <a href="/essentials/airlines/#al-europe">Europe</a>
+            <a href="/essentials/airlines/#al-middle-east">Middle East</a>
+            <a href="/essentials/airlines/#al-africa">Africa</a>
+            <a href="/essentials/airlines/#al-asia">Asia</a>
+            <a href="/essentials/airlines/#al-oceania">Oceania</a>
+          </div>
+        </details>
         <a href="/essentials/baggage/">Baggage</a>
         <a href="/essentials/connections/">Airport Connections</a>
         <a href="/essentials/lounges-us/">US Lounges</a>
@@ -2258,7 +2290,18 @@ window.lpGuideCard = function (href, flag, name, extra) {
     <details class="res-cell">
       <summary class="res-head">Getting around<span class="res-plus" aria-hidden="true"></span></summary>
       <div class="res-links">
-        <a href="/essentials/cars/">Car Rental</a>
+        <details class="res-sub">
+          <summary><a href="/essentials/cars/">Car Rental</a><span class="res-subplus" aria-hidden="true"></span></summary>
+          <div class="res-sublinks">
+            <a href="/essentials/cars/#rc-worldwide">Worldwide networks</a>
+            <a href="/essentials/cars/#rc-europe">Europe</a>
+            <a href="/essentials/cars/#rc-north-america">North America</a>
+            <a href="/essentials/cars/#rc-latin-america">Latin America</a>
+            <a href="/essentials/cars/#rc-asia-pacific">Asia &amp; Pacific</a>
+            <a href="/essentials/cars/#rc-africa-middle-east">Africa &amp; Middle East</a>
+            <a href="/essentials/cars/#rc-transfers">Private transfers</a>
+          </div>
+        </details>
         <a href="/essentials/transit-cards/">Transit Cards</a>
         <a href="/essentials/storage/">Luggage Storage</a>
       </div>
