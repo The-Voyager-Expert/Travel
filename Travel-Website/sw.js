@@ -1,3 +1,4 @@
+/* 2026-08-17: mobile-ux-fix — trains.css dark mode: op-review-label LOW CONTRAST (#D4663A on --surface → var(--text)). trains.css to 5. CACHE to v1046. */
 /* 2026-08-17: ONE search bar, everywhere (owner rule) — "all searches ... make them bigger ... all of them the same size and same distance to the title banner", "no pill closer to the search bar than the banner", "easy to see and use". 440 x 56 at 17px from three new :root tokens (--search-w / --search-h / --search-gap), replacing 360x40 desktop / 48px phone and a gap that ran 0-35px above the bar and 6-20px below it across 15 different wrapper classes. One height and one type size at EVERY viewport: mobile.css no longer carries its own 48px, and its blanket 16px !important input rule is overridden for the search box only (17px is still above the iOS auto-zoom threshold). The gap is now equal above and below on all ~80 banner pages. mobile.css min to 86, web-travel-style.css to 61, guides-index-style.css to 13, trains.css to 4. CACHE to v1045. */
 /* 2026-08-17: guide-style.css comment correction only, no rule changed — the note added with the max-width:370px restore said the uncapped width tracked the stop's photo COUNT. Measured since: every stop carries EXACTLY ONE photo (3580 blocks), so that case does not exist. What actually happened is worse and uniform — the lone image took the whole 1280px strip against a fixed 220px height, a 5.8:1 sliver with the subject cropped away. Also records the source-side rule the box implies: object-fit:cover cuts the top and bottom of a too-tall source and the SIDES of a too-wide one (Munich 475x1400 keeps 20% of its height; Rome 800x91 keeps 15% of its width) — enforced at harvest, Cleanliness 888. guide-style.css min to 234. CACHE to v1044. */
 /* 2026-08-17: rule-compliance-audit — removed font-weight:bold from mobile #ics-pill-row action pills (check_pills_not_bold Rule 857). guide-style.css min to 233. CACHE to v1043. */
@@ -1477,7 +1478,7 @@
 /* 2026-08-17: toolbar.js — 3-way merge: phone-menu one-tone + 28px band + Currency pill + Plan group + SEO migration (PAGE_ICON delta/united entries, RES_GROUPS continent links). toolbar.js -> v738. CACHE to v1037. */
 /* 2026-08-17: phone: the tile carousels become a showcase — new screens for all four toolbar.js -> v739. CACHE to v1038. */
 /* 2026-08-17: Cloudflare Web Analytics beacon added to toolbar.js, host-gated to guidemydays.com. The site is set to 'Enable with JS Snippet installation', NOT Cloudflare's automatic setup: automatic injection happens in the proxy, and the domain is on Cloudflare DNS but DNS-only, so visitors reach GitHub Pages directly and nothing passes through Cloudflare to inject into - automatic would have recorded zero for ever. toolbar.js -> v740. CACHE to v1039. */
-var CACHE = 'travel-cache-v1045';
+var CACHE = 'travel-cache-v1046';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1485,7 +1486,7 @@ var CACHE = 'travel-cache-v1045';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 234,'toolbar.js': 740, 'mobile.css': 86, 'web-travel-style.css': 61, 'guides-index-style.css': 13, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 4, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 234,'toolbar.js': 740, 'mobile.css': 86, 'web-travel-style.css': 61, 'guides-index-style.css': 13, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
