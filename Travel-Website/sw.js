@@ -1425,7 +1425,8 @@
 /* 2026-08-17: the nine category groups reach returning readers on the phone menu toolbar.js -> v704. CACHE to v991. */
 /* 2026-08-17: best of: the landing page tile replaces the 34-row list on a phone. Page only, no asset ?v= change, so the CACHE bump is what carries it to returning readers. toolbar.js -> v705. CACHE to v992. */
 /* 2026-08-17: one terracotta site-wide: every terracotta fill is now the flat #C04E1A the essentials hero band paints (was #b85c2a); dark partner #D4663A; the 3-stop fill gradient flattens to #C04E1A and its :active press to #8A3F18, surviving only as the border-image banner underline. toolbar.js -> v706. CACHE to v993. */
-var CACHE = 'travel-cache-v993';
+/* 2026-08-17: time zones: the Home base row is gone — the searched city is the reference and it shows in the search box. Page only, no asset ?v= change, so the CACHE bump is what carries it to returning readers. CACHE to v994. */
+var CACHE = 'travel-cache-v994';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
