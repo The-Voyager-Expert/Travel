@@ -1431,7 +1431,8 @@
 /* 2026-08-17: the six stylesheets that shipped without a floor reach returning readers — guide-style.css, guides-index-style.css, mobile.css, read-about.css, trains.css and web-travel-style.css each +1. CACHE to v997. */
 /* 2026-08-17: airline continent pages: nav rows for the seven, cont-nav shared toolbar.js -> v708. CACHE to v998. */
 /* 2026-08-17: the black category headings and the terracotta bar reach returning readers toolbar.js -> v709. CACHE to v999. */
-var CACHE = 'travel-cache-v999';
+/* 2026-08-17: car rental continent pages: seven nav rows replace the one toolbar.js -> v710. CACHE to v1000. */
+var CACHE = 'travel-cache-v1000';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1439,7 +1440,7 @@ var CACHE = 'travel-cache-v999';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 226,'toolbar.js': 709, 'mobile.css': 84, 'web-travel-style.css': 55, 'guides-index-style.css': 10, 'read-about.css': 4, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 226,'toolbar.js': 710, 'mobile.css': 84, 'web-travel-style.css': 55, 'guides-index-style.css': 10, 'read-about.css': 4, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
