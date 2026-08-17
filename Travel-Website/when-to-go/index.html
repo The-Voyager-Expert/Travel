@@ -196,10 +196,13 @@ a.cf-card { display: block; color: inherit; cursor: pointer;
   transition: border-color .15s, box-shadow .15s; }
 a.cf-card:hover { border-color: var(--rust); box-shadow: 0 3px 10px rgba(192,78,26,.12); }
 .cf-city { font-size: var(--fs-body,14px); font-weight: 700; color: var(--text, #1a1917);
-  display: flex; align-items: center; justify-content: space-between; gap: 4px; }
-.cf-city-arrow { font-size: 11px; color: var(--muted,#6a6660); opacity: 0.55; flex-shrink: 0; }
+  display: flex; align-items: center; justify-content: space-between; gap: 4px;
+  /* clears the absolutely-positioned compare button (22px at right:6px) — without
+     it the country label runs under the + and is clipped mid-word. */
+  padding-right: 16px; }
+/* No arrow beside the country (owner rule 2026-08-17) — the Guide pill at the
+   foot of the card is the one thing that says the card opens a guide. */
 .cf-country { font-size: 9.5px; color: var(--muted,#6a6660); letter-spacing: .02em; text-align: right; line-height: 1.2; }
-a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
 .cf-temps { display: flex; align-items: baseline; gap: 14px; margin-top: 8px; }
 .cf-hi { font-size: 26px; font-weight: 700; color: var(--c-temp-hi); line-height: 1; }
 .cf-lo { font-size: 26px; font-weight: 700; color: var(--c-temp-lo); line-height: 1; }
@@ -264,8 +267,14 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
 .cf-compare-clear { border: none; background: none; cursor: pointer; font-size: 12px; color: var(--muted); text-decoration: none; font-family: inherit; }
 .cf-compare-clear:hover { color: var(--text); }
 @media (max-width: 600px) and (pointer: coarse) { .cf-compare-panel { grid-template-columns: 1fr; } }
-/* Guide pill inside card */
-.cf-guide-pill { display: inline-block; font-size: 10px; padding: 2px 8px; margin-top: 6px; border: 1px solid var(--border2); border-radius: 4px; color: var(--muted); background: var(--bg); pointer-events: none; }
+/* Guide pill inside card — reads as a link, not a status tag (owner rule
+   2026-08-17). Same grammar as the site's .chevron-link-pill: terracotta label
+   + trailing › (U+203A text punctuation, never the banned up-right arrow glyph),
+   rim on the .30-to-full ladder. The card is the <a>, so the pill stays a span with
+   pointer-events:none — the click target is the whole card. */
+.cf-guide-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 9px; margin-top: 6px; border: 1px solid rgba(192,78,26,.30); border-radius: 999px; color: var(--rust, #C04E1A); background: var(--surface, #fff); pointer-events: none; transition: border-color .15s; }
+.cf-guide-pill::after { content: '\203A'; font-size: 14px; line-height: 1; }
+a.cf-card:hover .cf-guide-pill { border-color: var(--rust, #C04E1A); }
 /* Rainfall dry/wet badges — light mode base (dark mode overrides below) */
 .cf-dry-badge { background: #fffbe6; color: #7a6010; border: 1px solid #e8d870; }
 .cf-wet-badge { background: #e8f3fc; color: #2a5c7a; border: 1px solid #b0d4ec; }
@@ -982,7 +991,6 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
         var href = GUIDE_LINKS[k];
         var tag = href ? 'a' : 'div';
         var attrs = href ? ' class="cf-card" href="' + href + '"' : ' class="cf-card"';
-        var arrow = href ? '<span class="cf-city-arrow">→</span>' : '';
         var rainHtml = '';
         if (rec.rain && rec.rd) {
           var mm = rec.rain[month] || 0;
@@ -998,11 +1006,11 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
           '</div>';
         }
         var countryLine = CITY_COUNTRIES[k] ? '<div class="cf-country">' + CITY_COUNTRIES[k] + '</div>' : '';
-        var rightSlot = '<span style="display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex-shrink:0;">' + countryLine + (arrow ? '<span class="cf-city-arrow" style="align-self:flex-end;">→</span>' : '') + '</span>';
+        var rightSlot = '<span style="display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex-shrink:0;">' + countryLine + '</span>';
         var safeCmpKey = k.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
         var cmpSel = compareList.indexOf(k) >= 0;
         var cmpBtn = '<button type="button" class="cf-compare-btn' + (cmpSel ? ' selected' : '') + '" data-cmp="' + safeCmpKey + '">' + (cmpSel ? '' : '+') + '</button>';
-        var guidePill = href ? '<span class="cf-guide-pill">Guide available</span>' : '';
+        var guidePill = href ? '<span class="cf-guide-pill">Guide</span>' : '';
         return '<' + tag + attrs + '>' + cmpBtn +
           '<div class="cf-city"><span>' + (rec.city || k) + '</span>' + rightSlot + '</div>' +
           '<div class="cf-temps">' +
