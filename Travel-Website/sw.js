@@ -1424,7 +1424,8 @@
 /* 2026-08-17: hero band: a link inside it is white and underlined instead of the global gold, which was unreadable on terracotta (Visas) web-travel-style.css -> v53. CACHE to v990. */
 /* 2026-08-17: the nine category groups reach returning readers on the phone menu toolbar.js -> v704. CACHE to v991. */
 /* 2026-08-17: best of: the landing page tile replaces the 34-row list on a phone. Page only, no asset ?v= change, so the CACHE bump is what carries it to returning readers. toolbar.js -> v705. CACHE to v992. */
-var CACHE = 'travel-cache-v992';
+/* 2026-08-17: one terracotta site-wide: every terracotta fill is now the flat #C04E1A the essentials hero band paints (was #b85c2a); dark partner #D4663A; the 3-stop fill gradient flattens to #C04E1A and its :active press to #8A3F18, surviving only as the border-image banner underline. toolbar.js -> v706. CACHE to v993. */
+var CACHE = 'travel-cache-v993';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1432,7 +1433,7 @@ var CACHE = 'travel-cache-v992';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 224,'toolbar.js': 705, 'mobile.css': 82, 'web-travel-style.css': 53, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 1, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 224,'toolbar.js': 706, 'mobile.css': 82, 'web-travel-style.css': 53, 'guides-index-style.css': 8, 'read-about.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 1, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
