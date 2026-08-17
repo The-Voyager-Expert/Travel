@@ -147,17 +147,49 @@
 .trains-block .fc a,
 .trains-block .fc a:visited { color: var(--red); font-weight: 700; text-decoration: none; }
 @media (hover: hover) { .trains-block .fc a:hover { text-decoration: underline; } }
+/* ── Station address list — the airport list's twin ──────────────────────────
+   A train leg needs the same three facts a flight leg gets from .airport-addrs
+   (which station, its address, how far the hotel is) so it rides on the SAME
+   rules, joined by comma rather than copied: one block of values, one dark-mode
+   pass, one mobile pass. The classes are separate (.station-* not .airport-*)
+   because the calendar export reads .airport-row to name flight endpoints, and
+   a station row wearing that class would surface as an airport in a flight
+   note. Trains carry no export of their own — owner rule 2026-08-15.
+
+   It is its OWN section, not a tail on the timetable, because a station is
+   listed ONCE however many departures use it (owner 2026-08-17: "you put the
+   train station once with full address and all the times"). Two rail legs out
+   of the same pair of stations repeat the times, never the address — so this
+   takes .trains-block's card box rather than .airport-addrs' inline margin. */
 .airport-addrs { margin-top: 10px; padding-top: 8px; }
-.airport-row { display: flex; align-items: baseline; gap: 5px; padding: 1px 0; }
-.ap-code { font-size: 12px; font-weight: 700; color: var(--muted); min-width: 32px; flex: none; white-space: nowrap; }
-.ap-code a { color: var(--muted); font-weight: 700; }
-.ap-code a:visited { color: #6a6660; font-weight: 700; }
-.ap-code a:hover { color: var(--accent); }
+.station-addrs { margin-top: 4px; padding: 8px 12px; background: var(--warm); border-radius: 4px; border: 1px solid var(--border2); }
+.airport-row,
+.station-row { display: flex; align-items: baseline; gap: 5px; padding: 1px 0; }
+.ap-code,
+.st-name { font-size: 12px; font-weight: 700; color: var(--muted); min-width: 32px; flex: none; white-space: nowrap; }
+.ap-code a,
+.st-name a { color: var(--muted); font-weight: 700; }
+.ap-code a:visited,
+.st-name a:visited { color: #6a6660; font-weight: 700; }
+.ap-code a:hover,
+.st-name a:hover { color: var(--accent); }
 .ap-dash { font-size: 12px; color: var(--border); flex: none; }
-.ap-name { font-size: 12px; font-weight: 400; color: var(--muted); }
-.ap-name a { color: var(--muted); font-weight: 400; }
-.ap-name a:visited { color: #6a6660; font-weight: 400; }
-.ap-name a:hover { color: var(--accent); }
+.ap-name,
+.st-addr { font-size: 12px; font-weight: 400; color: var(--muted); }
+.ap-name a,
+.st-addr a { color: var(--muted); font-weight: 400; }
+.ap-name a:visited,
+.st-addr a:visited { color: #6a6660; font-weight: 400; }
+.ap-name a:hover,
+.st-addr a:hover { color: var(--accent); }
+/* The hotel→station lines sit under their own station, indented to the address
+   column so the group reads as one entry. Their own rows rather than a third
+   cell: at 393px the flex row already wraps the address, and a station can
+   carry SEVERAL of these — one per hotel that uses it across the trip, which
+   is what listing the station once instead of once per leg buys. */
+.st-from { font-size: 12px; color: var(--muted); padding: 0 0 3px 37px; }
+.station-row + .st-from { padding-top: 1px; }
+.st-from + .station-row { margin-top: 6px; }
 /* ── Hotel address — same treatment as a guide's 📍 address row ──────────────
    Guides render the address as a Maps anchor (blue --c-link, no underline at
    rest, underline on hover) with a copy button injected beside it that opens
@@ -263,6 +295,8 @@ a:hover, a:active { border-bottom: none; }
   .action, .action-box { font-size: 14px; }
   .airport-addrs .airport-name { font-size: 15px; }
   .airport-addrs .copy { display: none; }
+  .st-name, .st-addr, .st-from { font-size: 13px; }
+  .st-from { padding-left: 0; }
   .venue-distance { font-size: 15px; }
   .venue-distance .vd-line { display: block; }
 }
@@ -550,6 +584,23 @@ document.addEventListener('DOMContentLoaded',()=>{
       <div class="hotel-name"><a href="https://www.google.com/maps/search/?api=1&query=NH+Collection+Muenchen+Bavaria+Arnulfstrasse+2+80335+Munich">NH Collection München Bavaria</a></div>
       <p><a href="https://secure.booking.com/mybooking.html" target="_blank" rel="noopener">booking.com</a></p>
       <span class="hotel-addr"><a href="https://www.google.com/maps/search/?api=1&query=Arnulfstrasse+2+80335+Munich+Germany" target="_blank" rel="noopener">Arnulfstraße 2, 80335 Munich, Germany</a></span>
+    </div>
+
+    <div class="sec"><span class="who wifey">Wifey</span><span class="sec-divider">|</span>Stations</div>
+    <div class="station-addrs">
+      <div class="station-row">
+        <span class="st-name"><a href="https://www.google.com/maps/search/?api=1&query=M%C3%BCnchen+Hauptbahnhof+Bayerstrasse+10A+80335+M%C3%BCnchen+Germany" target="_blank" rel="noopener">München Hbf</a></span>
+        <span class="ap-dash">—</span>
+        <span class="st-addr"><a href="https://www.google.com/maps/search/?api=1&query=Bayerstrasse+10A+80335+M%C3%BCnchen+Germany" target="_blank" rel="noopener">Bayerstraße 10A, 80335 München, Germany</a></span>
+      </div>
+      <div class="st-from">NH Collection München Bavaria: 🚶 ~14 m · ~1 min walk · 🚕 ~1 min drive — directly opposite the Arnulfstraße (north) entrance</div>
+      <div class="st-from">Sofitel Munich Bayerpost: 🚶 ~120 m · ~2 min walk · 🚕 ~1 min drive — the Bayerstraße (south) side</div>
+      <div class="station-row">
+        <span class="st-name"><a href="https://www.google.com/maps/search/?api=1&query=Salzburg+Hauptbahnhof+S%C3%BCdtiroler+Platz+1+5020+Salzburg+Austria" target="_blank" rel="noopener">Salzburg Hbf</a></span>
+        <span class="ap-dash">—</span>
+        <span class="st-addr"><a href="https://www.google.com/maps/search/?api=1&query=S%C3%BCdtiroler+Platz+1+5020+Salzburg+Austria" target="_blank" rel="noopener">Südtiroler Platz 1, 5020 Salzburg, Austria</a></span>
+      </div>
+      <div class="st-from">NH Collection Salzburg City: 🚶 ~1.1 km · ~15 min walk · 🚕 ~5 min drive</div>
     </div>
 
     <div class="sec"><span class="who wifey">Wifey</span><span class="sec-divider">|</span>Trains</div>
