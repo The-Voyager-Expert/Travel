@@ -615,6 +615,46 @@ input[type="text"],
   -webkit-appearance: none; appearance: none;
   outline: none; transition: border-color .15s, box-shadow .15s;
 }
+/* ── Search inputs, DARK MODE ────────────────────────────────────────────────
+   The rule above hardcodes background #ffffff, border #e6e2da and color #1a1917,
+   with no dark counterpart anywhere — so every search box on the site (~70 pages)
+   stayed a white slab after the theme flipped. On the stats pages that was a bright
+   white plank in a dark page; on the essentials pages it was worse than that, because
+   something downstream DOES flip the text token there, leaving light text on a white
+   ground — an unreadable placeholder.
+
+   Additive on purpose: the light declarations above are not touched, so light mode is
+   byte-for-byte what it was on all ~70 pages, and only the three colours move here.
+   --surface / --border2 / --text already carry dark values on BOTH paths (the
+   prefers-color-scheme block below and the html[data-theme="dark"] tokens toolbar.js
+   injects), so no new token and no toolbar.js change is needed.
+
+   background-COLOR, never the `background` shorthand: the shorthand above also carries
+   var(--search-icon) at a fixed offset, and re-stating it here would drop the
+   magnifier. The icon itself needs no dark variant — it is #a8895a gold, which sits at
+   roughly 4.5:1 on the dark #2a2825 surface and is the same glyph light mode shows.
+
+   BOTH selectors are required and neither is redundant: the media query serves readers
+   whose OS is dark, and the attribute serves the site's own toggle, which stamps
+   html[data-theme="dark"] and does NOT match prefers-color-scheme. That split is the
+   same one that left the .page-header banner title unreadable. */
+@media (prefers-color-scheme: dark) {
+  input[type="search"],
+  input[type="text"],
+  .search-input {
+    background-color: var(--surface);
+    border-color: var(--border2);
+    color: var(--text);
+  }
+}
+html[data-theme="dark"] input[type="search"],
+html[data-theme="dark"] input[type="text"],
+html[data-theme="dark"] .search-input {
+  background-color: var(--surface);
+  border-color: var(--border2);
+  color: var(--text);
+}
+
 input[type="search"]:focus,
 input[type="text"]:focus,
 .search-input:focus { border-color: #c8b99a; box-shadow: none; }
