@@ -183,7 +183,7 @@
 .addr-copy-pop .acp-btn { display: flex; align-items: center; gap: 7px; width: 100%; text-align: left; background: none;
   border: none; padding: 8px 11px; font-size: 13px; font-family: inherit; color: var(--text); cursor: pointer;
   border-radius: 5px; white-space: nowrap; line-height: 1.2; }
-.addr-copy-pop .acp-btn:hover { background: rgba(184,92,42,.07); color: var(--rust); }
+.addr-copy-pop .acp-btn:hover { background: rgba(192,78,26,.07); color: var(--rust); }
 .addr-copy-done { font-size: 12px; color: #4a7a25; padding: 4px 11px 5px; display: none; }
 /* ── Hotel → venue distance ── */
 .venue-distance { font-size: 13px; color: var(--muted) !important; padding: 4px 0 0; margin: 0; }
@@ -358,9 +358,9 @@ a.trip-jump-pill:visited { color: #3d3a32; }
   .hotel-addr a, .hotel-addr a:visited { color: #5a9aee; }
   .addr-copy-pop { background: var(--surface2); border-color: var(--border); }
   .addr-copy-pop .acp-btn { color: var(--text); }
-  .addr-copy-pop .acp-btn:hover { color: #d4784a; }
+  .addr-copy-pop .acp-btn:hover { color: #D4663A; }
   .addr-copy-done { color: #7ab84a; }
-  .nu-c { color: #d4784a; }
+  .nu-c { color: #D4663A; }
   .trip-header { background: #2d1b5e; border-bottom-color: rgba(192,132,252,.35); }
   .trip-dates, .trip-title { color: #c084fc; }
   .hotel.hubby-block .hotel-meta,
@@ -396,9 +396,9 @@ a.trip-jump-pill:visited { color: #3d3a32; }
 :root[data-theme="dark"] .hotel-addr a:visited { color: #5a9aee; }
 :root[data-theme="dark"] .addr-copy-pop { background: var(--surface2); border-color: var(--border); }
 :root[data-theme="dark"] .addr-copy-pop .acp-btn { color: var(--text); }
-:root[data-theme="dark"] .addr-copy-pop .acp-btn:hover { color: #d4784a; }
+:root[data-theme="dark"] .addr-copy-pop .acp-btn:hover { color: #D4663A; }
 :root[data-theme="dark"] .addr-copy-done { color: #7ab84a; }
-:root[data-theme="dark"] .nu-c { color: #d4784a; }
+:root[data-theme="dark"] .nu-c { color: #D4663A; }
 :root[data-theme="dark"] .trip-header { background: #2d1b5e; border-bottom-color: rgba(192,132,252,.35); }
 :root[data-theme="dark"] .trip-dates,
 :root[data-theme="dark"] .trip-title { color: #c084fc; }
@@ -430,9 +430,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   const page=location.pathname.split('/').pop();
   document.querySelectorAll('.essentials-link').forEach(a=>{
     if(a.getAttribute('href')&&a.getAttribute('href').split('/').pop()===page){
-      a.style.borderColor='#b85c2a';
-      a.style.color='#b85c2a';
-      a.style.background='rgba(184,92,42,0.08)';
+      a.style.borderColor='#C04E1A';
+      a.style.color='#C04E1A';
+      a.style.background='rgba(192,78,26,0.08)';
     }
   });
 });
@@ -1019,47 +1019,32 @@ document.addEventListener('DOMContentLoaded',()=>{
      of putting the event in your own (owner: "it is not subscribe, calendar is
      another thing").
 
-     THE RULE THAT DECIDES WHICH ONE YOU GET, and it is not the file contents:
-       · Calendar handed a **URL** offers to SUBSCRIBE to it.
-       · Calendar handed a **FILE** IMPORTS it — the event lands in your own
-         calendar, editable. That is "add".
-     A blob: object URL is still a URL. So `window.location.href = blobURL`,
-     which this function did until today and which the guide export in
-     toolbar.js still does, is the subscribe path on iOS: Safari sees the
-     text/calendar navigation, hands the URL to Calendar, and Calendar asks to
-     subscribe (owner, 2026-08-17: "it is ask if I want to subscribe and it the
-     wrong behavior"). The comment it replaced claimed that navigation "routes
-     to the Add to Calendar prompt" — it does not, and the claim was inherited
-     from the guide export rather than measured. **Never navigate to a
-     text/calendar URL.**
+     THE THING THAT DECIDES SUBSCRIBE vs ADD IS THE FILE'S PREAMBLE, not how
+     it is delivered. `METHOD:PUBLISH` declares the .ics a *published calendar*,
+     and Apple answers a calendar by offering to subscribe to it or by making a
+     calendar of its own for it — which is why every booking arrived as its own
+     named calendar (owner: "they all have their own calendars"). It is gone,
+     along with X-WR-CALNAME / NAME / REFRESH-INTERVAL, which are the same claim
+     by another name. See calendar() above; never put any of them back.
 
-     So iPhone gets the .ics as a real File through the share sheet, where
-     Calendar accepts it as an import — no download, no file to hunt, and no
-     subscription. Cancelling the sheet does nothing (the AbortError is
-     swallowed on purpose: falling back to a download would hand over the file
-     the owner just declined). Anything without file sharing — desktop Chrome,
-     older Safari — takes the <a download>, which is also a file and also
-     imports.
+     DELIVERY: navigate to the blob. **Nothing is ever saved to disk** — owner,
+     2026-08-17: *"i should not need to save in my disk first"* · the behaviour
+     they want, in their words: *"the link opens, i press okay, add on my
+     calendar."* Safari — macOS and iOS alike — reads the text/calendar MIME off
+     the navigation and hands it straight to Calendar, which opens its add sheet
+     with the event in it. No download, no Downloads folder, no double-click.
+     An `<a download>` was tried on 2026-08-17 and is exactly what the owner
+     rejected: it puts a file on the disk for them to go and find.
 
-     Nothing async before the share call: it must run inside the click's own
-     user-gesture, or WebKit rejects it outright. The object URL is revoked
-     after 1500ms, not immediately — revoking at once can cancel the download
-     that was just started. */
+     Do not "improve" this: a `data:` URI is blocked outright by WebKit's
+     navigation policy, and the object URL is revoked after 1500ms rather than
+     at once, because revoking immediately can cancel the handoff that just
+     started. Nothing async before the navigation either — any await breaks the
+     user-gesture chain. */
   function save(name,ics){
-    var blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
-    if(isIOS){
-      var file=null;
-      try { file=new File([blob],name,{type:'text/calendar'}); } catch(e){}
-      if(file && navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
-        navigator.share({files:[file]})['catch'](function(){});
-        return;
-      }
-    }
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url; a.download=name;
-    document.body.appendChild(a); a.click();
-    setTimeout(function(){ URL.revokeObjectURL(url); if(a.parentNode) a.parentNode.removeChild(a); },1500);
+    var url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));
+    window.location.href=url;
+    setTimeout(function(){ URL.revokeObjectURL(url); },1500);
   }
 
   /* ── Flights ── */
