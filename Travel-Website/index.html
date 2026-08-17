@@ -2792,6 +2792,80 @@ window.lpGuideCard = function (href, flag, name, extra) {
       <span class="lp-best-band-d">Beaches, castles, caves, hot springs, observation decks and 29 more &mdash; each one ranked across the whole world, not country by country. Pick the category, and see the best of it anywhere.</span>
     </span>
   </a>
+  <script>
+  /* THE BEST OF PICTURE CHANGES EVERY DAY — one row per category:
+     [image, alt, category name]. PHONE ONLY, and one picture, because that is
+     what this tile is: `.lp-best-tile` is display:none until the phone
+     breakpoint, where it replaces the 34-name list that reads as "too long for
+     mobile, boring and ugly". Desktop has no Best Of picture at all and must not
+     gain one — the desktop half of this block is the bare-name list above.
+
+     ONLY THE PHOTOGRAPH ROTATES. The tile still links to /best-of/ and the band
+     still reads "Browse every Best Of list", deliberately: the category pages
+     carry no link back to the index, so pointing this tile at a category would
+     leave a phone with no route to the other 33. The picture advertises the
+     range; the destination stays the place you choose from.
+
+     The markup above holds Iguazu as the no-JavaScript fallback, and the swap
+     lands before layout, so loading="lazy" means that file is not fetched on the
+     other 33 days.
+
+     The pictures are each category's own lead image, already in the repo under
+     assets/best-of/. Nine of the 34 were changed by hand after looking at them:
+     the automatic lead for Safari was an empty wetland, for Animal Encounters a
+     distant field, for Unique Hotels a dusk horizon. LOOK before you swap one. */
+  (function () {
+    var B = [
+      ['/assets/best-of/amusement-parks/warner-bros-movie-world-entrance.jpg','Grand entrance plaza of Warner Bros. Movie World on the Gold Coast','Amusement Parks'],
+      ['/assets/best-of/animal-encounters/ningaloo-reef-whale-shark.jpg','Whale shark swimming in the waters off Ningaloo Reef','Animal Encounters'],
+      ['/assets/best-of/aquariums/darling-harbour.jpg','Darling Harbour waterfront at night, Sydney','Aquariums'],
+      ['/assets/best-of/architecture/sydney-opera-house.jpg','Sydney Opera House\'s white shell roofs on Sydney Harbour','Architecture'],
+      ['/assets/best-of/art-museums/belvedere-palace-vienna.jpg','Upper Belvedere palace exterior in Vienna with reflecting pool','Art Museums'],
+      ['/assets/best-of/beaches/half-moon-bay-antigua.jpg','Aerial view of the crescent-shaped Half Moon Bay on Antigua\'s southeastern coast','Beaches'],
+      ['/assets/best-of/castles/gravensteen-castle.jpg','Gravensteen castle and moat in Ghent','Castles'],
+      ['/assets/best-of/cathedrals/st-marys-cathedral-sydney.jpg','St. Mary\'s Cathedral illuminated at night, its twin Gothic spires lit gold','Cathedrals'],
+      ['/assets/best-of/caves/jenolan-caves.jpg','Limestone chamber with draperies and stalagmites inside Jenolan Caves','Caves'],
+      ['/assets/best-of/gardens/royal-botanic-garden-sydney.jpg','Garden path and lawns in the Royal Botanic Garden, Sydney','Gardens'],
+      ['/assets/best-of/hard-to-reach-places/antarctica-glacier.jpg','Glacier along the Antarctic Peninsula coastline','Hard-to-Reach Places'],
+      ['/assets/best-of/hot-springs/mataranka-thermal-pool.jpg','Swimmers in the clear, palm-fringed Mataranka Thermal Pool','Hot Springs'],
+      ['/assets/best-of/islands/nelsons-dockyard-english-harbour-antigua.jpg','Nelson\'s Dockyard and marina at English Harbour, Antigua','Islands'],
+      ['/assets/best-of/kids-friendly-places/sydney-harbour-panorama.jpg','Sydney Harbour panorama at dusk showing the Opera House and Harbour Bridge','Kid-Friendly'],
+      ['/assets/best-of/kids-museums/technopolis-mechelen.jpg','Technopolis entrance with its pink cone sculpture, Mechelen','Kids Museums'],
+      ['/assets/best-of/lakes/perito-moreno-glacier-lago-argentino.jpg','Perito Moreno Glacier meeting Lago Argentino','Lakes'],
+      ['/assets/best-of/luxury-hotels/paro-taktsang-bhutan.jpg','Paro Taktsang (Tiger\'s Nest Monastery), Bhutan','Luxurious Hotels'],
+      ['/assets/best-of/mountains-and-rock-formations/fitz-roy.jpg','Fitz Roy granite spire at sunrise, seen from El Chaltén','Mountains & Rock'],
+      ['/assets/best-of/museums/la-plata-museum-building.jpg','Museo de La Plata building facade in La Plata, Argentina','Museums'],
+      ['/assets/best-of/national-parks/perito-moreno-glacier.jpg','Perito Moreno Glacier and Andes peaks, Los Glaciares National Park','National Parks'],
+      ['/assets/best-of/natural-phenomena/the-pinnacles-nambung.jpg','Weathered limestone pinnacles rising from yellow desert sand in Nambung National Park','Natural Phenomena'],
+      ['/assets/best-of/observation-decks/sugarloaf-mountain-rio.jpg','Sugarloaf Mountain at the mouth of Guanabara Bay, Rio de Janeiro','Observation Decks'],
+      ['/assets/best-of/resorts/jumby-bay-island.jpg','Antigua','Resorts'],
+      ['/assets/best-of/safari/moremi-game-reserve.jpg','Lion in Moremi Game Reserve, Botswana','Safari'],
+      ['/assets/best-of/scuba-diving/great-barrier-reef.jpg','Aerial view of Arlington Reef, part of the Great Barrier Reef, Queensland','Scuba Diving'],
+      ['/assets/best-of/ski-resorts/ischgl-pists.jpg','Groomed pistes and lift towers in the Silvretta Arena above Ischgl','Ski Resorts'],
+      ['/assets/best-of/surfing/snapper-rocks.jpg','Surfers at Snapper Rocks, Gold Coast','Surfing'],
+      ['/assets/best-of/luxury-hotels/anguilla-western-aerial.jpg','Aerial view of the western coastline and turquoise Caribbean sea, Anguilla','Ultra Luxurious Resorts'],
+      ['/assets/best-of/unesco-sites/iguazu-national-park.jpg','Aerial view of Iguazu Falls from above the forest canopy','UNESCO Sites'],
+      ['/assets/best-of/unique-hotels/hotel-de-glace.jpg','Main entrance of the Hôtel de Glace built from ice and snow in Quebec','Unique Hotels'],
+      ['/assets/best-of/unique-museums/belgian-beer-world.jpg','Belgian Beer World, Brussels, Belgium','Unique Museums'],
+      ['/assets/best-of/volcanoes/mount-erebus.jpg','Aerial view of Mount Erebus rising from the Antarctic ice with volcanic plume','Volcanoes'],
+      ['/assets/best-of/wine-regions/mendoza.jpg','Winery and vineyard at Mendoza, Argentina, with the Andes in the background','Wine Regions'],
+      ['/assets/best-of/wonders-of-the-world/iguazu-falls.jpg','Iguazu Falls waterfall panorama viewed from the Argentine side','Wonders of the World']
+    ];
+    var tile = document.querySelector('.lp-best-tile');
+    if (!tile || !B.length) return;
+    var img = tile.querySelector('.lp-best-shot img');
+    if (!img) return;
+
+    /* The reader's local calendar day — Date.UTC on the local Y/M/D is a whole
+       number of days with no DST drift, unlike Date.now()/86400000. */
+    var n = new Date();
+    var day = Math.floor(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) / 86400000);
+    var row = B[((day % B.length) + B.length) % B.length];
+    if (!row || img.getAttribute('src') === row[0]) return;
+    img.src = row[0];
+    img.alt = row[1];
+  })();
+  </script>
 </section>
 
 <!-- Sunrise & Sunset removed from the landing page (owner 2026-08-14: "we
