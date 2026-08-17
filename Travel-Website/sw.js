@@ -1,3 +1,4 @@
+/* 2026-08-18: best-of-audit — wonders-of-the-world: Australia (Great Barrier Reef), Chile (Easter Island), Nepal (Mt Everest), UK (Stonehenge), Zimbabwe (Victoria Falls) added — 23 → 28 cards, 19 → 24 countries; cross-category data rebuilt — 1898 entries. best-of-cross-data.js to 21. CACHE to v1050. */
 /* 2026-08-18: THE APP ICON'S GROUND IS NEVER NAVY (owner, reading the bookmark bar: "no black? this is not the right colors"). A navy #011536 tile shipped under the pin in be5e48dd and lasted one day. The navy in the logo master is the LETTERING of 'Guide' and 'Days' — the pin carries none of it, and the logo is transparent art drawn to sit on the site's cream. And because the pin's centre hole is transparent, the tile filled the hole too: the mark read as an orange ring around a black dot on a black square. favicon-32 is now TRANSPARENT; apple-touch-icon, icon-192, icon-512 and icon-512-maskable take the site's own cream #f5f4f0 — iOS composites a transparent touch icon against BLACK and an Android maskable icon must fill its safe zone, so shipping those transparent reintroduces the exact black this removes. Cream is already manifest.webmanifest's background_color. Rebuilt from the master by build_brand_assets.py; app-icon-pin.svg follows. This bump purges the replaced icon files. CACHE to v1049. */
 /* 2026-08-17: best-of-audit — animal-encounters: Argentina (Península Valdés — UNESCO, southern right whales + orca beachings), India (Ranthambore Bengal Tiger Safari), Rwanda (Volcanoes NP mountain gorilla trekking) added; cross-category data rebuilt — 1893 entries. best-of-cross-data.js to 20. CACHE to v1048. */
 /* 2026-08-17: mobile-ux-fix — --ground:#242220 added to dark token set in web-travel-style.css and toolbar.js — fixes BRIGHT SURFACE on .hero-ground in dark mode (~12 essentials pages). toolbar.js to 741, web-travel-style.css to 62. CACHE to v1047. */
@@ -1481,7 +1482,7 @@
 /* 2026-08-17: toolbar.js — 3-way merge: phone-menu one-tone + 28px band + Currency pill + Plan group + SEO migration (PAGE_ICON delta/united entries, RES_GROUPS continent links). toolbar.js -> v738. CACHE to v1037. */
 /* 2026-08-17: phone: the tile carousels become a showcase — new screens for all four toolbar.js -> v739. CACHE to v1038. */
 /* 2026-08-17: Cloudflare Web Analytics beacon added to toolbar.js, host-gated to guidemydays.com. The site is set to 'Enable with JS Snippet installation', NOT Cloudflare's automatic setup: automatic injection happens in the proxy, and the domain is on Cloudflare DNS but DNS-only, so visitors reach GitHub Pages directly and nothing passes through Cloudflare to inject into - automatic would have recorded zero for ever. toolbar.js -> v740. CACHE to v1039. */
-var CACHE = 'travel-cache-v1049';
+var CACHE = 'travel-cache-v1050';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1489,7 +1490,7 @@ var CACHE = 'travel-cache-v1049';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 234,'toolbar.js': 741, 'mobile.css': 86, 'web-travel-style.css': 62, 'guides-index-style.css': 13, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 20, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 234,'toolbar.js': 741, 'mobile.css': 86, 'web-travel-style.css': 62, 'guides-index-style.css': 13, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 21, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
