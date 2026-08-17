@@ -6,6 +6,119 @@
 <link rel="stylesheet" href="/assets/web-travel-style.css?v=7">
 <link rel="stylesheet" href="/assets/mobile.css?v=53">
 <title>Best Of</title>
+<style>
+/* ═══ BEST OF ON A PHONE — pick by picture, not by reading ═══════════════════
+   Owner 2026-08-17. The landing page for the whole Best Of section: its one
+   job is letting someone choose a category. In text that is 34 near-identical
+   rows of "Name / N entries / Explore", which is the same wall the landing
+   page's list was — "too long for mobile, boring and ugly" — and choosing
+   between Caves and Hot Springs from two words is a decision nobody can make
+   at a glance. A photo makes it instant, so each card leads with one, taken
+   from that category's own library.
+
+   DESKTOP IS UNTOUCHED, deliberately and by the owner's standing instruction
+   for this pass ("MOBILE ONLY DO NOT TOUCH DESKTOP"). Both new elements —
+   .bo-shot and its .bo-hit link — are display:none at this, the default
+   scope, so a mouse sees exactly the card it saw before: the shared
+   .best-of-card out of web-travel-style.css, unmodified. Nothing here
+   overrides a shared rule outside the phone query.
+
+   The photos are `loading="lazy"`, and a lazy image inside a display:none
+   parent never enters the viewport, so desktop does not fetch a single one of
+   the 34.
+
+   WHY THIS BLOCK IS PAGE-LOCAL rather than in web-travel-style.css, against
+   the site's shared-CSS-only habit: .bo-shot exists on this page and nowhere
+   else — the 34 category pages use .showcase-card, and .best-of-card is now
+   this index's alone. Putting a one-page selector in the shared sheet would
+   ship it to all 591 pages that load it. check_best_of_css_standard exempts
+   best-of/index.html from the format rules for the same reason: it is the
+   category index, and its cards link to pages, not places.
+
+   The gate is `(max-width: 600px) and (pointer: coarse)` — width AND primary
+   input, never width alone. A narrowed desktop window reports a phone's width
+   and nothing else does; a bare width query HARD-FAILS
+   brain_check.check_mobile_breakpoints_gated_on_pointer (Toolbar.html § 42). */
+.bo-shot, .bo-hit { display: none; }
+
+@media (max-width: 600px) and (pointer: coarse) {
+  /* Two across. The shared phone rule directly above this in
+     web-travel-style.css drops the grid to ONE column, which was right for a
+     text card and is wrong for a picture — one column of photos is 34 full
+     screens. Two columns at a 393px viewport gives a 175px tile: wide enough
+     to read the subject of the photo, short enough that the page is scannable
+     in a few flicks. */
+  .best-of-grid { grid-template-columns: 1fr 1fr; gap: 16px 10px; }
+
+  /* The card loses its chrome. A border, a fill and an accent stripe around a
+     photo is two frames around one picture; the photo carries its own edge. */
+  .best-of-card {
+    position: relative;          /* anchor for the stretched .bo-hit link */
+    background: none;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    /* The shared card is a stretch-to-fill flex column. Left alone, a card
+       whose neighbour has a two-line name stretches to match it and the extra
+       height lands BETWEEN the name and the count — "Lakes" sat a full line
+       above its "59 entries" for no reason visible on the card itself. Sizing
+       to content puts the slack at the foot of the row, where it reads as the
+       gap before the next row. Photos still line up across a row regardless:
+       the photo is each card's first child. */
+    align-self: start;
+  }
+  /* Both are lifted treatments for a raised card that no longer exists — left
+     in place they nudge a photo on a flat page for no reason a reader can see. */
+  .best-of-card:hover, .best-of-card:active { transform: none; box-shadow: none; }
+
+  .bo-shot {
+    display: block;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;            /* clips the photo to the rounded corner */
+    background: var(--surface2, #efece6);   /* holds the shape before it loads */
+  }
+  .bo-shot img {
+    display: block;              /* kills the inline-image baseline gap */
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  /* The whole picture is the tap target. The "Explore" pill below is hidden on
+     a phone, so without this the only thing to tap would be the photo, and a
+     photo is not a link. Stretched over the card rather than the shot so the
+     name under it is tappable too — a 175px-wide thumbnail is a small target
+     and the label is the part the thumb aims at. */
+  .bo-hit { display: block; position: absolute; inset: 0; z-index: 1; }
+  .best-of-card:active .bo-shot img { opacity: .86; }
+  .bo-shot img { transition: opacity .12s ease; }
+
+  .best-of-name {
+    font-size: 14.5px;
+    line-height: 1.3;
+    margin-top: 8px;
+  }
+  .best-of-tag { font-size: 12.5px; margin-top: 1px; }
+  /* The pill said "Explore" 34 times. Tapping the card does that now, and the
+     row it sat in was a third of each card's height.
+     `!important` is required, and only because mobile.css already carries
+     `.best-of-links{display:grid!important}` — the phone rule that lays a
+     CATEGORY page's per-card link pills into two columns. That selector was
+     never meant to reach this page, and an !important can only be answered by
+     another one. Not a pattern to copy: everywhere else in this block plain
+     specificity is enough, because nothing else here fights an !important. */
+  .best-of-links { display: none !important; }
+
+  /* The intro card's second paragraph is eight lines on a phone — the whole
+     first screen, above a page whose job is to show pictures. The headline
+     above it already says what the section is, and the paragraph's real
+     subject (how Compare categories works) is explained again by the Compare
+     panel itself, which is a tap away and in context there. Markup untouched:
+     desktop still renders it, and the page-format rules that require an intro
+     card still find one. */
+  .page-intro-sub { display: none; }
+}
+</style>
 </head>
 <body>
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-updated="2026-07-05"></div>
@@ -51,6 +164,12 @@
     <div class="best-of-section-label" data-no-filter="1">Nature &amp; outdoors</div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: fitz-roy.jpg — Wikimedia Commons CC BY-SA 3.0 · "Fitz Roy El Chalten sunrise-13.jpg" by Almonroth · https://commons.wikimedia.org/wiki/File:Fitz_Roy_El_Chalten_sunrise-13.jpg -->
+        <img src="/assets/best-of/mountains-and-rock-formations/fitz-roy.jpg" alt="Fitz Roy granite spire at sunrise, seen from El Chaltén" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/mountains-and-rock-formations/" aria-label="Best Mountains &amp; Rock Formations"></a>
+      </div>
       <div class="best-of-name">Mountains &amp; Rock Formations</div>
       <div class="best-of-tag">50 entries</div>
       <div class="best-of-links">
@@ -59,6 +178,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: stromboli.jpg — Wikimedia Commons CC BY-SA 4.0 · "File:Aerial_image_of_Stromboli_(view_from_the_northeast).jpg" · https://commons.wikimedia.org/wiki/File:Aerial_image_of_Stromboli_(view_from_the_northeast).jpg -->
+        <img src="/assets/best-of/volcanoes/stromboli.jpg" alt="Aerial view of Stromboli island volcano in the Tyrrhenian Sea" loading="lazy" decoding="async" width="800" height="432">
+      
+        <a class="bo-hit" href="/best-of/volcanoes/" aria-label="Best Volcanoes"></a>
+      </div>
       <div class="best-of-name">Volcanoes</div>
       <div class="best-of-tag">40 entries</div>
       <div class="best-of-links">
@@ -67,6 +192,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: lake-khovsgol-munku-sardyk.jpg — Wikimedia Commons CC BY-SA 3.0 · "View from Hovsgol Lake to Munku-Sardyk - panoramio.jpg" by Michael Karavanov · https://commons.wikimedia.org/wiki/File:View_from_Hovsgol_Lake_to_Munku-Sardyk_-_panoramio.jpg -->
+        <img src="/assets/best-of/lakes/lake-khovsgol-munku-sardyk.jpg" alt="View across Khövsgöl Nuur toward the Munku-Sardyk mountain range, Mongolia" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/lakes/" aria-label="Best Lakes"></a>
+      </div>
       <div class="best-of-name">Lakes</div>
       <div class="best-of-tag">59 entries</div>
       <div class="best-of-links">
@@ -75,6 +206,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: sung-sot-cave-interior.jpg — Wikimedia Commons CC BY 2.0 · "Hang Sửng Sốt 3.jpg" by Mike Colvin from Manchester, UK · https://commons.wikimedia.org/wiki/File:Hang_S%E1%BB%ADng_S%E1%BB%91t_3.jpg -->
+        <img src="/assets/best-of/caves/sung-sot-cave-interior.jpg" alt="Illuminated stalactite chamber inside Sung Sot Cave, Ha Long Bay" loading="lazy" decoding="async" width="800" height="531">
+      
+        <a class="bo-hit" href="/best-of/caves/" aria-label="Best Caves"></a>
+      </div>
       <div class="best-of-name">Caves</div>
       <div class="best-of-tag">49 entries</div>
       <div class="best-of-links">
@@ -83,6 +220,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: royal-botanic-garden-sydney.jpg — Wikimedia Commons CC BY-SA 4.0 · "Garden in the Royal Botanic Gardens, Sydney.jpg" by Chris.sherlock2 · https://commons.wikimedia.org/wiki/File:Garden_in_the_Royal_Botanic_Gardens,_Sydney.jpg -->
+        <img src="/assets/best-of/gardens/royal-botanic-garden-sydney.jpg" alt="Garden path and lawns in the Royal Botanic Garden, Sydney" loading="lazy" decoding="async" width="800" height="322">
+      
+        <a class="bo-hit" href="/best-of/gardens/" aria-label="Best Gardens"></a>
+      </div>
       <div class="best-of-name">Gardens</div>
       <div class="best-of-tag">48 entries</div>
       <div class="best-of-links">
@@ -91,6 +234,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: erg-chebbi-dunes-merzouga.jpg — Wikimedia Commons CC BY-SA 3.0 · "Dunes-Merzouga-Erg Chebi" by Nomadz · https://commons.wikimedia.org/wiki/File:Dunes-Merzouga-Erg_Chebi.JPG -->
+        <img src="/assets/best-of/natural-phenomena/erg-chebbi-dunes-merzouga.jpg" alt="Sand dunes of Erg Chebbi near Merzouga, Morocco" loading="lazy" decoding="async" width="800" height="537">
+      
+        <a class="bo-hit" href="/best-of/natural-phenomena/" aria-label="Best Natural Phenomena"></a>
+      </div>
       <div class="best-of-name">Natural Phenomena</div>
       <div class="best-of-tag">29 entries</div>
       <div class="best-of-links">
@@ -99,6 +248,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: grand-prismatic-spring-aerial.jpg — Wikimedia Commons CC BY-SA 4.0 · "Aerial image of Grand Prismatic Spring (view from the southeast).jpg" · https://commons.wikimedia.org/wiki/File:Aerial_image_of_Grand_Prismatic_Spring_(view_from_the_southeast).jpg -->
+        <img src="/assets/best-of/hot-springs/grand-prismatic-spring-aerial.jpg" alt="Aerial view of Grand Prismatic Spring's rainbow rings in Yellowstone's Midway Geyser Basin" loading="lazy" decoding="async" width="800" height="657">
+      
+        <a class="bo-hit" href="/best-of/hot-springs/" aria-label="Best Hot Springs"></a>
+      </div>
       <div class="best-of-name">Hot Springs</div>
       <div class="best-of-tag">64 entries</div>
       <div class="best-of-links">
@@ -107,6 +262,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: perito-moreno-glacier.jpg — Wikimedia Commons CC BY 2.0 · "Grandeur - The Perito Moreno Glacier (Argentina) (8095666402).jpg" by Jorge Láscar · https://commons.wikimedia.org/wiki/File:%22Grandeur%22_-_The_Perito_Moreno_Glacier_(Argentina)_(8095666402).jpg -->
+        <img src="/assets/best-of/national-parks/perito-moreno-glacier.jpg" alt="Perito Moreno Glacier and Andes peaks, Los Glaciares National Park" loading="lazy" decoding="async" width="800" height="531">
+      
+        <a class="bo-hit" href="/best-of/national-parks-by-country/" aria-label="Best National Parks"></a>
+      </div>
       <div class="best-of-name">National Parks</div>
       <div class="best-of-tag">81 entries</div>
       <div class="best-of-links">
@@ -115,6 +276,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: antarctica-glacier.jpg — Wikimedia Commons CC BY-SA 3.0 · "Glacier in Antarctica, Antarctic Peninsula" by PaoMic · https://commons.wikimedia.org/wiki/File:Glacier_in_Antarctica,_Antarctic_Peninsula.JPG -->
+        <img src="/assets/best-of/hard-to-reach-places/antarctica-glacier.jpg" alt="Glacier along the Antarctic Peninsula coastline" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/hard-to-reach-places/" aria-label="Best Hard to Reach Places"></a>
+      </div>
       <div class="best-of-name">Hard to Reach Places</div>
       <div class="best-of-tag">20 entries</div>
       <div class="best-of-links">
@@ -126,6 +293,12 @@
     <div class="best-of-section-label" data-no-filter="1">Water &amp; adventure</div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: half-moon-bay-antigua.jpg — Wikimedia Commons CC BY 3.0 · "Half Moon bay and Exchange Bay, Antigua and Barbuda - panoramio" · https://commons.wikimedia.org/wiki/File:Half_Moon_bay_and_Exchange_Bay,_Antigua_and_Barbuda_-_panoramio.jpg -->
+        <img src="/assets/best-of/beaches/half-moon-bay-antigua.jpg" alt="Aerial view of the crescent-shaped Half Moon Bay on Antigua's southeastern coast" loading="lazy" decoding="async" width="800" height="450">
+      
+        <a class="bo-hit" href="/best-of/beaches/" aria-label="Best Beaches"></a>
+      </div>
       <div class="best-of-name">Beaches</div>
       <div class="best-of-tag">59 entries</div>
       <div class="best-of-links">
@@ -134,6 +307,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: mount-otemanu-bora-bora.jpg — Wikimedia Commons CC BY-SA 2.0 · "Mount Otemanu, Bora Bora - French Polynesia" by Sergio Calleja · https://commons.wikimedia.org/wiki/File:Mount_Otemanu,_Bora_Bora_-_French_Polynesia.jpg -->
+        <img src="/assets/best-of/islands/mount-otemanu-bora-bora.jpg" alt="Mount Otemanu rising above the Bora Bora lagoon" loading="lazy" decoding="async" width="800" height="600">
+      
+        <a class="bo-hit" href="/best-of/islands/" aria-label="Best Islands"></a>
+      </div>
       <div class="best-of-name">Islands</div>
       <div class="best-of-tag">35 entries</div>
       <div class="best-of-links">
@@ -142,6 +321,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: snapper-rocks.jpg — Wikimedia Commons CC BY-SA 2.0 · "File:Snapper Rocks Surf-010and (3400478218).jpg" · https://commons.wikimedia.org/wiki/File:Snapper_Rocks_Surf-010and_(3400478218).jpg -->
+        <img src="/assets/best-of/surfing/snapper-rocks.jpg" alt="Surfers at Snapper Rocks, Gold Coast" loading="lazy" decoding="async" width="800" height="523">
+      
+        <a class="bo-hit" href="/best-of/surfing/" aria-label="Best Surfing"></a>
+      </div>
       <div class="best-of-name">Surfing</div>
       <div class="best-of-tag">52 entries</div>
       <div class="best-of-links">
@@ -150,6 +335,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: great-barrier-reef.jpg — Wikimedia Commons CC BY-SA 4.0 · "Arlington-Reef-2018-aerial-view-Luka-Peternel" by Luka Peternel · https://commons.wikimedia.org/wiki/File:Arlington-Reef-2018-aerial-view-Luka-Peternel.jpg -->
+        <img src="/assets/best-of/scuba-diving/great-barrier-reef.jpg" alt="Aerial view of Arlington Reef, part of the Great Barrier Reef, Queensland" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/scuba-diving/" aria-label="Best Scuba Diving"></a>
+      </div>
       <div class="best-of-name">Scuba Diving</div>
       <div class="best-of-tag">32 entries</div>
       <div class="best-of-links">
@@ -161,6 +352,12 @@
     <div class="best-of-section-label" data-no-filter="1">Culture &amp; heritage</div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: rijksmuseum-amsterdam.jpg — Wikimedia Commons CC BY-SA 2.0 · "Netherlands-4131 - Rijksmuseum (11714501335).jpg" by Dennis G. Jarvis · https://commons.wikimedia.org/wiki/File:Netherlands-4131_-_Rijksmuseum_(11714501335).jpg -->
+        <img src="/assets/best-of/art-museums/rijksmuseum-amsterdam.jpg" alt="The Rijksmuseum's twin towers and central passage, Amsterdam" loading="lazy" decoding="async" width="800" height="541">
+      
+        <a class="bo-hit" href="/best-of/art-museums/" aria-label="Best Art Museums"></a>
+      </div>
       <div class="best-of-name">Art Museums</div>
       <div class="best-of-tag">47 entries</div>
       <div class="best-of-links">
@@ -169,6 +366,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: la-plata-museum-building.jpg — Wikimedia Commons CC BY-SA 3.0 · "La Plata Museum Facade" by Leandro Kibisz (Loco085) · https://commons.wikimedia.org/wiki/File:La_Plata_Museum_Facade.JPG -->
+        <img src="/assets/best-of/museums/la-plata-museum-building.jpg" alt="Museo de La Plata building facade in La Plata, Argentina" loading="lazy" decoding="async" width="800" height="531">
+      
+        <a class="bo-hit" href="/best-of/museums/" aria-label="Best Museums"></a>
+      </div>
       <div class="best-of-name">Museums</div>
       <div class="best-of-tag">48 entries</div>
       <div class="best-of-links">
@@ -177,6 +380,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: lego-house.jpg — Wikimedia Commons CC BY-SA 4.0 · "File:Lego House Billund.jpg" · https://commons.wikimedia.org/wiki/File:Lego_House_Billund.jpg -->
+        <img src="/assets/best-of/unique-museums/lego-house.jpg" alt="LEGO House, Billund, Denmark" loading="lazy" decoding="async" width="800" height="600">
+      
+        <a class="bo-hit" href="/best-of/unique-museums/" aria-label="Best Unique Museums"></a>
+      </div>
       <div class="best-of-name">Unique Museums</div>
       <div class="best-of-tag">59 entries</div>
       <div class="best-of-links">
@@ -185,6 +394,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: pacific-science-center-arches-seattle.jpg — Wikimedia Commons CC BY-SA 4.0 · "Pacific Science Center arches, Seattle WA.jpg" by Ron Clausen · https://commons.wikimedia.org/wiki/File:Pacific_Science_Center_arches,_Seattle_WA.jpg -->
+        <img src="/assets/best-of/kids-museums/pacific-science-center-arches-seattle.jpg" alt="The iconic Gothic arches of Pacific Science Center at Seattle Center, built for the 1962 World's Fair" loading="lazy" decoding="async" width="800" height="600">
+      
+        <a class="bo-hit" href="/best-of/kids-museums/" aria-label="Best Kids Museums"></a>
+      </div>
       <div class="best-of-name">Kids Museums</div>
       <div class="best-of-tag">30 entries</div>
       <div class="best-of-links">
@@ -193,6 +408,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: sydney-opera-house.jpg — Wikimedia Commons CC BY-SA 4.0 · "Exterior of Sydney Opera House.jpg" by BennyG3255 · https://commons.wikimedia.org/wiki/File:Exterior_of_Sydney_Opera_House.jpg -->
+        <img src="/assets/best-of/architecture/sydney-opera-house.jpg" alt="Sydney Opera House's white shell roofs on Sydney Harbour" loading="lazy" decoding="async" width="800" height="600">
+      
+        <a class="bo-hit" href="/best-of/architecture/" aria-label="Best Architecture"></a>
+      </div>
       <div class="best-of-name">Architecture</div>
       <div class="best-of-tag">71 entries</div>
       <div class="best-of-links">
@@ -201,6 +422,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: neuschwanstein-castle.jpg — Wikimedia Commons CC0 · "Neuschwanstein Castle 2024.jpg" by Wilfredor · https://commons.wikimedia.org/wiki/File:Neuschwanstein_Castle_2024.jpg -->
+        <img src="/assets/best-of/castles/neuschwanstein-castle.jpg" alt="Neuschwanstein Castle against the Bavarian mountainside, Schwangau, Germany" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/castles/" aria-label="Best Castles"></a>
+      </div>
       <div class="best-of-name">Castles</div>
       <div class="best-of-tag">70 entries</div>
       <div class="best-of-links">
@@ -209,6 +436,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: st-marys-cathedral-sydney.jpg — Wikimedia Commons CC BY-SA 2.5 · "St Mary's Cathedral, Sydney HDR" by Adam.J.W.C. · https://commons.wikimedia.org/wiki/File:St_Mary%27s_Cathedral,_Sydney_HDR.jpg -->
+        <img src="/assets/best-of/cathedrals/st-marys-cathedral-sydney.jpg" alt="St. Mary's Cathedral illuminated at night, its twin Gothic spires lit gold" loading="lazy" decoding="async" width="800" height="1113">
+      
+        <a class="bo-hit" href="/best-of/cathedrals/" aria-label="Best Cathedrals"></a>
+      </div>
       <div class="best-of-name">Cathedrals</div>
       <div class="best-of-tag">59 entries</div>
       <div class="best-of-links">
@@ -217,6 +450,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: victoria-falls.jpg — Wikimedia Commons CC BY-SA 3.0 · "Victoria_Falls.jpg" by Ninara · https://commons.wikimedia.org/wiki/File:Victoria_Falls.jpg -->
+        <img src="/assets/best-of/unesco-sites/victoria-falls.jpg" alt="Victoria Falls in full flood with mist rising from the Zambezi gorge" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/unesco-sites/" aria-label="Best UNESCO Sites"></a>
+      </div>
       <div class="best-of-name">UNESCO Sites</div>
       <div class="best-of-tag">50 entries</div>
       <div class="best-of-links">
@@ -225,6 +464,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: ha-long-bay.jpg — Wikimedia Commons CC BY 2.5 · "Ha Long Bay.jpg" · https://commons.wikimedia.org/wiki/File:Ha_Long_Bay.jpg -->
+        <img src="/assets/best-of/wonders-of-the-world/ha-long-bay.jpg" alt="Limestone karst islands rising from the emerald waters of Ha Long Bay, Vietnam" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/wonders-of-the-world/" aria-label="Best Wonders of the World"></a>
+      </div>
       <div class="best-of-name">Wonders of the World</div>
       <div class="best-of-tag">47 entries</div>
       <div class="best-of-links">
@@ -233,6 +478,12 @@
     </div>
 
 <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: bwindi-mountain-gorilla.jpg — Wikimedia Commons CC BY-SA 2.0 · "Mountain Gorilla, Bwindi, Uganda (16372469599).jpg" by Rod Waddington · https://commons.wikimedia.org/wiki/File:Mountain_Gorilla,_Bwindi,_Uganda_(16372469599).jpg -->
+        <img src="/assets/best-of/animal-encounters/bwindi-mountain-gorilla.jpg" alt="Mountain gorilla in Bwindi Impenetrable National Park" loading="lazy" decoding="async" width="800" height="585">
+      
+        <a class="bo-hit" href="/best-of/animal-encounters/" aria-label="Best Animal Encounters"></a>
+      </div>
       <div class="best-of-name">Animal Encounters</div>
       <div class="best-of-tag">26 entries</div>
       <div class="best-of-links">
@@ -241,6 +492,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: disneyland-paris-sleeping-beauty-castle.jpg — Wikimedia Commons CC BY-SA 4.0 · "Disneyland Paryż 2013 (13).JPG" by Kapsuglan · https://commons.wikimedia.org/wiki/File:Disneyland_Pary%C5%BC_2013_(13).JPG -->
+        <img src="/assets/best-of/amusement-parks/disneyland-paris-sleeping-beauty-castle.jpg" alt="Sleeping Beauty Castle at Disneyland Paris" loading="lazy" decoding="async" width="800" height="534">
+      
+        <a class="bo-hit" href="/best-of/amusement-parks/" aria-label="Best Amusement Parks"></a>
+      </div>
       <div class="best-of-name">Amusement Parks</div>
       <div class="best-of-tag">35 entries</div>
       <div class="best-of-links">
@@ -249,6 +506,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: aquarium-of-the-pacific-long-beach.jpg — Wikimedia Commons CC BY-SA 4.0 · "Aquarium of the Pacific 2024 February.jpg" by Jengod · https://commons.wikimedia.org/wiki/File:Aquarium_of_the_Pacific_2024_February.jpg -->
+        <img src="/assets/best-of/aquariums/aquarium-of-the-pacific-long-beach.jpg" alt="Aquarium of the Pacific's Pacific Visions wing, Long Beach" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/aquariums/" aria-label="Best Aquariums"></a>
+      </div>
       <div class="best-of-name">Aquariums</div>
       <div class="best-of-tag">21 entries</div>
       <div class="best-of-links">
@@ -257,6 +520,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: sydney-tower.jpg — Wikimedia Commons CC BY 2.0 · "Sydney Tower 4.jpg" by Alex Proimos · https://commons.wikimedia.org/wiki/File:Sydney_Tower_4.jpg -->
+        <img src="/assets/best-of/observation-decks/sydney-tower.jpg" alt="Sydney Tower rising above the city skyline" loading="lazy" decoding="async" width="800" height="1200">
+      
+        <a class="bo-hit" href="/best-of/observation-decks/" aria-label="Best Observation Decks"></a>
+      </div>
       <div class="best-of-name">Observation Decks</div>
       <div class="best-of-tag">53 entries</div>
       <div class="best-of-links">
@@ -265,6 +534,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: etosha.jpg — Wikimedia Commons CC BY-SA 4.0 · "Male African bush elephant in Etosha National Park" by Giles Laurent · https://commons.wikimedia.org/wiki/File:178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg -->
+        <img src="/assets/best-of/safari/etosha.jpg" alt="African bush elephant in Etosha National Park, Namibia" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/safari/" aria-label="Best Safari"></a>
+      </div>
       <div class="best-of-name">Safari</div>
       <div class="best-of-tag">37 entries</div>
       <div class="best-of-links">
@@ -273,6 +548,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: las-lenas-cordillera.jpg — Wikimedia Commons CC BY-SA 4.0 · "Las Leñas Cordillera.jpg" by Calamarcito · https://commons.wikimedia.org/wiki/File:Las_Le%C3%B1as_Cordillera.jpg -->
+        <img src="/assets/best-of/ski-resorts/las-lenas-cordillera.jpg" alt="Snow-covered Andes cordillera peaks at Las Leñas" loading="lazy" decoding="async" width="800" height="531">
+      
+        <a class="bo-hit" href="/best-of/ski-resorts/" aria-label="Best Ski Resorts"></a>
+      </div>
       <div class="best-of-name">Ski Resorts</div>
       <div class="best-of-tag">30 entries</div>
       <div class="best-of-links">
@@ -281,6 +562,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: mendoza.jpg — Wikimedia Commons CC BY-SA 4.0 · "File:Diamandes Winery.JPG" · https://commons.wikimedia.org/wiki/File:Diamandes_Winery.JPG -->
+        <img src="/assets/best-of/wine-regions/mendoza.jpg" alt="Winery and vineyard at Mendoza, Argentina, with the Andes in the background" loading="lazy" decoding="async" width="800" height="275">
+      
+        <a class="bo-hit" href="/best-of/wine-regions/" aria-label="Best Wine Regions"></a>
+      </div>
       <div class="best-of-name">Wine Regions</div>
       <div class="best-of-tag">26 entries</div>
       <div class="best-of-links">
@@ -292,6 +579,12 @@
     <div class="best-of-section-label" data-no-filter="1">Family</div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: copenhagen-nyhavn.jpg — Wikimedia Commons CC BY-SA 3.0 · "Nyhavn copenhagen.jpg" by Mstyslav Chernov · https://commons.wikimedia.org/wiki/File:Nyhavn_copenhagen.jpg -->
+        <img src="/assets/best-of/kids-friendly-places/copenhagen-nyhavn.jpg" alt="Colorful Nyhavn canal waterfront in Copenhagen with historic townhouses" loading="lazy" decoding="async" width="800" height="449">
+      
+        <a class="bo-hit" href="/best-of/kids-friendly-places/" aria-label="Best Kids Friendly Places"></a>
+      </div>
       <div class="best-of-name">Kids Friendly Places</div>
       <div class="best-of-tag">20 entries</div>
       <div class="best-of-links">
@@ -303,6 +596,12 @@
     <div class="best-of-section-label" data-no-filter="1">Accommodation</div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: jumby-bay-island.jpg — Wikimedia Commons Public domain · "Antigua.JPG" by Unknown · https://commons.wikimedia.org/wiki/File:Antigua.JPG -->
+        <img src="/assets/best-of/resorts/jumby-bay-island.jpg" alt="Antigua" loading="lazy" decoding="async" width="800" height="591">
+      
+        <a class="bo-hit" href="/best-of/resorts/" aria-label="Best Resorts"></a>
+      </div>
       <div class="best-of-name">Resorts</div>
       <div class="best-of-tag">105 entries</div>
       <div class="best-of-links">
@@ -311,6 +610,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: sofitel-metropole-hanoi.jpg — Wikimedia Commons CC BY 2.0 · "Sofitel Legend Metropole Hotel, Hanoi, 1901 (3) (26721073449).jpg" · https://commons.wikimedia.org/wiki/File:Sofitel_Legend_Metropole_Hotel,_Hanoi,_1901_(3)_(26721073449).jpg -->
+        <img src="/assets/best-of/luxury-hotels/sofitel-metropole-hanoi.jpg" alt="Sofitel Legend Metropole Hotel colonial facade, Hanoi, Vietnam" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/most-luxurious-hotels/" aria-label="Best Luxurious Hotels"></a>
+      </div>
       <div class="best-of-name">Luxurious Hotels</div>
       <div class="best-of-tag">48 entries</div>
       <div class="best-of-links">
@@ -319,6 +624,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: anguilla-western-aerial.jpg — Wikimedia Commons CC BY-SA 3.0 · "Anguilla Western view" · https://commons.wikimedia.org/wiki/File:Anguilla_Western_view.jpg -->
+        <img src="/assets/best-of/luxury-hotels/anguilla-western-aerial.jpg" alt="Aerial view of the western coastline and turquoise Caribbean sea, Anguilla" loading="lazy" decoding="async" width="800" height="533">
+      
+        <a class="bo-hit" href="/best-of/ultra-luxurious-resorts/" aria-label="Best Ultra Luxurious Resorts"></a>
+      </div>
       <div class="best-of-name">Ultra Luxurious Resorts</div>
       <div class="best-of-tag">25 entries</div>
       <div class="best-of-links">
@@ -327,6 +638,12 @@
     </div>
 
     <div class="best-of-card">
+      <div class="bo-shot">
+        <!-- photo: uluru-sunset.jpg — Wikimedia Commons CC BY-SA 3.0 · "Uluru-Kata Tjuta banner Uluru Sunset" by Tiimta · https://commons.wikimedia.org/wiki/File:Uluru-Kata_Tjuta_banner_Uluru_Sunset.jpg -->
+        <img src="/assets/best-of/unique-hotels/uluru-sunset.jpg" alt="Uluru glowing at sunset in the Central Australian desert" loading="lazy" decoding="async" width="2100" height="300">
+      
+        <a class="bo-hit" href="/best-of/unique-hotels/" aria-label="Best Unique Hotels"></a>
+      </div>
       <div class="best-of-name">Unique Hotels</div>
       <div class="best-of-tag">26 entries</div>
       <div class="best-of-links">
@@ -350,7 +667,7 @@ document.getElementById('best-of-search').addEventListener('input', function() {
   });
   // Reset region filter when searching
     var rc = document.getElementById('region-filters');
-    if (rc) { var rchips = rc.children; for (var i=0;i<rchips.length;i++) { rchips[i].style.cssText = (i===0) ? 'display:inline-block;padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid #b85c2a;color:#fff;background:#b85c2a;transition:all 0.2s' : 'display:inline-block;padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--text);background:var(--surface);transition:all 0.2s'; if (i===0) rchips[i].classList.add('bo-active'); else rchips[i].classList.remove('bo-active'); } }
+    if (rc) { var rchips = rc.children; for (var i=0;i<rchips.length;i++) { rchips[i].style.cssText = (i===0) ? 'display:inline-block;padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid #C04E1A;color:#fff;background:#C04E1A;transition:all 0.2s' : 'display:inline-block;padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--text);background:var(--surface);transition:all 0.2s'; if (i===0) rchips[i].classList.add('bo-active'); else rchips[i].classList.remove('bo-active'); } }
   labels.forEach(function(l) {
     var next = l.nextElementSibling;
     var anyVisible = false;
@@ -372,7 +689,7 @@ document.getElementById('best-of-search').addEventListener('input', function() {
   if (labels.length < 2) { container.style.display = 'none'; return; }
 
   var chipStyle = 'display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:400;cursor:pointer;border:1px solid var(--border);color:var(--muted,#6a6660);background:var(--surface);transition:all 0.2s';
-  var activeStyle = 'display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid #b85c2a;color:#fff;background:#b85c2a;transition:all 0.2s';
+  var activeStyle = 'display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid #C04E1A;color:#fff;background:#C04E1A;transition:all 0.2s';
 
   // Build "All" chip
   var allChip = document.createElement('span');
