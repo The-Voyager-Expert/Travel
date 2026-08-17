@@ -1177,6 +1177,15 @@ a.cf-card:hover .cf-guide-pill { border-color: var(--rust, #C04E1A); }
     readHash();
     sortEl.value = sort;
     paintMonths(); fillInputs(); paintUnit(); paintRainFilter(); renderResults();
+
+    /* Expose for TVESearch — that script loads AFTER search-autocomplete.js,
+       so it runs in a separate block where GUIDE_LINKS and CITY_COUNTRIES are
+       out of scope. By covering all 237 cities (not only the currently visible
+       filtered set) the typeahead works regardless of the active temp range or
+       month, and the country sub-label disambiguates Naples vs Naples FL etc. */
+    window._cfSearchItems = Object.keys(GUIDE_LINKS).map(function(k) {
+      return { name: (CLIM[k] && CLIM[k].city) || k, sub: CITY_COUNTRIES[k] || '' };
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
@@ -1187,31 +1196,7 @@ a.cf-card:hover .cf-guide-pill { border-color: var(--rust, #C04E1A); }
 <script>(function(){
   if(!window.TVESearch) return;
   var input=document.getElementById('cf-city-search'); if(!input) return;
-  var items=[];
-  var cards=document.querySelectorAll('.cf-card');
-  if(!cards.length){
-    var wrap=document.getElementById('cf-results');
-    if(wrap) cards=wrap.querySelectorAll('[class*="cf-card"]');
-  }
-  var seen={};
-  document.querySelectorAll('#cf-results .cf-card, #cf-results [class*="cf-card"]').forEach(function(c){
-    var span=c.querySelector('.cf-city span');
-    var nm=span?span.textContent.trim():'';
-    if(!nm||seen[nm.toLowerCase()]) return;
-    seen[nm.toLowerCase()]=1;
-    items.push({name:nm, sub:'Climate'});
-  });
-  if(!items.length){
-    var script=document.querySelector('script:not([src])');
-    if(script){
-      var m=script.textContent.match(/city\s*:\s*["']([^"']+)["']/g);
-      if(m) m.forEach(function(s){
-        var nm=s.replace(/city\s*:\s*["']/,'').replace(/["']$/,'');
-        if(!seen[nm.toLowerCase()]){seen[nm.toLowerCase()]=1;items.push({name:nm,sub:'Climate'});}
-      });
-    }
-  }
-  TVESearch.attach(input,{items:items, onPick:function(it){
+  TVESearch.attach(input,{items:window._cfSearchItems||[],onPick:function(it){
     input.value=it.name;
     input.dispatchEvent(new Event('input',{bubbles:true}));
   }});
