@@ -1466,7 +1466,8 @@
 /* 2026-08-17: world map: the hardcoded owner seed is deleted toolbar.js -> v736. CACHE to v1032. */
 /* 2026-08-17: phone: the four tool tiles become 3-step carousels toolbar.js -> v737. CACHE to v1033. */
 /* 2026-08-17: guide-style.css: a comment closed early in the phone Type Scale block (4821b273), leaving five lines of prose as bare invalid CSS followed by a stray */ — browsers dropped the whole :root override, so every mobile guide rendered the desktop 15px scale instead of the intended 16.5px one. Fixed the comment; floor bump makes returning phones actually fetch it. guide-style.css -> v229. CACHE to v1034. */
-var CACHE = 'travel-cache-v1034';
+/* 2026-08-17: web-travel-style.css: cache-floor sweep — a shared asset shipped a change with its MIN_VERSIONS floor unmoved, so the push guard rejected every queued push behind it. Bumping the floor only; no content change. web-travel-style.css -> v60. CACHE to v1035. */
+var CACHE = 'travel-cache-v1035';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1474,7 +1475,7 @@ var CACHE = 'travel-cache-v1034';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 229,'toolbar.js': 737, 'mobile.css': 85, 'web-travel-style.css': 59, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 229,'toolbar.js': 737, 'mobile.css': 85, 'web-travel-style.css': 60, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
