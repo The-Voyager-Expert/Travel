@@ -1459,7 +1459,8 @@
 /* 2026-08-17: the in-guide 💱 Currency pill renders again — its country lookup missed _by_slug on every guide since the URL migration toolbar.js -> v732. CACHE to v1025. */
 /* 2026-08-17: Compare table repriced from the 17 August rates — it had been quoting July, with Korean Won 8.2% out toolbar.js -> v733. CACHE to v1026. */
 /* 2026-08-17: the .page-header banner title flips for dark mode under the theme TOGGLE, not only the OS setting — it was color:#3d3a32 !important in the desktop block with the dark override living only inside @media (prefers-color-scheme: dark), which html[data-theme="dark"] does not match, so pressing the toggle in a light OS gave a #3d3a32 title on the #1a1917 ground (~1.2:1). Now var(--text, #3d3a32) — identical in light, flipped by both dark paths. Reaches the 12 pages still on .page-header: the 9 stats pages, Reports, its mock-up and Sunrise & Sunset. web-travel-style.css -> v58. CACHE to v1027. */
-var CACHE = 'travel-cache-v1027';
+/* 2026-08-17: phone: When to Go and Before You Go tiles on the landing page toolbar.js -> v734. CACHE to v1028. */
+var CACHE = 'travel-cache-v1028';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1467,7 +1468,7 @@ var CACHE = 'travel-cache-v1027';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 227,'toolbar.js': 733, 'mobile.css': 85, 'web-travel-style.css': 58, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 227,'toolbar.js': 734, 'mobile.css': 85, 'web-travel-style.css': 58, 'guides-index-style.css': 12, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 19, 'weather.js': 8, 'trains.css': 3, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
