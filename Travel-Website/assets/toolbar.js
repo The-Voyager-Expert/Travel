@@ -1684,7 +1684,7 @@ window.TVE.home = (function () {
          reads as a stray underline again, which is what the first 34px version
          did. It carries no label: the owner ruled out a heading over this tier,
          so the band marks where the categories start and says nothing. */
-      '.tb-ham-menu .tb-ham-grp-bar{height:6px;background:#C04E1A;margin:14px 0 0}' +
+      '.tb-ham-menu .tb-ham-grp-bar{height:14px;background:#C04E1A;margin:14px 0 0}' +
       '.tb-ham-grp-plus::before{content:"+"}' +
       '.tb-ham-menu .tb-ham-grp[open]>summary .tb-ham-grp-plus::before{content:"\\2212"}' +
       /* Indented one step from the category name, the way a child row reads on
