@@ -339,18 +339,20 @@ function clearMine() {
   beenPaintCount();
 }
 
-/* One-shot migration for the owner's own browser: open this page once at
-   World-Map.html#seed-mine and the 82 cities that used to be hardcoded are
-   written into this browser's store, after which the map treats them like
-   any other reader's marks. OWNER_SEED is scaffolding — delete it and this
-   block once the seed has been run. */
-if (location.hash === '#seed-mine') {
-  var OWNER_SEED = ['Amalfi','Amsterdam','Bologna','Bruges','Brussels','Cambridge','Cannes','Capri','Cascais','Cinque Terre','Copenhagen','Corfu','Edinburgh','Florence','Geneva','Gothenburg','Hamburg','London','Luxembourg','Madrid','Marktoberdorf','Monaco','Munich','Nice','Oxford','Paris','Pisa','Porto','Rome','San Sebastian','Sintra','Sorrento','Strasbourg','Stuttgart','Toledo','Turin','Venice','Vienna','Lagos','Chongqing','Atlanta','Austin','Big Island','Chicago','Kauai','La Jolla','Las Vegas','Los Cabos','Maui','Miami','Nashville','New York','Oahu','Orlando','Palo Alto','Pasadena','Puerto Vallarta','San Diego','San Francisco','San Juan Island','Scottsdale','Seattle','Sedona','Toronto','Vancouver','Victoria','Whistler','Athens','Beijing','Hiroshima','Kyoto','Seoul','Shanghai','Taipei','Tokyo','Zhangjiajie','Aruba','Cancún','Curaçao','Sint Maarten','Virgin Islands','The Bahamas','Rio de Janeiro'];
-  /* Held for buildPins, which is where a display name can be turned into the
-     guide slug via that pin's own href. */
-  window.SEED_NAMES = OWNER_SEED;
-  history.replaceState(null, '', location.pathname + location.search);
-}
+/* NO HARDCODED LIST OF PLACES LIVES ON THIS PAGE (owner rule 2026-08-17:
+   "i am not doing hardcode anymore").
+
+   Two have existed and both are gone. `BEEN_CITIES`, a Set of 82 city names,
+   presented the owner's travel to every reader as their own — removed
+   2026-08-14 when visited became per-visitor. `OWNER_SEED`, the same 82 behind
+   a `#seed-mine` hash, was the one-shot migration that carried them into the
+   owner's browser; it ran on 2026-08-17 and is removed here, as its own
+   comment always said it should be.
+
+   There is nothing left to re-add. A reader's places come from the I've Been
+   pill on each guide, and a list that already exists moves between browsers
+   through the Back up link — which is a per-reader `#mine=` hash, not page
+   data, and is why no seed is needed by anyone ever again. */
 </script>
 
 <div id="wrap">
@@ -1391,14 +1393,6 @@ function buildPins() {
     renderPinLabels();
     beenPaintCount();
   };
-
-  if (window.SEED_NAMES) {
-    const slugByName = {};
-    PINS.forEach(p => { slugByName[p[0]] = beenSlug(p[3]); });
-    window.SEED_NAMES.forEach(n => { if (slugByName[n]) beenSet(slugByName[n], true); });
-    window.SEED_NAMES = null;
-    window.applyVisitedFilter(true);
-  }
 
   /* A restored list is painted gold immediately, and the count says how many
      landed — arriving at a map that looks unchanged is indistinguishable from
