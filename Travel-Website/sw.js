@@ -1398,7 +1398,22 @@
    re-measured against NH Collection Salzburg City, four stops added, days
    re-cut. Guide HTML only, no asset ?v= change, so CACHE to v980 is what
    carries it to returning readers. */
-var CACHE = 'travel-cache-v980';
+/* 2026-08-17: trips — the calendar icon asked to SUBSCRIBE instead of adding
+   the event (owner: "it is ask if I want to subscribe and it the wrong
+   behavior"). The subscribe/add fork is not in the .ics bytes, it is in what
+   Calendar gets handed: a URL it offers to subscribe to, a FILE it imports.
+   `window.location.href = blobURL` is a URL, so on iPhone Safari handed the
+   text/calendar navigation to Calendar and Calendar asked to subscribe — the
+   comment claiming that navigation "routes to the Add to Calendar prompt" was
+   inherited from the guide export, never measured. iOS now shares the .ics as a
+   real File (share sheet -> Calendar -> import); everything else keeps the
+   <a download>, also a file, also an import. The guide export in toolbar.js
+   still carries the same blob navigation and is left for the pass that owns
+   that file. The dead /trips/feed/ subscription feed is gone with it: nothing
+   has linked to it since webcal was dropped, and it was the last surface on the
+   site that could produce a subscription. Page + sw only, no asset ?v= change,
+   so CACHE to v981 is what carries it to returning readers. */
+var CACHE = 'travel-cache-v981';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
