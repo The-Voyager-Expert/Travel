@@ -1175,11 +1175,11 @@ a.land-cta:hover:visited {
    reader's cursor. A grid pins each group to a fixed cell — an opened group
    grows downward and nothing else moves. align-items:start keeps the old
    promise that a group ends where its last link ends. */
-.res-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; column-gap: clamp(1rem, 2.4vw, 1.8rem); row-gap: clamp(0.9rem, 2vw, 1.4rem); }
+.res-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; column-gap: clamp(1rem, 2.4vw, 1.8rem); row-gap: clamp(1rem, 2.2vw, 1.5rem); }
 @media (max-width: 760px) { .res-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 460px) { .res-grid { grid-template-columns: minmax(0, 1fr); } }
 .res-cell { min-width: 0; }
-.res-head { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink, #17150f); margin: 0 0 0.15rem; }
+.res-head { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink, #17150f); margin: 0; }
 /* Each group is a disclosure (owner 2026-08-17): the category name carries a
    small plus, and opening it gives the links for all of the pages under it.
    Fifty-two links as one wall is a page of scanning to reach one of them; nine
@@ -1188,14 +1188,22 @@ a.land-cta:hover:visited {
    list is still total (Thirty-first non-negotiable), just behind its heading.
    The plus is a typographic marker like the row chevron, not an icon: it is
    ASCII + / U+2212, so nothing here comes from the icon catalogue. */
-summary.res-head { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+/* Baseline, not center: the count and the plus sit on the category name's
+   baseline rather than on the box's middle, which is what makes the three
+   read as one line of type instead of three objects in a row. */
+summary.res-head { list-style: none; cursor: pointer; display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; padding: 0.42rem 0; border-bottom: 1.5px solid var(--ink, #17150f); }
+.res-head-right { display: flex; align-items: baseline; gap: 0.55rem; }
+/* Filled by script from the links themselves — a hardcoded number goes stale
+   the first time a page is added to a group, and it is the one thing here
+   nobody would think to check. Absent with scripting off, which is fine. */
+.res-n { font-size: 0.72rem; font-weight: 400; color: var(--muted, #6a6660); font-variant-numeric: tabular-nums; }
 summary.res-head::-webkit-details-marker { display: none; }
-summary.res-head:hover { color: var(--rust, #C04E1A); }
+summary.res-head:hover { color: var(--rust, #C04E1A); border-bottom-color: var(--rust, #C04E1A); }
 summary.res-head:focus-visible { outline: 2px solid var(--rust, #b85c2a); outline-offset: 2px; }
 .res-plus { font-size: 0.95rem; font-weight: 400; line-height: 1; opacity: 0.75; }
 .res-plus::before { content: '+'; }
 .res-cell[open] .res-plus::before { content: '\2212'; }
-.res-cell[open] .res-links { padding-bottom: 0.2rem; }
+.res-cell[open] .res-links { padding-top: 0.15rem; padding-bottom: 0.2rem; }
 /* One row may open a SECOND level: the continent blocks of the page behind it.
    Its own class rather than .res-plus, because .res-cell[open] .res-plus is a
    DESCENDANT selector — sharing the class would flip this marker to a minus the
@@ -2241,7 +2249,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
 <section class="lp-res" id="trip-resources">
   <div class="res-grid">
     <details class="res-cell">
-      <summary class="res-head">Money<span class="res-plus" aria-hidden="true"></span></summary>
+      <summary class="res-head">Money<span class="res-head-right"><span class="res-n" aria-hidden="true"></span><span class="res-plus" aria-hidden="true"></span></span></summary>
       <div class="res-links">
         <a href="/essentials/budget/">Budget</a>
         <a href="/essentials/cards-atm/">Cards &amp; ATM</a>
@@ -2249,7 +2257,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       </div>
     </details>
     <details class="res-cell">
-      <summary class="res-head">Flights &amp; airports<span class="res-plus" aria-hidden="true"></span></summary>
+      <summary class="res-head">Flights &amp; airports<span class="res-head-right"><span class="res-n" aria-hidden="true"></span><span class="res-plus" aria-hidden="true"></span></span></summary>
       <div class="res-links">
         <!-- Airlines is grouped by continent on the page, and the reader who
              wants Asian carriers is asking a continent question before an
@@ -2275,7 +2283,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       </div>
     </details>
     <details class="res-cell">
-      <summary class="res-head">Trains<span class="res-plus" aria-hidden="true"></span></summary>
+      <summary class="res-head">Trains<span class="res-head-right"><span class="res-n" aria-hidden="true"></span><span class="res-plus" aria-hidden="true"></span></span></summary>
       <div class="res-links">
         <a href="/essentials/european-trains/">Europe</a>
         <a href="/essentials/asian-trains/">Asia</a>
@@ -2288,7 +2296,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       </div>
     </details>
     <details class="res-cell">
-      <summary class="res-head">Getting around<span class="res-plus" aria-hidden="true"></span></summary>
+      <summary class="res-head">Getting around<span class="res-head-right"><span class="res-n" aria-hidden="true"></span><span class="res-plus" aria-hidden="true"></span></span></summary>
       <div class="res-links">
         <details class="res-sub">
           <summary><a href="/essentials/cars/">Car Rental</a><span class="res-subplus" aria-hidden="true"></span></summary>
@@ -2307,7 +2315,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       </div>
     </details>
     <details class="res-cell">
-      <summary class="res-head">Visas &amp; docs<span class="res-plus" aria-hidden="true"></span></summary>
+      <summary class="res-head">Visas &amp; docs<span class="res-head-right"><span class="res-n" aria-hidden="true"></span><span class="res-plus" aria-hidden="true"></span></span></summary>
       <div class="res-links">
         <a href="/essentials/visa/">Visas</a>
         <a href="/essentials/entry/">Entry Requirements</a>
@@ -2318,7 +2326,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       </div>
     </details>
     <details class="res-cell">
-      <summary class="res-head">Stay &amp; eat<span class="res-plus" aria-hidden="true"></span></summary>
+      <summary class="res-head">Stay &amp; eat<span class="res-head-right"><span class="res-n" aria-hidden="true"></span><span class="res-plus" aria-hidden="true"></span></span></summary>
       <div class="res-links">
         <a href="/essentials/hotels/">Hotels</a>
         <a href="/essentials/neighborhoods/">Neighborhoods</a>
@@ -2326,7 +2334,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       </div>
     </details>
     <details class="res-cell">
-      <summary class="res-head">Health &amp; safety<span class="res-plus" aria-hidden="true"></span></summary>
+      <summary class="res-head">Health &amp; safety<span class="res-head-right"><span class="res-n" aria-hidden="true"></span><span class="res-plus" aria-hidden="true"></span></span></summary>
       <div class="res-links">
         <a href="/essentials/safety/">Safety</a>
         <a href="/essentials/vaccines/">Vaccines</a>
@@ -2337,7 +2345,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       </div>
     </details>
     <details class="res-cell">
-      <summary class="res-head">Plan<span class="res-plus" aria-hidden="true"></span></summary>
+      <summary class="res-head">Plan<span class="res-head-right"><span class="res-n" aria-hidden="true"></span><span class="res-plus" aria-hidden="true"></span></span></summary>
       <div class="res-links">
         <a href="/essentials/sims/">Phone &amp; SIM</a>
         <a href="/essentials/apps/">Travel Apps</a>
@@ -2346,7 +2354,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       </div>
     </details>
     <details class="res-cell">
-      <summary class="res-head">Special trips<span class="res-plus" aria-hidden="true"></span></summary>
+      <summary class="res-head">Special trips<span class="res-head-right"><span class="res-n" aria-hidden="true"></span><span class="res-plus" aria-hidden="true"></span></span></summary>
       <div class="res-links">
         <a href="/essentials/cruises/">Cruises</a>
         <a href="/essentials/disney/">Disney Parks</a>
@@ -2357,6 +2365,20 @@ window.lpGuideCard = function (href, flag, name, extra) {
     </details>
   </div>
 </section>
+
+<script>
+/* The page count on each Trip Resources heading, counted off the rows it opens
+   so it cannot drift from them. A row is a direct link or a sub-disclosure
+   (Airlines, Car Rental) — the continent anchors inside one are not pages. */
+(function () {
+  document.querySelectorAll('.res-cell').forEach(function (cell) {
+    var links = cell.querySelector('.res-links');
+    var slot = cell.querySelector('.res-n');
+    if (!links || !slot) return;
+    slot.textContent = links.querySelectorAll(':scope > a, :scope > details').length;
+  });
+}());
+</script>
 
 <!-- Collapsed by default. A contact form is the least likely thing on this page
      to be wanted, so it should not occupy a screen of height on the chance that
