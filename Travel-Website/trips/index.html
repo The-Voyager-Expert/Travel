@@ -1318,16 +1318,16 @@ document.addEventListener('DOMContentLoaded',()=>{
        deliberately: that is the attribute that turns the handoff into a file in
        Downloads instead of letting Safari pass it to Calendar. */
     a.href='/trips/ics/'+ev.uid.replace('@guidemydays.com','')+'.ics';
-    /* target=_blank so the trip page STAYS WHERE IT IS. Without it the anchor
-       navigates this tab to the file, the browser takes the download, and the
-       reader is left staring at a blank page having lost the list they were
-       working down (owner 2026-08-17: "after i add the calendar it show a
-       complete blank page"). A tab whose only navigation is a download is
-       closed by the browser on its own, so nothing accumulates.
-       It is an ATTRIBUTE, never window.open(): that call returns null by
-       specification, and testing its result is what once shipped a row opening
-       the calendar AND downloading the file in the same click. */
-    a.target='_blank'; a.rel='noopener';
+    /* Same-tab navigation only — NO target=_blank.
+       GitHub Pages serves .ics with Content-Type: text/calendar (verified).
+       On iOS, Safari intercepts the text/calendar response before navigation
+       completes: Calendar opens its "Add Event" sheet and the trip page
+       remains in the stack. target=_blank opened a new tab that stayed open
+       and empty after Calendar handled the file — owner: "i am in an empty
+       page when i exit." On macOS, same-tab navigation downloads the file;
+       if Safari's "Open safe files after downloading" is on, Calendar opens
+       automatically. No download attribute: that forces a Save-to-disk flow
+       on every platform. Never window.open(): returns null by specification. */
     a.className='cal-add'+(addedSet().indexOf(ev.uid)>-1?' added':'');
     a.title=label; a.setAttribute('aria-label',label);
     a.innerHTML=icon('calendar')||'';
