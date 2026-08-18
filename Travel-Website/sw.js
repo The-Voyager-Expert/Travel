@@ -1538,7 +1538,8 @@
 /* 2026-08-18: guide-style — (a) .lounge-arrival-chip joins the desktop 28px inset rule. It is a .day-block child like .hotel-first but INJECTED by toolbar.js afterend of .day-header rather than authored, so it appears in no guide's HTML and a grep of the guides for day-block children never found it; left out, the airport chip ran the full card width while the From Hotel banner directly beneath it sat 28px in on each side. (b) The 'Inquire for a different hotel' link is body-text black (--c-text-primary / #3d3a32, dark #e8e5e0) instead of the brand gold — it sits under the hotel name and address and in gold read as the loudest line in the title card while being its least important. guide-style.css -> v244. CACHE to v1079. */
 /* 2026-08-18: weather strip desktop margin-top 0 -> 36px, matching the 36px that #ics-pill-row puts below it (the strip's own 16px bottom collapses under that, so the gap below was 36 and the gap above only .title-page's 16) toolbar.js -> v750. CACHE to v1080. */
 /* 2026-08-18: stop spacing measured to the BOX, not the text: prose->panel top now 16px (was 0, so only the prose's own 10px separated them), and the title->prose 16px re-aimed past the injected note nodes that had been swallowing it since the note feature shipped toolbar.js -> v751. CACHE to v1081. */
-var CACHE = 'travel-cache-v1081';
+/* 2026-08-18: Map day label shows at every width; guides mosaic to 4 columns on desktop; pinned card to light terracotta with the guide pill matched to Before you go toolbar.js -> v752. CACHE to v1082. */
+var CACHE = 'travel-cache-v1082';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1546,7 +1547,7 @@ var CACHE = 'travel-cache-v1081';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 245,'toolbar.js': 751, 'mobile.css': 87, 'web-travel-style.css': 69, 'guides-index-style.css': 15, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 245,'toolbar.js': 752, 'mobile.css': 87, 'web-travel-style.css': 69, 'guides-index-style.css': 15, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -10949,10 +10949,17 @@ window.TVE.home = (function () {
 
     /* Same self-styled idiom as #tve-copy-day-css (§ 30): classes, but the
        rules ship inside toolbar.js so there is no guide-style.css half to
-       drift against. Below 480px the label is dropped and the pin stands
-       alone — the day label, Copy day and this control share one flex row, and
-       a third word wraps the header on a phone. aria-label carries the meaning
-       either way, so nothing is lost when the text is gone. */
+       drift against.
+
+       THE LABEL SHOWS AT EVERY WIDTH (owner 2026-08-18: "map day does not show
+       in mobile just the icon"). It used to be dropped below 480px on the
+       grounds that "a third word wraps the header on a phone" — measured on a
+       live guide with the label forced visible, that is not true of today's
+       layout: at both 360px and 393px the header stays ONE row and
+       scrollWidth == clientWidth, so nothing wraps and nothing overflows.
+       A bare pin next to a labelled "Copy day" also read as a different kind of
+       control rather than its pair, and aria-label is invisible to someone
+       looking at the row. Re-measure before re-adding any hide. */
     var _mdCss = document.createElement('style');
     _mdCss.id = 'tve-map-day-css';
     _mdCss.textContent =
@@ -10963,8 +10970,7 @@ window.TVE.home = (function () {
       '.tve-map-day-link:hover,.tve-map-day-link:focus-visible{color:#C04E1A;}' +
       '.tve-map-day-link:focus-visible{outline:2px solid #C04E1A;' +
       'outline-offset:3px;border-radius:4px;}' +
-      '@media (max-width:480px){.tve-map-day-link span{display:none;}' +
-      '.tve-map-day-link{margin-left:12px;}}';
+      '@media (max-width:480px){.tve-map-day-link{margin-left:12px;}}';
     (document.head || document.documentElement).appendChild(_mdCss);
 
     /* City name from <title>, not .title-city — the banner ships ALL CAPS and
