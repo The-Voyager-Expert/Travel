@@ -6908,7 +6908,10 @@ window.TVE.home = (function () {
     }
 
     function _dtfBuild(data) {
-      var from = data[curr];
+      /* Keyed by destination guide FILENAME ("florence.html"); `curr` is
+         _pageKey(), which strips the extension. Same break as the "Also in
+         [Country]" lookup below and the 💱 Currency pill — try both spellings. */
+      var from = data[curr] || data[curr + '.html'];
       if (!from || !from.length) return;
       /* Anchor on the last day card — .overview-extras may already have been
          relocated out of the card by the time this runs. */
@@ -6949,7 +6952,9 @@ window.TVE.home = (function () {
           cities.appendChild(sep);
         }
         var a = document.createElement('a');
-        a.href = '../' + g.dir + '/' + g.slug;
+        /* ROOT-ABSOLUTE — the pre-flatten `../{dir}/{slug}` 404s from
+           /guides/*.html. See the same fix on the Also-in-Country pills. */
+        a.href = '/guides/' + g.slug;
         a.textContent = g.city;
         cities.appendChild(a);
       });
@@ -7089,12 +7094,28 @@ window.TVE.home = (function () {
     if (!isRealGuide) return;
     var _cacheKey = 'tvecg';
     function _build(data) {
+      /* `_by_slug` is keyed by FILENAME ("paris.html"); `curr` is _pageKey(),
+         which strips the extension ("paris"). They matched until the 2026-08-16
+         URL migration gave _pageKey its `.replace(/\.html$/i, '')`, and since then
+         this lookup has returned undefined on all 237 guides and bailed on the
+         next line — so "Also in [Country]" rendered on ZERO guides where it should
+         render on 192 (28 countries hold 2+ guides). Nothing errored: a country
+         the file does not know is a legitimate reason to render no section, which
+         is exactly why it read as a page with no peers rather than as a bug.
+         The 💱 Currency pill a few hundred lines below had the identical break and
+         was fixed on 2026-08-18; this one was missed in that pass. Try both
+         spellings so it cannot break again from either side. */
       var bySlug = data['_by_slug'] || {};
-      var country = bySlug[curr];
+      var country = bySlug[curr] || bySlug[curr + '.html'];
       if (!country) return;
       var peers = data[country];
       if (!peers || peers.length < 2) return;
-      var siblings = peers.filter(function (g) { return g.slug !== curr; });
+      /* Same mismatch, and this half fails the other way: with `g.slug` carrying
+         the extension the filter never matched, so the moment the lookup above
+         starts working every guide lists ITSELF among its own peers. */
+      var siblings = peers.filter(function (g) {
+        return g.slug !== curr && g.slug !== curr + '.html';
+      });
       if (!siblings.length) return;
       /* Insert after #nearby-guides; fall back to after #also-on-this-site */
       var anchor = document.getElementById('nearby-guides') || document.getElementById('also-on-this-site');
@@ -7110,7 +7131,12 @@ window.TVE.home = (function () {
       siblings.forEach(function (g) {
         var a = document.createElement('a');
         a.className = 'also-in-country-pill';
-        a.href = '../' + g.dir + '/' + g.slug;
+        /* ROOT-ABSOLUTE (Thirtieth non-negotiable, rule 4). This built the
+           PRE-FLATTEN shape `../{dir}/{slug}`, which from /guides/paris.html
+           resolves to /{dir}/{slug}.html — a 404 on every pill (verified:
+           /aix-en-provence/aix-en-provence.html → 404, /guides/aix-en-provence.html
+           → 200). `g.slug` already carries the .html. */
+        a.href = '/guides/' + g.slug;
         /* City name ONLY — no map glyph (owner rule 2026-08-10, Rule 815). */
         a.textContent = g.city;
         pills.appendChild(a);
