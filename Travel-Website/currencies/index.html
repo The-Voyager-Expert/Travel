@@ -122,6 +122,59 @@
 .index-table tbody tr:hover td { background: #FAE8DE; box-shadow: inset 0 1px 0 rgba(192,78,26,.15), inset 0 -1px 0 rgba(192,78,26,.15); }
 .index-table tbody tr:active td { background: #f2d0bb; box-shadow: inset 2px 0 0 #C04E1A, inset -2px 0 0 #C04E1A; }
 .fx-used { font-size: var(--fs-sub,12px); color: var(--muted,#6a6660); font-weight: 400; }
+
+/* ── A row opens onto its guides ──────────────────────────────────────────
+   Owner rule 2026-08-18: "we hover in the desktop and feel like we should press
+   and something happens ... when we click a currency it opens below the guides
+   for that currency and we can click and go to the guide." The row already had
+   `cursor: pointer` and a terracotta hover, so it was promising something; this
+   is what it promises. It is also the answer to the question the table asks —
+   where can I go with this money — so it belongs on the answer, not two clicks
+   away.
+   The marker is drawn from a border, not typed: no glyph, no emoji, and it
+   rotates rather than swapping character, so nothing has to be re-drawn. */
+.fx-mark {
+  display: inline-block; width: 0; height: 0; margin-right: 8px;
+  vertical-align: middle;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent; border-bottom: 4px solid transparent;
+  opacity: .5; transition: transform .12s ease, opacity .12s ease;
+}
+tr[aria-expanded="true"] .fx-mark { transform: rotate(90deg); opacity: 1; }
+.index-table tbody tr:hover .fx-mark { opacity: 1; }
+/* The detail row carries no hover and no pointer — it is content, not a control,
+   and inheriting the row treatment made it look like another currency to click. */
+.index-table tbody tr.fx-open { cursor: default; background: var(--warm,#fdf4ed); }
+.index-table tbody tr.fx-open:hover td { background: var(--warm,#fdf4ed); box-shadow: inset 0 -1px 0 var(--border2,#e6e2da); }
+/* ⚠️ The detail cell is a `<td colspan="4">`, which makes it BOTH the row's
+   :first-child AND its :last-child — so it inherits every rule written for the
+   name column and the numbers column at once. Shipped without this it rendered
+   right-aligned, bold, brown, nowrap and tabular-nums: a list of city names
+   dressed as a currency amount, hard against the right edge of the table.
+   Nothing about that is visible in the JS or in the markup — the rules are
+   three screens up and were written for a different cell. Every one of them is
+   named here rather than reset with a shorthand, so it is clear what is being
+   undone and why. */
+.index-table tbody tr.fx-open td {
+  padding: 4px 14px 14px;
+  text-align: left;
+  white-space: normal;
+  font-weight: 400;
+  color: var(--text);
+  font-variant-numeric: normal;
+}
+.fx-gc { margin: 0; padding: 7px 0 0; font-size: var(--fs-sub,12px); line-height: 1.7; }
+.fx-gc b {
+  display: inline-block; min-width: 8.5em; margin-right: 6px;
+  color: var(--muted,#6a6660); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.fx-gc a { color: var(--text,#3d3a32); text-decoration: none; border-bottom: 1px solid rgba(192,78,26,.35); }
+.fx-gc a:hover { color: #C04E1A; border-bottom-color: #C04E1A; }
+/* Literal hex, not var(): browsers refuse to resolve custom properties inside
+   :visited, so a var() here silently does nothing and the link goes purple. */
+.fx-gc a:visited { color: #3d3a32; }
+.fx-gc .fx-sep { color: var(--muted,#6a6660); opacity: .6; }
 .rates-footer { text-align: center; font-size: var(--fs-sub,12px); color: var(--muted); margin: 24px 0 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 
 @media (max-width: 600px) and (pointer: coarse) {
@@ -134,6 +187,17 @@
   .fx-swap { align-self: center; margin: 0; }
   .index-table td, .index-table th { font-size: var(--fs-sub,12px) !important; padding: 6px 8px !important; }
   .fx-used { display: block; }
+  /* The 8.5em label column is a desktop alignment device; on 393px it strands
+     the first guide on its own line. The country name becomes its own line. */
+  .fx-gc b { display: block; min-width: 0; margin: 0 0 2px; }
+  /* The "Where it is used" column is DROPPED on phones — header and cells — and
+     that is not a truncation, it is a de-duplication: the row now opens onto the
+     same countries, grouped, with their guides under them. Left in, the euro's
+     twenty countries stacked in a ~110px cell and made one row 480px tall, so a
+     reader scrolling the table met one currency per screen. Three columns
+     (Currency · Sym · You get) is what fits 393px. */
+  .fx-where-col { display: none; }
+  .index-table tbody tr.fx-open td { padding: 4px 8px 12px !important; }
 }
 @media (prefers-color-scheme: dark) {
   .fx-ctl { background: var(--surface2, #1e1c1a); }
@@ -160,6 +224,9 @@
   .index-table tbody td:last-child { color: var(--text, #e8e5e0); }
   .index-table tbody tr:hover td { background: rgba(212,102,58,.16); box-shadow: inset 0 1px 0 rgba(212,102,58,.25), inset 0 -1px 0 rgba(212,102,58,.25); }
   .index-table tbody tr:active td { background: rgba(212,102,58,.28); }
+  .index-table tbody tr.fx-open, .index-table tbody tr.fx-open:hover td { background: rgba(212,102,58,.08); }
+  .fx-gc a { color: var(--text, #e8e5e0); border-bottom-color: rgba(212,102,58,.45); }
+  .fx-gc a:hover { color: var(--rust, #D4663A); border-bottom-color: var(--rust, #D4663A); }
 }
 </style>
 <link rel="stylesheet" href="/assets/mobile.css">
@@ -452,7 +519,7 @@
     <p class="fx-lede" id="fx-lede"></p>
     <table class="index-table">
       <colgroup><col style="width:26%"><col style="width:42%"><col style="width:10%"><col style="width:22%"></colgroup>
-      <thead><tr><th>Currency</th><th>Where it is used</th><th class="sym-col">Sym</th><th>You get</th></tr></thead>
+      <thead><tr><th>Currency</th><th class="fx-where-col">Where it is used</th><th class="sym-col">Sym</th><th>You get</th></tr></thead>
       <tbody id="fx-tbody"></tbody>
     </table>
   </div>
@@ -469,7 +536,7 @@
    update_currency_rates.py (the monthly refresh) read them. Rewrite a rate with
    the script, never by hand. */
 var FXR={"AED":{"n":"UAE Dirham","s":"Dh","r":3.6725},"ARS":{"n":"Argentine Peso","s":"AR$","r":1488.6984},"AUD":{"n":"Australian Dollar","s":"A$","r":1.411664},"AWG":{"n":"Aruban Florin","s":"Afl.","r":1.79},"BBD":{"n":"Barbadian Dollar","s":"Bds$","r":2},"BRL":{"n":"Brazilian Real","s":"R$","r":5.183604},"BSD":{"n":"Bahamian Dollar","s":"B$","r":1},"BTN":{"n":"Bhutanese Ngultrum","s":"Nu","r":95.669227},"CAD":{"n":"Canadian Dollar","s":"C$","r":1.387295},"CHF":{"n":"Swiss Franc","s":"Fr","r":0.812672},"CLP":{"n":"Chilean Peso","s":"CL$","r":913.660777},"CNY":{"n":"Chinese Yuan (Renminbi)","s":"¥","r":6.748651},"CRC":{"n":"Costa Rican Colón","s":"₡","r":448.933752},"CZK":{"n":"Czech Koruna","s":"Kč","r":20.918375},"DKK":{"n":"Danish Krone","s":"kr","r":6.462747},"EGP":{"n":"Egyptian Pound","s":"E£","r":50.257428},"EUR":{"n":"Euro","s":"€","r":0.86417},"GBP":{"n":"Pound Sterling","s":"£","r":0.738482},"GEL":{"n":"Georgian Lari","s":"₾","r":2.61008},"HKD":{"n":"Hong Kong Dollar","s":"HK$","r":7.84748},"HUF":{"n":"Hungarian Forint","s":"Ft","r":313.653187},"IDR":{"n":"Indonesian Rupiah","s":"Rp","r":17833.789555},"ISK":{"n":"Icelandic Króna","s":"kr","r":122.897761},"JOD":{"n":"Jordanian Dinar","s":"JD","r":0.709},"JPY":{"n":"Japanese Yen","s":"¥","r":159.20446},"KRW":{"n":"South Korean Won","s":"₩","r":1415.099364},"KYD":{"n":"Cayman Islands Dollar","s":"CI$","r":0.833333},"LAK":{"n":"Lao Kip","s":"₭","r":22322.128707},"LKR":{"n":"Sri Lankan Rupee","s":"Rs","r":332.495758},"MAD":{"n":"Moroccan Dirham","s":"DH","r":9.284162},"MVR":{"n":"Maldivian Rufiyaa","s":"Rf","r":15.433883},"MXN":{"n":"Mexican Peso","s":"$","r":17.018755},"NOK":{"n":"Norwegian Krone","s":"kr","r":9.443699},"NPR":{"n":"Nepalese Rupee","s":"Rs","r":153.070764},"NZD":{"n":"New Zealand Dollar","s":"NZ$","r":1.697418},"OMR":{"n":"Omani Rial","s":"RO","r":0.384497},"PEN":{"n":"Peruvian Sol","s":"S/","r":3.369918},"PHP":{"n":"Philippine Peso","s":"₱","r":61.516375},"PLN":{"n":"Polish Złoty","s":"zł","r":3.722457},"QAR":{"n":"Qatari Riyal","s":"QR","r":3.64},"SCR":{"n":"Seychellois Rupee","s":"SCR","r":13.950727},"SEK":{"n":"Swedish Krona","s":"kr","r":9.518055},"SGD":{"n":"Singapore Dollar","s":"S$","r":1.279055},"THB":{"n":"Thai Baht","s":"฿","r":33.136295},"TRY":{"n":"Turkish Lira","s":"₺","r":47.884451},"TWD":{"n":"New Taiwan Dollar","s":"NT$","r":31.966724},"USD":{"n":"US Dollar","s":"$","r":1},"UYU":{"n":"Uruguayan Peso","s":"$U","r":40.039615},"VND":{"n":"Vietnamese Dong","s":"₫","r":26065.195054},"XCG":{"n":"Caribbean Guilder","s":"ƒ","r":1.79},"XPF":{"n":"CFP Franc","s":"XPF","r":103.125704},"ZAR":{"n":"South African Rand","s":"R","r":16.187875}};
-var FXC=[["Austria","Austria","Europe","EUR",""],["Belgium","Belgium","Europe","EUR",""],["Croatia","Croatia","Europe","EUR","Adopted the euro in 2023."],["Czech_Republic","Czech Republic","Europe","CZK",""],["Denmark","Denmark","Europe","DKK",""],["Estonia","Estonia","Europe","EUR",""],["Finland","Finland","Europe","EUR",""],["France","France","Europe","EUR",""],["Georgia","Georgia","Europe","GEL",""],["Germany","Germany","Europe","EUR",""],["Greece","Greece","Europe","EUR",""],["Hungary","Hungary","Europe","HUF",""],["Iceland","Iceland","Europe","ISK",""],["Ireland","Ireland","Europe","EUR",""],["Italy","Italy","Europe","EUR",""],["Latvia","Latvia","Europe","EUR",""],["Lithuania","Lithuania","Europe","EUR",""],["Luxembourg","Luxembourg","Europe","EUR",""],["Malta","Malta","Europe","EUR",""],["Monaco","Monaco","Europe","EUR",""],["Montenegro","Montenegro","Europe","EUR","Uses the euro without EU membership."],["Netherlands","Netherlands","Europe","EUR",""],["Norway","Norway","Europe","NOK",""],["Poland","Poland","Europe","PLN",""],["Portugal","Portugal","Europe","EUR",""],["Slovenia","Slovenia","Europe","EUR",""],["Spain","Spain","Europe","EUR",""],["Sweden","Sweden","Europe","SEK",""],["Switzerland","Switzerland","Europe","CHF",""],["Turkey","Turkey","Europe","TRY",""],["United_Kingdom","United Kingdom","Europe","GBP",""],["Jordan","Jordan","Middle East","JOD","Pegged to the US dollar (~0.71)."],["Oman","Oman","Middle East","OMR","Pegged to the US dollar (~0.38)."],["Qatar","Qatar","Middle East","QAR","Pegged to the US dollar (~3.64)."],["United_Arab_Emirates","United Arab Emirates","Middle East","AED","Pegged to the US dollar (~3.67)."],["Egypt","Egypt","Africa","EGP",""],["Morocco","Morocco","Africa","MAD",""],["Seychelles","Seychelles","Africa","SCR",""],["South_Africa","South Africa","Africa","ZAR",""],["Bhutan","Bhutan","Asia","BTN","Pegged 1:1 to the Indian Rupee; INR also accepted."],["China","China","Asia","CNY",""],["Hong_Kong","Hong Kong","Asia","HKD","Pegged to the US dollar (~7.8)."],["Indonesia","Indonesia","Asia","IDR",""],["Japan","Japan","Asia","JPY",""],["Laos","Laos","Asia","LAK",""],["Maldives","Maldives","Asia","MVR",""],["Nepal","Nepal","Asia","NPR",""],["Philippines","Philippines","Asia","PHP",""],["Singapore","Singapore","Asia","SGD",""],["South_Korea","South Korea","Asia","KRW",""],["Sri_Lanka","Sri Lanka","Asia","LKR",""],["Taiwan","Taiwan","Asia","TWD",""],["Thailand","Thailand","Asia","THB",""],["Vietnam","Vietnam","Asia","VND",""],["Australia","Australia","Oceania","AUD",""],["French_Polynesia","French Polynesia","Oceania","XPF",""],["New_Zealand","New Zealand","Oceania","NZD",""],["Canada","Canada","North America","CAD",""],["Mexico","Mexico","North America","MXN",""],["United_States","United States","North America","USD",""],["Costa_Rica","Costa Rica","Central America","CRC","Many establishments accept US dollars, especially in tourist areas."],["Aruba","Aruba","Caribbean","AWG","Pegged to the US dollar; USD widely accepted."],["Bahamas","Bahamas","Caribbean","BSD","Pegged 1:1 with the US dollar — USD accepted everywhere."],["Barbados","Barbados","Caribbean","BBD","Pegged 2:1 with the US dollar — USD widely accepted."],["Cayman_Islands","Cayman Islands","Caribbean","KYD","Pegged to the US dollar; one of the few currencies worth more than USD."],["Curacao","Curaçao","Caribbean","XCG","Pegged to the US dollar; replaced the Netherlands Antillean guilder."],["Puerto_Rico","Puerto Rico","Caribbean","USD","US territory — uses the US dollar."],["Sint_Maarten","Sint Maarten","Caribbean","XCG","Pegged to the US dollar; USD widely accepted."],["Turks_and_Caicos","Turks and Caicos","Caribbean","USD","British Overseas Territory; the US dollar is the official currency."],["Argentina","Argentina","South America","ARS",""],["Brazil","Brazil","South America","BRL",""],["Chile","Chile","South America","CLP",""],["Ecuador","Ecuador","South America","USD","Ecuador adopted the US dollar as its official currency in 2000."],["Peru","Peru","South America","PEN",""],["Uruguay","Uruguay","South America","UYU",""]];
+var FXC=[["Austria","Austria","Europe","EUR","",[["Salzburg","/guides/salzburg.html"],["Vienna","/guides/vienna.html"]]],["Belgium","Belgium","Europe","EUR","",[["Bruges","/guides/bruges.html"],["Brussels","/guides/brussels.html"]]],["Croatia","Croatia","Europe","EUR","Adopted the euro in 2023.",[["Dubrovnik","/guides/dubrovnik.html"],["Split","/guides/split.html"]]],["Czech_Republic","Czech Republic","Europe","CZK","",[["Prague","/guides/prague.html"]]],["Denmark","Denmark","Europe","DKK","",[["Copenhagen","/guides/copenhagen.html"]]],["Estonia","Estonia","Europe","EUR","",[["Tallinn","/guides/tallinn.html"]]],["Finland","Finland","Europe","EUR","",[["Helsinki","/guides/helsinki.html"]]],["France","France","Europe","EUR","",[["Aix-en-Provence","/guides/aix-en-provence.html"],["Annecy","/guides/annecy.html"],["Bordeaux","/guides/bordeaux.html"],["Cannes","/guides/cannes.html"],["Colmar","/guides/colmar.html"],["Lille","/guides/lille.html"],["Lyon","/guides/lyon.html"],["Marseille","/guides/marseille.html"],["Nice","/guides/nice.html"],["Paris","/guides/paris.html"],["Strasbourg","/guides/strasbourg.html"]]],["Georgia","Georgia","Europe","GEL","",[["Tbilisi","/guides/tbilisi.html"]]],["Germany","Germany","Europe","EUR","",[["Berlin","/guides/berlin.html"],["Cologne","/guides/cologne.html"],["Frankfurt","/guides/frankfurt.html"],["Hamburg","/guides/hamburg.html"],["Marktoberdorf","/guides/marktoberdorf.html"],["Munich","/guides/munich.html"],["Stuttgart","/guides/stuttgart.html"]]],["Greece","Greece","Europe","EUR","",[["Athens","/guides/athens.html"],["Corfu","/guides/corfu.html"],["Crete","/guides/crete.html"],["Mykonos","/guides/mykonos.html"],["Rhodes","/guides/rhodes.html"],["Santorini","/guides/santorini.html"],["Zakynthos","/guides/zakynthos.html"]]],["Hungary","Hungary","Europe","HUF","",[["Budapest","/guides/budapest.html"]]],["Iceland","Iceland","Europe","ISK","",[["Reykjavik","/guides/reykjavik.html"]]],["Ireland","Ireland","Europe","EUR","",[["Dublin","/guides/dublin.html"]]],["Italy","Italy","Europe","EUR","",[["Amalfi","/guides/amalfi.html"],["Bologna","/guides/bologna.html"],["Capri","/guides/capri.html"],["Cinque Terre","/guides/cinque-terre.html"],["Florence","/guides/florence.html"],["Lake Como","/guides/lake-como.html"],["Lecce","/guides/lecce.html"],["Milan","/guides/milan.html"],["Naples","/guides/naples.html"],["Pisa","/guides/pisa.html"],["Rome","/guides/rome.html"],["Sardinia","/guides/sardinia.html"],["Sicily","/guides/sicily.html"],["Siena","/guides/siena.html"],["Sorrento","/guides/sorrento.html"],["Turin","/guides/turin.html"],["Venice","/guides/venice.html"],["Verona","/guides/verona.html"]]],["Latvia","Latvia","Europe","EUR","",[["Riga","/guides/riga.html"]]],["Lithuania","Lithuania","Europe","EUR","",[["Vilnius","/guides/vilnius.html"]]],["Luxembourg","Luxembourg","Europe","EUR","",[["Luxembourg","/guides/luxembourg.html"]]],["Malta","Malta","Europe","EUR","",[["Valletta","/guides/valletta.html"]]],["Monaco","Monaco","Europe","EUR","",[["Monaco","/guides/monaco.html"]]],["Montenegro","Montenegro","Europe","EUR","Uses the euro without EU membership.",[["Kotor","/guides/kotor.html"]]],["Netherlands","Netherlands","Europe","EUR","",[["Amsterdam","/guides/amsterdam.html"],["Rotterdam","/guides/rotterdam.html"]]],["Norway","Norway","Europe","NOK","",[["Bergen","/guides/bergen.html"],["Oslo","/guides/oslo.html"],["Tromsø","/guides/tromso.html"],["Ålesund","/guides/alesund.html"]]],["Poland","Poland","Europe","PLN","",[["Kraków","/guides/krakow.html"]]],["Portugal","Portugal","Europe","EUR","",[["Cascais","/guides/cascais.html"],["Madeira","/guides/madeira.html"],["Lagos","/guides/lagos.html"],["Lisbon","/guides/lisbon.html"],["Porto","/guides/porto.html"],["Sintra","/guides/sintra.html"],["Azores","/guides/azores.html"]]],["Slovenia","Slovenia","Europe","EUR","",[["Ljubljana","/guides/ljubljana.html"]]],["Spain","Spain","Europe","EUR","",[["Barcelona","/guides/barcelona.html"],["Bilbao","/guides/bilbao.html"],["Granada","/guides/granada.html"],["Madrid","/guides/madrid.html"],["Málaga","/guides/malaga.html"],["San Sebastián","/guides/san-sebastian.html"],["Seville","/guides/seville.html"],["Tenerife","/guides/tenerife.html"],["Toledo","/guides/toledo.html"]]],["Sweden","Sweden","Europe","SEK","",[["Gothenburg","/guides/gothenburg.html"],["Stockholm","/guides/stockholm.html"]]],["Switzerland","Switzerland","Europe","CHF","",[["Geneva","/guides/geneva.html"],["Lucerne","/guides/lucerne.html"],["Zurich","/guides/zurich.html"]]],["Turkey","Turkey","Europe","TRY","",[["Istanbul","/guides/istanbul.html"]]],["United_Kingdom","United Kingdom","Europe","GBP","",[["Cambridge","/guides/cambridge.html"],["Edinburgh","/guides/edinburgh.html"],["Glasgow","/guides/glasgow.html"],["London","/guides/london.html"],["Oxford","/guides/oxford.html"]]],["Jordan","Jordan","Middle East","JOD","Pegged to the US dollar (~0.71).",[["Petra","/guides/petra.html"]]],["Oman","Oman","Middle East","OMR","Pegged to the US dollar (~0.38).",[["Muscat","/guides/muscat.html"]]],["Qatar","Qatar","Middle East","QAR","Pegged to the US dollar (~3.64).",[["Doha","/guides/doha.html"]]],["United_Arab_Emirates","United Arab Emirates","Middle East","AED","Pegged to the US dollar (~3.67).",[["Abu Dhabi","/guides/abu-dhabi.html"],["Dubai","/guides/dubai.html"]]],["Egypt","Egypt","Africa","EGP","",[["Cairo","/guides/cairo.html"]]],["Morocco","Morocco","Africa","MAD","",[["Marrakech","/guides/marrakech.html"]]],["Seychelles","Seychelles","Africa","SCR","",[["Seychelles","/guides/seychelles.html"]]],["South_Africa","South Africa","Africa","ZAR","",[["Cape Town","/guides/cape-town.html"]]],["Bhutan","Bhutan","Asia","BTN","Pegged 1:1 to the Indian Rupee; INR also accepted.",[["Paro","/guides/bhutan.html"]]],["China","China","Asia","CNY","",[["Beijing","/guides/beijing.html"],["Chongqing","/guides/chongqing.html"],["Shanghai","/guides/shanghai.html"],["Zhangjiajie","/guides/zhangjiajie.html"]]],["Hong_Kong","Hong Kong","Asia","HKD","Pegged to the US dollar (~7.8).",[["Hong Kong","/guides/hong-kong.html"]]],["Indonesia","Indonesia","Asia","IDR","",[["Bali","/guides/bali.html"]]],["Japan","Japan","Asia","JPY","",[["Hiroshima","/guides/hiroshima.html"],["Kyoto","/guides/kyoto.html"],["Osaka","/guides/osaka.html"],["Tokyo","/guides/tokyo.html"]]],["Laos","Laos","Asia","LAK","",[["Luang Prabang","/guides/luang-prabang.html"]]],["Maldives","Maldives","Asia","MVR","",[["Maldives","/guides/maldives.html"]]],["Nepal","Nepal","Asia","NPR","",[["Pokhara","/guides/pokhara.html"]]],["Philippines","Philippines","Asia","PHP","",[["Palawan","/guides/palawan.html"]]],["Singapore","Singapore","Asia","SGD","",[["Singapore","/guides/singapore.html"]]],["South_Korea","South Korea","Asia","KRW","",[["Busan","/guides/busan.html"],["Seoul","/guides/seoul.html"]]],["Sri_Lanka","Sri Lanka","Asia","LKR","",[["Colombo","/guides/colombo.html"]]],["Taiwan","Taiwan","Asia","TWD","",[["Taipei","/guides/taipei.html"]]],["Thailand","Thailand","Asia","THB","",[["Bangkok","/guides/bangkok.html"],["Chiang Mai","/guides/chiang-mai.html"],["Phuket","/guides/phuket.html"]]],["Vietnam","Vietnam","Asia","VND","",[["Hanoi","/guides/hanoi.html"],["Hoi An","/guides/hoi-an.html"]]],["Australia","Australia","Oceania","AUD","",[["Melbourne","/guides/melbourne.html"],["Sydney","/guides/sydney.html"]]],["French_Polynesia","French Polynesia","Oceania","XPF","",[["Bora Bora","/guides/bora-bora.html"]]],["New_Zealand","New Zealand","Oceania","NZD","",[["Queenstown","/guides/queenstown.html"],["Wellington","/guides/wellington.html"]]],["Canada","Canada","North America","CAD","",[["Banff","/guides/banff.html"],["Montréal","/guides/montreal.html"],["Québec City","/guides/quebec-city.html"],["Toronto","/guides/toronto.html"],["Vancouver","/guides/vancouver.html"],["Victoria","/guides/victoria.html"],["Whistler","/guides/whistler.html"]]],["Mexico","Mexico","North America","MXN","",[["Cancún","/guides/cancun.html"],["Los Cabos","/guides/los-cabos.html"],["Oaxaca","/guides/oaxaca.html"],["Puerto Vallarta","/guides/puerto-vallarta.html"]]],["United_States","United States","North America","USD","",[["Alaska","/guides/alaska.html"],["Atlanta","/guides/atlanta.html"],["Austin","/guides/austin.html"],["Bend","/guides/bend.html"],["Big Island","/guides/big-island.html"],["Boston","/guides/boston.html"],["Boulder","/guides/boulder.html"],["Cape Cod","/guides/cape-cod.html"],["Carmel by the Sea","/guides/carmel-by-the-sea.html"],["Charlotte","/guides/charlotte.html"],["Chicago","/guides/chicago.html"],["Coeur d'Alene","/guides/coeur-dalene.html"],["Columbia","/guides/columbia.html"],["Dallas","/guides/dallas.html"],["Denver","/guides/denver.html"],["Florida Keys","/guides/florida-keys.html"],["Glacier National Park","/guides/glacier-national-park.html"],["Hilton Head Island","/guides/hilton-head-island.html"],["Kauai","/guides/kauai.html"],["Key West","/guides/keywest.html"],["La Jolla","/guides/la-jolla.html"],["Lake Tahoe","/guides/lake-tahoe.html"],["Las Vegas","/guides/las-vegas.html"],["Los Angeles","/guides/los-angeles.html"],["Malibu","/guides/malibu.html"],["Marco Island","/guides/marco-island.html"],["Maui","/guides/maui.html"],["Miami","/guides/miami.html"],["Napa","/guides/napa.html"],["Naples, FL","/guides/naples-florida.html"],["Nashville","/guides/nashville.html"],["New Orleans","/guides/new-orleans.html"],["New York","/guides/new-york.html"],["Oahu","/guides/oahu.html"],["Orcas Island","/guides/orcas-island.html"],["Orlando","/guides/orlando.html"],["Palm Desert","/guides/palm-desert.html"],["Palo Alto","/guides/palo-alto.html"],["Pasadena","/guides/pasadena.html"],["Pensacola","/guides/pensacola.html"],["Philadelphia","/guides/philadelphia.html"],["Phoenix","/guides/phoenix.html"],["Portland","/guides/portland.html"],["San Diego","/guides/san-diego.html"],["San Francisco","/guides/san-francisco.html"],["San Jose","/guides/san-jose.html"],["San Juan Island","/guides/san-juan-island.html"],["Santa Barbara","/guides/santa-barbara.html"],["Santa Cruz","/guides/santa-cruz.html"],["Santa Fe","/guides/santa-fe.html"],["Santa Monica","/guides/santa-monica.html"],["Sarasota","/guides/sarasota.html"],["Scottsdale","/guides/scottsdale.html"],["Seattle","/guides/seattle.html"],["Sedona","/guides/sedona.html"],["Virgin Islands","/guides/virgin-islands.html"],["Washington DC","/guides/washington-dc.html"],["Yellowstone","/guides/yellowstone.html"]]],["Costa_Rica","Costa Rica","Central America","CRC","Many establishments accept US dollars, especially in tourist areas.",[["Arenal","/guides/arenal.html"],["Manuel Antonio","/guides/manuel-antonio.html"],["San José","/guides/san-jose-costa-rica.html"]]],["Aruba","Aruba","Caribbean","AWG","Pegged to the US dollar; USD widely accepted.",[["Aruba","/guides/aruba.html"]]],["Bahamas","Bahamas","Caribbean","BSD","Pegged 1:1 with the US dollar — USD accepted everywhere.",[["The Bahamas","/guides/bahamas.html"]]],["Barbados","Barbados","Caribbean","BBD","Pegged 2:1 with the US dollar — USD widely accepted.",[["Barbados","/guides/barbados.html"]]],["Cayman_Islands","Cayman Islands","Caribbean","KYD","Pegged to the US dollar; one of the few currencies worth more than USD.",[["Cayman Islands","/guides/cayman-islands.html"]]],["Curacao","Curaçao","Caribbean","XCG","Pegged to the US dollar; replaced the Netherlands Antillean guilder.",[["Curaçao","/guides/curacao.html"]]],["Puerto_Rico","Puerto Rico","Caribbean","USD","US territory — uses the US dollar.",[["Puerto Rico","/guides/puerto-rico.html"]]],["Sint_Maarten","Sint Maarten","Caribbean","XCG","Pegged to the US dollar; USD widely accepted.",[["Sint Maarten","/guides/sint-maarten.html"]]],["Turks_and_Caicos","Turks and Caicos","Caribbean","USD","British Overseas Territory; the US dollar is the official currency.",[["Turks and Caicos","/guides/turks-and-caicos.html"]]],["Argentina","Argentina","South America","ARS","",[["Buenos Aires","/guides/buenos-aires.html"]]],["Brazil","Brazil","South America","BRL","",[["Aracaju","/guides/aracaju.html"],["Curitiba","/guides/curitiba.html"],["Florianópolis","/guides/florianopolis.html"],["Fortaleza","/guides/fortaleza.html"],["Foz do Iguaçu","/guides/foz-do-iguacu.html"],["João Pessoa","/guides/joao-pessoa.html"],["Maceió","/guides/maceio.html"],["Natal","/guides/natal.html"],["Olinda","/guides/olinda.html"],["Porto Alegre","/guides/porto-alegre.html"],["Recife","/guides/recife.html"],["Rio de Janeiro","/guides/rio-de-janeiro.html"],["Salvador","/guides/salvador.html"],["São Luís","/guides/sao-luis.html"],["São Paulo","/guides/sao-paulo.html"]]],["Chile","Chile","South America","CLP","",[["Santiago","/guides/santiago.html"]]],["Ecuador","Ecuador","South America","USD","Ecuador adopted the US dollar as its official currency in 2000.",[["Galápagos Islands","/guides/galapagos-islands.html"]]],["Peru","Peru","South America","PEN","",[["Cusco","/guides/cusco.html"],["Lima","/guides/lima.html"],["Machu Picchu","/guides/machupicchu.html"]]],["Uruguay","Uruguay","South America","UYU","",[["Montevideo","/guides/montevideo.html"]]]];
 (function(){
   var elAmt=document.getElementById('fx-amount');
   var elFrom=document.getElementById('fx-from'), elTo=document.getElementById('fx-to');
@@ -481,10 +548,14 @@ var FXC=[["Austria","Austria","Europe","EUR",""],["Belgium","Belgium","Europe","
      countries share EUR and four share USD, so the table is keyed by CURRENCY
      while the two pickers are keyed by COUNTRY — that is what lets a reader
      pick "Italy" and read a result about the Euro. */
-  var BYA={}, USED={};
+  var BYA={}, USED={}, GUIDES={};
   for(var i=0;i<FXC.length;i++){
     var row=FXC[i]; BYA[row[0]]=row;
     (USED[row[3]]=USED[row[3]]||[]).push(row[1]);
+    /* Grouped BY COUNTRY, not flattened: the euro covers eleven countries and
+       sixty-odd guides, and an undifferentiated list of sixty city names is not
+       something anyone reads. The country is the thing the reader is choosing. */
+    if(row[5] && row[5].length) (GUIDES[row[3]]=GUIDES[row[3]]||[]).push([row[1],row[5]]);
   }
   var sortMode='most', tableOpen=false;
 
@@ -544,15 +615,20 @@ var FXC=[["Austria","Austria","Europe","EUR",""],["Belgium","Belgium","Europe","
     var html='';
     for(var j=0;j<list.length;j++){
       var C=FXR[list[j].c], used=(USED[list[j].c]||[]).join(' · ');
-      html+='<tr data-iso="'+list[j].c+'"><td>'+esc(C.n)+' <span class="fx-used">'+list[j].c+'</span></td>'+
-            '<td class="fx-used">'+esc(used)+'</td>'+
+      html+='<tr data-iso="'+list[j].c+'" tabindex="0" role="button" aria-expanded="false">'+
+            '<td><span class="fx-mark"></span>'+esc(C.n)+' <span class="fx-used">'+list[j].c+'</span></td>'+
+            '<td class="fx-used fx-where-col">'+esc(used)+'</td>'+
             '<td class="sym-col">'+esc(C.s)+'</td>'+
-            '<td>'+esc(C.s+fmt(list[j].v))+'</td></tr>';
+            '<td>'+esc(C.s+fmt(list[j].v))+'</td></tr>'+
+            /* Rendered with the row and hidden, not built on demand: an
+               expansion that has to be constructed first flashes an empty band
+               on a slow phone, and `hidden` costs nothing. */
+            '<tr class="fx-open" hidden><td colspan="4">'+guidesHTML(list[j].c)+'</td></tr>';
     }
     elBody.innerHTML=html;
     document.getElementById('fx-lede').innerHTML=
       'What <b>'+esc(A.s+fmt(amt)+' '+A.n)+'</b> is worth, currency by currency. '+
-      'These are exchange rates, not local prices.';
+      'Open a row to see the guides that use it. These are exchange rates, not local prices.';
   }
 
   elAmt.addEventListener('input',render);
@@ -573,17 +649,50 @@ var FXC=[["Austria","Austria","Europe","EUR",""],["Belgium","Belgium","Europe","
       renderTable();
     });
   });
-  /* A row in the table is a destination: clicking it re-points "To" at that
-     currency and rewrites the result above, so the table doubles as a picker.
-     The first country listed for the currency is the one the select lands on. */
-  elBody.addEventListener('click',function(e){
-    var tr=e.target.closest?e.target.closest('tr'):null;
-    if(!tr||!tr.getAttribute('data-iso')) return;
-    var want=tr.getAttribute('data-iso');
-    for(var k=0;k<FXC.length;k++){
-      if(FXC[k][3]===want){ elTo.value=FXC[k][0]; break; }
+  function guidesHTML(iso){
+    var g=GUIDES[iso]||[], out='';
+    for(var i=0;i<g.length;i++){
+      var links=[];
+      for(var j=0;j<g[i][1].length;j++){
+        links.push('<a href="'+g[i][1][j][1]+'">'+esc(g[i][1][j][0])+'</a>');
+      }
+      out+='<p class="fx-gc"><b>'+esc(g[i][0])+'</b>'+
+           links.join('<span class="fx-sep"> · </span>')+'</p>';
     }
-    render();
+    return out;
+  }
+
+  /* A row OPENS onto its guides (owner rule 2026-08-18). It used to re-point
+     "To" at that currency instead — a change that happened above the fold, out
+     of sight of the row you had just pressed, which is why the row read as
+     doing nothing. One click, one visible thing, and the thing is the answer to
+     the question the table asks.
+     Accordion, not multi-open: with 51 rows and the euro's sixty guides, two
+     open panels put the second one off-screen. */
+  function toggleRow(tr){
+    if(!tr||!tr.getAttribute('data-iso')) return;
+    var det=tr.nextElementSibling, open=det && det.hidden;
+    [].forEach.call(elBody.querySelectorAll('tr[aria-expanded="true"]'),function(r){
+      r.setAttribute('aria-expanded','false');
+      if(r.nextElementSibling) r.nextElementSibling.hidden=true;
+    });
+    if(open){ det.hidden=false; tr.setAttribute('aria-expanded','true'); }
+  }
+  elBody.addEventListener('click',function(e){
+    /* A click on one of the guide links must NOT be read as a row press — it
+       would collapse the panel out from under the link the reader is following. */
+    if(e.target.closest && e.target.closest('a')) return;
+    toggleRow(e.target.closest ? e.target.closest('tr[data-iso]') : null);
+  });
+  /* A <tr> is not focusable on its own, so the rows carry tabindex and role and
+     answer the two keys a button answers. Space is preventDefault'ed or it
+     scrolls the page instead of opening the row. */
+  elBody.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ') return;
+    var tr=e.target.closest?e.target.closest('tr[data-iso]'):null;
+    if(!tr) return;
+    e.preventDefault();
+    toggleRow(tr);
   });
 
   /* The ONE thing that may arrive with a currency already set: a #Country link
