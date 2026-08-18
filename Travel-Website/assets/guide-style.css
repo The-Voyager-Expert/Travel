@@ -2637,28 +2637,35 @@ div.train .train-time   { padding: 2px 0; }
   margin-top: 16px !important;
 }
 
-/* MOBILE — the section itself IS one white card (owner rule 2026-08-10).
-   Desktop is unchanged: side-by-side rows as inset white cards framed by beige,
-   per the card-in-a-section design. On a phone that frame plus a 14px beige gap
-   under every row made three ride-app links read as three separate cards inside
-   a beige box. Below 601px the beige goes away — the section background turns
-   white, the title drops its own card ring and becomes the card's header (gold
-   rule underneath), and the entry rows sit flush, divided by a hairline. The
-   side-by-side name/link grid is untouched on both breakpoints. */
+/* MOBILE — the ENTRY ROWS sit flush; the section keeps the beige frame
+   (owner rule 2026-08-18, correcting the 2026-08-10 shape).
+
+   2026-08-10 solved a real problem the wrong way. Three ride-app links each
+   separated by a 14px beige gap read as three separate cards inside a beige
+   box, so that pass whited out the SECTION — background: var(--c-card-bg) on
+   #getting-around / #food-delivery, plus a title stripped of its card ring.
+   That closed the gaps and cost the frame: on a phone every other extras
+   section draws a white title card inset inside a beige box, and these two
+   drew white-on-white, so their title card had no frame around it and their
+   white ground ran the section's own 18px padding wider on each side than the
+   card above and the card below. Every box measured identically to its
+   neighbours — no margin was wrong — yet in a column of collapsed sections two
+   rows read as knocked out of alignment, which is what the owner reported
+   three times (2026-08-18: "food delivery and getting around still showing
+   margin misaligned").
+
+   The gap fix never needed the white-out. The flush-row rules below are what
+   close the beige gutters between entries; they stand on their own. With the
+   section beige and its title back in its own card, the entry rows still form
+   ONE white block divided by hairlines — the 2026-08-10 intent — inside the
+   same beige frame every neighbouring section has.
+
+   NEVER re-add a background to these two sections at any breakpoint. Enforced,
+   hard-fail: brain_check.check_extras_section_frame_uniform (static, fleet-wide)
+   and validate_mobile_render.py §9 (render-level: the measured background of
+   every collapsible section on the page must match its neighbours'). Answer a
+   gap complaint with the row rules, never with the section ground. */
 @media (max-width: 600px) and (pointer: coarse) {
-  #getting-around,
-  #food-delivery {
-    background: var(--c-card-bg);
-  }
-  #getting-around > .extras-title,
-  #food-delivery  > .extras-title {
-    background: transparent;
-    border: 0;
-    border-bottom: 2px solid var(--c-brand);
-    border-radius: 0;
-    padding: 4px 14px 12px;
-    margin-bottom: 0;
-  }
   /* Rows sit flush — a hairline replaces the beige gap. Only the COLOR of the
      already-present 1.5px transparent border moves, so no row shifts by 0.5px. */
   #getting-around > .extras-sub,

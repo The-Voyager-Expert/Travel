@@ -1504,7 +1504,8 @@
 /* 2026-08-18: best-of — .best-of-search-input deleted; the index search took a 360px cap and a 6px/14px margin against the 440px --search-w standard and its equal 32px gaps. web-travel-style.css to 65. CACHE to v1059. */
 /* 2026-08-18: best-of — .best-of-search-input re-deleted after a stale-baseline restore; the class has no user and the index search takes the standard 440x56 bar. web-travel-style.css to 66. */
 /* 2026-08-18: hero-band gap — the § 14 rule now covers pages with no search; 13 pages had their first block flush against the terracotta. web-travel-style.css bumped. */
-var CACHE = 'travel-cache-v1062';
+/* 2026-08-18: guide-style.css: Food Delivery / Getting Around keep the beige section frame on phones — the 2026-08-10 white-out left their title cards un-framed and reading as misaligned with every neighbouring section. guide-style.css -> v236. CACHE to v1063. */
+var CACHE = 'travel-cache-v1063';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1512,7 +1513,7 @@ var CACHE = 'travel-cache-v1062';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 235,'toolbar.js': 743, 'mobile.css': 87, 'web-travel-style.css': 67, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 236,'toolbar.js': 743, 'mobile.css': 87, 'web-travel-style.css': 67, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
