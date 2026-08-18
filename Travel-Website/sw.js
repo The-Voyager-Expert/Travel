@@ -1486,7 +1486,8 @@
 /* 2026-08-17: phone: the tile carousels become a showcase — new screens for all four toolbar.js -> v739. CACHE to v1038. */
 /* 2026-08-17: Cloudflare Web Analytics beacon added to toolbar.js, host-gated to guidemydays.com. The site is set to 'Enable with JS Snippet installation', NOT Cloudflare's automatic setup: automatic injection happens in the proxy, and the domain is on Cloudflare DNS but DNS-only, so visitors reach GitHub Pages directly and nothing passes through Cloudflare to inject into - automatic would have recorded zero for ever. toolbar.js -> v740. CACHE to v1039. */
 /* 2026-08-18: guides-index-style.css — replace hardcoded #c8b99a with var(--c-search-focus-border) on #guide-search:focus. guides-index-style.css -> v14. CACHE to v1053. */
-var CACHE = 'travel-cache-v1054';
+/* 2026-08-18: trips: calendar icon changed from sprite <use> to inline flat SVG (Safari <use>+DOMContentLoaded timing); sw.js passes .ics requests through unintercepted so iOS text/calendar → Calendar hand-off works natively. CACHE to v1055. */
+var CACHE = 'travel-cache-v1055';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1533,6 +1534,14 @@ self.addEventListener('fetch', function (e) {
   var url;
   try { url = new URL(req.url); } catch (_) { return; }
   if (url.origin !== self.location.origin) return;
+
+  /* .ics calendar files — pass through without interception.
+     When the service worker intercepts a text/calendar navigation and returns
+     the response via respondWith(), iOS Safari's system-level hand-off to
+     Calendar.app is bypassed — the response goes to the browser instead.
+     Returning early here lets the browser make the request itself so the
+     native text/calendar → Calendar interception works normally. */
+  if (url.pathname.endsWith('.ics')) return;
 
   /* Rewrite stale asset version URLs so iOS HTTP cache is bypassed */
   var rewrittenUrl = rewriteAssetUrl(req.url);

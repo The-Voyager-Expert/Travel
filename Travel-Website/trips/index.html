@@ -1267,13 +1267,19 @@ document.addEventListener('DOMContentLoaded',()=>{
     };
   }
 
-  /* Drawn marks, never emoji — window.TVE.icon is the site's shared accessor
-     over NAV_ICONS, the same set the toolbar, the guides and the index chips
-     draw from. Returns '' if toolbar.js has not loaded, and the label alone
-     still reads correctly. */
-  function icon(key){
-    try { return (window.TVE && window.TVE.icon) ? window.TVE.icon(key,15) : ''; }
-    catch(e){ return ''; }
+  /* Inline flat SVG — no sprite, no <use>, no dependency on _gmSprite() timing.
+     TVE.icon() prefers the gradient <use>-based sprite, which requires #gm-i-calendar
+     to exist in the DOM. On iOS Safari the <use> elements are created before
+     _gmSprite() runs on DOMContentLoaded, and Safari does not always retroactively
+     resolve <use> references to symbols added later — so the icons rendered empty.
+     The flat NAV_ICONS path is identical to what the site draws everywhere else
+     (same viewBox, same fill token), it needs no sprite, and it always shows. */
+  function icon(){
+    return '<svg viewBox="0.10 -0.90 23.81 23.81" width="15" height="15"' +
+           ' fill="var(--rust,#C04E1A)" aria-hidden="true">' +
+           '<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19' +
+           'c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14' +
+           'v11zM7 10h5v5H7z"/></svg>';
   }
   function escHTML(s){
     return String(s==null?'':s).replace(/[&<>"]/g,function(c){
@@ -1330,7 +1336,7 @@ document.addEventListener('DOMContentLoaded',()=>{
        on every platform. Never window.open(): returns null by specification. */
     a.className='cal-add'+(addedSet().indexOf(ev.uid)>-1?' added':'');
     a.title=label; a.setAttribute('aria-label',label);
-    a.innerHTML=icon('calendar')||'';
+    a.innerHTML=icon();
     a.addEventListener('click',function(){
       markAdded(ev.uid);
       a.className='cal-add added';
