@@ -190,23 +190,27 @@
   font-weight: 700; color: var(--text, #17150f); margin: 0 0 .6rem; text-wrap: balance; }
 .gi-lead p { margin: 0; font-size: 1.02rem; line-height: 1.65; color: var(--muted, #6a6660); }
 
-/* THE CARD GRID. Five cards: four in a 2-up, the fifth spanning both. The
-   currency strip is a 5.4:1 sliver of the action row — in a half-width cell the
-   numbers it exists to show are unreadable, so it takes the full width. Written
-   `1 / -1` rather than `span 2` so the one-column phone layout needs no unset. */
-.gi-cards { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 22px); }
+/* FEATURE ROWS. Screenshot left (fixed width), explanation right. The big
+   cards keep the original proportions; the small-feature rows use a narrower
+   thumbnail so the text carries the visual weight.
+   .gi-card-sm shrinks the shot column and lightens the border so small-feature
+   rows read as a supporting list rather than equal-weight cards. */
+.gi-cards { display: flex; flex-direction: column; gap: clamp(10px, 1.6vw, 16px); }
 .gi-card { background: var(--surface, #fff); border: 1px solid var(--border2, #e6e2da);
-  border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
-.gi-card-wide { grid-column: 1 / -1; }
-.gi-shot { display: block; background: #f5f4f0; border-bottom: 1px solid var(--border2, #e6e2da); }
-.gi-shot img { display: block; width: 100%; height: auto; }
-/* A caption is ONE line of label and ONE short line under it. Owner: "dont do
-   long texts that no one reads." If a card needs a paragraph, it is the wrong
-   card. */
-.gi-body { padding: 15px 20px 18px; }
-.gi-body h3 { margin: 0 0 .3rem; font-size: 1.02rem; font-weight: 700; letter-spacing: -.015em;
+  border-radius: 14px; overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 340px) 1fr; align-items: stretch; }
+.gi-card-sm { border-color: var(--border, #dad6ce);
+  grid-template-columns: minmax(0, 200px) 1fr; }
+.gi-shot { display: block; background: #f5f4f0; border-right: 1px solid var(--border2, #e6e2da); }
+.gi-card-sm .gi-shot { border-right-color: var(--border, #dad6ce); }
+.gi-shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* A caption is ONE line of label and ONE short line under it. */
+.gi-body { padding: 18px 22px; display: flex; flex-direction: column; justify-content: center; }
+.gi-body h3 { margin: 0 0 .35rem; font-size: 1.02rem; font-weight: 700; letter-spacing: -.015em;
   color: var(--text, #17150f); }
+.gi-card-sm .gi-body h3 { font-size: .94rem; }
 .gi-body p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--muted, #6a6660); }
+.gi-card-sm .gi-body p { font-size: .85rem; }
 
 /* THE SCAN-LIST. Every feature a guide carries, as LABELS — never sentences.
    Multicol, not grid: 26 items of one line each balance into even columns by
@@ -281,7 +285,13 @@
 @media (max-width: 1000px) { .gi-list { columns: 3; } }
 @media (max-width: 760px) {
   .gi { padding: 0 16px; }
-  .gi-cards { grid-template-columns: 1fr; }
+  .gi-card { grid-template-columns: 1fr; }
+  .gi-card-sm { grid-template-columns: 1fr; }
+  .gi-shot { border-right: none; border-bottom: 1px solid var(--border2, #e6e2da); }
+  .gi-card-sm .gi-shot { border-bottom-color: var(--border, #dad6ce); }
+  /* Small-feature cards collapse the shot entirely on phones — the label and
+     description carry the idea without requiring a tiny thumbnail. */
+  .gi-card-sm .gi-shot { display: none; }
   /* Two columns of short labels on a phone, not one: 26 items in a single
      column is a wall to scroll past, which is the thing the owner objected to.
      They are labels, so they fit. */
@@ -771,7 +781,7 @@
       </div>
     </div>
 
-    <div class="gi-card gi-card-wide">
+    <div class="gi-card">
       <!-- Screenshot: the Currency pill expanded on a live guide.
            /guides/athens.html at 820px / 2x — click #tve-cur-pill, put a number
            in the first field, clip the pill row plus #tve-cur-panel. The rate
@@ -780,8 +790,50 @@
         alt="The guide&rsquo;s action row with Currency open: sixty US dollars converting to fifty-one euros eighty-five, with the rate and its date underneath"
         loading="lazy" width="1544" height="284"></span>
       <div class="gi-body">
-        <h3>Calendar. Offline. Maps. Currency.</h3>
-        <p>One row, on every guide.</p>
+        <h3>Currency, calendar, offline &mdash; one row</h3>
+        <p>Convert in either direction, export a day to Apple Calendar, or save the guide to read with no signal.</p>
+      </div>
+    </div>
+
+    <div class="gi-card gi-card-sm">
+      <!-- Screenshot: the guide stop row with its tick checked and the stop
+           visually marked as done. /guides/athens.html at 820px / 2x — click
+           the ✓ circle on any stop, clip the stop header row only
+           (~1472 x 200px). The tick, the dim treatment and the strikethrough
+           are what makes this shot distinct from the day-tools card. -->
+      <span class="gi-shot"><img src="/assets/guides-intro/guide-stop.png"
+        alt="A guide stop with the tick-off circle checked and the stop row visually dimmed to show it is done"
+        loading="lazy" width="1456" height="1048"></span>
+      <div class="gi-body">
+        <h3>Tick off as you go</h3>
+        <p>Check a stop when you leave &mdash; it dims so you always know where you are in the day without scrolling back up.</p>
+      </div>
+    </div>
+
+    <div class="gi-card gi-card-sm">
+      <!-- Screenshot: the guide action row with the Calendar button highlighted,
+           or the currency panel row showing all four action pills.
+           /guides/athens.html at 820px / 2x — clip the pill row (#ics-pill-row
+           or the action strip just above #tve-cur-panel), ~1544 x 180px. -->
+      <span class="gi-shot"><img src="/assets/guides-intro/currency.png"
+        alt="The guide action row showing Calendar, Offline, Maps and Currency buttons side by side"
+        loading="lazy" width="1544" height="284"></span>
+      <div class="gi-body">
+        <h3>Add a day to Apple Calendar</h3>
+        <p>Tap <strong>Calendar</strong> on any day and it lands in your own calendar &mdash; with every stop, its address and how long you have there.</p>
+      </div>
+    </div>
+
+    <div class="gi-card gi-card-sm">
+      <!-- Screenshot: the Read About page header for a live guide. Load
+           /guides/athens-read-about.html at 820px / 2x, clip the top
+           ~1544 x 600px (hero, byline, first paragraph of the story). -->
+      <span class="gi-shot"><img src="/assets/guides-intro/guide-overview.png"
+        alt="The Read About page for Athens: a full-width photo of the Acropolis, the city name, and the opening paragraphs of the story"
+        loading="lazy" width="1544" height="1276"></span>
+      <div class="gi-body">
+        <h3>The story behind the city</h3>
+        <p>Every guide has a Read About page &mdash; the history, the character, and what makes the place worth the flight.</p>
       </div>
     </div>
   </div>
