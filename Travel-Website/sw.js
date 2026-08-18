@@ -1534,7 +1534,8 @@
 /* 2026-08-18: toolbar.js comments only — five stale references to an in-guide Hotels & Flights panel that does not exist, corrected to describe the code as it is (8529b096). No behaviour change; the bump is here because the push guard cannot tell a comment from a behaviour and satisfying it is cheaper than arguing with it. toolbar.js -> v748. CACHE to v1074. */
 /* 2026-08-18: guide-style — align .next banner left edge with .lounge-arrival-chip (border-left-width:3px); push Read More row 16px below prose card (margin-top outside the white tile). guide-style.css -> v242. CACHE to v1076. */
 /* 2026-08-18: pill sweep — all essentials filter/nav pill rows unified to 999px radius, terracotta outlined, gap spacing matching the toolbar pill grammar. Active state = outlined (never solid fill). Fixed solid-fill violations on tipping, insurance, best-of. web-travel-style.css -> v69, trains.css -> v6. CACHE to v1077. */
-var CACHE = 'travel-cache-v1077';
+/* 2026-08-18: guide-style — Collapse toggle now takes the section nav pill's own tokens (--c-pill-bg/-bd/-text, 20px radius, 14px, 4px 10px) instead of the .next motion-banner greys at 6px/15px, which put a third shape in a row that already reads as chips. Same pass: the Trip Overview rail ran SMALLER on desktop than on a phone — the phone block raises --fs-small to 13px and desktop kept 12px, so .ovd-num and .ovd-count were the smallest type on the page at the distance you read it from furthest away. Set on the two rail parts, not on --fs-small, which is the shared caption token. guide-style.css -> v243. CACHE to v1078. */
+var CACHE = 'travel-cache-v1078';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1542,7 +1543,7 @@ var CACHE = 'travel-cache-v1077';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 242,'toolbar.js': 749, 'mobile.css': 87, 'web-travel-style.css': 69, 'guides-index-style.css': 15, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 243,'toolbar.js': 749, 'mobile.css': 87, 'web-travel-style.css': 69, 'guides-index-style.css': 15, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
