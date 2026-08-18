@@ -1136,6 +1136,59 @@ window.TVE.home = (function () {
     return NAV_ICONS[key] || (GM_SPRITE[key] ? SPRITE_ONLY : null);
   }
 
+  /* ── MONO ACTION-ROW MARKS (owner 2026-08-18: "Icon takes the label's colour
+     — i loved this one"). ────────────────────────────────────────────────────
+     The action row's five icons each came from a different catalogue family, so
+     one row carried a RED calendar, a GREEN-and-BLUE map, a GREEN arrow and a
+     GOLD-and-TEAL coin pair. Every icon correct on its own; four unrelated hues
+     together, which is what the owner called a carnival.
+
+     These are drawn as MARKS, not as catalogue icons — the same distinction the
+     site already makes for the row marks _injectRowMarks paints inside every
+     stop, which are flat single-colour silhouettes rather than gradient icons.
+     `fill: currentColor` is what makes them take the label's colour, so the
+     icon and the word are one object and the icon follows the pill's ink
+     automatically — change the label colour and nothing here has to move.
+
+     Deliberately NOT the gradient-and-rim catalogue treatment: that rule
+     governs ICONS, and a mark is the other system. Do not "restore" these to
+     GM_SPRITE — that is the carnival coming back.
+
+     EVERY PATH BELOW IS THE CATALOGUE'S OWN, taken verbatim from
+     `icon_find.py --embed 46,12,617,375,1265,40` and flattened to currentColor.
+     Nothing here is hand-drawn (Twenty-eighth non-negotiable: an icon is
+     reused, never redrawn) — a hand-cut copy loses the optical normalisation
+     the specimen's viewBox carries and renders visibly undersized beside its
+     neighbours. Each entry keeps its OWN vb for the same reason.
+     The light shapes that survive as knockouts — the tick on #1265, the
+     currency glyph on #375, the pin's hole on #40 — take --c-pill-bg rather
+     than currentColor, because a one-colour mark swallows them otherwise.
+     To change a drawing: re-run the script, do not edit the path by hand. */
+  var GM_MONO = {
+    'cal-export': { vb: '0.10 -0.90 23.81 23.81', m: '<path fill="none" stroke="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" stroke-width="0.6"/>' },
+    'country-map': { vb: '0 0 24 24', m: '<path fill="none" stroke="currentColor" d="M2 5.2 8.6 3v16L2 21.2z" stroke-width="0.5"/><path opacity=".42" fill="none" stroke="currentColor" d="M8.6 3 15.4 5.2v16L8.6 19z" stroke-width="1" stroke-linejoin="round" /><path fill="none" stroke="currentColor" d="M15.4 5.2 22 3v16l-6.6 2.2z" stroke-width="0.5"/><path fill="none" stroke="var(--c-pill-bg,#fdf8f0)" d="M17.4 5.6a2.3 2.3 0 0 0-2.3 2.3c0 1.7 2.3 4.3 2.3 4.3s2.3-2.6 2.3-4.3a2.3 2.3 0 0 0-2.3-2.3z" stroke-width="0.5"/>' },
+    'download': { vb: '0 0 24 24', m: '<path fill="none" stroke="currentColor" d="M12 4v11.4" stroke-width="2.3" stroke-linecap="round"/><path fill="none" stroke="currentColor" d="M6.8 10.2 12 15.4l5.2-5.2" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><path fill="none" stroke="currentColor" d="M5.4 19.6h13.2" stroke-width="2.3" stroke-linecap="round"/>' },
+    'exchange': { vb: '0 0 24 24', m: '<circle opacity=".42" fill="none" stroke="currentColor" cx="8.4" cy="14.6" r="6.6" stroke-width="0.5"/><circle fill="none" stroke="currentColor" cx="16.2" cy="9.4" r="6.2" stroke-width="0.5"/><path fill="none" stroke="var(--c-pill-bg,#fdf8f0)" d="M16.2 6.2v6.4M14.5 7.9h3.4M14.5 10.9h3.4" stroke-width="1.1" stroke-linecap="round"/>' },
+    'check': { vb: '0 0 24 24', m: '<circle fill="none" stroke="currentColor" cx="12" cy="12" r="10.6" stroke-width="0.5"/><path fill="none" stroke="var(--c-pill-bg,#fdf8f0)" d="M6.8 12.4 10.4 16l6.8-8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>' },
+    'pin': { vb: '0 0 24 24', m: '<path fill="none" stroke="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" stroke-width="0.5" fill-rule="evenodd"/>' }
+  };
+  /* mono=true forces the flat currentColor mark and SKIPS the coloured sprite.
+     Passed explicitly at the action-row call sites rather than inferred from the
+     key, because several of these keys (check, pin) are also drawn in full
+     colour elsewhere and must keep their catalogue treatment there. */
+  function monoSVG(key, size) {
+    var d = GM_MONO[key];
+    if (!d) return iconSVG(null, size, key);
+    /* THE SPECIMEN'S OWN viewBox, never a fixed square. Catalogue drawings are
+       optically normalised inside their own box — #46 is '0.10 -0.90 23.81
+       23.81' — so forcing '0 0 24 24' shifts and rescales the artwork. That is
+       the exact failure Site-Icons.html § size standard describes, and it is
+       invisible until the mark sits beside a correctly-boxed neighbour. */
+    return '<svg class="gm-ic gm-ic-mono" width="' + size + '" height="' + size +
+           '" viewBox="' + d.vb + '" fill="currentColor" aria-hidden="true">' +
+           d.m + '</svg>';
+  }
+
   function iconSVG(entry, size, key) {
     /* Coloured symbol wins when one exists. The <use> inherits nothing from the
        old fill="var(--rust)" because every shape inside the symbol carries its
@@ -2730,7 +2783,7 @@ window.TVE.home = (function () {
           var pill = document.createElement('a');
           pill.className = 'overview-extra-link';
           pill.href = mapHref;
-          pill.innerHTML = iconSVG(GM_SPRITE['country-map'] && 'country-map', 15, 'country-map') + ' All Stops Map';
+          pill.innerHTML = monoSVG('country-map', 15) + ' All Stops Map';
           gelRow.appendChild(pill);
         }
       };
@@ -3310,7 +3363,7 @@ window.TVE.home = (function () {
     var bTitle = document.createElement('div');
     bTitle.style.cssText = 'margin-bottom:5px;padding-right:28px;';
     var bTitleText = document.createElement('span');
-    bTitleText.innerHTML = iconSVG(GM_SPRITE['cal-export'] && 'cal-export', 15, 'cal-export') + ' Export to Calendar';
+    bTitleText.innerHTML = monoSVG('cal-export', 15) + ' Export to Calendar';
     bTitleText.style.cssText = 'font-size:15px;font-weight:700;color:#1b2531;';
     bTitle.appendChild(bTitleText);
 
@@ -3440,7 +3493,7 @@ window.TVE.home = (function () {
     /* ── Trigger link — <a> matches the other pills exactly, terracotta border only ── */
     var trigBtn = document.createElement('a');
     trigBtn.href = 'javascript:void(0)';
-    trigBtn.innerHTML = iconSVG(GM_SPRITE['cal-export'] && 'cal-export', 15, 'cal-export') + ' Export to Calendar';
+    trigBtn.innerHTML = monoSVG('cal-export', 15) + ' Export to Calendar';
     trigBtn.className = 'overview-extra-link';
     trigBtn.addEventListener('click', function (e) {
       e.preventDefault(); e.stopPropagation();
@@ -4499,8 +4552,8 @@ window.TVE.home = (function () {
     btn.className = 'overview-extra-link';
     btn.id = 'tve-offline-btn';
     btn.innerHTML = saved
-      ? iconSVG(NAV_ICONS['check'], 15, 'check') + ' Saved for Offline'
-      : iconSVG(NAV_ICONS['download'], 15, 'download') + ' Save for Offline';
+      ? monoSVG('check', 15) + ' Saved for Offline'
+      : monoSVG('download', 15) + ' Save for Offline';
     if (saved) {
       btn.classList.add('tve-saved');
       btn.style.setProperty('cursor', 'default', 'important');
@@ -4531,7 +4584,7 @@ window.TVE.home = (function () {
       if (localStorage.getItem(storageKey)) {
         /* Already saved → toggle back to the resting state (mirrors I've Been). */
         localStorage.removeItem(storageKey);
-        btn.innerHTML = iconSVG(NAV_ICONS['download'], 15, 'download') + ' Save for Offline';
+        btn.innerHTML = monoSVG('download', 15) + ' Save for Offline';
         btn.classList.remove('tve-saved');
         btn.style.setProperty('cursor', 'pointer', 'important');
         return;
@@ -4621,19 +4674,19 @@ window.TVE.home = (function () {
     btn.className = 'overview-extra-link' + (visited ? ' tve-been' : '');
     btn.id = 'tve-visited-btn';
     btn.innerHTML = visited
-      ? iconSVG(NAV_ICONS['check'], 15, 'check') + ' I’ve Been'
-      : iconSVG(NAV_ICONS['pin'], 15, 'pin') + ' I’ve Been';
+      ? monoSVG('check', 15) + ' I’ve Been'
+      : monoSVG('pin', 15) + ' I’ve Been';
 
     btn.addEventListener('click', function (e) {
       e.preventDefault(); e.stopPropagation();
       var nowVisited = !!localStorage.getItem(storageKey);
       if (nowVisited) {
         localStorage.removeItem(storageKey);
-        btn.innerHTML = iconSVG(NAV_ICONS['pin'], 15, 'pin') + ' I’ve Been';
+        btn.innerHTML = monoSVG('pin', 15) + ' I’ve Been';
         btn.classList.remove('tve-been');
       } else {
         localStorage.setItem(storageKey, '1');
-        btn.innerHTML = iconSVG(NAV_ICONS['check'], 15, 'check') + ' I’ve Been';
+        btn.innerHTML = monoSVG('check', 15) + ' I’ve Been';
         btn.classList.add('tve-been');
       }
     });
@@ -7417,7 +7470,7 @@ window.TVE.home = (function () {
       pill.href = 'javascript:void(0)';
       pill.className = 'overview-extra-link';
       pill.id = 'tve-cur-pill';
-      pill.innerHTML = iconSVG(NAV_ICONS['exchange'], 15, 'exchange') + ' Currency';
+      pill.innerHTML = monoSVG('exchange', 15) + ' Currency';
       pill.setAttribute('aria-expanded', 'false');
       pill.setAttribute('aria-controls', 'tve-cur-panel');
       pill.style.setProperty('flex', '1 1 0', 'important');
@@ -8351,7 +8404,18 @@ window.TVE.home = (function () {
             /* Coloured symbol if there is one, else the original mask class.
                The wrapper span is kept either way so sizing, alignment and the
                .gm-mk selectors other injectors rely on are unchanged. */
-            if (GM_SPRITE[mkey]) {
+            /* INSIDE THE ACTION ROW the mark is MONO, like every other pill
+               there (owner 2026-08-18). The 🗺 All Stops Map pill is the one
+               action pill whose label is authored in each guide's HTML rather
+               than built by toolbar.js, so it reaches its icon through this
+               render-time pass instead of monoSVG — and without this branch it
+               kept the full-colour green-and-blue sprite while the four pills
+               beside it had gone mono. That is the carnival surviving in the
+               one place nobody would look for it. */
+            if (GM_MONO[mkey] && row.closest && row.closest('#ics-pill-row')) {
+              mk.className = 'gm-mk gm-mk-c gm-mk-mono';
+              mk.innerHTML = monoSVG(mkey, 15);
+            } else if (GM_SPRITE[mkey]) {
               mk.className = 'gm-mk gm-mk-c';
               mk.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-' + mkey + '"/></svg>';
             } else {

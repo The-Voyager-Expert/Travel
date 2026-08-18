@@ -628,28 +628,41 @@ a.title-hotel-request:visited { color: #3d3a32; }   /* owner rule 2026-07-28: no
    text + thin gold border; ID overrides beat that specificity. */
 
 /* Button-group join: collapse double borders and square inner corners when
-   pills sit flush (gap:0) in #ics-pill-row.
-   Also restores the gold border + white bg the action bar had before the
-   section-chip borderless fill was introduced — both rows share overview-extras
-   so the base rule hits both; these overrides scope the action bar back. */
+   pills sit flush (gap:0) in #ics-pill-row. Both rows share .overview-extras,
+   so the base rule hits both and these overrides scope the action bar back.
+   (The old note here said this "restores the gold border + white bg" — that
+   stopped being true when the row moved onto the section pill's own tokens
+   below; it is now the same warm ground and the same warm hairline.) */
 #ics-pill-row { margin-top: 36px; margin-bottom: 14px; }   /* extra separation from the Trip Overview card so the toolbar doesn't overshadow it */
+/* THE ACTION ROW TAKES THE SECTION PILL'S OWN TOKENS (owner 2026-08-18: "for
+   the action button the pill background let's use the same as the extra
+   sections pills"). It used to carry --c-warm-bg on --c-index-border, which
+   looked identical in light mode — --c-warm-bg and --c-pill-bg are both
+   #fdf8f0 — and diverged in two places nobody was looking: the BORDER was the
+   grey index hairline rather than the pills' warm one, and in DARK MODE the two
+   backgrounds are genuinely different values (#242220 against #2a2825), so the
+   action row sat a shade darker than the chips directly above it. Reading the
+   same tokens is what stops them drifting apart again.
+   Ink is deliberately left as --c-text-primary for now; the inside of the pill
+   is a separate decision. */
 #ics-pill-row > .overview-extra-link {
-  border: 1px solid var(--c-index-border);
-  background: var(--c-warm-bg);
-  color: var(--c-text-primary);
+  border: 1px solid var(--c-pill-bd);
+  background: var(--c-pill-bg);
+  color: var(--c-pill-text);
   font-weight: 500;
   letter-spacing: 0.01em;
 }
-#ics-pill-row > .overview-extra-link:not(:first-child) {
-  border-left-width: 0;
-  border-radius: 0;
-}
-#ics-pill-row > .overview-extra-link:first-child {
-  border-radius: 6px 0 0 6px;
-}
-#ics-pill-row > .overview-extra-link:last-child {
-  border-radius: 0 6px 6px 0;
-}
+/* SEPARATE PILLS, not a joined button group (owner 2026-08-18: "lets separate
+   them"). Each pill carries its own 6px corners and full border; the row gets a
+   real gap. The `!important` on the gap is not decoration — toolbar.js builds
+   this row with an INLINE `display:flex;gap:0;width:100%`, which no ordinary
+   stylesheet rule can beat.
+   The three seam rules that used to live here — border-left-width:0 on
+   :not(:first-child) plus the two half-radius end caps — are DELETED. They
+   existed only to collapse double borders when the pills sat flush. Re-adding
+   any of them re-joins the row. */
+#ics-pill-row { gap: 8px !important; flex-wrap: wrap !important; }
+#ics-pill-row > .overview-extra-link { border-radius: 6px; }
 
 /* A flex item's default min-width:auto refuses to shrink below its content, so
    the labels overflowed the pills instead of the pills getting narrower. */
@@ -786,8 +799,10 @@ a.title-hotel-request:visited { color: #3d3a32; }   /* owner rule 2026-07-28: no
    it) so all four sides are uniformly terracotta; -1px margin overlaps the neighbour's
    right border so there's no double seam or layout shift. Needs the
    #ics-pill-row > id.class specificity to beat the (1,2,0) button-group rule. */
-#ics-pill-row > #tve-visited-btn.tve-been,
-#ics-pill-row > #tve-offline-btn.tve-saved { border-left-width: 1px; margin-left: -1px; }
+/* Was: restore the collapsed left border and pull back 1px, so a toggled pill
+   did not grow the row by a hairline. Dead now that the pills are separated and
+   every one keeps a full border — kept as a marker so the -1px does not come
+   back with someone re-reading the old button-group rules. */
 @media (hover: hover) {
   #ics-cal-pill:hover, #ics-map-pill:hover, #tve-offline-btn:hover, #tve-visited-btn:hover { background: var(--c-pill-hover); border-color: var(--c-pill-bd-hover); }
 }
@@ -807,7 +822,7 @@ a.title-hotel-request:visited { color: #3d3a32; }   /* owner rule 2026-07-28: no
 #tve-cur-pill.tve-cur-on:visited { color: #C04E1A; }
 /* Same collapsed-left-border restore the other two toggled-on pills need — the
    button-group :not(:first-child) rule zeroes it; -1px margin hides the seam. */
-#ics-pill-row > #tve-cur-pill.tve-cur-on { border-left-width: 1px; margin-left: -1px; }
+/* Same as above — the currency pill's seam compensation is dead with separated pills. */
 @media (hover: hover) {
   #tve-cur-pill:hover { background: var(--c-pill-hover); border-color: var(--c-pill-bd-hover); }
 }
