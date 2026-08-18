@@ -158,7 +158,15 @@
    rule that never applied changes nothing on screen, which is the only reason it
    is safe to delete. */
 @media (max-width: 62rem) {
-  .lp-hero { grid-template-columns: 1fr; }
+  /* minmax(0, 1fr), not 1fr: a bare 1fr track takes its MINIMUM from its
+     content, so one fixed-width child stretches the whole column past the
+     viewport and the page scrolls sideways. The § 14 search bar added to this
+     column on 2026-08-18 is exactly that — width: var(--search-w, 440px), a
+     hard 440px against a 393px phone — and it pushed the hero, the h1, the
+     paragraph and the buttons 79px off the right edge, not just itself. The
+     desktop track above already reads minmax(0, …) for this reason; the phone
+     one did not, and had simply never been given a fixed-width child. */
+  .lp-hero { grid-template-columns: minmax(0, 1fr); }
   /* The phone's tracks are pinned separately because the page never resolved to
      the same shape on both. Measured at 393px, the original four gave columns of
      114.4 / 114.4 / 119.5 and rows of 79.6 / 80.7 / 123.0 — the third column
@@ -255,6 +263,39 @@
   margin: 0 0 clamp(1.4rem, 3vw, 2rem);
 }
 .lp-actions { display: flex; flex-wrap: wrap; gap: clamp(0.55rem, 1.2vw, 0.85rem); }
+
+/* ── Hero guide picker (owner 2026-08-18) ────────────────────────────────────
+   The lead line is the hero paragraph's own type, one step down, with the verb
+   in terracotta so it reads as a continuation of that sentence rather than as
+   a second heading. Never give it a size or weight of its own beyond this: the
+   h1 is the only voice in this column.
+
+   THE FIELD ITSELF IS STYLED NOWHERE HERE, deliberately. It is a bare
+   input[type="search"], so it takes the § 14 standard from web-travel-style.css
+   whole — 440x56, 6px radius, 17px, the shared magnifier, the placeholder
+   colour and both dark-mode overrides. Restating any of those here is what
+   `check_search_bar_standard` exists to catch, and this block carried a 680px
+   999px hero pill for exactly one run before that gate caught it: the pill
+   belongs to FORMAT_EXCEPTION_PAGES, and the site root is not one.
+
+   The two rules below are the only things the standard does not supply:
+   the dropdown's anchor, and the § 43 gap. --search-gap goes on the WRAPPER
+   and the input's own 14px margin-bottom is zeroed, or the bar sits with twice
+   as much room below it as above. */
+.lp-pick { margin-top: clamp(1.15rem, 2.4vw, 1.6rem); }
+.lp-pick-lead {
+  font-size: clamp(0.94rem, 1.3vw, 1.06rem);
+  line-height: 1.55;
+  color: var(--muted, #6a6660);
+  margin: 0 0 0.7rem;
+  max-width: 46ch; }
+.lp-pick-lead em { font-style: normal; color: var(--rust, #C04E1A); font-weight: 600; }
+#lp-guide-wrap { position: relative; display: block; max-width: var(--search-w, 440px); }
+/* max-width, never width: the § 14 rule's own `width: var(--search-w)` is
+   what check_search_bar_standard measures, so it stays untouched and this
+   only lets the bar shrink on a screen narrower than 440px. */
+#lp-guide-wrap #lp-guide-search { margin-bottom: 0; max-width: 100%; }
+#lp-guide-wrap .sa-suggest { left: 0; right: 0; top: calc(100% + 8px); text-align: left; }
 
 .lp-btn {
   display: inline-flex; align-items: center; gap: 0.45em;
@@ -2148,6 +2189,37 @@ window.lpGuideCard = function (href, flag, name, extra) {
     <a class="lp-btn" href="/guides/">Browse over 230 guides</a>
     </div>
 
+  <!-- Or skip all of it (owner 2026-08-18): "if you know where you want to go,
+       pick your guide … the drop-down with all guides and as they type the
+       country or city the drop down keeps filling in with the options."
+
+       The hero paragraph above already promises this — "If you already know
+       where you're going, go straight to the guide" — and until now the only
+       way to act on it was the Browse button and a 237-card mosaic. This is
+       that sentence given a control, which is why the lead line picks the
+       promise up rather than restating it.
+
+       THIS IS THE § 14 STANDARD BAR, NOT THE HERO PILL, and the distinction
+       cost a rewrite. The 680px/999px pill belongs to hero-pill pages, and
+       those are exactly the pages in FORMAT_EXCEPTION_PAGES — which the site
+       ROOT index.html is explicitly NOT in (Twenty-ninth non-negotiable, in as
+       many words). So `check_search_bar_standard` measures this page and the
+       pill hard-fails it six ways. A bare input[type="search"] takes the whole
+       standard from web-travel-style.css — 440x56, 6px radius, 17px, the
+       shared magnifier — so there is nothing to restate here and no third
+       search shape invented. The placeholder is the guides index's own "City
+       or country", which is also the promise that typing a COUNTRY works.
+
+       #lp-guide-wrap is position:relative because TVESearch appends its
+       dropdown into it; without it the list anchors to the page. -->
+  <div class="lp-pick">
+    <p class="lp-pick-lead">Or, if you already know where you are going &mdash; <em>pick your guide</em>.</p>
+    <div id="lp-guide-wrap">
+      <input type="search" class="search-input" id="lp-guide-search" placeholder="City or country" aria-label="Find a guide by city or country" autocomplete="off">
+    </div>
+  </div>
+  </div>
+
   <!-- 2026-08-15: the "When to Go" pair that sat here was removed. It existed to
        fill the 129px this column ran short of the mosaic beside it — filler, not
        content — and it was a third route to two things already on this page:
@@ -3741,47 +3813,6 @@ window.lpGuideCard = function (href, flag, name, extra) {
 
   <p class="cf-note">Prefer your own mail app? <a href="mailto:contact@guidemydays.com">contact@guidemydays.com</a></p>
 </details>
-
-<script>
-/* ── The two jump menus ─────────────────────────────────────────────────────
-   Best Of is a static list (34 categories, they change rarely and a wrong one
-   is a 404 you'd notice). The guide picker is built from search-index.json —
-   the same file the site search reads — so it lists exactly the guides that
-   shipped and cannot drift as guides are added. If the fetch fails the select
-   simply stays disabled with a note; the "Browse all the guides" button beside
-   it is a plain link and always works. */
-(function () {
-  var pick = document.getElementById('guide-pick');
-  if (!pick || !window.fetch) return;
-
-  fetch('/assets/search-index.json')
-    .then(function (r) { return r.json(); })
-    .then(function (data) {
-      var guides = (data && data.guides) || [];
-      if (!guides.length) throw new Error('no guides');
-      guides.slice().sort(function (a, b) {
-        return (a.c || '').localeCompare(b.c || '');
-      }).forEach(function (g) {
-        if (!g.u || !g.c) return;
-        var o = document.createElement('option');
-        /* `u` is WEB_ROOT-relative ("guides/City/city.html") and this page IS
-           the web root, so it is already the correct href from here. */
-        o.value = './' + g.u;
-        o.textContent = g.c;
-        pick.appendChild(o);
-      });
-      pick.options[0].textContent = '…or pick one of ' + guides.length + ' cities';
-      pick.addEventListener('change', function () {
-        if (pick.value) location.href = pick.value;
-      });
-    })
-    .catch(function () {
-      pick.disabled = true;
-      pick.options[0].textContent = 'City list unavailable — use Browse all';
-    });
-})();
-</script>
-
 <script>
 /* Arriving at #contact must OPEN the form, not just scroll to it.
    The toolbar's Contact tab points here, and #contact is the <details> element
@@ -4616,6 +4647,75 @@ function render() {
     }
   });
 }());</script>
+<script>
+/* ── The hero guide picker ──────────────────────────────────────────────────
+   Owner 2026-08-18: "the drop-down with all guides and as they type the country
+   or city the drop down keeps filling in with the options."
+
+   This REPLACES a dead script. The Best Of / guide jump menus that used to sit
+   here were removed in a redesign; the #guide-pick <select> half of it went
+   with them, but its script stayed and has been early-returning on a missing
+   element ever since. It also built its own label reading "…or pick one of N
+   cities" — an exact fleet count in reader-facing text, which is now banned
+   (Fifty-second non-negotiable). It never rendered, so nobody saw either fault.
+
+   MATCHING ON COUNTRY IS THE POINT, not a bonus: TVESearch matches `name` OR
+   `sub`, so passing the country as `sub` is what makes typing "Japan" list
+   Tokyo, Kyoto and Osaka. That is the site-wide rule (Thirty-first
+   non-negotiable) and the placeholder promises it in as many words.
+
+   TWO SOURCES, because neither file alone can answer this:
+     · search-index.json  — the authoritative shipped-guide list (name + url),
+       the same file the site search reads, so this cannot drift as guides ship.
+     · country-guides.json — slug → country.
+   The page's own `var G` was the tempting third option and is WRONG here: it is
+   the photo-hero table, so it holds only guides that have had a hero picked.
+   It was 237 rows against 239 shipped guides while this was written — a search
+   silently missing the two newest cities, which is the least visible way to be
+   broken.
+
+   FETCHED ON FIRST INTENT, not on load. search-index.json is 379K; a reader who
+   never touches the field should not pay for it, and one who does gets it on
+   focus, before the first keystroke has finished. The field is attached
+   immediately with an empty list and re-rendered when the data lands, so typing
+   during the fetch is not swallowed. */
+(function () {
+  var input = document.getElementById('lp-guide-search');
+  if (!input || !window.TVESearch || !window.fetch) return;
+
+  var api = TVESearch.attach(input, { items: [] });   /* default onPick → item.href */
+  var loading = false;
+
+  function load() {
+    if (loading) return;
+    loading = true;
+    Promise.all([
+      fetch('/assets/search-index.json').then(function (r) { return r.json(); }),
+      fetch('/assets/country-guides.json').then(function (r) { return r.json(); })
+        .catch(function () { return null; })          /* countries are a bonus; names are not */
+    ]).then(function (res) {
+      var guides = (res[0] && res[0].guides) || [];
+      var bySlug = (res[1] && res[1]._by_slug) || {};
+      var items = [];
+      guides.forEach(function (g) {
+        if (!g || !g.c || !g.u) return;
+        /* `u` is web-root-relative ("guides/athens.html"); every internal link
+           on this site is root-absolute (Thirtieth non-negotiable). */
+        var href = g.u.charAt(0) === '/' ? g.u : '/' + g.u;
+        items.push({ name: g.c, sub: bySlug[href.replace('/guides/', '')] || '', href: href });
+      });
+      if (!items.length) return;
+      api.setItems(items);
+      if (input.value) api.render();                  /* they typed while it loaded */
+    }).catch(function () {
+      loading = false;                                /* let a later focus retry */
+    });
+  }
+
+  input.addEventListener('focus', load);
+  input.addEventListener('input', load);
+}());
+</script>
 <script>
 /* The trip-length select drives the hidden pills, so the layered filter engine
    stays the only thing that actually filters — no second code path to keep in
