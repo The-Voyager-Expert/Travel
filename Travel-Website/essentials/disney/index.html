@@ -169,12 +169,12 @@ a.pill:visited { color: #6a6660; }
 
   <div class="controls">
     <div class="pills tve-glue-m">
-      <button class="pill" data-filter="dates"   onclick="filterCat(this,'dates')">🟡 When to go <span class="pill-count" id="cnt-dates"></span></button>
-      <button class="pill" data-filter="book"    onclick="filterCat(this,'book')">🟣 Book ahead <span class="pill-count" id="cnt-book"></span></button>
-      <button class="pill" data-filter="rope"    onclick="filterCat(this,'rope')">🔵 Rope drop <span class="pill-count" id="cnt-rope"></span></button>
-      <button class="pill" data-filter="ll"      onclick="filterCat(this,'ll')">🟠 Lightning Lane <span class="pill-count" id="cnt-ll"></span></button>
-      <button class="pill" data-filter="inpark"  onclick="filterCat(this,'inpark')">🟢 In the park <span class="pill-count" id="cnt-inpark"></span></button>
-      <button class="pill" data-filter="transit" onclick="filterCat(this,'transit')">⚫ Getting around <span class="pill-count" id="cnt-transit"></span></button>
+      <button class="pill" data-filter="dates"   onclick="filterCat(this,'dates')" aria-pressed="false">🟡 When to go <span class="pill-count" id="cnt-dates"></span></button>
+      <button class="pill" data-filter="book"    onclick="filterCat(this,'book')" aria-pressed="false">🟣 Book ahead <span class="pill-count" id="cnt-book"></span></button>
+      <button class="pill" data-filter="rope"    onclick="filterCat(this,'rope')" aria-pressed="false">🔵 Rope drop <span class="pill-count" id="cnt-rope"></span></button>
+      <button class="pill" data-filter="ll"      onclick="filterCat(this,'ll')" aria-pressed="false">🟠 Lightning Lane <span class="pill-count" id="cnt-ll"></span></button>
+      <button class="pill" data-filter="inpark"  onclick="filterCat(this,'inpark')" aria-pressed="false">🟢 In the park <span class="pill-count" id="cnt-inpark"></span></button>
+      <button class="pill" data-filter="transit" onclick="filterCat(this,'transit')" aria-pressed="false">⚫ Getting around <span class="pill-count" id="cnt-transit"></span></button>
     </div>
   </div>
 
@@ -397,12 +397,13 @@ function filterCat(btn, cat) {
   document.getElementById('dp-search').value = '';
   if (activeFilter === cat) {
     activeFilter = null;
-    pills.forEach(function (p) { p.classList.remove('active'); });
+    pills.forEach(function (p) { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
     rows.forEach(function (r) { r.classList.remove('hidden'); });
   } else {
     activeFilter = cat;
-    pills.forEach(function (p) { p.classList.remove('active'); });
+    pills.forEach(function (p) { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
     btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
     rows.forEach(function (r) {
       var cats = (r.dataset.cats || '').split(/\s+/);
       r.classList.toggle('hidden', cats.indexOf(cat) === -1);
@@ -418,7 +419,7 @@ function filterCat(btn, cat) {
   var noRes  = document.getElementById('no-results');
   search.addEventListener('input', function () {
     activeFilter = null;
-    document.querySelectorAll('.pill[data-filter]').forEach(function (p) { p.classList.remove('active'); });
+    document.querySelectorAll('.pill[data-filter]').forEach(function (p) { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
     var q = search.value.trim().toLowerCase();
     var visible = 0;
     rows.forEach(function (r) {
