@@ -13,17 +13,11 @@
   --c-skip:        #c8c0b4;
 }
 /* ── Stat bar ── */
-.stat-bar {
-  display: flex; flex-wrap: wrap; gap: 0;
-  margin: 0 0 16px;
-  background: var(--rule,#D2CDCA);
-  border: 1px solid var(--rule,#D2CDCA);
-  border-radius: 8px; overflow: hidden;
-}
+.stat-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 14px; justify-content: center; }
 .stat-pill {
   display: inline-flex; align-items: center; gap: 7px;
-  padding: 9px 16px; flex: 1 1 auto;
-  background: var(--surface); border: none;
+  padding: 7px 16px; border-radius: 999px; border: 1.5px solid; flex: 1 1 auto;
+   
   font-size: 12px; color: var(--text); white-space: nowrap;
 }
 .stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -36,20 +30,15 @@
 /* ── Filter pills ── */
 .controls { margin-bottom: 20px; }
 .pills { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
-.pill {
-  display: inline-flex; align-items: center; justify-content: center;
-  flex: 0 0 auto; height: 36px;
-  padding: 0 14px; border: 1px solid rgba(192,78,26,.30);
-  border-radius: 999px; background: var(--surface,#fff);
-  font-family: inherit; font-size: 13px; font-weight: 500; line-height: 1;
-  color: var(--rust,#C04E1A);
-  cursor: pointer; transition: background .12s, color .12s, border-color .12s; white-space: nowrap;
-}
-a.pill:visited { color: var(--rust,#C04E1A); }
-.pill:hover { background: #fdf4ed; border-color: rgba(192,78,26,.55); }
-.pill.active,
-.pill.active:hover,
-.pill.active:focus { background: #fdf4ed; color: var(--rust,#C04E1A); border-color: rgba(192,78,26,0.85); font-weight: 600; }
+  /* Geometry only. Colour comes from the fam-* class on each button — this rule
+     used to set background:var(--surface) and color:var(--rust), which painted
+     every pill white with terracotta ink and outranked the family classes. */
+  .pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    flex: 0 0 auto; padding: 3px 8px; border-width: 1px; border-style: solid;
+    border-radius: 4px; font-family: inherit; font-size: 11px; font-weight: 700;
+    line-height: 1.5; letter-spacing: 0.04em; cursor: pointer; white-space: nowrap;
+  }
 /* ── Region headers (B — hairline rule) ── */
 .region-header {
   display: flex; align-items: center; gap: 12px;
@@ -124,29 +113,27 @@ a.pill:visited { color: var(--rust,#C04E1A); }
   /* No phone override: the gap above and below the search is one token
      (--search-gap) at every viewport — owner rule 2026-08-17. */
   .pills { display: flex !important; flex-wrap: wrap !important; gap: 5px !important; justify-content: center !important; }
-  .pill { flex: 0 0 auto !important; height: 36px !important; padding: 4px 10px !important; border-radius: 999px !important; font-size: 12px !important; white-space: nowrap !important; border: 1px solid rgba(192,78,26,.30) !important; color: var(--rust,#C04E1A) !important; }
-  .pill.active, .pill.active:hover, .pill.active:focus { background: #fdf4ed !important; border-color: rgba(192,78,26,0.85) !important; color: var(--rust,#C04E1A) !important; }
   .stat-bar { display: grid; grid-template-columns: repeat(2, 1fr); }
-  .stat-pill { font-size: 11.5px; padding: 4px 6px; height: 40px; border-radius: 0; justify-content: center; }
+  .stat-pill { font-size: 11.5px; padding: 4px 6px; height: 40px; border-radius: 999px; justify-content: center; }
   .country-row { grid-template-columns: 1fr; gap: 12px; padding: 13px 14px 13px 18px; }
   .tip-label { width: 120px; }
 }
 @media (prefers-color-scheme: dark) {
   :root { --rule: #3a3730; }
   #region-pills.pills .pill { color: var(--text); }
-  #region-pills.pills .pill.active,
-  #region-pills.pills .pill.active:hover,
-  #region-pills.pills .pill.active:focus { color: #fff; }
+  
   .stat-label { color: var(--muted); }
   .region-header { color: var(--muted); }
 }
 
-/* Moved out of html/:root[data-theme="dark"] on 2026-08-18: the manual
-   theme toggle was removed, nothing stamps that attribute any more, and the
-   selectors could never match. Never put one back — the media query is the
-   only path to dark mode now. */
-@media (prefers-color-scheme: dark) {
-   { --rule: #3a3730; }
+/* Filter pills: ONE BOX rule (same size as .badge — no hover, no transition).
+   Colour cannot tell these apart from tipping norm badges: green/blue/yellow/grey
+   mean Expected/Appreciated/Check Bill/Not Customary on the stat bar and all
+   country rows, so all six region filters share fam-grey. */
+.pill.active, .pill.is-on {
+  outline: 2.5px solid currentColor;
+  outline-offset: 2px;
+  font-weight: 600;
 }
 </style>
 <link rel="stylesheet" href="/assets/mobile.css?v=53">
@@ -190,19 +177,19 @@ a.pill:visited { color: var(--rust,#C04E1A); }
     <input type="search" class="search-input" id="search" placeholder="Country or city" aria-label="Search by country or city" autocomplete="off">
   </div>
 
-  <div class="stat-bar" id="stat-bar"></div>
 
   <div class="controls">
     <div class="pills" id="region-pills">
-      <button class="pill active" data-region="all" aria-pressed="true">All</button>
-      <button class="pill" data-region="americas" aria-pressed="false">Americas</button>
-      <button class="pill" data-region="caribbean" aria-pressed="false">Caribbean</button>
-      <button class="pill" data-region="europe" aria-pressed="false">Europe</button>
-      <button class="pill" data-region="asiapac" aria-pressed="false">Asia · Pacific</button>
-      <button class="pill" data-region="other" aria-pressed="false">M.E. &amp; Africa</button>
+      <button class="pill fam-grey active" data-region="all" aria-pressed="true">All</button>
+      <button class="pill fam-red" data-region="americas" aria-pressed="false">Americas</button>
+      <button class="pill fam-pink" data-region="caribbean" aria-pressed="false">Caribbean</button>
+      <button class="pill fam-purple" data-region="europe" aria-pressed="false">Europe</button>
+      <button class="pill fam-orange" data-region="asiapac" aria-pressed="false">Asia · Pacific</button>
+      <button class="pill fam-blue" data-region="other" aria-pressed="false">M.E. &amp; Africa</button>
     </div>
   </div>
 
+  <div class="stat-bar" id="stat-bar"></div>
   <div class="country-list" id="list"></div>
 
 </div>
