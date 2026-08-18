@@ -1002,19 +1002,32 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
       if (costData) {
         var COUNTRY_CURRENCY = {'United States':'United_States','United Arab Emirates':'United_Arab_Emirates','United Kingdom':'United_Kingdom','South Korea':'South_Korea','New Zealand':'New_Zealand','Sri Lanka':'Sri_Lanka','Costa Rica':'Costa_Rica','Czech Republic':'Czech_Republic','Hong Kong':'Hong_Kong','Puerto Rico':'Puerto_Rico','Sint Maarten':'Sint_Maarten','Turks & Caicos':'Turks_and_Caicos','Cayman Islands':'Cayman_Islands','French Polynesia':'French_Polynesia'};
         var currAnchor = country ? (COUNTRY_CURRENCY[country] || country.replace(/ /g,'_')) : '';
-        var currHref = 'Currency-Guide.html' + (currAnchor ? '#' + currAnchor : '');
+        /* /currencies/, and NOT the pre-flatten 'Currency-Guide.html', which has
+           not existed since 2026-08-16 — this pill 404'd on every result that had
+           cost data. The hash is the FXC anchor (Czech_Republic), which that page
+           reads off window.__tveDeep to fill "To" — the destination's currency.
+           It never fills "From": the reader's own money is theirs to name
+           (Fiftieth non-negotiable). CURRENCY_RATES is keyed by the same anchor. */
+        var currHref = '/currencies/' + (currAnchor ? '#' + currAnchor : '');
+        /* The "1 USD = 149.2 ¥" row is GONE (owner rule 2026-08-18). This page is
+           read by someone searching for their own destination, and it quoted every
+           one of them from a currency chosen for them — the exact thing /currencies/
+           was rebuilt to stop doing ("it cant be anchored agains or starting from an
+           currency", Fiftieth non-negotiable). A rate needs a base and this card has
+           no way to know the reader's, so it names the destination's money and hands
+           the conversion to the page that can ask. Never re-add a rate row here.
+
+           CURRENCY_RATES stays for its SYMBOL, which is not anchored to anything and
+           is what a price tag actually shows. */
         var rateInfo = currAnchor ? CURRENCY_RATES[currAnchor] : null;
-        var rateHtml = '';
-        if (rateInfo && rateInfo.r !== 1) {
-          var r = rateInfo.r, sym = rateInfo.s;
-          var fmtRate = r >= 100 ? Math.round(r).toLocaleString() : r >= 10 ? r.toFixed(1) : r >= 1 ? r.toFixed(2) : r.toFixed(3);
-          rateHtml = '<div class="byg-row"><span class="byg-row-label">1 USD =</span><span class="byg-row-value" style="font-weight:700;">' + fmtRate + ' ' + sym + '</span></div>';
-        }
+        var symHtml = (rateInfo && rateInfo.s)
+          ? '<div class="byg-row"><span class="byg-row-label">Symbol</span><span class="byg-row-value" style="font-weight:700;">' + rateInfo.s + '</span></div>'
+          : '';
         html += '<div class="byg-card byg-card-fixed-sm">' +
           '<div class="byg-card-head"><span class="byg-card-title">Cost &amp; Currency</span></div>' +
           '<div class="byg-row"><span class="byg-row-label">Cost level</span><span class="byg-cost-badge ' + costClass(costData.tier) + '">' + costData.tier + '</span></div>' +
           '<div class="byg-row"><span class="byg-row-label">Currency</span><span class="byg-row-value">' + costData.currency + '</span></div>' +
-          rateHtml +
+          symHtml +
           '<div class="byg-links-row"><a href="' + currHref + '" class="byg-link">All currencies →</a></div>' +
           '</div>';
       }
