@@ -35,6 +35,50 @@ a.jump-pill:visited { color: #6a6660; }
 .rec-section { margin-bottom: 40px; scroll-margin-top: 56px; }
 .rec-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
 
+/* ── The origin control ────────────────────────────────────────────────────
+   "Flight Records — from Seattle (SEA)" was a hardcoded label, and the three
+   sections that ranked by distance ranked from Seattle for every reader on
+   earth. The origin is now named by the reader's own TVE.home and the name IS
+   the control: a label with no way to change it is the thing the owner ruled
+   out, not the label. Same grammar as the landing-page finder's "Where are
+   you flying from?" — this reads its rows through TVE.home.names/lookup so
+   there is one airport list on the site, not a second copy. */
+.rec-section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px 14px; margin-bottom: 6px;
+}
+.rec-section-head .rec-section-title { margin-bottom: 0; }
+.rec-home-field { position: relative; flex: 0 1 300px; }
+/* By ID, deliberately. web-travel-style.css sizes every `input[type=text]` to
+   the 440x56 search standard, and a class rule here loses to it — the same
+   fight mobile.css § 11b-2 documents and solves the same way. This control is
+   not the page's search bar: it is a secondary picker beside a section title,
+   so it is sized to that. */
+#rec-home-in {
+  width: 100%; box-sizing: border-box; height: 36px; min-height: 36px;
+  padding: 0 14px; font: inherit; font-size: 13px;
+  border: 1.5px solid var(--border2, #e6e2da); border-radius: 999px;
+  background: var(--surface); color: var(--text);
+}
+#rec-home-in::placeholder { color: var(--muted); }
+#rec-home-in:hover { border-color: var(--rust, #C04E1A); }
+#rec-home-in:focus { border-color: var(--c-search-focus-border); outline: none; }
+.rec-home-list {
+  list-style: none; margin: 6px 0 0; padding: 6px;
+  position: absolute; left: 0; right: 0; top: 100%; z-index: 20;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: 0 8px 26px rgba(0,0,0,.12);
+  max-height: 232px; overflow-y: auto;
+}
+.rec-home-list[hidden] { display: none; }
+.rec-home-opt {
+  padding: 7px 10px; border-radius: 7px; font-size: 13px;
+  color: var(--text); cursor: pointer;
+}
+.rec-home-opt-on, .rec-home-opt:hover { background: var(--bg, #f0ede8); }
+.rec-home-note { font-size: 11px; color: var(--muted); margin: 0 0 14px; }
+.rec-home-note:empty { display: none; }
+
 /* two-col grid for rankings */
 .rank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .rank-block { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; }
@@ -191,7 +235,18 @@ a.rank-city::after { content: " →"; color: #C04E1A; font-weight: 600; margin-l
 
 <!-- Flight Records -->
 <div class="rec-section" id="flight">
-  <div class="rec-section-title">Flight Records — from Seattle (SEA)</div>
+  <div class="rec-section-head">
+    <div class="rec-section-title">Flight Records — from <span id="rec-home-name">your airport</span></div>
+    <!-- type="text", not type="search": this is a secondary control beside a
+         section title, not the search that opens a page, so it is deliberately
+         outside the 440x56 standard of Formatting.html § 14. Same shape and
+         same reason as the landing finder's #fnd-home-in, which this copies. -->
+    <div class="rec-home-field">
+      <input type="text" id="rec-home-in" class="rec-home-in" placeholder="Fly from another city" autocomplete="off" spellcheck="false" aria-label="Change the airport these rankings are measured from">
+      <ul id="rec-home-list" class="rec-home-list" role="listbox" hidden></ul>
+    </div>
+  </div>
+  <p class="rec-home-note" id="rec-home-note"></p>
   <div class="rank-grid" id="flight-grid"></div>
 </div>
 
@@ -289,42 +344,258 @@ function rankBlock(icon, title, rows) {
 }
 
 // ---- Build all data arrays ----
+/* Every city, Seattle included. It used to be filtered out here by `fm > 0`,
+   which dropped it from Summer Heat, Winter Escapes, Best Value, Guide Length
+   and By Region as well — rankings that have nothing to do with where anyone
+   is flying from. Seattle carries a full climate, cost, safety and days row
+   like any other guide, and is now ranked like one. The reader's OWN city is
+   dropped, but only from the sections that measure distance, and only there. */
 var entries = Object.keys(DATA).map(function(slug) {
   var d = DATA[slug];
   return Object.assign({slug: slug, name: d.n}, d);
-}).filter(function(d) { return d.fm > 0; }); // exclude home (Seattle)
+});
 
-// FLIGHT RECORDS
-(function() {
-  var sorted = entries.slice().sort(function(a,b){ return a.fm - b.fm; });
-  var closest = sorted.slice(0,10);
-  var furthest = sorted.slice(-10).reverse();
+/* ══ HOME-AWARE DISTANCE ═════════════════════════════════════════════════
+   Owner rule 2026-08-18: nothing on the site is anchored to Seattle. This page
+   was the last holdout — three sections ranked by `fm`, the flying minutes of
+   a Delta routing out of SEA, and two of them said so in their titles.
 
-  var closestRows = rankRows(closest, function(d){
-    return '<span class="rank-val">' + d.ft + '</span>';
-  });
-  var furthestRows = rankRows(furthest, function(d){
-    return '<span class="rank-val">' + d.ft + '</span>';
-  });
+   The fix is the one TVE.home already established (toolbar.js § 43) and is NOT
+   to throw the routings away: they are the best data the site has and stay
+   exact for the reader they describe.
 
-  // Nonstop count
-  var nonstop = entries.filter(function(d){ return d.fr === 'nonstop'; });
-  var oneStop = entries.filter(function(d){ return d.fr === '1stop'; });
-  var twoStop = entries.filter(function(d){ return d.fr === '2stop'; });
+     home is SEA  ->  the measured routing verbatim, ranked and shown as the
+                      total journey time the reader actually sits through.
+     home is not  ->  a great-circle FLYING-time estimate from the reader's own
+                      airport, always rendered with a leading "~" and labelled
+                      as an estimate. No hub is invented, no leg is claimed.
 
-  var routeRows = [
-    {label:'Nonstop', count: nonstop.length, cities: nonstop.slice(0,5).map(function(d){return d.name;}).join(', ') + '…'},
-    {label:'1 stop', count: oneStop.length, cities: oneStop.slice(0,5).map(function(d){return d.name;}).join(', ') + '…'},
-    {label:'2 stops', count: twoStop.length, cities: twoStop.slice(0,5).map(function(d){return d.name;}).join(', ') + '…'},
-  ];
-  var routeHtml = routeRows.map(function(r){
-    return '<div class="rank-row"><span class="rank-city" style="font-weight:600">' + r.label + '</span><span class="rank-rg" style="font-size:10px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + r.cities + '</span><span class="rank-val">' + r.count + ' cities</span></div>';
-  }).join('');
+   RANK BY WHAT IS DISPLAYED. The old code sorted on `fm` (585+395 air minutes
+   for Abu Dhabi) while printing `ft` (17h 50m, layovers included) — different
+   quantities, so "Furthest" shipped visibly out of order: 25h15, 23h30, 23h39,
+   23h35 … 19h55, 21h20. Whichever branch runs, the sort key and the printed
+   value are now the same number.
 
+   A city with no airport position is DROPPED from the estimated lists rather
+   than guessed at — the same rule the landing finder applies to a guide with
+   no FMAP entry. And the reader's own city is dropped from these three
+   sections only; it still ranks in Summer Heat, Best Value and the rest. */
+var HOME = window.TVE && window.TVE.home;
+var AIR = null, airPending = false;
+
+/* Accent-folded: the DATA keys are the guide slugs, and six of them carry
+   accents ("Kraków", "São-Paulo") while airports.json is keyed in plain
+   ASCII. Without the fold those six silently lose their coordinates and drop
+   out of every estimated list. */
+function airKey(slug) {
+  var t = String(slug || '');
+  t = t.normalize ? t.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : t;
+  return t.toLowerCase() + '.html';
+}
+
+function destCode(slug) {
+  return (AIR && AIR._by_slug && AIR._by_slug[airKey(slug)]) || '';
+}
+
+/* "17h 02m" / "45m" -> minutes. The printed total is the only place this page
+   holds a journey time, so it is also what the default branch sorts on. */
+function parseHM(txt) {
+  var m = /(?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?/.exec(String(txt || ''));
+  if (!m || (!m[1] && !m[2])) return null;
+  return (+(m[1] || 0)) * 60 + (+(m[2] || 0));
+}
+
+/* The default origin is read off TVE.home's own FALLBACK, never spelled out
+   here. One city name on the site, in the module that owns it — so a page can
+   never drift from it, and a page that hardcodes it can never look correct. */
+function homeIsDefault() { return !HOME || HOME.isDefault(); }
+function homeBase() { return (HOME && HOME.get()) || { city: '', code: '' }; }
+function homeCity() { return homeBase().city; }
+function homeCode() { return homeBase().code; }
+
+/* Minutes from the active origin, or null when this city cannot be measured
+   from it (no coordinates, or it IS the origin). */
+/* Nobody flies to the city they are already in, and matching on airport CODE
+   alone does not catch that: a reader who picks Rome Ciampino gets FCO-coded
+   Rome back as their own nearest destination at "~46m" — two airports, one
+   city, 28km apart. Anything inside 100km of the origin is the origin, which
+   also covers LHR/LGW/STN, JFK/EWR and the rest. The nearest genuinely
+   separate pair the site ships is roughly twice that. */
+var SAME_METRO_KM = 100;
+
+function homeMins(d) {
+  if (homeIsDefault()) return d.fr === 'home' ? null : parseHM(d.ft);
+  var code = destCode(d.slug);
+  if (!code || code === homeCode()) return null;
+  var pos = AIR && AIR.xy && AIR.xy[code];
+  if (!pos) return null;
+  var h = homeBase();
+  if (typeof h.lat === 'number' && HOME.km(h.lat, h.lon, pos[0], pos[1]) < SAME_METRO_KM) return null;
+  return HOME.estimate(pos[0], pos[1]);
+}
+
+function homeVal(d, mins) {
+  return homeIsDefault()
+    ? '<span class="rank-val">' + d.ft + '</span>'
+    : '<span class="rank-val">~' + HOME.fmt(mins) + '</span>';
+}
+
+/* Every city this origin can actually measure, nearest first. */
+function measured() {
+  return entries.map(function(d) {
+    return { d: d, mins: homeMins(d) };
+  }).filter(function(x) {
+    return typeof x.mins === 'number' && x.mins > 0;
+  }).sort(function(a, b) { return a.mins - b.mins; });
+}
+
+function paintHomeSections() {
+  var rows = measured();
+  var city = homeCity();
+  var byMins = {};
+  rows.forEach(function(x) { byMins[x.d.slug] = x.mins; });
+
+  /* FLIGHT RECORDS */
+  var closest = rows.slice(0, 10);
+  var furthest = rows.slice(-10).reverse();
+  function distRows(list) {
+    return rankRows(list.map(function(x) { return x.d; }), function(d) {
+      return homeVal(d, byMins[d.slug]);
+    });
+  }
   document.getElementById('flight-grid').innerHTML =
-    rankBlock('🟢', 'Closest to Seattle', closestRows) +
-    rankBlock('🔴', 'Furthest from Seattle', furthestRows);
-})();
+    rankBlock('\ud83d\udfe2', 'Closest to ' + city, distRows(closest)) +
+    rankBlock('\ud83d\udd34', 'Furthest from ' + city, distRows(furthest));
+
+  /* SAFETY — the second block is "the safe ones you can reach soonest", so it
+     is ordered by the same distance and named after the same origin. */
+  var nearBySafety = rows.filter(function(x) { return x.d.safe === 'Safe'; });
+  var verySafe = entries.filter(function(d) { return d.safe === 'Very Safe'; })
+    .sort(function(a, b) {
+      var am = byMins[a.slug], bm = byMins[b.slug];
+      if (typeof am !== 'number') return 1;
+      if (typeof bm !== 'number') return -1;
+      return am - bm;
+    });
+  document.getElementById('safety-grid').innerHTML =
+    rankBlock('\ud83d\udfe2', 'Very Safe — Top Picks',
+      rankRows(verySafe.slice(0, 10), function() { return safeBadge('Very Safe'); })) +
+    rankBlock('', 'Safe — Closest to ' + city,
+      rankRows(nearBySafety.slice(0, 10).map(function(x) { return x.d; }),
+        function() { return safeBadge('Safe'); }));
+
+  /* BEST COMBOS — only the budget+safe block is distance-ordered. */
+  var budgetSafe = rows.filter(function(x) {
+    var d = x.d;
+    return (d.cost || '').toLowerCase() === 'budget' &&
+      (d.safe === 'Safe' || d.safe === 'Very Safe');
+  }).map(function(x) { return x.d; });
+  var mildSafe = entries.filter(function(d) {
+    return d.hi && d.hi.length > 6 && d.hi[6] >= 20 && d.hi[6] <= 26 &&
+      (d.safe === 'Very Safe' || d.safe === 'Safe');
+  }).sort(function(a, b) { return b.hi[6] - a.hi[6]; });
+  document.getElementById('combos-grid').innerHTML =
+    rankBlock('', 'Budget + Safe — Closest to ' + city,
+      rankRows(budgetSafe.slice(0, 10), function(d) { return tierBadge(d.cost); })) +
+    rankBlock('', 'Mild Summer + Safe (20\u201326\u00b0C)',
+      rankRows(mildSafe.slice(0, 10), function(d) {
+        return '<span class="rank-val">' + d.hi[6].toFixed(1) + '\u00b0C Jul</span>';
+      }));
+
+  /* The header names the origin, and the note says which of the two kinds of
+     number is on screen. An estimate that is not labelled an estimate is the
+     one genuinely misleading thing this page could print. */
+  var nameEl = document.getElementById('rec-home-name');
+  var noteEl = document.getElementById('rec-home-note');
+  if (nameEl) nameEl.textContent = city + ' (' + homeCode() + ')';
+  if (noteEl) {
+    noteEl.textContent = homeIsDefault()
+      ? 'Measured routings. Set your own airport to rank every list from where you actually fly.'
+      : 'Flying time, estimated from ' + city + ' (' + homeCode() + ') \u2014 no connections assumed. '
+        + rows.length + ' of ' + entries.length + ' destinations have a mapped airport.';
+  }
+}
+
+/* airports.json is only needed once the reader leaves the default: on SEA the
+   page has its measured numbers already and fetches nothing. */
+function withAirports(then) {
+  if (AIR || homeIsDefault()) { then(); return; }
+  if (airPending) return;
+  airPending = true;
+  fetch('/assets/airports.json')
+    .then(function(r) { return r.json(); })
+    .then(function(a) { AIR = a || {}; airPending = false; then(); })
+    .catch(function() { AIR = {}; airPending = false; then(); });
+}
+
+paintHomeSections();
+
+/* ── The origin picker ───────────────────────────────────────────────────── */
+(function() {
+  var input = document.getElementById('rec-home-in');
+  if (!input || !HOME) return;
+  var list = document.getElementById('rec-home-list');
+  var rows = [], active = -1, majorSet = null;
+
+  function label(r) { return r[1] + ' (' + r[0] + ')' + (r[2] ? ' \u00b7 ' + r[2] : ''); }
+  function majors() {
+    if (majorSet) return majorSet;
+    majorSet = {};
+    ((AIR && AIR.major) || []).forEach(function(c) { majorSet[c] = 1; });
+    return majorSet;
+  }
+  function paint() {
+    list.textContent = '';
+    if (!rows.length) { list.hidden = true; return; }
+    list.hidden = false;
+    rows.forEach(function(r, i) {
+      var li = document.createElement('li');
+      li.className = 'rec-home-opt' + (i === active ? ' rec-home-opt-on' : '');
+      li.setAttribute('role', 'option');
+      li.textContent = label(r);
+      li.addEventListener('mousedown', function(e) { e.preventDefault(); choose(r); });
+      list.appendChild(li);
+    });
+  }
+  function choose(r) {
+    var h = HOME.fromRow(r);
+    if (!h) return;
+    /* Picking the default airport clears the override rather than storing it,
+       so the page goes back to the measured routings instead of estimating a
+       city it has exact data for — the same rule the landing finder applies.
+       The code comes from TVE.home.FALLBACK, never spelled out here. */
+    if (h.code === (HOME.FALLBACK && HOME.FALLBACK.code)) { HOME.clear(); } else { HOME.set(h); }
+    list.hidden = true; rows = []; active = -1;
+    input.value = '';
+    withAirports(paintHomeSections);
+  }
+  function search() {
+    var q = input.value.trim();
+    if (!q) { rows = []; active = -1; paint(); return; }
+    HOME.names(function(all) {
+      rows = HOME.lookup(q, all, majors(), 6);
+      active = rows.length ? 0 : -1;
+      paint();
+    });
+  }
+  input.addEventListener('input', search);
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { list.hidden = true; rows = []; active = -1; input.blur(); return; }
+    if (!rows.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); active = (active + 1) % rows.length; paint(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); active = (active - 1 + rows.length) % rows.length; paint(); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (active >= 0) choose(rows[active]); }
+  });
+  document.addEventListener('mousedown', function(e) {
+    if (!list.hidden && !list.contains(e.target) && e.target !== input) {
+      list.hidden = true; rows = []; active = -1;
+    }
+  });
+
+  /* A home set on another page of the site applies here without a reload. */
+  HOME.onChange(function() { withAirports(paintHomeSections); });
+  withAirports(paintHomeSections);
+}());
 
 // SUMMER HEAT (July = index 6)
 (function() {
@@ -399,52 +670,10 @@ var entries = Object.keys(DATA).map(function(slug) {
     rankBlock('🇪🇺', 'Best Value in Europe', euRows);
 })();
 
-// SAFETY
-(function() {
-  var vsSafe = entries.filter(function(d){ return d.safe==='Very Safe'; }).sort(function(a,b){ return a.fm-b.fm; });
-  var safe = entries.filter(function(d){ return d.safe==='Safe'; }).sort(function(a,b){ return a.fm-b.fm; });
-
-  var vsRows = rankRows(vsSafe.slice(0,10), function(d){
-    return safeBadge('Very Safe');
-  });
-  var safeRows = rankRows(safe.slice(0,10), function(d){
-    return safeBadge('Safe');
-  });
-
-  document.getElementById('safety-grid').innerHTML =
-    rankBlock('🟢', 'Very Safe — Top Picks', vsRows) +
-    rankBlock('', 'Safe — Closest from Seattle', safeRows);
-})();
-
-// BEST COMBOS
-(function() {
-  // Budget + Safe/Very Safe
-  var budgetSafe = entries.filter(function(d){
-    return (d.cost||'').toLowerCase()==='budget' && (d.safe==='Safe' || d.safe==='Very Safe');
-  }).sort(function(a,b){ return a.fm-b.fm; });
-
-  // Mild summer (20-26°C July) + Very Safe
-  var mildSafe = entries.filter(function(d){
-    return d.hi && d.hi.length > 6 && d.hi[6] >= 20 && d.hi[6] <= 26 && (d.safe==='Very Safe' || d.safe==='Safe');
-  }).sort(function(a,b){ return b.hi[6]-a.hi[6]; });
-
-  // Warm winter escape (Jan hi > 25°C) + Budget/Moderate
-  var warmValue = entries.filter(function(d){
-    return d.hi && d.hi.length > 0 && d.hi[0] >= 25 && 
-      ['budget','moderate'].includes((d.cost||'').toLowerCase());
-  }).sort(function(a,b){ return b.hi[0]-a.hi[0]; });
-
-  var bsRows = rankRows(budgetSafe.slice(0,10), function(d){
-    return tierBadge(d.cost);
-  });
-  var msRows = rankRows(mildSafe.slice(0,10), function(d){
-    return '<span class="rank-val">' + d.hi[6].toFixed(1) + '°C Jul</span>';
-  });
-
-  document.getElementById('combos-grid').innerHTML =
-    rankBlock('', 'Budget + Safe (closest first)', bsRows) +
-    rankBlock('', 'Mild Summer + Safe (20–26°C)', msRows);
-})();
+/* SAFETY and BEST COMBOS are rendered by paintHomeSections() above: both
+   order by distance from the reader's own airport, so both have to repaint
+   when that changes. Their old standalone IIFEs ranked from Seattle and said
+   so ("Safe \u2014 Closest from Seattle", "Budget + Safe (closest first)"). */
 
 // GUIDE LENGTH
 (function() {
