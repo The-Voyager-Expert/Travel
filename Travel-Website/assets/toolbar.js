@@ -7768,7 +7768,17 @@ window.TVE.home = (function () {
       strip.style.cssText =
         'display:flex;align-items:center;text-decoration:none;width:100%;' +
         'background:#f3efe6;border:1px solid #e3dccd;border-radius:6px;' +
-        'padding:' + (isMobile ? '5px 6px' : '6px 10px') + ';margin:' + (isMobile ? '12px 0' : '0 0 16px') + ';font-family:inherit;box-sizing:border-box;' +
+        /* Desktop top margin is 36px to match what sits BELOW the strip: at
+           runtime #ics-pill-row is lifted out of the Trip Overview card and
+           inserted directly before .overview-section, which makes it the strip's
+           next sibling, and its own margin-top:36px collapses over the strip's
+           16px bottom — so the gap under the strip is 36 and the strip's declared
+           16 never shows. Above it there was nothing at all (margin-top:0), so
+           what read as the top gap was only .title-page's own 16px bottom margin
+           and the strip sat high in its slot (owner 2026-08-18). 36 here collapses
+           over that 16 the same way, giving 36/36. Phone keeps its own 12/12 —
+           the phone block sets its own rhythm and is not part of this. */
+        'padding:' + (isMobile ? '5px 6px' : '6px 10px') + ';margin:' + (isMobile ? '12px 0' : '36px 0 16px') + ';font-family:inherit;box-sizing:border-box;' +
         'overflow:hidden;cursor:pointer;transition:background .15s;';
       strip.addEventListener('mouseenter', function () { strip.style.background = '#ece5d6'; });
       strip.addEventListener('mouseleave', function () { strip.style.background = '#f3efe6'; });
