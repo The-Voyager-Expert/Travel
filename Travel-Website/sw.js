@@ -1495,7 +1495,12 @@
    (28px / 999px radius / 12px 700) and gave the bar an iOS safe-area bottom padding.
    Bumped toolbar.js min to 743, web-travel-style.css min to 63, mobile.css min to 87,
    CACHE to v1057. */
-var CACHE = 'travel-cache-v1057';
+/* 2026-08-18: best-of filter/sort controls unified — all pills now share 999px radius, 13px font,
+   consistent padding. Sort <select> replaced with a days-jump disc-btn dropdown. disc-btn scoped
+   to .bo-feat-toolbar and #regionJump to match chip style without touching Guides-Index. Dark-mode
+   active chip: #e08060 → #D4663A (correct dark-mode terracotta). web-travel-style.css min to 64,
+   best-of-features.js min to 2. CACHE to v1058. */
+var CACHE = 'travel-cache-v1058';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1503,7 +1508,7 @@ var CACHE = 'travel-cache-v1057';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 235,'toolbar.js': 743, 'mobile.css': 87, 'web-travel-style.css': 63, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 235,'toolbar.js': 743, 'mobile.css': 87, 'web-travel-style.css': 64, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
