@@ -269,16 +269,6 @@ window.TVE.home = (function () {
   } catch (e) {}
 })();
 
-/* ── Theme early-init — read stored preference and stamp data-theme on <html>
-   before the first paint. Body is opacity:0 (from web-travel-style.css) so
-   there is no flash; the html[data-theme] CSS rules injected later by the main
-   toolbar IIFE will already match by the time the body is revealed. ── */
-(function () {
-  try {
-    var t = localStorage.getItem('tve_theme');
-    if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
-  } catch (e) {}
-})();
 
 /* ── Font preload — inject Google Fonts <link> so CSS @import doesn't block render */
 (function () {
@@ -1313,23 +1303,15 @@ window.TVE.home = (function () {
       'padding:10px 10px 26px;background:transparent;width:100%;box-sizing:border-box}' +
     '.tb a.tb-brand-logo img{display:block;width:100%;max-width:300px;height:auto;margin:0 auto}' +
     /* Light/dark logo swap. EVERY SELECTOR HERE CARRIES THE FULL `.tb a
-       .tb-brand-logo img` PREFIX and that is not verbosity — the sizing rule
-       directly above is (0,2,2), so the obvious short form
-       `html[data-theme="dark"] .tb-logo-light{display:none}` is (0,2,1), loses
-       the cascade, and BOTH logos render stacked. Same trap the `.tb a` padding
-       note further up records. With `img.tb-logo-x` these are (0,3,2) and win.
-       Three theme states, two rules: the media query covers a reader who never
-       chose (no data-theme attribute at all), and `:not([data-theme="light"])`
-       is what stops it overriding a reader who chose light on a dark OS. The
-       explicit rule then wins in both directions. */
+       .tb-brand-logo img` PREFIX — the sizing rule above is (0,2,2), so a
+       shorter form `@media … .tb-logo-light{display:none}` is (0,1,2), loses
+       the cascade, and BOTH logos render stacked. With `img.tb-logo-x` the
+       selectors are (0,3,2) and win. OS dark mode is the only path: no manual
+       toggle exists, so data-theme is never set. */
     '.tb a.tb-brand-logo img.tb-logo-dark{display:none}' +
     '@media(prefers-color-scheme:dark){' +
-      'html:not([data-theme="light"]) .tb a.tb-brand-logo img.tb-logo-light{display:none}' +
-      'html:not([data-theme="light"]) .tb a.tb-brand-logo img.tb-logo-dark{display:block}}' +
-    'html[data-theme="dark"] .tb a.tb-brand-logo img.tb-logo-light{display:none}' +
-    'html[data-theme="dark"] .tb a.tb-brand-logo img.tb-logo-dark{display:block}' +
-    'html[data-theme="light"] .tb a.tb-brand-logo img.tb-logo-light{display:block}' +
-    'html[data-theme="light"] .tb a.tb-brand-logo img.tb-logo-dark{display:none}' +
+      '.tb a.tb-brand-logo img.tb-logo-light{display:none}' +
+      '.tb a.tb-brand-logo img.tb-logo-dark{display:block}}' +
     /* MOBILE ONLY (owner 2026-08-10): the bar turns beige with dark-terracotta
    traces, and the wordmark is CENTRED in the row. Everything else keeps its
    position — hamburger left, theme toggle right — so the logo is absolutely
@@ -1358,8 +1340,6 @@ window.TVE.home = (function () {
          dark-mode value, so the bar follows the theme. */
       '.tb{background:var(--c-page-bg,#f5f4f0)!important}' +
       '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#C04E1A!important}' +
-      '.tb-theme-toggle{border-color:#C04E1A!important;background:transparent!important;color:#C04E1A!important}' +
-      '.tb-theme-toggle:hover{border-color:#C04E1A!important;background:transparent!important}' +
       /* padding-top 3px -> 14px (owner rule 2026-08-15: "move the title guide my
          days lower in mobile"). The wordmark is absolutely positioned with no
          `top`, so its vertical seat IS this padding — it sat hard against the
@@ -1803,178 +1783,21 @@ window.TVE.home = (function () {
       '.tb-ham-menu .tb-ham-grp-links a.tb-grp-current{font-weight:700;' +
         'box-shadow:inset 2px 0 0 #C04E1A}' +
     '}' +
-    /* ── Theme toggle button ─────────────────────────────────────────────── */
-    '@media (pointer: fine){.tb-theme-toggle{position:absolute;top:10px;right:16px;margin-right:0}}' +
-    '.tb-theme-toggle{flex-shrink:0;margin-left:0;margin-right:10px;width:40px;height:40px;border-radius:50%;' +
-      'border:1.5px solid rgba(122,59,30,.55);background:transparent;color:#C04E1A;' +
-      'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
-      'transition:background .15s,border-color .15s;outline:none;padding:0;' +
-      '-webkit-appearance:none;font-family:inherit;line-height:0}' +
-    '.tb-theme-toggle:hover{background:transparent;border-color:rgba(122,59,30,.85)}' +
-    '.tb-theme-toggle:active{transform:scale(.93)}' +
-    '@media (max-width: 1260px) and (pointer: coarse){.tb-theme-toggle{order:1;margin-left:0;margin-right:14px}}' +
-    /* ── Dark-mode token override — mirrors @media(prefers-color-scheme:dark) ── */
-    /* Covers all tokens from web-travel-style.css + guide-style.css dark blocks. */
-    /* html[data-theme="dark"] specificity (0,1,1) > :root (0,1,0) — always wins. */
-    'html[data-theme="dark"]{' +
-      '--bg:#1a1917;--warm:#242220;--surface:#2a2825;--surface2:#1e1c1a;' +
-      '--border:#3a3730;--border2:#332f2a;--text:#e8e5e0;--muted:#9a9690;' +
-      '--accent:#c8a040;--hover:#2e2a1e;--navy:#5a8adb;--green:#5aaa5e;' +
-      '--gold:#d4a830;--red:#d44040;' +
-      '--req-bg:#2a2510;--req-bd:#c8a020;--rec-bg:#0e200e;--rec-bd:#4a9a4a;' +
-      '--con-bg:#101525;--con-bd:#7080b0;--med-bg:#250e0e;--med-bd:#c06060;' +
-      '--c-tag-good-bg:#0d200d;--c-tag-good-border:rgba(90,170,94,0.4);' +
-      '--c-tag-ok-bg:#281f00;--c-tag-ok-text:#d4a830;--c-tag-ok-border:#7a6010;' +
-      '--c0:#4aaa70;--c0bg:#0e2415;--c0bd:#285e3a;' +
-      '--c1:#6090d8;--c1bg:#0e1525;--c1bd:#304878;' +
-      '--c2:#c8a44a;--c2bg:rgba(200,164,74,.12);--c2bd:#9a7830;' +
-      '--c-disc-bg:#280e0e;--c-disc:#e07070;--c-rust-tint:#2a1a12;' +
-      '--tier-req:#c8a020;--tier-req-text:#1a1200;' +
-      '--tier-rec:#4a9a4a;--tier-rec-text:#ffffff;' +
-      '--tier-con:#6080c0;--tier-con-text:#ffffff;' +
-      '--tier-med:#c07070;--tier-med-text:#ffffff;' +
-      '--rust:#D4663A;--ground:#242220;--border-warm:#5a5040;--track:#3a3530;' +
-      '--c-temp-hi:#e05030;--c-temp-lo:#6090e0;--c-rain:#6090b0;' +
-      '--c-search-focus-border:#7a6a5a;--c-search-placeholder:#7a6a50;' +
-      '--c-section-head:#c8a060;--c-terracotta:#D4663A;' +
-      '--badge-top-bg:#2a1e00;--badge-top-text:#e8b060;--badge-top-bd:#7a5810;' +
-      '--badge-warn-bg:#2a1408;--badge-warn-text:#e8a880;--badge-warn-bd:rgba(232,168,128,0.4);' +
-      '--badge-ok-bg:#0a200a;--badge-ok-text:#80cc80;--badge-ok-bd:#306030;' +
-      '--c-page-bg:#1a1917;--c-card-bg:#2a2825;--c-card-shadow:0 2px 8px rgba(0,0,0,0.25);' +
-      '--c-warm-bg:#242220;--c-brand:#c8a060;--c-brand-hover:#2e2a1e;' +
-      /* Pill palette — mirrors the dark block in guide-style.css. */
-      '--c-pill-bg:#2a2825;--c-pill-hover:#332f2a;--c-pill-active:#3d3830;' +
-      '--c-pill-text:#c8a060;--c-pill-bd:rgba(200,160,96,.30);' +
-      '--c-pill-bd-hover:rgba(200,160,96,.50);--c-pill-bd-active:rgba(200,160,96,.65);' +
-      '--c-action-text:#c8a060;--c-action-press:#3d3830;' +
-      '--c-float-bg:#2a2825;--c-float-bd:#7a6430;--c-float-text:#c8a060;' +
-      '--c-navbtn-bd:#5a5040;--c-navbtn-text:#b0aca4;' +
-      '--c-text-primary:#e8e5e0;--c-text-muted:#999;--c-link:#5a9aee;' +
-      '--c-next-bg:#222120;--c-next-border:#444;--c-skip-note:#777;' +
-      '--c-index-bg:#1e1c1a;--c-index-border:#3a3730;' +
-      '--c-index-text-muted:#9a9690;--c-index-accent:#c8a040;' +
-      '--c-index-muted-2:#8a8680;--c-index-muted-3:#6a6660;' +
-      '--c-index-muted-4:#7a7670;--c-index-muted-5:#666;' +
-      '--c-title-bg:#b88a55;--c-title-text:#ffffff;' +
-      '--c-warn-text:#e0c080;--c-warn-link:#d4a030;' +
-      '--c-tastes-text:#e0d0a0;--c-headsup-text:#e0a0a0;--c-headsup-link:#d06040}' +
-    'html[data-theme="dark"] ::selection{background:rgba(200,160,64,.35)}' +
-    /* .title-hotel-request uses var(--c-brand) which resolves automatically in dark mode. */
-    /* :not(:hover):not(:active):not(:focus-visible) — THE REST STATE ONLY.
-       This block is injected into <head>, so it lands AFTER the stylesheets at
-       equal specificity and wins every property it names. Unscoped, it beat the
-       pill's own :hover fill while the !important white label survived, and the
-       word vanished on a white pill (owner 2026-08-16, reported repeatedly).
-       The white label is gone from the CSS now, but the scoping stays: a theme
-       rule has no business overriding an interaction state, and this is what
-       stops the next palette edit from silently flattening hover again. */
-    'html[data-theme="dark"] .also-on-this-site-pill:not(:hover):not(:active):not(:focus-visible),' +
-    'html[data-theme="dark"] .nearby-guide-pill:not(:hover):not(:active):not(:focus-visible)' +
-      '{background:var(--c-card-bg);color:#b8962a;border-color:#8a7a40}' +
-    /* ── Light-mode override — forces light tokens even when OS is dark ───── */
-    'html[data-theme="light"]{' +
-      '--bg:#f5f4f0;--warm:#fdf8f0;--surface:#ffffff;--surface2:#f0ede8;' +
-      '--border:#d8d4cc;--border2:#e6e2da;--text:#3d3a32;--muted:#6a6660;' +
-      '--accent:#8a6c1a;--hover:#faefd8;--navy:#1a3a8b;--green:#1a5a1a;' +
-      '--gold:#c8961a;--red:#a02020;' +
-      '--req-bg:#fef9e5;--req-bd:#d4a010;--rec-bg:#f0faf0;--rec-bd:#4a9a4a;' +
-      '--con-bg:#eef1f8;--con-bd:#6b7fb8;--med-bg:#fdf0f0;--med-bd:#c06060;' +
-      '--c-tag-good-bg:#e8f5e8;--c-tag-good-border:rgba(26,90,26,0.4);' +
-      '--c-tag-ok-bg:#fff8e0;--c-tag-ok-text:#7a5800;--c-tag-ok-border:rgba(122,88,0,0.4);' +
-      '--c0:#1a5a1a;--c0bg:#e8f5e8;--c0bd:#a0d8a0;' +
-      '--c1:#1a3a8b;--c1bg:#e8f0fb;--c1bd:#a0b8e8;' +
-      '--c2:#8a5a10;--c2bg:rgba(200,164,74,.10);--c2bd:rgba(122,88,0,0.4);' +
-      '--c-disc-bg:#f8e8e8;--c-disc:#7a1010;--c-rust-tint:#fbeee4;' +
-      '--tier-req:#f0c040;--tier-req-text:#5a3a00;' +
-      '--tier-rec:#6db96d;--tier-rec-text:#ffffff;' +
-      '--tier-con:#93a8d8;--tier-con-text:#ffffff;' +
-      '--tier-med:#e08080;--tier-med-text:#ffffff;' +
-      '--rust:#C04E1A;--border-warm:#c4b896;--track:#ece6dd;' +
-      '--c-temp-hi:#a61c00;--c-temp-lo:#3d5282;--c-rain:#4a7c9b;' +
-      '--c-search-focus-border:#c8b99a;--c-search-placeholder:#A8895A;' +
-      '--c-section-head:#5C3D11;--c-terracotta:#C04E1A;' +
-      '--badge-top-bg:#fdecc8;--badge-top-text:#7a4d00;--badge-top-bd:#e8c97a;' +
-      '--badge-warn-bg:#fdf0e8;--badge-warn-text:#7a3a1a;--badge-warn-bd:rgba(122,58,26,0.4);' +
-      '--badge-ok-bg:#e4f5e4;--badge-ok-text:#1a5c1a;--badge-ok-bd:#90cc90;' +
-      '--c-page-bg:#f5f4f0;--c-card-bg:#fff;--c-card-shadow:0 2px 8px rgba(0,0,0,0.07);' +
-      '--c-warm-bg:#fdf8f0;--c-brand:#8a6c1a;--c-brand-hover:#faefd8;' +
-      /* Pill palette — mirrors the :root defaults in guide-style.css. */
-      '--c-pill-bg:#fdf8f0;--c-pill-hover:#faefd8;--c-pill-active:#f5e8c8;' +
-      '--c-pill-text:#8a6c1a;--c-pill-bd:rgba(138,108,26,.25);' +
-      '--c-pill-bd-hover:rgba(138,108,26,.45);--c-pill-bd-active:rgba(138,108,26,.6);' +
-      '--c-action-text:#5a3c0e;--c-action-press:#e5ddc8;' +
-      '--c-float-bg:#ffffff;--c-float-bd:#c8a44a;--c-float-text:#8a6c1a;' +
-      '--c-navbtn-bd:#c4b896;--c-navbtn-text:#6b6860;' +
-      '--c-text-primary:#3d3a32;--c-text-muted:#555;--c-link:#2867c4;' +
-      '--c-next-bg:#ede8db;--c-next-border:#bba070;--c-skip-note:#999;' +
-      '--c-index-bg:#f0ede8;--c-index-border:#d8d4cc;' +
-      '--c-index-text-muted:#6a6660;--c-index-accent:#7a5c0e;' +
-      '--c-index-muted-2:#9a9890;--c-index-muted-3:#b8ad9e;' +
-      '--c-index-muted-4:#c4b49a;--c-index-muted-5:#aaa;' +
-      '--c-title-bg:#6b4422;--c-title-text:#ffffff;' +
-      '--c-warn-text:#5a3a05;--c-warn-link:#a36009;' +
-      '--c-tastes-text:#3a2a05;--c-headsup-text:#3a1a1a;--c-headsup-link:#a61c00}' +
-    'html[data-theme="light"] ::selection{background:rgba(122,59,30,.35);color:inherit}' +
-    /* Rest state only — see the note on the dark twin above. This is the exact
-       rule that produced the white-on-white pill: `background:#ffffff` here beat
-       the hover fill, `color:#fff !important` in the stylesheet outranked the
-       gold, and the label disappeared for anyone who had used the theme toggle. */
-    'html[data-theme="light"] .also-on-this-site-pill:not(:hover):not(:active):not(:focus-visible),' +
-    'html[data-theme="light"] .nearby-guide-pill:not(:hover):not(:active):not(:focus-visible)' +
-      '{background:#ffffff;color:#8a6c1a;border-color:#c8a44a}' +
     /* ── Dark-mode nav-link override — #7a3b1e (dark rust) is low-contrast on dark bg; shift to brand gold ── */
     '@media (prefers-color-scheme:dark){' +
       '.tb a,.tb a:visited,.tb a:hover,.tb a.tb-active{color:#c8a060!important}' +
       '.tb-ddbtn,.tb-ddbtn:hover,.tb-ddbtn.tb-active{color:#c8a060!important}' +
       '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#c8a060!important}' +
     '}' +
-    'html[data-theme="dark"] .tb a,' +
-    'html[data-theme="dark"] .tb a:visited,' +
-    'html[data-theme="dark"] .tb a:hover,' +
-    'html[data-theme="dark"] .tb a.tb-active{color:#c8a060!important}' +
-    'html[data-theme="dark"] .tb-ddbtn,' +
-    'html[data-theme="dark"] .tb-ddbtn:hover,' +
-    'html[data-theme="dark"] .tb-ddbtn.tb-active{color:#c8a060!important}' +
-    'html[data-theme="dark"] .tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#c8a060!important}' +
-    /* ── Dark-mode top-strip pills ───────────────────────────────────────────
-       The pill rest state above is a WHITE ground with a terracotta rim, which
-       is correct on the light bar and a row of white lozenges on a dark page.
-       The label is already shifted to brand gold #c8a060 by the two blocks
-       directly above, so the rim and fill follow it: no ground at rest, a faint
-       gold wash on hover, a stronger one when active. Same .30 / .55 / .85
-       border ladder, restated in gold.
-
-       Written TWICE on purpose, exactly like the colour rules above: the media
-       query catches a reader on system-dark who has never touched the toggle,
-       and the html[data-theme="dark"] copy catches one who picked dark
-       explicitly. The media-query copy is guarded with
-       html:not([data-theme="light"]) so it does not paint a reader who is on
-       system-dark but has explicitly chosen the light theme — the same
-       white-on-white trap the .also-on-this-site-pill note above records.
-       Active is stated last in each block: its selector outranks the rest-state
-       one, so order is belt and braces rather than the mechanism. */
+    /* ── Dark-mode top-strip pills — no ground at rest, gold wash on hover/active ── */
     '@media (prefers-color-scheme:dark){' +
-      'html:not([data-theme="light"]) .tb-links>a,' +
-      'html:not([data-theme="light"]) .tb-links>a:visited,' +
-      'html:not([data-theme="light"]) .tb-ddbtn' +
+      '.tb-links>a,.tb-links>a:visited,.tb-ddbtn' +
         '{background:transparent;border-color:rgba(200,160,96,.42)}' +
-      'html:not([data-theme="light"]) .tb-links>a:hover,' +
-      'html:not([data-theme="light"]) .tb-ddbtn:hover' +
+      '.tb-links>a:hover,.tb-ddbtn:hover' +
         '{background:rgba(200,160,96,.12);border-color:rgba(200,160,96,.62)}' +
-      'html:not([data-theme="light"]) .tb a.tb-active,' +
-      'html:not([data-theme="light"]) .tb-ddbtn.tb-active' +
+      '.tb a.tb-active,.tb-ddbtn.tb-active' +
         '{background:rgba(200,160,96,.16);border-color:rgba(200,160,96,.85)}' +
-    '}' +
-    'html[data-theme="dark"] .tb-links>a,' +
-    'html[data-theme="dark"] .tb-links>a:visited,' +
-    'html[data-theme="dark"] .tb-ddbtn' +
-      '{background:transparent;border-color:rgba(200,160,96,.42)}' +
-    'html[data-theme="dark"] .tb-links>a:hover,' +
-    'html[data-theme="dark"] .tb-ddbtn:hover' +
-      '{background:rgba(200,160,96,.12);border-color:rgba(200,160,96,.62)}' +
-    'html[data-theme="dark"] .tb a.tb-active,' +
-    'html[data-theme="dark"] .tb-ddbtn.tb-active' +
-      '{background:rgba(200,160,96,.16);border-color:rgba(200,160,96,.85)}'
+    '}'
     ;
   document.head.appendChild(styleEl);
 
@@ -2255,87 +2078,12 @@ window.TVE.home = (function () {
   hamBtn.innerHTML = '<svg width="25" height="18" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="currentColor"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="currentColor"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="currentColor"/></svg>';
   bar.appendChild(hamBtn);
 
-  /* ── Theme toggle ───────────────────────────────────────────────────────── */
-  (function () {
-    var SVG_SUN  = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-      '<circle cx="8" cy="8" r="3.5" fill="currentColor"/>' +
-      '<line x1="8" y1="1" x2="8" y2="3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="8" y1="13" x2="8" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="1" y1="8" x2="3" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="13" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="2.93" y1="2.93" x2="4.34" y2="4.34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="11.66" y1="11.66" x2="13.07" y2="13.07" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="13.07" y1="2.93" x2="11.66" y2="4.34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="4.34" y1="11.66" x2="2.93" y2="13.07" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
-      '</svg>';
-    var SVG_MOON = '<svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">' +
-      '<path d="M13 8.5A5.5 5.5 0 0 1 6.5 2c0-.18.01-.35.03-.52A6.5 6.5 0 1 0 13.52 8.47' +
-      'C13.35 8.49 13.18 8.5 13 8.5z" fill="currentColor"/>' +
-      '</svg>';
-
-    var themeBtn = document.createElement('button');
-    themeBtn.type = 'button';
-    themeBtn.id = 'tve-theme-toggle';
-    themeBtn.className = 'tb-theme-toggle';
-
-    function updateIcon() {
-      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-      themeBtn.innerHTML = dark ? SVG_MOON : SVG_SUN;
-      themeBtn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
-      themeBtn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
-    }
-    updateIcon();
-
-    themeBtn.addEventListener('click', function () {
-      var cur  = document.documentElement.getAttribute('data-theme');
-      /* No stored preference yet means the page is following OS; treat that as
-         the current OS preference so the toggle flips away from it correctly. */
-      if (!cur) cur = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
-      var next = (cur === 'dark') ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      try { localStorage.setItem('tve_theme', next); } catch (e) {}
-      updateIcon();
-    });
-
-    /* WHERE THE TOGGLE LIVES — owner rule 2026-08-10: "pin in the page as if it
-       was the last tab and when we reduce it will behave like the rest."
-
-       Desktop nav showing: the toggle is the LAST CHILD OF .tb-links, i.e. a tab.
-       It was previously a sibling of .tb-inner, which put it in .tb's wrap
-       context on its own. The tab row's natural width is 1414px (measured), so
-       on any window under ~1500px the row filled line 1 and the toggle dropped
-       to a centred second line beneath it — the jump the owner saw, and it was
-       reachable on every ordinary laptop, not just a narrowed window. As a tab
-       it wraps, scrolls and reflows with the others and can never separate.
-
-       Hamburger showing (<=1260px): moved back to a direct child of .tb, because
-       .tb-inner is display:none there and the toggle would vanish with it. That
-       is also the shipped mobile design — hamburger left, wordmark centre,
-       sun far right (.tb-theme-toggle{order:1} in the 1260 block).
-
-       Re-parented live on a matchMedia change so dragging a window across the
-       breakpoint lands it in the right place without a reload. */
-    /* Must mirror the CSS nav-swap query EXACTLY, pointer condition included.
-       Without `and (pointer: coarse)` this re-parented the toggle out of the
-       tab row on a narrow DESKTOP window, where the hamburger no longer
-       appears — the toggle ended up back beside a wordmark with no menu. */
-    var _navMq = window.matchMedia('(max-width: 1260px) and (pointer: coarse)');
-    function placeThemeToggle() {
-      var host = bar;   /* always the bar — pinned top-right on desktop by CSS */
-      if (themeBtn.parentNode !== host) host.appendChild(themeBtn);
-    }
-    bar.appendChild(themeBtn);
-    placeThemeToggle();          /* .tb-links is already in the DOM by now */
-    if (_navMq.addEventListener) _navMq.addEventListener('change', placeThemeToggle);
-    else if (_navMq.addListener) _navMq.addListener(placeThemeToggle);
-    window.TVE = window.TVE || {};
+  window.TVE = window.TVE || {};
   /* Shared with index.html's filter chips (and, next, the guides) so one mark
      never has two drawings. */
   window.TVE.icon = function (key, size) {
     var e = navIcon(key); return e ? iconSVG(e, size || 15, key) : '';
   };
-    window.TVE.placeThemeToggle = placeThemeToggle;
-  })();
 
   var hamMenu = document.createElement('div');
   hamMenu.className = 'tb-ham-menu';
@@ -4237,27 +3985,6 @@ window.TVE.home = (function () {
         '.tve-ph-tt{background:#f5f0e6;border-radius:0 3px 3px 0;padding-left:4px;}' +
         '.tve-ph-now{font-size:10px;font-weight:700;color:#6b5320;' +
         'text-transform:uppercase;letter-spacing:.05em;margin-left:4px;}' +
-        /* Dark mode — data-theme="dark" */
-        'html[data-theme="dark"] .tve-ph{background:transparent;border-left-color:#c8a060;' +
-        'border-right-color:rgba(200,160,96,.28);color:#e8e5e0;}' +
-        'html[data-theme="dark"] .tve-ph-24{background:transparent!important;' +
-        'border-left-color:#c8a060!important;border-right-color:rgba(200,160,96,.28)!important;' +
-        'color:#e8e5e0!important;}' +
-        'html[data-theme="dark"] .tve-ph-chv{color:#c8a060;}' +
-        'html[data-theme="dark"] .tve-ph-panel{background:#242220;border-left-color:#c8a060;' +
-        'border-right-color:rgba(200,160,96,.28);border-bottom-color:rgba(200,160,96,.28);' +
-        'box-shadow:0 6px 16px rgba(0,0,0,.5);}' +
-        'html[data-theme="dark"] .tve-ph-hr{border-top-color:rgba(200,160,96,.25);}' +
-        'html[data-theme="dark"] .tve-ph-d{color:#e8e5e0;}' +
-        'html[data-theme="dark"] .tve-ph-t{color:#e8e5e0;}' +
-        'html[data-theme="dark"] .tve-ph-cl{color:#999!important;}' +
-        'html[data-theme="dark"] .tve-ph-24v{color:#c8a060!important;}' +
-        'html[data-theme="dark"] .tve-ph-tag24{background:#2a2825;color:#c8a060;' +
-        'border-color:#7a6430;}' +
-        'html[data-theme="dark"] .tve-ph-td,' +
-        'html[data-theme="dark"] .tve-ph-tt{background:#3d3830;}' +
-        'html[data-theme="dark"] .tve-ph-now{color:#c8a060;}' +
-        /* Dark mode — prefers-color-scheme fallback (first visit, no data-theme stamped) */
         '@media(prefers-color-scheme:dark){' +
         'html:not([data-theme="light"]) .tve-ph{background:transparent;border-left-color:#c8a060;' +
         'border-right-color:rgba(200,160,96,.28);color:#e8e5e0;}' +
@@ -11623,14 +11350,13 @@ window.TVE.home = (function () {
         'background:#C04E1A;' +
         'border-color:#C04E1A;}}' +
         '.overview-day.tve-stf-dim{opacity:.35;pointer-events:none;}' +
-        ':root[data-theme="dark"] #tve-stf{border-bottom-color:rgba(212,184,150,.16);}' +
-        ':root[data-theme="dark"] #tve-stf .tve-stf-lead{color:#8a827a;}' +
-        ':root[data-theme="dark"] .tve-stf-chip.is-on{' +
-        'background:#8A3F18;' +
-        'border-color:#a85e28;color:#f5efe6;}' +
-        '@media (hover:hover){:root[data-theme="dark"] .tve-stf-chip.is-on:hover{' +
-        'background:#8A3F18;' +
-        'border-color:#a85e28;}}';
+        '@media (prefers-color-scheme:dark){' +
+        '#tve-stf{border-bottom-color:rgba(212,184,150,.16);}' +
+        '#tve-stf .tve-stf-lead{color:#8a827a;}' +
+        '.tve-stf-chip.is-on{background:#8A3F18;border-color:#a85e28;color:#f5efe6;}' +
+        '}' +
+        '@media (hover:hover) and (prefers-color-scheme:dark){' +
+        '.tve-stf-chip.is-on:hover{background:#8A3F18;border-color:#a85e28;}}';
       (document.head || document.documentElement).appendChild(css);
 
       /* ── Markup ── */
