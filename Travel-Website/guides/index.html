@@ -4758,14 +4758,43 @@
 
   /* Pins added from inside a guide carry no flag (the guide page has no flag
      element), so backfill it from the matching mosaic card and persist. */
+  /* Repair a stored bookmark against the page as it is TODAY, then backfill its
+     flag. A pin keeps the href captured when it was saved, and the 2026-08-16
+     URL flatten moved every guide from `/guides/City/city_vN.html` to
+     `/guides/city.html` — so any bookmark made before that date now points at a
+     404 (owner 2026-08-18, clicking a bookmarked Salzburg). localStorage is not
+     migrated by a deploy, so the stale value survives indefinitely and the only
+     place that can fix it is here, at render time.
+
+     Matching is by NAME, because the name is the one field that did not move.
+     The flag lookup below was already keyed on the href, so a stale pin silently
+     lost its flag too — which is why that pill rendered as a bare city name.
+
+     A pin whose city has no card at all is LEFT ALONE, not dropped: that is the
+     reader's own data, and a guide can be absent because a filter is active. */
   function backfillFlags(pins) {
     var changed = false;
+    var cards = null;
     pins.forEach(function (p) {
-      if (p.flag || !p.href) return;
-      var card = document.querySelector('.mosaic .dest-card[href="' + p.href + '"]');
-      var flagEl = card ? card.querySelector('.dest-flag') : null;
-      var flag = flagEl ? flagEl.textContent.trim() : '';
-      if (flag) { p.flag = flag; changed = true; }
+      var card = p.href
+        ? document.querySelector('.mosaic .dest-card[href="' + p.href + '"]')
+        : null;
+      if (!card && p.name) {
+        if (!cards) cards = document.querySelectorAll('.mosaic .dest-card');
+        for (var i = 0; i < cards.length; i++) {
+          var nm = cards[i].querySelector('.dest-name');
+          if (nm && nm.textContent.trim() === p.name) { card = cards[i]; break; }
+        }
+        if (card) {
+          var fresh = card.getAttribute('href');
+          if (fresh && fresh !== p.href) { p.href = fresh; changed = true; }
+        }
+      }
+      if (!p.flag && card) {
+        var flagEl = card.querySelector('.dest-flag');
+        var flag = flagEl ? flagEl.textContent.trim() : '';
+        if (flag) { p.flag = flag; changed = true; }
+      }
     });
     if (changed) savePins(pins);
     return pins;
