@@ -88,7 +88,39 @@
    Outlined at rest, outlined when selected — the site's Option B grammar
    (Twenty-fourth non-negotiable): a chosen chip is white with a terracotta rim
    and a terracotta label, never a filled gradient. Rim ladder .30 → .55 → .85. */
-.fx-sort { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; }
+/* STICKY, and that is the way out of the table (owner rule 2026-08-18: "after i
+   open the entire table of currency how do i close and go up to the top so i
+   can exit without rolling all up for a long time on mobile?").
+   51 rows is a long scroll and there was no way back — the ✕ rides with the
+   reader instead, so closing is one tap from ANY position rather than only from
+   the two ends. It also keeps the sort pills reachable the whole way down,
+   which is what they were for.
+   A sticky row, not a floating pill: the Forty-fourth non-negotiable closed that
+   family, and this is the table's own control bar staying with its table — the
+   same shape as .best-of-region-filters. `top: 0` because this page has no fixed
+   header to clear; nothing on it is fixed but the 2px scroll progress bar.
+   The background is opaque and NOT transparent — 51 rows scroll under this. */
+.fx-sort {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  position: sticky; top: 0; z-index: 5;
+  background: var(--bg, #f5f4f0);
+  margin-bottom: 0; padding: 10px 0 12px;
+  border-bottom: 1px solid var(--border2, #e6e2da);
+}
+/* Same standalone-✕ standard as the in-guide panel: ✕ U+2715, 13px, #7a7068,
+   no background, no border, NO radius. Registered in _X_STANDARD_SELECTORS.
+   margin-left:auto puts it at the far end of the row, away from the sort pills,
+   so a thumb reaching for "Least value" never lands on "close the whole table". */
+.fx-close-x {
+  margin-left: auto; font-size: 13px; line-height: 1; color: #7a7068;
+  background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
+  position: relative;
+}
+.fx-close-x:hover { color: #3d3a32; }
+.fx-close-x::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 44px; height: 44px; transform: translate(-50%, -50%);
+}
 .fx-sort-label { font-size: var(--fs-label,11px); font-weight: 700; color: var(--muted,#6a6660); text-transform: uppercase; letter-spacing: 0.08em; }
 .fx-sort-pill {
   font: inherit; font-size: var(--fs-sub,12px); font-weight: 600;
@@ -98,7 +130,7 @@
 }
 .fx-sort-pill:hover { background: #fdf4ed; border-color: rgba(192,78,26,.55); color: #C04E1A; }
 .fx-sort-pill.on { background: #fdf4ed; border-color: rgba(192,78,26,.85); color: #C04E1A; }
-.fx-lede { margin: 0 0 14px; font-size: var(--fs-body,14px); color: var(--muted,#6a6660); }
+.fx-lede { margin: 14px 0 14px; font-size: var(--fs-body,14px); color: var(--muted,#6a6660); }
 .fx-lede b { color: var(--text,#3d3a32); }
 
 /* ── The comparison table ─────────────────────────────────────────────────
@@ -218,6 +250,8 @@ tr[aria-expanded="true"] .fx-mark { transform: rotate(90deg); opacity: 1; }
      under the 4.5 floor. Holding the surface flat keeps the same label at 4.66.
      Option B is unchanged: outlined at rest, outlined when chosen, terracotta
      border and terracotta label (Twenty-fourth non-negotiable). */
+  .fx-sort { background: var(--bg, #1a1917); border-bottom-color: var(--border2, #3a3630); }
+  .fx-close-x:hover { color: #f5f3ef; }
   .fx-sort-pill { background: var(--surface2, #1e1c1a); color: var(--text, #e8e5e0); border-color: rgba(212,102,58,.35); }
   .fx-sort-pill:hover { background: var(--surface2, #1e1c1a); color: var(--rust, #D4663A); border-color: rgba(212,102,58,.6); }
   .fx-sort-pill.on { background: var(--surface2, #1e1c1a); color: var(--rust, #D4663A); border-color: rgba(212,102,58,.9); }
@@ -515,6 +549,7 @@ tr[aria-expanded="true"] .fx-mark { transform: rotate(90deg); opacity: 1; }
       <span class="fx-sort-label">Sort</span>
       <button class="fx-sort-pill on" type="button" data-sort="most">Most value</button>
       <button class="fx-sort-pill" type="button" data-sort="least">Least value</button>
+      <button id="fx-close" class="fx-close-x" type="button" aria-label="Close the table">&#10005;</button>
     </div>
     <p class="fx-lede" id="fx-lede"></p>
     <table class="index-table">
@@ -639,6 +674,14 @@ var FXC=[["Austria","Austria","Europe","EUR","",[["Salzburg","/guides/salzburg.h
   });
   document.getElementById('fx-yes').addEventListener('click',function(){
     tableOpen=true; elAsk.hidden=true; elWrap.hidden=false; renderTable();
+  });
+  /* Closing puts the reader back where they pressed Yes — the result card —
+     rather than at the top of the document. `scrollIntoView` is safe here: this
+     page sets no scroll-behavior, so it lands immediately (the smooth-scroll
+     trap the old country-list page documented does not apply). */
+  document.getElementById('fx-close').addEventListener('click',function(){
+    tableOpen=false; elWrap.hidden=true; elAsk.hidden=false;
+    elRes.scrollIntoView({block:'start'});
   });
   [].forEach.call(document.querySelectorAll('.fx-sort-pill'),function(p){
     p.addEventListener('click',function(){
