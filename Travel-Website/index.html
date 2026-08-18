@@ -159,13 +159,11 @@
    is safe to delete. */
 @media (max-width: 62rem) {
   /* minmax(0, 1fr), not 1fr: a bare 1fr track takes its MINIMUM from its
-     content, so one fixed-width child stretches the whole column past the
-     viewport and the page scrolls sideways. The § 14 search bar added to this
-     column on 2026-08-18 is exactly that — width: var(--search-w, 440px), a
-     hard 440px against a 393px phone — and it pushed the hero, the h1, the
-     paragraph and the buttons 79px off the right edge, not just itself. The
-     desktop track above already reads minmax(0, …) for this reason; the phone
-     one did not, and had simply never been given a fixed-width child. */
+     content, so the first fixed-width child stretches the whole column past the
+     viewport. The § 14 search bar added below is exactly that — a hard 440px
+     against a 393px phone — and it pushed the hero, the h1, the paragraph and
+     the buttons 79px off the right edge, not just itself. The desktop track
+     above already reads minmax(0, …) for this reason. */
   .lp-hero { grid-template-columns: minmax(0, 1fr); }
   /* The phone's tracks are pinned separately because the page never resolved to
      the same shape on both. Measured at 393px, the original four gave columns of
@@ -265,35 +263,41 @@
 .lp-actions { display: flex; flex-wrap: wrap; gap: clamp(0.55rem, 1.2vw, 0.85rem); }
 
 /* ── Hero guide picker (owner 2026-08-18) ────────────────────────────────────
-   The lead line is the hero paragraph's own type, one step down, with the verb
-   in terracotta so it reads as a continuation of that sentence rather than as
-   a second heading. Never give it a size or weight of its own beyond this: the
-   h1 is the only voice in this column.
+   The lead line is the hero paragraph's own type one step down, with the verb
+   in terracotta, so it reads as a continuation of that sentence rather than as
+   a second heading — the h1 is the only voice in this column.
 
    THE FIELD ITSELF IS STYLED NOWHERE HERE, deliberately. It is a bare
    input[type="search"], so it takes the § 14 standard from web-travel-style.css
-   whole — 440x56, 6px radius, 17px, the shared magnifier, the placeholder
-   colour and both dark-mode overrides. Restating any of those here is what
-   `check_search_bar_standard` exists to catch, and this block carried a 680px
-   999px hero pill for exactly one run before that gate caught it: the pill
-   belongs to FORMAT_EXCEPTION_PAGES, and the site root is not one.
+   whole — size, radius, type size, the shared magnifier, the placeholder colour
+   and both dark-mode overrides. Restating any of it is what
+   check_search_bar_standard exists to catch, and a 680px hero pill sat here for
+   one run before that gate caught it.
 
-   The two rules below are the only things the standard does not supply:
-   the dropdown's anchor, and the § 43 gap. --search-gap goes on the WRAPPER
-   and the input's own 14px margin-bottom is zeroed, or the bar sits with twice
-   as much room below it as above. */
+   The three rules below are only what the standard does not supply: the
+   dropdown's anchor, the § 43 gap (the input's own 14px margin-bottom is zeroed
+   or the bar gets twice as much room below it as above), and permission to
+   shrink under 440px — max-width, never width, so the measured property is
+   untouched. */
 .lp-pick { margin-top: clamp(1.15rem, 2.4vw, 1.6rem); }
-.lp-pick-lead {
+.lp-hero .lp-pick-lead {
   font-size: clamp(0.94rem, 1.3vw, 1.06rem);
   line-height: 1.55;
-  color: var(--muted, #6a6660);
+  /* The HEADLINE's black, not the grey the hero paragraph takes (owner
+     2026-08-18: "match the black font … the big one i meant"). That is
+     var(--text) — .lp-hero h1 sets it explicitly and beats the earlier
+     `.lp-hero h1 { color: var(--ink) }`, so --ink is NOT the colour on screen
+     and matching it would miss by a visible step. The token carries its own
+     dark value, so never write the literal. Selector is .lp-hero .lp-pick-lead
+     because `.lp-hero p` is (0,1,1) and a bare .lp-pick-lead (0,1,0) loses to
+     it — the first version of this rule was simply outranked and stayed grey.
+     The terracotta em follows .lp-hero h1 em: ink plus a terracotta accent is
+     that headline's own grammar. */
+  color: var(--text, #3d3a32);
   margin: 0 0 0.7rem;
   max-width: 46ch; }
 .lp-pick-lead em { font-style: normal; color: var(--rust, #C04E1A); font-weight: 600; }
 #lp-guide-wrap { position: relative; display: block; max-width: var(--search-w, 440px); }
-/* max-width, never width: the § 14 rule's own `width: var(--search-w)` is
-   what check_search_bar_standard measures, so it stays untouched and this
-   only lets the bar shrink on a screen narrower than 440px. */
 #lp-guide-wrap #lp-guide-search { margin-bottom: 0; max-width: 100%; }
 #lp-guide-wrap .sa-suggest { left: 0; right: 0; top: calc(100% + 8px); text-align: left; }
 
@@ -2194,30 +2198,28 @@ window.lpGuideCard = function (href, flag, name, extra) {
        country or city the drop down keeps filling in with the options."
 
        The hero paragraph above already promises this — "If you already know
-       where you're going, go straight to the guide" — and until now the only
-       way to act on it was the Browse button and a 237-card mosaic. This is
-       that sentence given a control, which is why the lead line picks the
-       promise up rather than restating it.
+       where you're going, go straight to the guide" — and the only way to act
+       on it was the Browse button and a 237-card mosaic. The lead line picks
+       that promise up rather than restating it.
 
-       THIS IS THE § 14 STANDARD BAR, NOT THE HERO PILL, and the distinction
-       cost a rewrite. The 680px/999px pill belongs to hero-pill pages, and
-       those are exactly the pages in FORMAT_EXCEPTION_PAGES — which the site
-       ROOT index.html is explicitly NOT in (Twenty-ninth non-negotiable, in as
-       many words). So `check_search_bar_standard` measures this page and the
-       pill hard-fails it six ways. A bare input[type="search"] takes the whole
-       standard from web-travel-style.css — 440x56, 6px radius, 17px, the
-       shared magnifier — so there is nothing to restate here and no third
-       search shape invented. The placeholder is the guides index's own "City
-       or country", which is also the promise that typing a COUNTRY works.
+       THIS IS THE § 14 STANDARD BAR, NOT THE 680px HERO PILL. That pill belongs
+       to FORMAT_EXCEPTION_PAGES and the site root is explicitly not one, so
+       check_search_bar_standard measures this page and the pill hard-fails it
+       six ways. A bare input[type="search"] takes the whole standard from
+       web-travel-style.css — 440x56, 6px radius, 17px, the shared magnifier,
+       both dark-mode overrides — so nothing is restated here.
 
        #lp-guide-wrap is position:relative because TVESearch appends its
-       dropdown into it; without it the list anchors to the page. -->
+       dropdown into it; without it the list anchors to the page.
+
+       KEEP THIS BLOCK EXACTLY TWO DIVS DEEP. The first version of it nested a
+       pill wrapper in here and the edit that removed that wrapper mismatched a
+       closing tag, which ejected .lp-hero-art out of .lp-hero and left the
+       mosaic full-bleed below the copy. Nothing in the CSS was wrong and the
+       braces balanced; the grid had simply lost its second child. -->
   <div class="lp-pick">
     <p class="lp-pick-lead">Or, if you already know where you are going &mdash; <em>pick your guide</em>.</p>
-    <div id="lp-guide-wrap">
-      <input type="search" class="search-input" id="lp-guide-search" placeholder="City or country" aria-label="Find a guide by city or country" autocomplete="off">
-    </div>
-  </div>
+    <div id="lp-guide-wrap"><input type="search" class="search-input" id="lp-guide-search" placeholder="City or country" aria-label="Find a guide by city or country" autocomplete="off"></div>
   </div>
 
   <!-- 2026-08-15: the "When to Go" pair that sat here was removed. It existed to
@@ -4652,33 +4654,34 @@ function render() {
    Owner 2026-08-18: "the drop-down with all guides and as they type the country
    or city the drop down keeps filling in with the options."
 
-   This REPLACES a dead script. The Best Of / guide jump menus that used to sit
-   here were removed in a redesign; the #guide-pick <select> half of it went
-   with them, but its script stayed and has been early-returning on a missing
-   element ever since. It also built its own label reading "…or pick one of N
-   cities" — an exact fleet count in reader-facing text, which is now banned
-   (Fifty-second non-negotiable). It never rendered, so nobody saw either fault.
+   This REPLACES a dead script. The guide jump menu that used to sit here lost
+   its #guide-pick <select> in a redesign; the script stayed and has been
+   early-returning on a missing element ever since. It also built a label
+   reading "…or pick one of N cities" — an exact fleet count in reader-facing
+   text, now banned (Fifty-second non-negotiable). Neither fault was visible
+   because none of it ran.
 
    MATCHING ON COUNTRY IS THE POINT, not a bonus: TVESearch matches `name` OR
-   `sub`, so passing the country as `sub` is what makes typing "Japan" list
-   Tokyo, Kyoto and Osaka. That is the site-wide rule (Thirty-first
-   non-negotiable) and the placeholder promises it in as many words.
+   `sub`, so the country rides in as `sub` and typing "Japan" lists Tokyo,
+   Kyoto and Osaka. That is the site-wide rule (Thirty-first non-negotiable) and
+   the "City or country" placeholder promises it in as many words.
 
-   TWO SOURCES, because neither file alone can answer this:
-     · search-index.json  — the authoritative shipped-guide list (name + url),
-       the same file the site search reads, so this cannot drift as guides ship.
+   TWO SOURCES, because neither answers alone:
+     · search-index.json  — the authoritative shipped list (name + url), the
+       same file the site search reads, so this cannot drift as guides ship.
      · country-guides.json — slug → country.
-   The page's own `var G` was the tempting third option and is WRONG here: it is
-   the photo-hero table, so it holds only guides that have had a hero picked.
-   It was 237 rows against 239 shipped guides while this was written — a search
-   silently missing the two newest cities, which is the least visible way to be
-   broken.
+   The page's own `var G` was the tempting third and is WRONG: it is the
+   photo-hero table, so it holds only guides that have had a hero picked — 237
+   rows against 239 shipped guides while this was written, a search silently
+   missing the two newest cities.
 
-   FETCHED ON FIRST INTENT, not on load. search-index.json is 379K; a reader who
-   never touches the field should not pay for it, and one who does gets it on
-   focus, before the first keystroke has finished. The field is attached
+   FETCHED ON FIRST INTENT, not on load: search-index.json is 379K and a reader
+   who never touches the field should not pay for it. The field is attached
    immediately with an empty list and re-rendered when the data lands, so typing
-   during the fetch is not swallowed. */
+   during the fetch is not swallowed.
+
+   Runs AFTER search-autocomplete.js — attaching before the library loads is a
+   silent no-op, which is how the first version of this shipped broken. */
 (function () {
   var input = document.getElementById('lp-guide-search');
   if (!input || !window.TVESearch || !window.fetch) return;
