@@ -917,11 +917,27 @@ body.hide-packed .critical-card.complete .card-body { display: none; }
  if (card) card.classList.toggle('open');
  }
 
+ /* A card can be addressed directly — /essentials/packing/#card-hiking, the link
+    the guides' Hiking section carries. Every card is closed by default, so without
+    this the browser scrolls to the right place and the reader sees a shut card with
+    no list in it, which reads as a dead link rather than a collapsed one. Opens the
+    named card and re-aligns it, on load and on any later hash change. */
+ function openHashCard() {
+ var id = (location.hash || '').replace(/^#/, '');
+ if (!/^card-[a-z0-9-]+$/.test(id)) return;
+ var card = document.getElementById(id);
+ if (!card || card.className.indexOf('collapsible-card') === -1) return;
+ card.classList.add('open');
+ card.scrollIntoView({ block: 'start' });
+ }
+ window.addEventListener('hashchange', openHashCard);
+
  loadDays();
  applyQuantities();
  loadState();
  loadHidePacked();
  updateProgress(true);
+ openHashCard();
 </script>
 </body>
 </html>
