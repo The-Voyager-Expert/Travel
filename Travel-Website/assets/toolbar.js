@@ -8525,15 +8525,12 @@ window.TVE.home = (function () {
        rules — without that this pass would blank them, so the two ship
        together.
 
-       SCOPED TO #tt-budget-chips, NOT to .ttchip. There is a second chip row
-       above it — the climate filter: 🌴 Hot & humid · ☀️ Warm & sunny · 🌤 Mild
-       · 🍂 Cool · ❄️ Cold. Only 🌤 is in MARKS, and gm-mk-sun has no mask in
-       guides-index-style.css, so a bare `.ttchip` sweep BLANKED that chip and
-       left one drawn icon among four Apple emoji — measurably worse than the
-       all-emoji row it replaced. Drawing that row means four new marks (palm,
-       sun, leaf, snowflake) plus their masks; until those exist it stays
-       emoji, whole and consistent. Widen this selector only together with the
-       masks the widened set needs.
+       Covers both chip rows on index.html: the budget filter (💰 💳 ✨) and
+       the climate filter (🌴 ☀ 🌤 🍂 ❄). All five climate glyphs resolve to
+       GM_SPRITE keys — palm · sun-clear · partly-cloudy · leaf-autumn ·
+       snowflake — and guides-index-style.css carries the matching masks, so
+       the entire row draws. Measured 2026-08-18: 0 of the 62 glyphs in MARKS
+       render flat and 0 render blank.
 
        Explicit wrapper, never `forEach.call(list, markRow)` — see the note on
        the motion sweep below for what that costs. */
