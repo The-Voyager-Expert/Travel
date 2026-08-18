@@ -2800,10 +2800,10 @@ window.lpGuideCard = function (href, flag, name, extra) {
              itinerary contains a day reached by train (the .train-header row);
              32 of the 96 European guides carry it. -->
         <div class="fnd-field" id="fnd-train-field" hidden>
-          <label for="fnd-train">Trains</label>
+          <label for="fnd-train">Nearby Train trips planned:</label>
           <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-train"/></svg></span><select id="fnd-train">
             <option value="">Any</option>
-            <option value="1">Has a day by train</option>
+            <option value="1">1</option>
           </select></div>
         </div>
       </div>
@@ -5593,7 +5593,10 @@ function render() {
          note on TVE.home for why flying time is what gets estimated. */
       var HOME = window.TVE && window.TVE.home;
       var homeDefault = !HOME || HOME.isDefault();
-      var homeCode = homeDefault ? 'SEA' : HOME.get().code;
+      /* The default origin's code comes from TVE.home.FALLBACK, never a literal:
+         one place on the site names it, and a page that spells it out can never
+         be told apart from a page that is anchored to it. */
+      var homeCode = homeDefault ? (HOME && HOME.FALLBACK.code) : HOME.get().code;
       var AIRXY = (window._lpAirports && window._lpAirports.xy) || null;
       var AIRBY = (window._lpAirports && window._lpAirports._by_slug) || null;
       out += '<tr><td class="cmp-row-label">Flight<br>from ' + esc(homeCode) + '</td>';
@@ -6187,7 +6190,7 @@ function render() {
     var f = d.fmap[slugOf(g)];
     if (homeIsDefault()) {
       var m = journeyMins(f);
-      return m === null ? null : { mins: m, exact: true, home: 'SEA',
+      return m === null ? null : { mins: m, exact: true, home: HOME && HOME.FALLBACK.code,
                                    text: f.t || '', atHome: f.r === 'home' };
     }
     var h = HOME.get(), p = destPos(g);
@@ -6753,7 +6756,7 @@ function render() {
     var homeNote = document.getElementById('fnd-home-note');
 
     var rows = [], active = -1;
-    var defaultCode = 'SEA'; // FMAP routing data is SEA-only
+    var defaultCode = HOME.FALLBACK.code; // the one origin FMAP has exact data for
 
     function label(r) { return r[1] + ' (' + r[0] + ')' + (r[2] ? ' · ' + r[2] : ''); }
 
