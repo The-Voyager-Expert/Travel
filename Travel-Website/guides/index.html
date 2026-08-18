@@ -201,19 +201,27 @@
    wraps a four-word heading onto three lines. Stacking also fixes the "maps
    screenshot too big" complaint for free: the map is now half the width it was.
 
-   .gi-shot carries an explicit aspect-ratio because the four sources are
-   different shapes (1544x1276, 1456x1048, 1400x809, 1544x284). Without it the
-   two cards in a row have different image heights and the captions no longer
-   line up across the row. */
+   EVERY SCREENSHOT CARRIES ITS OWN REAL WIDTH AND HEIGHT, AND THOSE ARE ITS
+   ASPECT RATIO. There is deliberately NO aspect-ratio and NO object-fit:cover
+   here. The four sources are genuinely different shapes — 1544x1276 (1.21),
+   1456x1048 (1.39), 1400x809 (1.73), 1544x284 (5.44) — because a stop card, a
+   map and a one-row currency panel are not the same picture. Forced into one
+   16/9 box, cover CROPS rather than scales: the 1.21 shot loses a third of its
+   height and the 5.44 panel two thirds of its width, and what gets cut is the
+   part the shot exists to show (owner 2026-08-18: "we cropped and not resized,
+   the look awful"). Each image is width:100% / height:auto — scaled down whole,
+   never trimmed. The cards in a row therefore end at different heights, which is
+   the honest result and is why .gi-cards uses align-items:start.
+   This is the same call the landing page's showcase tiles already document
+   (Thirty-ninth non-negotiable) — do not re-add a shared ratio to line the
+   captions up. */
 .gi-cards { display: grid; grid-template-columns: 1fr 1fr;
   gap: clamp(10px, 1.6vw, 16px); align-items: start; }
 .gi-card { background: var(--surface, #fff); border: 1px solid var(--border2, #e6e2da);
-  border-radius: 14px; overflow: hidden;
-  display: grid; grid-template-rows: auto 1fr; height: 100%; }
+  border-radius: 14px; overflow: hidden; }
 .gi-shot { display: block; background: #f5f4f0;
-  border-bottom: 1px solid var(--border2, #e6e2da); aspect-ratio: 16 / 9; }
-.gi-shot img { display: block; width: 100%; height: 100%; object-fit: cover;
-  object-position: top center; }
+  border-bottom: 1px solid var(--border2, #e6e2da); }
+.gi-shot img { display: block; width: 100%; height: auto; }
 /* A caption is ONE line of label and ONE short line under it. */
 .gi-body { padding: 16px 20px; display: flex; flex-direction: column; justify-content: center; }
 .gi-body h3 { margin: 0 0 .35rem; font-size: 1.02rem; font-weight: 700; letter-spacing: -.015em;
