@@ -317,11 +317,11 @@ const SE_EVENTS = [
     guide:'/guides/new-york.html',
     name:'TCS New York City Marathon', dates:'First Sunday of November',
     desc:'The world\'s largest marathon — 55,000 runners cross all five boroughs from the Verrazzano-Narrows Bridge to Central Park, watched by 2 million spectators. Running the five-borough course is one of the most exhilarating sporting experiences New York offers any visitor.' },
-  { months:[10], city:'Las-Vegas', country:'United States', flag:'🇺🇸', sport:'F1',
+  { months:[10], city:'Las Vegas', country:'United States', flag:'🇺🇸', sport:'F1',
     guide:'/guides/las-vegas.html',
     name:'Formula 1 Las Vegas Grand Prix', dates:'Mid-November (Las Vegas Strip Circuit)',
     desc:'The most audacious venue in F1 history — the night race down the Strip past the Bellagio fountains, Caesars Palace, and the Sphere at 200+ mph is pure spectacle. Las Vegas returned to the F1 calendar in 2023 with a three-day extravaganza that is equal parts motorsport and entertainment event.' },
-  { months:[10,11], city:'Abu-Dhabi', country:'UAE', flag:'🇦🇪', sport:'F1',
+  { months:[10,11], city:'Abu Dhabi', country:'UAE', flag:'🇦🇪', sport:'F1',
     guide:'/guides/abu-dhabi.html',
     name:'Formula 1 Abu Dhabi Grand Prix', dates:'Late November (Yas Marina Circuit, season finale)',
     desc:'F1\'s season finale on Yas Island — a twilight-to-night race with the iconic W Hotel bridging the track and the Yas Viceroy Hotel illuminated against the desert sky. The drivers\' and constructors\' championship can still be decided in the final laps of the year, making Abu Dhabi the most title-decisive race on the calendar.' }
@@ -344,9 +344,11 @@ function initMonths() {
     btn.className = 'sc-mon';
     btn.innerHTML = `<span class="sc-mon-abbr">${m}</span>`;
     btn.setAttribute('aria-label', MONTH_FULL[i]);
+    btn.setAttribute('aria-pressed', 'false');
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.sc-mon').forEach(b => b.classList.remove('on'));
+      document.querySelectorAll('.sc-mon').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
       btn.classList.add('on');
+      btn.setAttribute('aria-pressed', 'true');
       activeMon  = i;
       activeCity = null;
       const inp = document.getElementById('sc-city-search');
@@ -364,9 +366,11 @@ function initSportFilter() {
     btn.className = 'sc-sport-btn' + (s === 'All' ? ' on' : '');
     btn.textContent = (SPORT_ICONS[s] || '') + ' ' + s;
     btn.setAttribute('aria-label', 'Filter: ' + s);
+    btn.setAttribute('aria-pressed', s === 'All' ? 'true' : 'false');
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.sc-sport-btn').forEach(b => b.classList.remove('on'));
+      document.querySelectorAll('.sc-sport-btn').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
       btn.classList.add('on');
+      btn.setAttribute('aria-pressed', 'true');
       activeSport = s;
       if (activeCity)        renderCityResults(activeCity);
       else if (activeMon !== null) renderMonthResults();
