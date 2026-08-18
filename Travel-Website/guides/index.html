@@ -3291,17 +3291,19 @@
     if (inp) inp.dispatchEvent(inputEvt);
   }
 
+  chips.forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
   chips.forEach(function (chip) {
     chip.addEventListener('click', function () {
       var m = parseInt(chip.getAttribute('data-m'), 10);
       if (activeMo === m) {
         /* clicking same month toggles off */
         activeMo = null;
-        chips.forEach(function (c) { c.classList.remove('on'); });
+        chips.forEach(function (c) { c.classList.remove('on'); c.setAttribute('aria-pressed', 'false'); });
       } else {
         activeMo = m;
-        chips.forEach(function (c) { c.classList.remove('on'); });
+        chips.forEach(function (c) { c.classList.remove('on'); c.setAttribute('aria-pressed', 'false'); });
         chip.classList.add('on');
+        chip.setAttribute('aria-pressed', 'true');
       }
       applySeasonFilter();
     });
@@ -3309,10 +3311,10 @@
 
   badge.addEventListener('click', function () {
     activeMo = null;
-    chips.forEach(function (c) { c.classList.remove('on'); });
+    chips.forEach(function (c) { c.classList.remove('on'); c.setAttribute('aria-pressed', 'false'); });
     applySeasonFilter();
   });
-  window._clearSeasonFilter = function () { if (activeMo !== null) { activeMo = null; chips.forEach(function(c){c.classList.remove('on');}); applySeasonFilter(); } };
+  window._clearSeasonFilter = function () { if (activeMo !== null) { activeMo = null; chips.forEach(function(c){c.classList.remove('on');c.setAttribute('aria-pressed','false');}); applySeasonFilter(); } };
 }());
 </script>
 
@@ -3330,6 +3332,7 @@
   var chips  = [].slice.call(document.querySelectorAll('#theme-panel .tchip'));
   var badge  = document.getElementById('theme-badge');
   var cards  = [].slice.call(document.querySelectorAll('.dest-card'));
+  chips.forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
 
   /* Flat taxonomy — every chip is an independent tag, with ONE dependency:
      Islands implies Beach (every island is a beach; not the reverse). So
@@ -3345,7 +3348,9 @@
   function applyThemeFilter() {
     if (window._exitCompareMode) window._exitCompareMode();
     chips.forEach(function (chip) {
-      chip.classList.toggle('on', isLit(chip.getAttribute('data-theme')));
+      var lit = isLit(chip.getAttribute('data-theme'));
+      chip.classList.toggle('on', lit);
+      chip.setAttribute('aria-pressed', lit ? 'true' : 'false');
     });
     var sel = Object.keys(selected);
     if (sel.length === 0) {
@@ -4361,10 +4366,12 @@
   // Exclusive chip groups
   ['tt-climate-chips','tt-budget-chips'].forEach(function (id) {
     var group = document.querySelectorAll('#' + id + ' .ttchip');
+    Array.from(group).forEach(function (btn) { btn.setAttribute('aria-pressed', 'false'); });
     Array.from(group).forEach(function (btn) {
       btn.addEventListener('click', function () {
-        Array.from(group).forEach(function (b) { b.classList.remove('on'); });
+        Array.from(group).forEach(function (b) { b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
         btn.classList.add('on');
+        btn.setAttribute('aria-pressed', 'true');
         updateGo();
       });
     });
@@ -4664,9 +4671,11 @@
   /* ── Step chips ── */
   function bindSingle(stepId, ansKey, nextStep) {
     [].slice.call(document.querySelectorAll('#' + stepId + ' .hcchip')).forEach(function (chip) {
+      chip.setAttribute('aria-pressed', 'false');
       chip.addEventListener('click', function () {
-        [].slice.call(document.querySelectorAll('#' + stepId + ' .hcchip')).forEach(function (c) { c.classList.remove('on'); });
+        [].slice.call(document.querySelectorAll('#' + stepId + ' .hcchip')).forEach(function (c) { c.classList.remove('on'); c.setAttribute('aria-pressed', 'false'); });
         chip.classList.add('on');
+        chip.setAttribute('aria-pressed', 'true');
         ans[ansKey] = (ansKey === 'month') ? parseInt(chip.getAttribute('data-v'), 10) : chip.getAttribute('data-v');
         showStep(nextStep);
       });
@@ -4677,8 +4686,10 @@
   bindSingle('hc-s3', 'climate', 4);
 
   [].slice.call(document.querySelectorAll('#hc-s4 .hcchip')).forEach(function (chip) {
+    chip.setAttribute('aria-pressed', 'false');
     chip.addEventListener('click', function () {
       chip.classList.toggle('on');
+      chip.setAttribute('aria-pressed', chip.classList.contains('on') ? 'true' : 'false');
       ans.activities = [].slice.call(document.querySelectorAll('#hc-s4 .hcchip.on')).map(function (c) { return c.getAttribute('data-v'); });
       goBtn.disabled = (ans.activities.length === 0);
     });
