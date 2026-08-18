@@ -36,6 +36,22 @@ html { overflow-x: clip; }
   --green:    #1a5a1a;   /* canonical GREEN family text — Badge spec 2026-07-29 */
   --gold:     #c8961a;
   --red:      #a02020;
+
+  /* ── Badge families — THE single source. 8 approved families, light.
+     Never restate one of these values in a page. A page writes
+     class="badge fam-red" / class="pill-badge fam-red" and carries no colour.
+     Spec: Brain/Reference/Formatting/Formatting.html#sec-badges ── */
+  --fam-yellow-bg: #fff8e0; --fam-yellow-bd: rgba(122,88,0,0.4);   --fam-yellow-ink: #7a5800;
+  --fam-green-bg:  #e8f5e8; --fam-green-bd:  rgba(26,90,26,0.4);   --fam-green-ink:  #1a5a1a;
+  --fam-red-bg:    #fdf0e8; --fam-red-bd:    rgba(122,58,26,0.4);  --fam-red-ink:    #7a3a1a;
+  --fam-blue-bg:   #e8f0fb; --fam-blue-bd:   rgba(26,58,139,0.4);  --fam-blue-ink:   #1a3a8b;
+  --fam-purple-bg: #f3e8ff; --fam-purple-bd: rgba(124,58,237,0.4); --fam-purple-ink: #7c3aed;
+  --fam-orange-bg: #fdf8f0; --fam-orange-bd: rgba(184,134,90,0.4); --fam-orange-ink: #8a4a10;
+  --fam-pink-bg:   rgba(160,40,110,0.08); --fam-pink-bd: rgba(160,40,110,0.4); --fam-pink-ink: #8a2168;
+  --fam-grey-bg:   rgba(138,108,26,0.07); --fam-grey-bd: rgba(106,102,96,0.4); --fam-grey-ink: #6a6660;
+  /* shape + rhythm — not oval, not square, never glued */
+  --fam-radius: 6px;
+  --fam-gap:    6px;
   /* Floating controls (scroll-to-top FAB) — see guide-style.css --c-float-* */
   --c-float-bg:   #ffffff;
   --c-float-bd:   #c8a44a;
@@ -198,6 +214,16 @@ html { overflow-x: clip; }
     --green:    #5aaa5e;   /* canonical dark GREEN family text */
     --gold:     #d4a830;
     --red:      #d44040;
+
+    /* ── Badge families, dark. Same eight, one definition. ── */
+    --fam-yellow-bg: #281f00; --fam-yellow-bd: rgba(212,168,48,0.4);  --fam-yellow-ink: #d4a830;
+    --fam-green-bg:  #0d200d; --fam-green-bd:  rgba(90,170,94,0.4);   --fam-green-ink:  #5aaa5e;
+    --fam-red-bg:    #2a1408; --fam-red-bd:    rgba(232,168,128,0.4); --fam-red-ink:    #e8a880;
+    --fam-blue-bg:   #0a1a3a; --fam-blue-bd:   rgba(147,180,255,0.4); --fam-blue-ink:   #93b4ff;
+    --fam-purple-bg: #2d1b5e; --fam-purple-bd: rgba(192,132,252,0.4); --fam-purple-ink: #c084fc;
+    --fam-orange-bg: #2a1808; --fam-orange-bd: rgba(220,150,80,0.4);  --fam-orange-ink: #f5a860;
+    --fam-pink-bg:   rgba(255,80,155,0.10);  --fam-pink-bd: rgba(255,138,192,0.4); --fam-pink-ink: #ff8ac0;
+    --fam-grey-bg:   rgba(180,175,168,0.10); --fam-grey-bd: rgba(180,175,168,0.4); --fam-grey-ink: #b4afa8;
     --c-float-bg:   #2a2825;
     --c-float-bd:   #7a6430;
     --c-float-text: #c8a060;
@@ -2227,3 +2253,86 @@ body > .hero-ground {
 }
 :root[data-theme="dark"] .cont-btn { background: transparent; border-color: rgba(212,102,58,.34); }
 :root[data-theme="dark"] .cont-btn.on { background: rgba(212,102,58,.16); border-color: rgba(212,102,58,.85); color: var(--rust, #D4663A); }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BADGES AND BADGE-ANCHORED PILLS — one definition, every page reads it.
+
+   A BADGE labels what something IS. ALL CAPS. Not clickable.
+   A PILL-BADGE links or filters to that same thing. Sentence case.
+   Identical box and identical colour; the case is what tells them apart.
+
+   Owner rules 2026-08-18:
+     · every one matches an approved family — no invented near-misses
+     · one hover: background NEVER changes, border and text go terracotta
+     · space between them — never glued
+     · not oval (999px), not square (0)
+     · no white fill
+   A page carries NO colour. It writes the family class and nothing else.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.badge,
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid;
+  border-radius: var(--fam-radius, 6px);
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+/* the label — static, caps */
+.badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+}
+
+/* the control — links or filters, sentence case, never caps */
+.pill-badge {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 6px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  transition: border-color .15s, color .15s;
+}
+
+/* the one hover — ground stays put */
+.pill-badge:hover,
+.pill-badge:focus-visible {
+  border-color: var(--rust, #C04E1A);
+  color: var(--rust, #C04E1A);
+}
+
+/* selected — the currentColor ring, already live on scams and visa-times */
+.badge.is-on,
+.pill-badge.is-on {
+  outline: 2.5px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* a strip of them breathes */
+.badge-strip,
+.pill-badge-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fam-gap, 6px);
+  align-items: center;
+}
+
+/* ── the eight families ── */
+.fam-yellow { background: var(--fam-yellow-bg); border-color: var(--fam-yellow-bd); color: var(--fam-yellow-ink); }
+.fam-green  { background: var(--fam-green-bg);  border-color: var(--fam-green-bd);  color: var(--fam-green-ink); }
+.fam-red    { background: var(--fam-red-bg);    border-color: var(--fam-red-bd);    color: var(--fam-red-ink); }
+.fam-blue   { background: var(--fam-blue-bg);   border-color: var(--fam-blue-bd);   color: var(--fam-blue-ink); }
+.fam-purple { background: var(--fam-purple-bg); border-color: var(--fam-purple-bd); color: var(--fam-purple-ink); }
+.fam-orange { background: var(--fam-orange-bg); border-color: var(--fam-orange-bd); color: var(--fam-orange-ink); }
+.fam-pink   { background: var(--fam-pink-bg);   border-color: var(--fam-pink-bd);   color: var(--fam-pink-ink); }
+.fam-grey   { background: var(--fam-grey-bg);   border-color: var(--fam-grey-bd);   color: var(--fam-grey-ink); }
