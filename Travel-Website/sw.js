@@ -1520,12 +1520,11 @@
    currency (52 of them) and the guide's currency is fixed — so the 60 US-dollar guides get the pill for
    the first time. The page is precached, so readers need the new copy.
    toolbar.js -> v745, guide-style.css -> v239. CACHE to v1067. */
-/* 2026-08-18: /currencies/ is a CONVERTER — any currency to any currency, opening on no result, with
-   the comparison table behind a "worth more?" button and sortable most/least value. The 73 per-country
-   blocks are gone; the page's rates now live in two baked literals (FXR/FXC) that build_currency_rates.py
-   and update_currency_rates.py read. Same rule reaches the in-guide 💱 pill: the reader PICKS their own
-   currency (52 of them) and the guide's currency is fixed — so the 60 US-dollar guides get the pill for
-   the first time. The page is precached, so readers need the new copy.
+/* 2026-08-18: the in-guide 💱 panel gets a way out and stops being an orphan on phones. A ✕ closes it
+   (tapping the pill again was the only way out and nobody found it), following the standalone-✕ standard
+   — U+2715, 13px #7a7068, no background, border or radius — with a 44px hit area from a transparent
+   ::after. The Currency pill now spans the whole 2-column phone pill row when it is the odd one out, and
+   the left amount field no longer collapses to a sliver behind the "=" at 393px.
    toolbar.js -> v746, guide-style.css -> v241. CACHE to v1069. */
 var CACHE = 'travel-cache-v1069';
 
