@@ -83,10 +83,12 @@ window.TVE.isPhone = function () {
    "~10h flying" and then connects has been told the truth; one shown a
    fabricated "AMS · 1 stop" has not.
 
-   Storage is one key, and it deliberately mirrors tve_book_origin so the
-   in-guide Hotels & Flights panel and this share one answer — a reader who
-   types their home airport into a Flights search should never be asked for it
-   again by the finder, and the reverse. Spec: Toolbar.html § 46. */
+   Storage is one key. set() also writes localStorage['tve_book_origin'], which
+   nothing on the site reads today: it is kept so a booking surface can adopt
+   the reader's airport without asking again. It is a WRITE-ONLY reservation,
+   not a link to a live surface — earlier wording here described an in-guide
+   "Hotels & Flights" panel that does not exist, and index.html's picker cited
+   it as precedent. Spec: Toolbar.html § 46. */
 window.TVE.home = (function () {
   var KEY = 'tve_home_city';
   /* Seattle stays the fallback because it is the one home the site has exact
@@ -171,8 +173,11 @@ window.TVE.home = (function () {
      airport's formal name. Then the site's own major list, then OurAirports'
      size tier, then city. Every tier-break below the first exists because the
      one above it left a real case wrong — "paris" put Le Bourget first,
-     "seattle" put Boeing Field first. This is the one implementation; the
-     Flights panel calls it rather than keeping a second copy. */
+     "seattle" put Boeing Field first. This is the one implementation of AIRPORT
+     search on the site and every origin picker calls it — the landing finder,
+     Destination Records, and the guides-index Flight time view. Note it is not
+     TVESearch, which searches GUIDES; an origin picker wired to that one finds
+     cities with guides rather than airports to fly from. */
   function lookup(q, rows, majorSet, limit) {
     q = fold(q).trim();
     if (!q || !rows || !rows.length) return [];
@@ -197,10 +202,10 @@ window.TVE.home = (function () {
     return out.slice(0, limit || 8).map(function (x) { return x[1]; });
   }
 
-  /* airport-names.json is 204 KB and is fetched on the FIRST KEYSTROKE of a
-     home-city or Flights field, never on page load — most readers never open
-     either. sessionStorage key 'tveapn' is shared with the Flights panel, so a
-     reader who has used one has already paid for the other. */
+  /* airport-names.json is 204 KB and is fetched on the FIRST KEYSTROKE of an
+     origin picker, never on page load — most readers never open one. The
+     sessionStorage key 'tveapn' is shared by every picker, so a reader who has
+     used one has already paid for the rest. */
   var rows = null, pending = null;
   function names(cb) {
     if (rows) { setTimeout(function () { cb(rows); }, 0); return; }
@@ -848,7 +853,7 @@ window.TVE.home = (function () {
     'wand': ['0 0 24 24', '<path d="M14.4 2.2 15.9 6.1 19.8 7.6 15.9 9.1 14.4 13 12.9 9.1 9 7.6 12.9 6.1z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/><path d="M12.2 11.4 3.4 20.2a1.9 1.9 0 0 0 2.7 2.7l8.8-8.8z" fill="url(#gm-plum)" stroke="var(--c-plum-rim)" stroke-width="0.5"/><circle cx="20.4" cy="13.4" r="1.5" fill="url(#gm-rose)" stroke="var(--c-rose-rim)" stroke-width="0.5"/><circle cx="6.6" cy="5.4" r="1.2" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/>'],
     /* Guide-Icons.html specimen #324, "Sun · sun and palms" — owner pick
        2026-08-13 for Browse by City, replacing the generic 'search' magnifier.
-       'search' itself stays: the Hotels & Flights pill still draws it. */
+       'search' itself stays: other surfaces still draw it. */
     'sun-palms': ['0 0 24 24', '<circle cx="12.6" cy="10.2" r="5.4" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/><circle cx="12.6" cy="10.2" r="5.4" fill="url(#gm-gloss)"/><rect x="1" y="19.4" width="22" height="2.4" rx="1.2" fill="url(#gm-tan)" stroke="var(--c-tan-rim)" stroke-width="0.5"/><path d="M5.4 19.4c-.4-3.6-.2-6.4.6-8.4l1.9.5c-.7 1.8-.9 4.4-.5 7.9z" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/><path d="M6.4 10.4c2.4-1.6 4.4-1.4 6 .6-1.8-.6-3.5-.4-5 .6zM6.4 10.4c-2.4-1.6-4.4-1.4-6 .6 1.8-.6 3.5-.4 5 .6zM6.4 10.4c.6-2.6 2-4 4.2-4.2-1.5 1-2.6 2.4-3.2 4.2z" fill="url(#gm-leaf)" stroke="var(--c-leaf-rim)" stroke-width="0.5"/><path d="M18.4 19.4c.3-3 .1-5.4-.5-7l1.8-.5c.7 1.7.9 4.2.6 7.5z" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/><path d="M19 12.2c2-1.3 3.7-1.1 5 .5-1.5-.5-2.9-.3-4.2.5zM19 12.2c-2-1.3-3.7-1.1-5 .5 1.5-.5 2.9-.3 4.2.5z" fill="url(#gm-leaf)" stroke="var(--c-leaf-rim)" stroke-width="0.5"/>'],
     /* Guide-Icons.html specimen #71, "Clock · clock and hourglass" — owner pick
        2026-08-13 for Visa Processing Times. Fourth distinct clock; 'clock' (#62)
