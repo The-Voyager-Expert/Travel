@@ -20,8 +20,21 @@
 /* ── Sibling pills (shape comes from shared .sibling-pill) ── */
 .an-siblings { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 18px; }
 
-/* ── Filter card — Form A rounded chips for the two short rows, Form B glued
-      square grid for the long city list (Page-Format § 5, two-pill-forms) ── */
+/* ── Filter card — two dropdowns on ONE row, then the glued square grid for
+      the long city list (Page-Format § 5, two-pill-forms).
+
+      Region and character used to be two rows of counted chips in two
+      different visual languages, stacked above the 93-cell city grid, with
+      nothing saying the three tiers were peers. Measured at 1280px that card
+      was 493px tall on its own and 2,002px on a 393px phone — the first
+      sentence of content sat at 1,272px / 2,829px. Owner approved the
+      rebuild 2026-08-18 ("proposal is better for sure").
+
+      The two selects reuse the landing finder's documented control shape
+      (.fnd-ctl in index.html): a 999px pill carrying the border, with a bare
+      select inside that draws none of its own. Select text is
+      color:var(--accent) — every picker select on the site is gold, and
+      brain_check.check_picker_select_gold_color hard-fails anything else. ── */
 .an-controls {
   background: var(--surface); border: 1px solid var(--border2); border-radius: 12px;
   padding: 16px 18px; box-shadow: 0 2px 12px rgba(92,61,17,.07); margin-bottom: 18px;
@@ -29,17 +42,20 @@
 .an-ctrl-label { font-size: var(--fs-label); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 9px; }
 .an-ctrl-block + .an-ctrl-block { margin-top: 15px; padding-top: 15px; border-top: 1px solid #efece6; }
 
-.an-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.an-chip {
-  display: inline-flex; align-items: center; gap: 5px;
-  border: 1px solid var(--border2); border-radius: 14px; cursor: pointer;
-  padding: 5px 12px; font-family: inherit; font-size: 12px; font-weight: 500;
-  color: var(--text); background: var(--surface,#ffffff); line-height: 1.3;
-  transition: background .12s, color .12s, border-color .12s;
+.an-filter-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.an-ctl {
+  display: flex; align-items: center; gap: .5rem; min-width: 0; flex: 1 1 220px;
+  border: 1px solid var(--border,#e3ddd2); border-radius: 999px;
+  background: var(--surface,#ffffff); padding: 0 .9rem;
+  height: 2.55rem; box-sizing: border-box;
 }
-.an-chip:hover { border-color: var(--rust); background: var(--bg,#f5f4f0); }
-.an-chip.on { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); }
-.an-chip-n { font-size: 10.5px; color: var(--muted); font-weight: 400; }
+.an-ctl:focus-within { border-color: var(--rust,#C04E1A); }
+/* The pill carries the border, so the field inside must not draw a second one
+   and must not paint a background over the rounded corners. */
+.an-ctl select {
+  flex: 1 1 auto; min-width: 0; border: 0; outline: none; background: transparent;
+  font: inherit; font-size: 13px; color: var(--accent); padding: 0; cursor: pointer; height: 100%;
+}
 
 /* minmax(0,1fr): a bare 1fr floors at min-content, so long city names
    ("Copenhagen", "Luxembourg") pushed the third column past the card edge
@@ -124,7 +140,6 @@
 
 @media (prefers-color-scheme: dark) {
   .an-b-value { color: #c8a060; }
-  .an-chip.on     { background: var(--surface2,#1e1c1a); border-color: var(--border2); color: var(--text); }
   .an-cbtn.on,
   .an-cbtn.on:hover,
   .an-cbtn.on:focus { background: var(--surface2,#1e1c1a); border-color: var(--border2); color: var(--text); }
@@ -188,13 +203,9 @@
   </div>
 
   <div class="an-controls">
-    <div class="an-ctrl-block">
-      <div class="an-ctrl-label">Filter by region</div>
-      <div class="an-chips" id="an-region-row"></div>
-    </div>
-    <div class="an-ctrl-block">
-      <div class="an-ctrl-label">Filter by character</div>
-      <div class="an-chips" id="an-tag-row"></div>
+    <div class="an-ctrl-block an-filter-row">
+      <div class="an-ctl"><select id="an-region-sel" aria-label="Filter by region"></select></div>
+      <div class="an-ctl"><select id="an-tag-sel" aria-label="Filter by character"></select></div>
     </div>
     <div class="an-ctrl-block">
       <div class="an-ctrl-label">Filter by city</div>
@@ -3964,8 +3975,10 @@ function applyFilters() {
 }
 
 function syncChips() {
-  document.querySelectorAll('#an-region-row .an-chip').forEach(b => b.classList.toggle('on', b.dataset.region === activeRegion));
-  document.querySelectorAll('#an-tag-row .an-chip').forEach(b => b.classList.toggle('on', b.dataset.tag === activeTag));
+  const rs = document.getElementById('an-region-sel');
+  const ts = document.getElementById('an-tag-sel');
+  if (rs) rs.value = activeRegion;
+  if (ts) ts.value = activeTag;
   document.querySelectorAll('.an-cbtn').forEach(b => {
     b.classList.toggle('on', b.dataset.city === activeCity);
     /* The region filter narrows the city grid so it stays scannable */
@@ -3980,35 +3993,39 @@ function clearSearchBox() {
 }
 
 function initFilters() {
-  const rr = document.getElementById('an-region-row');
+  /* The counts stay — they were the one thing the chip rows said that a bare
+     dropdown does not, and they are what tells a reader a region is worth
+     opening. They ride in the option text because option contents cannot be
+     styled. */
+  const rs = document.getElementById('an-region-sel');
   ['All'].concat(AN_REGIONS).forEach(name => {
     const n = name === 'All' ? AN_LIVE_CITIES.length : AN_LIVE_CITIES.filter(c => c.region === name).length;
     if (!n) return;
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'an-chip' + (name === 'All' ? ' on' : '');
-    b.dataset.region = name;
-    b.innerHTML = (name === 'All' ? 'All regions' : name) + ' <span class="an-chip-n">' + n + '</span>';
-    b.addEventListener('click', () => {
-      activeRegion = name;
-      if (name !== 'All' && activeCity !== 'All' && cityRegion(activeCity) !== name) activeCity = 'All';
-      clearSearchBox(); syncChips(); applyFilters();
-    });
-    rr.appendChild(b);
+    const o = document.createElement('option');
+    o.value = name;
+    o.textContent = (name === 'All' ? 'All regions' : name) + ' (' + n + ')';
+    rs.appendChild(o);
+  });
+  rs.addEventListener('change', () => {
+    const name = rs.value;
+    activeRegion = name;
+    if (name !== 'All' && activeCity !== 'All' && cityRegion(activeCity) !== name) activeCity = 'All';
+    clearSearchBox(); syncChips(); applyFilters();
   });
 
-  const tr = document.getElementById('an-tag-row');
+  const ts = document.getElementById('an-tag-sel');
   ['All'].concat(Object.keys(AN_TAGS)).forEach(key => {
     const n = key === 'All' ? AN_DISTRICTS.length : AN_DISTRICTS.filter(d => d.tags.indexOf(key) !== -1).length;
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'an-chip' + (key === 'All' ? ' on' : '');
-    b.dataset.tag = key;
-    b.innerHTML = (key === 'All' ? 'Any character' : AN_TAGS[key].label) + ' <span class="an-chip-n">' + n + '</span>';
-    b.addEventListener('click', () => {
-      activeTag = key; clearSearchBox(); syncChips(); applyFilters();
-    });
-    tr.appendChild(b);
+    const label = key === 'All'
+      ? 'Any character'
+      : AN_TAGS[key].label.charAt(0) + AN_TAGS[key].label.slice(1).toLowerCase();
+    const o = document.createElement('option');
+    o.value = key;
+    o.textContent = label + ' (' + n + ')';
+    ts.appendChild(o);
+  });
+  ts.addEventListener('change', () => {
+    activeTag = ts.value; clearSearchBox(); syncChips(); applyFilters();
   });
 
   const grid = document.getElementById('an-city-grid');
@@ -4051,8 +4068,15 @@ applyFilters();
     const lower = fold(q.trim());
     if (!lower) { syncChips(); applyFilters(); return; }
     activeCity = 'All'; activeRegion = 'All'; activeTag = 'All';
-    document.querySelectorAll('.an-cbtn, .an-chip').forEach(b => b.classList.remove('on'));
-    document.querySelectorAll('.an-cbtn').forEach(b => { b.style.display = ''; });
+    /* The two selects go back to their All entries — a select has no
+       "nothing chosen" state, and All regions / Any character IS the state a
+       search leaves the filters in. The city buttons lose their mark and all
+       come back into view, as before. */
+    const rs = document.getElementById('an-region-sel');
+    const ts = document.getElementById('an-tag-sel');
+    if (rs) rs.value = 'All';
+    if (ts) ts.value = 'All';
+    document.querySelectorAll('.an-cbtn').forEach(b => { b.classList.remove('on'); b.style.display = ''; });
     render(
       d => fold(d.name).indexOf(lower) !== -1
         || fold(d.city).indexOf(lower) !== -1
