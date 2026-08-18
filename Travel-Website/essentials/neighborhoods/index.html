@@ -57,6 +57,36 @@
   font: inherit; font-size: 13px; color: var(--accent); padding: 0; cursor: pointer; height: 100%;
 }
 
+/* ── City fold ─────────────────────────────────────────────────────────────
+   The 93-cell grid is the tallest thing on the page by an order of magnitude
+   — 1,600px of it on a phone, above the first sentence of content — so it
+   folds behind its own summary, closed on arrival. The known trade, accepted
+   by the owner: an open grid answers "which cities are covered" at a glance,
+   and folding it sends that reader to the search box six pixels above, which
+   already answers the same question by name.
+
+   The summary NAMES the active city, so the filter state is legible with the
+   grid shut; syncCityFold() keeps it in step with every path that can set a
+   city — a grid click, the region reset, the search box, and the #City deep
+   link guides arrive on. Closed is the resting state, so picking a city
+   closes it again: leaving it open puts the 1,600px straight back. */
+.an-cityfold { min-width: 0; }
+.an-fold-sum {
+  display: flex; align-items: center; gap: .5rem; cursor: pointer;
+  border: 1px solid var(--border,#e3ddd2); border-radius: 999px;
+  background: var(--surface,#ffffff); padding: 0 .9rem;
+  height: 2.55rem; box-sizing: border-box;
+  font-size: 13px; color: var(--accent); list-style: none;
+}
+/* Both spellings — WebKit still uses the pseudo-element, everyone else the
+   list-style above. Without this the native triangle sits inside the pill. */
+.an-fold-sum::-webkit-details-marker { display: none; }
+.an-fold-sum:hover { border-color: var(--rust,#C04E1A); }
+.an-fold-sum:focus-visible { outline: 2px solid var(--rust,#C04E1A); outline-offset: 2px; }
+.an-fold-sum::after { content: '+'; margin-left: auto; font-size: 15px; line-height: 1; opacity: .7; }
+.an-cityfold[open] .an-fold-sum::after { content: '\2212'; }
+.an-cityfold[open] .an-city-grid { margin-top: 11px; }
+
 /* minmax(0,1fr): a bare 1fr floors at min-content, so long city names
    ("Copenhagen", "Luxembourg") pushed the third column past the card edge
    at ≤375px. */
@@ -140,6 +170,11 @@
 
 @media (prefers-color-scheme: dark) {
   .an-b-value { color: #c8a060; }
+  /* Rest state: the pointer:fine block above paints these var(--rust), which
+     is #D4663A in dark and measures 4.03:1 on the dark pill — under AA. The
+     selected state already reads var(--text) here, so the rest state joins
+     it; same specificity, and this block is later in source, so it wins. */
+  .an-cbtn { color: var(--text); }
   .an-cbtn.on,
   .an-cbtn.on:hover,
   .an-cbtn.on:focus { background: var(--surface2,#1e1c1a); border-color: var(--border2); color: var(--text); }
@@ -207,10 +242,10 @@
       <div class="an-ctl"><select id="an-region-sel" aria-label="Filter by region"></select></div>
       <div class="an-ctl"><select id="an-tag-sel" aria-label="Filter by character"></select></div>
     </div>
-    <div class="an-ctrl-block">
-      <div class="an-ctrl-label">Filter by city</div>
+    <details class="an-ctrl-block an-cityfold" id="an-cityfold">
+      <summary class="an-fold-sum" id="an-fold-sum">Filter by city</summary>
       <div class="an-city-grid" id="an-city-grid"></div>
-    </div>
+    </details>
   </div>
 
   <div class="an-count" id="an-count"></div>
@@ -3974,11 +4009,26 @@ function applyFilters() {
   );
 }
 
+/* The summary is the only thing on screen saying which city is filtered once
+   the grid is shut, so every path that can change activeCity or activeRegion
+   has to come through here — including the search box, which resets the
+   filters without going through syncChips(). */
+function syncCityFold() {
+  const sum = document.getElementById('an-fold-sum');
+  if (!sum) return;
+  if (activeCity !== 'All') { sum.textContent = activeCity; return; }
+  const n = activeRegion === 'All'
+    ? AN_LIVE_CITIES.length
+    : AN_LIVE_CITIES.filter(c => c.region === activeRegion).length;
+  sum.textContent = 'All cities (' + n + ')';
+}
+
 function syncChips() {
   const rs = document.getElementById('an-region-sel');
   const ts = document.getElementById('an-tag-sel');
   if (rs) rs.value = activeRegion;
   if (ts) ts.value = activeTag;
+  syncCityFold();
   document.querySelectorAll('.an-cbtn').forEach(b => {
     b.classList.toggle('on', b.dataset.city === activeCity);
     /* The region filter narrows the city grid so it stays scannable */
@@ -4038,6 +4088,10 @@ function initFilters() {
     b.addEventListener('click', () => {
       activeCity = name;
       if (name !== 'All') activeRegion = 'All';
+      /* Closed is the resting state — a pick that leaves the grid open puts
+         1,600px of buttons back above the results the pick just produced. */
+      const fold = document.getElementById('an-cityfold');
+      if (fold) fold.open = false;
       clearSearchBox(); syncChips(); applyFilters();
     });
     grid.appendChild(b);
@@ -4077,6 +4131,7 @@ applyFilters();
     if (rs) rs.value = 'All';
     if (ts) ts.value = 'All';
     document.querySelectorAll('.an-cbtn').forEach(b => { b.classList.remove('on'); b.style.display = ''; });
+    syncCityFold();
     render(
       d => fold(d.name).indexOf(lower) !== -1
         || fold(d.city).indexOf(lower) !== -1
