@@ -158,6 +158,124 @@
 .mosaic-wrap { grid-template-columns: 1fr !important; }
 </style>
 <link rel="stylesheet" href="/assets/mobile.css?v=53">
+<style>
+/* ══ GUIDES INTRO (owner 2026-08-18) — below the search, above the guides ═════
+   "study the guides feature and do an introduction overview explaining what
+   people can do with the guides ... especially explain that as people mark in
+   that card they have been to that place they can go to the maps and track
+   their own journey as they explore the world."
+
+   Desktop AND mobile — the owner scoped it to neither, so it is not gated.
+
+   THIS IS NOT AN INTRO CARD. The retired `.page-intro-card` is still hidden a
+   few rules up (owner 2026-08-14) and this does not bring it back: that was a
+   banner explaining the PAGE, printed above a page that says what it is. This
+   explains the GUIDES — what is inside one, and what a reader can do with the
+   fleet — and it sits below the hero rather than above it.
+
+   IT HIDES THE MOMENT A FILTER OR SEARCH IS ON. Someone who has typed a city
+   wants the city, not the pitch; the toggle is one line at the foot of the
+   filter pass, beside the no-result message. `[hidden]` alone does not do it —
+   `.gi` sets a display, which outranks the UA sheet, so the `#id[hidden]` rule
+   below is required and is not redundant.
+
+   The three screenshots are captured from the live pages, never hand-edited.
+   Recipes are in the comment above each <img>. They go stale the ordinary way
+   (a hotel changes, the weather strip is the weather of the day it was shot) —
+   re-run the capture, do not paint over the file. ── */
+.gi { max-width: 1120px; margin: 0 auto clamp(2rem, 4vw, 3rem); padding: 0 24px; }
+#guides-intro[hidden] { display: none !important; }
+.gi-lead { max-width: 760px; margin: 0 auto clamp(1.5rem, 3vw, 2.1rem); text-align: center; }
+.gi-lead h2 { font-size: clamp(1.45rem, 3vw, 2.05rem); line-height: 1.15; letter-spacing: -.025em;
+  font-weight: 700; color: var(--text, #17150f); margin: 0 0 .6rem; text-wrap: balance; }
+.gi-lead p { margin: 0; font-size: 1.02rem; line-height: 1.65; color: var(--muted, #6a6660); }
+
+/* THE CARD GRID. Five cards: four in a 2-up, the fifth spanning both. The
+   currency strip is a 5.4:1 sliver of the action row — in a half-width cell the
+   numbers it exists to show are unreadable, so it takes the full width. Written
+   `1 / -1` rather than `span 2` so the one-column phone layout needs no unset. */
+.gi-cards { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 22px); }
+.gi-card { background: var(--surface, #fff); border: 1px solid var(--border2, #e6e2da);
+  border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+.gi-card-wide { grid-column: 1 / -1; }
+.gi-shot { display: block; background: #f5f4f0; border-bottom: 1px solid var(--border2, #e6e2da); }
+.gi-shot img { display: block; width: 100%; height: auto; }
+/* A caption is ONE line of label and ONE short line under it. Owner: "dont do
+   long texts that no one reads." If a card needs a paragraph, it is the wrong
+   card. */
+.gi-body { padding: 15px 20px 18px; }
+.gi-body h3 { margin: 0 0 .3rem; font-size: 1.02rem; font-weight: 700; letter-spacing: -.015em;
+  color: var(--text, #17150f); }
+.gi-body p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--muted, #6a6660); }
+
+/* THE SCAN-LIST. Every feature a guide carries, as LABELS — never sentences.
+   Multicol, not grid: 26 items of one line each balance into even columns by
+   themselves, where a grid would need a column count that is wrong at some
+   width. (The opposite call to the landing page's Trip Resources block, which
+   is grid because its cells OPEN and multicol would re-flow the neighbours
+   under the reader's cursor. Nothing here opens.) */
+.gi-all { margin: clamp(1.7rem, 3vw, 2.5rem) 0 .75rem; font-size: .78rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--rust, #C04E1A); text-align: center; }
+.gi-list { columns: 4; column-gap: clamp(18px, 2.4vw, 34px);
+  margin: 0; padding: 0; list-style: none; }
+.gi-list li { break-inside: avoid; -webkit-column-break-inside: avoid;
+  margin: 0 0 .42rem; padding-left: 15px; position: relative;
+  font-size: .9rem; line-height: 1.45; color: var(--text, #17150f); }
+.gi-list li::before { content: ""; position: absolute; left: 0; top: .5em;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--rust, #C04E1A); }
+.gi-list li em { font-style: normal; font-weight: 700; }
+.gi-list li a { color: var(--rust, #C04E1A); font-weight: 600; }
+
+/* The map half carries the weight — it is the part the owner asked for by
+   name, and it is the only thing here with somewhere to go. */
+.gi-mark { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(18px, 3vw, 32px);
+  align-items: center; margin-top: clamp(14px, 2vw, 22px);
+  padding: clamp(18px, 2.6vw, 28px); background: var(--surface, #fff);
+  border: 1px solid var(--border2, #e6e2da); border-radius: 14px; }
+.gi-mark h3 { margin: 0 0 .5rem; font-size: clamp(1.1rem, 2vw, 1.35rem); font-weight: 700;
+  letter-spacing: -.02em; color: var(--text, #17150f); text-wrap: balance; }
+/* WEIGHT-ONLY emphasis, never colour: --rust is #D4663A in dark mode and that
+   is 4.03:1 on the --surface card, under AA at this size. Measured — a
+   terracotta <em> here is what validate_dark_mode.py catches. */
+.gi-mark p strong { font-weight: 700; color: var(--text, #17150f); }
+.gi-mark p { margin: 0 0 1.05rem; font-size: .97rem; line-height: 1.62; color: var(--muted, #6a6660); }
+.gi-mark .gi-shot { border: 1px solid var(--border2, #e6e2da); border-radius: 12px; overflow: hidden; }
+.gi-pill { display: inline-block; font-weight: 700; color: var(--rust, #C04E1A); }
+
+@media (prefers-color-scheme: dark) {
+  .gi-shot { background: #201e1c; }
+  .gi-shot img { opacity: .92; }
+  /* The filled CTA is the one thing here that does NOT take var(--rust) in dark
+     mode, and the hexes are deliberate rather than drift. --rust is #D4663A on a
+     dark ground — the LIFT that makes terracotta legible as ink or as a thin rim
+     — and cream on that fill measures 3.45:1, under AA. The darker #C04E1A puts
+     it at 4.57:1. Both values are the one approved terracotta pair (Thirty-fifth
+     non-negotiable); what changes is which of them a large filled area wants.
+     Hover goes DARKER here rather than inverting to the card colour: #D4663A
+     text on the #2a2825 card is 4.03:1, so the light-mode inversion would fail
+     the same way. #8A3F18 is the documented darkened tone for a control whose
+     rest is already terracotta (the same one #hc-go:hover takes) and carries
+     cream at 7.08:1. Measured with validate_dark_mode.py — do not "simplify"
+     either back to var(--rust). */
+  .gx-btn { background: #C04E1A; border-color: #C04E1A; }
+  .gx-btn:hover, .gx-btn:focus-visible, a.gx-btn:hover:visited {
+    background: #8A3F18; border-color: #8A3F18; color: rgb(253, 248, 240); }
+}
+@media (max-width: 1000px) { .gi-list { columns: 3; } }
+@media (max-width: 760px) {
+  .gi { padding: 0 16px; }
+  .gi-cards { grid-template-columns: 1fr; }
+  /* Two columns of short labels on a phone, not one: 26 items in a single
+     column is a wall to scroll past, which is the thing the owner objected to.
+     They are labels, so they fit. */
+  .gi-list { columns: 2; column-gap: 16px; }
+  .gi-list li { font-size: .84rem; padding-left: 13px; }
+  .gi-mark { grid-template-columns: 1fr; }
+  /* Text first on a phone: the picture means nothing until the sentence that
+     explains the gold pins has been read. */
+  .gi-mark .gi-shot { order: 2; }
+}
+</style>
 <!-- seo:start — generated by Brain/scripts/build/build_seo.py · do not hand-edit -->
 <meta name="description" content="Every guide on the site — 237 cities, each planned day by day with walking and ride times, tickets and opening hours. Filter by country, theme or month.">
 <link rel="canonical" href="https://guidemydays.com/guides/">
@@ -537,6 +655,154 @@
 <div id="filter-active-bar">
   <button type="button" id="clear-all-filters">✕ clear</button>
 </div>
+<!-- ══ GUIDES INTRO — owner-directed 2026-08-18 ═══════════════════════════
+     Sits below the search and above the guides, exactly where the owner put it.
+     Spec, and the reasons it must not be "tidied", are in the CSS block in <head>.
+
+     IT IS A MINI AD, NOT A MANUAL. Owner: "this is not a tutorial just a spiel
+     for people to have an idea" · "make it look cool and easy to see and grasp
+     dont do long texts that no one reads". It shipped once with four-line
+     paragraphs under every picture and that was the note that came back. So:
+     a picture carries the idea, a line of type names it, and the full feature
+     inventory is a scan-list of short labels — never sentences. If you are
+     adding a feature here and it needs a clause to explain it, the label is
+     wrong, not the rule.
+
+     The list IS complete, though (owner: "so mention all the features"). When a
+     feature ships, is retired, or changes, THIS BLOCK MOVES IN THE SAME PASS —
+     a page advertising something the guides no longer do is worse than one that
+     says nothing. -->
+<section class="gi" id="guides-intro">
+  <div class="gi-lead">
+    <h2>Every city, already planned</h2>
+    <p>Open a guide and the trip is done &mdash; what to see, in what order, how long it takes, and exactly how you get there.</p>
+  </div>
+
+  <div class="gi-cards">
+    <div class="gi-card">
+      <!-- Screenshot: the top of a live guide. Regenerate rather than edit —
+           load /guides/athens.html at 820px / 2x, clip x 24, y 256, 772 x 638.
+           The weather strip is the weather of the day it was shot; that is
+           expected and is not a reason to retouch the file. -->
+      <span class="gi-shot"><img src="/assets/guides-intro/guide-overview.png"
+        alt="The top of the Athens guide: the hotel it is built around, a week of weather, a row of buttons including I&rsquo;ve Been, and the trip overview listing five days and their stops"
+        loading="lazy" width="1544" height="1276"></span>
+      <div class="gi-body">
+        <h3>The whole trip, one screen</h3>
+        <p>Hotel, weather, every day, every stop.</p>
+      </div>
+    </div>
+
+    <div class="gi-card">
+      <!-- Screenshot: one stop of a live guide, ending on the motion row that
+           leads to the next one. /guides/athens.html at 820px / 2x, clip
+           x 46, y 1496, 728 x 524. -->
+      <span class="gi-shot"><img src="/assets/guides-intro/guide-stop.png"
+        alt="A single stop in the Athens guide: Syntagma Square with a thirty-minute estimate, opening hours, a copyable address, a photo, and a row reading twelve minutes on foot or four by car to the next stop"
+        loading="lazy" width="1456" height="1048"></span>
+      <div class="gi-body">
+        <h3>Every stop, spelled out</h3>
+        <p>How long, when it&rsquo;s open, where it is &mdash; and the walk or ride to the next one.</p>
+      </div>
+    </div>
+
+    <div class="gi-card">
+      <!-- Screenshot: the all-stops map with one day selected. Load
+           /guides/athens-stops-map.html at 900px / 2x, click the Day 1 chip,
+           let it fit its own bounds (do NOT force a zoom — at 14 the pins
+           re-cluster into a bare "2" and the point of the picture is gone),
+           hide the zoom and attribution controls, and clip from the chip row
+           down 520px. JPEG, not PNG: raster map tiles quantise badly and the
+           PNG was 559 KB against 185. -->
+      <span class="gi-shot"><img src="/assets/guides-intro/day-map.jpg"
+        alt="The Athens all-stops map with Day 1 selected: five pins within a few streets of each other in the centre, and chips above for All days and Days 1 to 5"
+        loading="lazy" width="1400" height="809"></span>
+      <div class="gi-body">
+        <h3>A day is one pocket of the city</h3>
+        <p>Stops grouped by where they are. No zig-zagging.</p>
+      </div>
+    </div>
+
+    <div class="gi-card">
+      <!-- Screenshot: a day header and its first stop, with a note saved, the
+           star on and the actions visible. /guides/athens.html at 820px / 2x —
+           click the ★ on the first stop, click its ✎, type the note, Save, then
+           clip from the day header to the bottom of the saved note. Drive the
+           real controls rather than seeding localStorage: notes are keyed
+           internally and a hand-written key renders nothing. -->
+      <span class="gi-shot"><img src="/assets/guides-intro/day-tools.png"
+        alt="A day heading reading Day 1 with Map day and Copy day buttons, then the first stop starred and carrying a personal note about the guard change"
+        loading="lazy" width="1472" height="582"></span>
+      <div class="gi-body">
+        <h3>Copy it. Map it. Note it.</h3>
+        <p>Tick off, share, star or scribble on any stop.</p>
+      </div>
+    </div>
+
+    <div class="gi-card gi-card-wide">
+      <!-- Screenshot: the Currency pill expanded on a live guide.
+           /guides/athens.html at 820px / 2x — click #tve-cur-pill, put a number
+           in the first field, clip the pill row plus #tve-cur-panel. The rate
+           date moves with update_currency_rates.py; re-shoot, never retouch. -->
+      <span class="gi-shot"><img src="/assets/guides-intro/currency.png"
+        alt="The guide&rsquo;s action row with Currency open: sixty US dollars converting to fifty-one euros eighty-five, with the rate and its date underneath"
+        loading="lazy" width="1544" height="284"></span>
+      <div class="gi-body">
+        <h3>Calendar. Offline. Maps. Currency.</h3>
+        <p>One row, on every guide.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="gi-all">Everything in a guide</p>
+  <ul class="gi-list">
+    <li>Days ordered by geography</li>
+    <li>Time to spend at each stop</li>
+    <li>Walk <em>and</em> ride times between stops</li>
+    <li>Addresses that copy in one tap</li>
+    <li>Directions straight into maps</li>
+    <li>A map of every stop, or of one day</li>
+    <li>The whole day as one route</li>
+    <li>Opening hours and weekly closures</li>
+    <li>Tickets and tours, linked</li>
+    <li>Restaurants, coffee, local dishes</li>
+    <li>Michelin and shows</li>
+    <li>Day trips and nearby stations</li>
+    <li>How to get around the city</li>
+    <li>A hotel the guide is built around</li>
+    <li>Alternatives at other prices</li>
+    <li><a href="mailto:contact@guidemydays.com">Ask us for a different hotel</a></li>
+    <li>Currency converter, both ways</li>
+    <li>Export the days to your calendar</li>
+    <li>Save it to read with no signal</li>
+    <li>Filter the stops, fold the days</li>
+    <li>A read-about page per city</li>
+    <li>What is honestly worth skipping</li>
+    <li>Tick stops off as you go</li>
+    <li>Your own notes on any stop</li>
+    <li>Star stops across every guide</li>
+    <li>Share a stop, copy a whole day</li>
+  </ul>
+
+  <div class="gi-mark">
+    <div>
+      <h3>Watch your own map fill in</h3>
+      <p>Every guide has an <strong>I&rsquo;ve Been</strong> button. Tap it and that city turns gold &mdash; gold for where you have been, terracotta for what is still ahead. Your map, in your own browser.</p>
+      <a class="gx-btn" href="/maps/world/">Open the world map</a>
+    </div>
+    <!-- Screenshot: the live world map with a reader's own list on it. Load
+         /maps/world/#mine=<slugs> at 820px / 2x, let the pins restore (the
+         hash paints them gold and turns the Visited display on by itself),
+         set the view over Europe where the pins separate instead of
+         clustering, hide the zoom and attribution controls, and capture the
+         #map element. The gold-against-terracotta contrast IS the feature: a
+         map of all-terracotta pins is only an index. -->
+    <span class="gi-shot"><img src="/assets/guides-intro/visited-map.png"
+      alt="The world map over Europe: gold pins on the cities marked as visited, terracotta pins on the ones still ahead, and a pill at the bottom reading Visited 27"
+      loading="lazy" width="1640" height="1108"></span>
+  </div>
+</section>
+
 <div class="mosaic-wrap">
 <div class="mosaic">
 
@@ -2053,6 +2319,13 @@
       ([].some.call(document.querySelectorAll('.lchip.on'), function(c) { return c.dataset.l && c.dataset.l !== 'all'; })) ||
       (document.getElementById('btn-new-filter') && document.getElementById('btn-new-filter').getAttribute('aria-pressed') === 'true');
     noRes.style.display = (shown === 0 && anyFilter) ? 'block' : 'none';
+    /* The intro block steps aside the moment a search or filter is on: someone
+       who has typed a city wants the city, not the pitch. It comes back when
+       the filters clear, so it is never lost — and it rides `anyFilter`, the
+       same test the no-result message uses, rather than a second definition of
+       "is anything filtered" that would drift away from it. */
+    var giBlock = document.getElementById('guides-intro');
+    if (giBlock) giBlock.hidden = !!anyFilter;
     clearKbd();
   }
 
