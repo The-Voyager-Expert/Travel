@@ -1,3 +1,4 @@
+/* 2026-08-18: dark-mode: manual ☀/🌙 toggle removed — OS prefers-color-scheme only. tve_theme localStorage key gone, data-theme never stamped on <html>, html[data-theme] CSS blocks removed. Dark mode still works via @media(prefers-color-scheme:dark). toolbar.js to 742. CACHE to v1056. */
 /* 2026-08-18: section-titles — all 238 guides now author 'Also on this site', 'Nearby Guides', '✨ Worth Knowing' directly in HTML; three :empty::before CSS fallbacks removed. guide-style.css to 235. CACHE to v1054. */
 /* 2026-08-18: best-of-audit — kids-friendly-places: Germany (Munich), New Zealand (Queenstown) added; 26→28 cards; cross-category data rebuilt — 1903 entries. best-of-cross-data.js to 23. CACHE to v1052. */
 /* 2026-08-18: best-of-audit — hard-to-reach-places: Ethiopia (Danakil Depression), Tristan da Cunha, Tuvalu added; 24→27 cards, 22→25 country sections; cross-category data rebuilt — 1901 entries. best-of-cross-data.js to 22. CACHE to v1051. */
@@ -1487,7 +1488,7 @@
 /* 2026-08-17: Cloudflare Web Analytics beacon added to toolbar.js, host-gated to guidemydays.com. The site is set to 'Enable with JS Snippet installation', NOT Cloudflare's automatic setup: automatic injection happens in the proxy, and the domain is on Cloudflare DNS but DNS-only, so visitors reach GitHub Pages directly and nothing passes through Cloudflare to inject into - automatic would have recorded zero for ever. toolbar.js -> v740. CACHE to v1039. */
 /* 2026-08-18: guides-index-style.css — replace hardcoded #c8b99a with var(--c-search-focus-border) on #guide-search:focus. guides-index-style.css -> v14. CACHE to v1053. */
 /* 2026-08-18: trips: calendar icon changed from sprite <use> to inline flat SVG (Safari <use>+DOMContentLoaded timing); sw.js passes .ics requests through unintercepted so iOS text/calendar → Calendar hand-off works natively. CACHE to v1055. */
-var CACHE = 'travel-cache-v1055';
+var CACHE = 'travel-cache-v1056';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1495,7 +1496,7 @@ var CACHE = 'travel-cache-v1055';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 235,'toolbar.js': 741, 'mobile.css': 86, 'web-travel-style.css': 62, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 235,'toolbar.js': 742, 'mobile.css': 86, 'web-travel-style.css': 62, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
