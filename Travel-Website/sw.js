@@ -1,3 +1,4 @@
+/* 2026-08-18: HIKING — the optional guide section is wired: two drawn marks (#1233 boot on the title and its Trip Overview pill, #1349 peak on the terrain row) into MARKS, its Style-A card and the shared .extras-lead ask row into guide-style.css, and the pill ranked between Heads Up and Worth Knowing. No guide carries the section yet. toolbar.js to 744, guide-style.css to 238. CACHE to v1066. */
 /* 2026-08-18: dark-mode: manual ☀/🌙 toggle removed — OS prefers-color-scheme only. tve_theme localStorage key gone, data-theme never stamped on <html>, html[data-theme] CSS blocks removed. Dark mode still works via @media(prefers-color-scheme:dark). toolbar.js to 742. CACHE to v1056. */
 /* 2026-08-18: section-titles — all 238 guides now author 'Also on this site', 'Nearby Guides', '✨ Worth Knowing' directly in HTML; three :empty::before CSS fallbacks removed. guide-style.css to 235. CACHE to v1054. */
 /* 2026-08-18: best-of-audit — kids-friendly-places: Germany (Munich), New Zealand (Queenstown) added; 26→28 cards; cross-category data rebuilt — 1903 entries. best-of-cross-data.js to 23. CACHE to v1052. */
@@ -1511,7 +1512,7 @@
    fit-content(38%) NAME track a 320-char paragraph collapses to a word per line and stretches the
    name column with it), and the first-entry 16px title gap now also fires after it. Guides are
    precached, so readers need the new copy. guide-style.css -> v237. CACHE to v1065. */
-var CACHE = 'travel-cache-v1065';
+var CACHE = 'travel-cache-v1066';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1519,7 +1520,7 @@ var CACHE = 'travel-cache-v1065';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 237,'toolbar.js': 743, 'mobile.css': 87, 'web-travel-style.css': 68, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 238,'toolbar.js': 744, 'mobile.css': 87, 'web-travel-style.css': 68, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

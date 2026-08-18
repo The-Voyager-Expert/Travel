@@ -8082,7 +8082,15 @@ window.TVE.home = (function () {
          the same row. */
       '🌍': 'globe',        /* World Map */
       '⛲': 'cathedral',     /* Day Trips — 128 sections */
-      '🏓': 'paddle'        /* Pickleball — 54 sections */
+      '🏓': 'paddle',       /* Pickleball — 54 sections */
+      /* Hiking (owner rule 2026-08-18). The boot is catalogue #1233 — the SAME
+         drawing the Packing Checklist carries on its own Hiking card, which is
+         also where the section's closing pill points. The peak is #1349 and leads
+         the terrain row (distance · ascent). Both are authored glyphs in guide
+         HTML like every other section icon; without a row here they render as
+         Apple emoji and check_row_glyphs_are_drawn hard-fails. */
+      '🥾': 'hiking-boot',
+      '⛰': 'peak'
     };
     /* Built FROM MARKS rather than hand-written. The previous hand-kept
        pattern had to be edited in lockstep with the table and the two leads
@@ -10202,7 +10210,9 @@ window.TVE.home = (function () {
       'getting-around': 20, 'stations-near-hotel': 21, 'day-trips-by-train': 22,
       /* Plan & do */
       'weekly-closures': 30, 'tours': 31, 'shows': 32, 'pickleball': 33,
-      'heads-up': 34, 'worth-knowing': 35
+      /* Hiking sorts where the section itself sits — last content section of the
+         guide, between Heads Up and Worth Knowing (owner rule 2026-08-18). */
+      'heads-up': 34, 'hiking': 35, 'worth-knowing': 36
       /* Elsewhere on the site — everything else, ranked below */
     };
     var ELSEWHERE = 90;
