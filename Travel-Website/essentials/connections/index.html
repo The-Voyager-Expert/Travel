@@ -22,37 +22,9 @@
 .search-wrap { display: flex; justify-content: center; align-self: stretch; }
 .search-wrap input { margin-bottom: 0; }
 .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
-.pill {
-  font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; padding: 6px 12px;
-  border: 1px solid var(--border2); border-radius: 6px; background: var(--surface);
-  color: var(--muted, #6a6660); cursor: pointer; white-space: nowrap;
-  transition: border-color .15s, box-shadow .15s;
-  text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
-}
-a.pill:visited { color: #6a6660; }
-.pill:hover { border-color: var(--rust); background: var(--bg,#f5f4f0); }
-.pill.active { background: var(--surface,#ffffff); color: var(--rust,#C04E1A); border-color: var(--rust); }
-/* Family-colored rest state — bg + text carry the family; border stays neutral. */
-.pill[data-filter="easy"]  { background:#e8f5e8; color:#1a5a1a; }
-.pill[data-filter="mod"]   { background:#fff8e0; color:#7a5800; }
-.pill[data-filter="extra"] { background:#fdf0e8; color:#7a3a1a; }
-.pill[data-filter="easy"].active,
-.pill[data-filter="mod"].active,
-.pill[data-filter="extra"].active { background: var(--surface,#ffffff); color: var(--rust,#C04E1A); border-color: var(--rust); }
-
-/* Desktop-only formatting + behavior per Formatting.html#src-desktoppill:
-   36px height, squared touching strip, counts hidden, family bg on rest,
-   terracotta-border page-bg on .active (kills the gradient). */
-@media (min-width: 601px), (pointer: fine) {
-  .pills { gap: 6px; }
-  .pills .pill { flex: 0 0 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; border: 1px solid rgba(192,78,26,.30); border-radius: 999px; margin-left: 0; color: var(--rust, #C04E1A); }
-  .pills .pill-count { display: none; }
-  .pills .pill:hover { background: #fdf4ed; border-color: rgba(192,78,26,.55); color: var(--rust, #C04E1A); }
-  .pills .pill.active,
-  .pills .pill[data-filter="easy"].active,
-  .pills .pill[data-filter="mod"].active,
-  .pills .pill[data-filter="extra"].active { background: #fdf4ed; border: 1px solid rgba(192,78,26,.85); color: var(--rust, #C04E1A); font-weight: 600; }
-}
+/* Filter pills — size + colour from .pill-badge / .fam-*. No hover. */
+.pill { font-family: inherit; cursor: pointer; gap: 5px; }
+.pill.active { outline: 2.5px solid currentColor; outline-offset: 2px; }
 
 /* ── How to read ── */
 .howto {
@@ -94,14 +66,8 @@ a.pill:visited { color: #6a6660; }
 }
 .ar-name { font-size: 13px; color: var(--text); }
 .ar-country { font-size: 12px; color: var(--muted); }
-.ar-tier {
-  display: inline-block; margin-left: auto; flex-shrink: 0;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5;
-  text-transform: uppercase; padding: 3px 8px; border-radius: 4px; white-space: nowrap;
-}
-.at-easy  { background:#e8f5e8; color:#1a5a1a; border:1px solid rgba(26,90,26,0.4); }
-.at-mod   { background:#fff8e0; color:#7a5800; border:1px solid rgba(122,88,0,0.4); }
-.at-extra { background:#fdf0e8; color:#7a3a1a; border:1px solid rgba(122,58,26,0.4); }
+/* Tier badge layout — size + colour from .badge / .fam-* */
+.ar-tier { margin-left: auto; flex-shrink: 0; }
 .ar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .tc {
   display: flex; flex-direction: column; gap: 3px;
@@ -125,7 +91,6 @@ a.pill:visited { color: #6a6660; }
   /* Form B glued 3-across grid — full width, no gaps, square corners, 46px.
      1.5px neutral border + negative margin so adjacent borders overlap. */
   .pills { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; width: 100% !important; justify-content: center !important; }
-  .pill { flex: 0 0 auto !important; height: 36px !important; padding: 4px 12px !important; border: 1px solid rgba(192,78,26,.30) !important; border-radius: 999px !important; font-size: 13px !important; white-space: nowrap !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; color: var(--rust, #C04E1A) !important; }
   .pill-count { display: none !important; }
   .ar-grid { grid-template-columns: repeat(2, 1fr); }
   /* Tier badge always on its own line: with a long airport name it wrapped
@@ -135,9 +100,7 @@ a.pill:visited { color: #6a6660; }
   .ar-tier { margin-left: 0; order: 99; flex: 0 0 auto; }
 }
 @media (prefers-color-scheme: dark) {
-  .pill[data-filter="easy"], .at-easy  { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,0.4); }
-  .pill[data-filter="mod"],  .at-mod   { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,0.4); }
-  .pill[data-filter="extra"],.at-extra { background: #240e00; color: #c8840a; border-color: rgba(200,132,10,0.4); }
+  /* Filter pills and tier badges: dark handled by .fam-* tokens */
   .tc-rec .tv { color: #c8a060; }
   .src-link, a.src-link { color: #c8a060; }
 }
@@ -185,9 +148,9 @@ a.pill:visited { color: #6a6660; }
 
   <div class="controls">
     <div class="pills tve-glue-m">
-      <button class="pill" data-filter="easy"  onclick="filterTier(this,'easy')">🟢 Easy <span class="pill-count" id="cnt-easy"></span></button>
-      <button class="pill" data-filter="mod"   onclick="filterTier(this,'mod')">🟡 Moderate <span class="pill-count" id="cnt-mod"></span></button>
-      <button class="pill" data-filter="extra" onclick="filterTier(this,'extra')">🔴 Allow extra <span class="pill-count" id="cnt-extra"></span></button>
+      <button class="pill pill-badge fam-green"  data-filter="easy"  onclick="filterTier(this,'easy')">🟢 Easy <span class="pill-count" id="cnt-easy"></span></button>
+      <button class="pill pill-badge fam-yellow" data-filter="mod"   onclick="filterTier(this,'mod')">🟡 Moderate <span class="pill-count" id="cnt-mod"></span></button>
+      <button class="pill pill-badge fam-orange" data-filter="extra" onclick="filterTier(this,'extra')">🔴 Allow extra <span class="pill-count" id="cnt-extra"></span></button>
     </div>
 
   <div class="howto">
@@ -204,7 +167,7 @@ a.pill:visited { color: #6a6660; }
     <div class="region-label">Europe</div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">AMS</span><span class="ar-name">Amsterdam Schiphol</span><span class="ar-country">Netherlands</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">AMS</span><span class="ar-name">Amsterdam Schiphol</span><span class="ar-country">Netherlands</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">40 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">50 min</span></div>
@@ -215,7 +178,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">MUC</span><span class="ar-name">Munich Franz Josef Strauss</span><span class="ar-country">Germany</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">MUC</span><span class="ar-name">Munich Franz Josef Strauss</span><span class="ar-country">Germany</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">35 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">45 min</span></div>
@@ -226,7 +189,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">ZRH</span><span class="ar-name">Zurich</span><span class="ar-country">Switzerland</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">ZRH</span><span class="ar-name">Zurich</span><span class="ar-country">Switzerland</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">40 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">40 min</span></div>
@@ -237,7 +200,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">CPH</span><span class="ar-name">Copenhagen Kastrup</span><span class="ar-country">Denmark</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">CPH</span><span class="ar-name">Copenhagen Kastrup</span><span class="ar-country">Denmark</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">40 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">45 min</span></div>
@@ -248,7 +211,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">HEL</span><span class="ar-name">Helsinki Vantaa</span><span class="ar-country">Finland</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">HEL</span><span class="ar-name">Helsinki Vantaa</span><span class="ar-country">Finland</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">35 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">45 min</span></div>
@@ -259,7 +222,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">VIE</span><span class="ar-name">Vienna</span><span class="ar-country">Austria</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">VIE</span><span class="ar-name">Vienna</span><span class="ar-country">Austria</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">25 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">40 min</span></div>
@@ -270,7 +233,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">LHR</span><span class="ar-name">London Heathrow</span><span class="ar-country">United Kingdom</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">LHR</span><span class="ar-name">London Heathrow</span><span class="ar-country">United Kingdom</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Same terminal</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">To international</span><span class="tv">75 min</span></div>
@@ -281,7 +244,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">FRA</span><span class="ar-name">Frankfurt</span><span class="ar-country">Germany</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">FRA</span><span class="ar-name">Frankfurt</span><span class="ar-country">Germany</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">60 min</span></div>
@@ -292,7 +255,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">MAD</span><span class="ar-name">Madrid Barajas</span><span class="ar-country">Spain</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">MAD</span><span class="ar-name">Madrid Barajas</span><span class="ar-country">Spain</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">60 min</span></div>
@@ -303,7 +266,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">BCN</span><span class="ar-name">Barcelona El Prat</span><span class="ar-country">Spain</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">BCN</span><span class="ar-name">Barcelona El Prat</span><span class="ar-country">Spain</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">60 min</span></div>
@@ -314,7 +277,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">FCO</span><span class="ar-name">Rome Fiumicino</span><span class="ar-country">Italy</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">FCO</span><span class="ar-name">Rome Fiumicino</span><span class="ar-country">Italy</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">50 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">70 min</span></div>
@@ -325,7 +288,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">IST</span><span class="ar-name">Istanbul</span><span class="ar-country">Türkiye</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">IST</span><span class="ar-name">Istanbul</span><span class="ar-country">Türkiye</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">75 min</span></div>
@@ -336,7 +299,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">DUB</span><span class="ar-name">Dublin</span><span class="ar-country">Ireland</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">DUB</span><span class="ar-name">Dublin</span><span class="ar-country">Ireland</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Within Europe</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">To international</span><span class="tv">75 min</span></div>
@@ -347,7 +310,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">CDG</span><span class="ar-name">Paris Charles de Gaulle</span><span class="ar-country">France</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">CDG</span><span class="ar-name">Paris Charles de Gaulle</span><span class="ar-country">France</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">90 min</span></div>
@@ -358,7 +321,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">LIS</span><span class="ar-name">Lisbon Humberto Delgado</span><span class="ar-country">Portugal</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">LIS</span><span class="ar-name">Lisbon Humberto Delgado</span><span class="ar-country">Portugal</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Schengen</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">To non-Schengen</span><span class="tv">60 min</span></div>
@@ -371,7 +334,7 @@ a.pill:visited { color: #6a6660; }
     <div class="region-label">North America</div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">ATL</span><span class="ar-name">Atlanta Hartsfield-Jackson</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">ATL</span><span class="ar-name">Atlanta Hartsfield-Jackson</span><span class="ar-country">United States</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">35–45 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">40 min</span></div>
@@ -382,7 +345,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">ORD</span><span class="ar-name">Chicago O'Hare</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">ORD</span><span class="ar-name">Chicago O'Hare</span><span class="ar-country">United States</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">60 min</span></div>
@@ -393,7 +356,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">DFW</span><span class="ar-name">Dallas/Fort Worth</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">DFW</span><span class="ar-name">Dallas/Fort Worth</span><span class="ar-country">United States</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">50 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">60 min</span></div>
@@ -404,7 +367,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">IAH</span><span class="ar-name">Houston George Bush</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">IAH</span><span class="ar-name">Houston George Bush</span><span class="ar-country">United States</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">60 min</span></div>
@@ -415,7 +378,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">MIA</span><span class="ar-name">Miami</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">MIA</span><span class="ar-name">Miami</span><span class="ar-country">United States</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">60 min</span></div>
@@ -426,7 +389,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">SFO</span><span class="ar-name">San Francisco</span><span class="ar-country">United States</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">SFO</span><span class="ar-name">San Francisco</span><span class="ar-country">United States</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">50 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
@@ -437,7 +400,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">JFK</span><span class="ar-name">New York JFK</span><span class="ar-country">United States</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">JFK</span><span class="ar-name">New York JFK</span><span class="ar-country">United States</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Same terminal</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Terminal change</span><span class="tv">90 min</span></div>
@@ -448,7 +411,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">LAX</span><span class="ar-name">Los Angeles</span><span class="ar-country">United States</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">LAX</span><span class="ar-name">Los Angeles</span><span class="ar-country">United States</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">2 hr</span></div>
@@ -459,7 +422,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">YYZ</span><span class="ar-name">Toronto Pearson</span><span class="ar-country">Canada</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">YYZ</span><span class="ar-name">Toronto Pearson</span><span class="ar-country">Canada</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">75 min</span></div>
@@ -470,7 +433,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">YVR</span><span class="ar-name">Vancouver</span><span class="ar-country">Canada</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">YVR</span><span class="ar-name">Vancouver</span><span class="ar-country">Canada</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Int'l → int'l</span><span class="tv">75 min</span></div>
@@ -481,7 +444,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">MEX</span><span class="ar-name">Mexico City Benito Juárez</span><span class="ar-country">Mexico</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">MEX</span><span class="ar-name">Mexico City Benito Juárez</span><span class="ar-country">Mexico</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
@@ -492,7 +455,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">PTY</span><span class="ar-name">Panama City Tocumen</span><span class="ar-country">Panama</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">PTY</span><span class="ar-name">Panama City Tocumen</span><span class="ar-country">Panama</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
         <div class="tc"><span class="tl">To international</span><span class="tv">45 min</span></div>
@@ -503,7 +466,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">GRU</span><span class="ar-name">São Paulo Guarulhos</span><span class="ar-country">Brazil</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">GRU</span><span class="ar-name">São Paulo Guarulhos</span><span class="ar-country">Brazil</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
@@ -516,7 +479,7 @@ a.pill:visited { color: #6a6660; }
     <div class="region-label">Middle East &amp; Africa</div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">DOH</span><span class="ar-name">Doha Hamad</span><span class="ar-country">Qatar</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">DOH</span><span class="ar-name">Doha Hamad</span><span class="ar-country">Qatar</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
         <div class="tc"><span class="tl">To international</span><span class="tv">45 min</span></div>
@@ -527,7 +490,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">DXB</span><span class="ar-name">Dubai International</span><span class="ar-country">United Arab Emirates</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">DXB</span><span class="ar-name">Dubai International</span><span class="ar-country">United Arab Emirates</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
         <div class="tc"><span class="tl">Same terminal</span><span class="tv">60 min</span></div>
@@ -538,7 +501,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">AUH</span><span class="ar-name">Abu Dhabi Zayed</span><span class="ar-country">United Arab Emirates</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">AUH</span><span class="ar-name">Abu Dhabi Zayed</span><span class="ar-country">United Arab Emirates</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
         <div class="tc"><span class="tl">To international</span><span class="tv">60 min</span></div>
@@ -549,7 +512,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">JNB</span><span class="ar-name">Johannesburg O.R. Tambo</span><span class="ar-country">South Africa</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">JNB</span><span class="ar-name">Johannesburg O.R. Tambo</span><span class="ar-country">South Africa</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
@@ -560,7 +523,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">CAI</span><span class="ar-name">Cairo</span><span class="ar-country">Egypt</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">CAI</span><span class="ar-name">Cairo</span><span class="ar-country">Egypt</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
@@ -573,7 +536,7 @@ a.pill:visited { color: #6a6660; }
     <div class="region-label">Asia-Pacific</div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">SIN</span><span class="ar-name">Singapore Changi</span><span class="ar-country">Singapore</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">SIN</span><span class="ar-name">Singapore Changi</span><span class="ar-country">Singapore</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
         <div class="tc"><span class="tl">Same airline</span><span class="tv">45 min</span></div>
@@ -584,7 +547,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">HKG</span><span class="ar-name">Hong Kong</span><span class="ar-country">Hong Kong</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">HKG</span><span class="ar-name">Hong Kong</span><span class="ar-country">Hong Kong</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
         <div class="tc"><span class="tl">To international</span><span class="tv">50 min</span></div>
@@ -595,7 +558,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-easy" data-tier="easy">
-      <div class="ar-header"><span class="ar-code">KUL</span><span class="ar-name">Kuala Lumpur</span><span class="ar-country">Malaysia</span><span class="ar-tier at-easy">Easy</span></div>
+      <div class="ar-header"><span class="ar-code">KUL</span><span class="ar-name">Kuala Lumpur</span><span class="ar-country">Malaysia</span><span class="ar-tier badge fam-green">Easy</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">60 min</span></div>
@@ -606,7 +569,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">ICN</span><span class="ar-name">Seoul Incheon</span><span class="ar-country">South Korea</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">ICN</span><span class="ar-name">Seoul Incheon</span><span class="ar-country">South Korea</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">—</span></div>
         <div class="tc"><span class="tl">Same terminal</span><span class="tv">45 min</span></div>
@@ -617,7 +580,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">NRT</span><span class="ar-name">Tokyo Narita</span><span class="ar-country">Japan</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">NRT</span><span class="ar-name">Tokyo Narita</span><span class="ar-country">Japan</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Same terminal</span><span class="tv">60 min</span></div>
@@ -628,7 +591,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">HND</span><span class="ar-name">Tokyo Haneda</span><span class="ar-country">Japan</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">HND</span><span class="ar-name">Tokyo Haneda</span><span class="ar-country">Japan</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
@@ -639,7 +602,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">BKK</span><span class="ar-name">Bangkok Suvarnabhumi</span><span class="ar-country">Thailand</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">BKK</span><span class="ar-name">Bangkok Suvarnabhumi</span><span class="ar-country">Thailand</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
@@ -650,7 +613,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">SYD</span><span class="ar-name">Sydney Kingsford Smith</span><span class="ar-country">Australia</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">SYD</span><span class="ar-name">Sydney Kingsford Smith</span><span class="ar-country">Australia</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">90 min</span></div>
@@ -661,7 +624,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-mod" data-tier="mod">
-      <div class="ar-header"><span class="ar-code">AKL</span><span class="ar-name">Auckland</span><span class="ar-country">New Zealand</span><span class="ar-tier at-mod">Moderate</span></div>
+      <div class="ar-header"><span class="ar-code">AKL</span><span class="ar-name">Auckland</span><span class="ar-country">New Zealand</span><span class="ar-tier badge fam-yellow">Moderate</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">45 min</span></div>
         <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">90 min</span></div>
@@ -672,7 +635,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">PVG</span><span class="ar-name">Shanghai Pudong</span><span class="ar-country">China</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">PVG</span><span class="ar-name">Shanghai Pudong</span><span class="ar-country">China</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Domestic → int'l</span><span class="tv">90 min</span></div>
@@ -683,7 +646,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">DEL</span><span class="ar-name">Delhi Indira Gandhi</span><span class="ar-country">India</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">DEL</span><span class="ar-name">Delhi Indira Gandhi</span><span class="ar-country">India</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">2 hr</span></div>
@@ -694,7 +657,7 @@ a.pill:visited { color: #6a6660; }
     </div>
 
     <div class="apt-row tier-extra" data-tier="extra">
-      <div class="ar-header"><span class="ar-code">BOM</span><span class="ar-name">Mumbai Chhatrapati Shivaji</span><span class="ar-country">India</span><span class="ar-tier at-extra">Allow extra</span></div>
+      <div class="ar-header"><span class="ar-code">BOM</span><span class="ar-name">Mumbai Chhatrapati Shivaji</span><span class="ar-country">India</span><span class="ar-tier badge fam-orange">Allow extra</span></div>
       <div class="ar-grid">
         <div class="tc"><span class="tl">Domestic</span><span class="tv">60 min</span></div>
         <div class="tc"><span class="tl">Int'l → domestic</span><span class="tv">2 hr</span></div>
