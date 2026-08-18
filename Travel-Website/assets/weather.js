@@ -165,20 +165,18 @@
 
       function content(folder, cityLabel) {
         var days   = GUIDE_DAYS[folder];
-        var fmap   = window._FMAP || {};
         var costD  = (window._COST_DATA   || {})[cityLabel] || (window._COST_DATA   || {})[folder] || {};
         var safeD  = (window._SAFETY_DATA || {})[cityLabel] || (window._SAFETY_DATA || {})[folder] || {};
 
-        /* Flight: find FMAP key whose first segment matches folder */
-        var flightMins = null;
-        Object.keys(fmap).forEach(function (k) {
-          if (k.split('/')[0] === folder && fmap[k].r !== 'home' && fmap[k].m)
-            flightMins = fmap[k].m;
-        });
-
+        /* NO FLIGHT TIME HERE (2026-08-18). This used to print "✈️ 9h" straight out
+           of FMAP, which is 237 routings from ONE airport — so it was Seattle's air
+           time, shown to whoever was reading, with nothing saying so. Never re-add
+           it: a hover tooltip has nowhere to put the control that an origin number
+           needs beside it ("every label is a control", TVE.home, toolbar.js § 43).
+           The Flight time view on the guides index answers that question properly,
+           with a picker and an estimate labelled as one. */
         var line1 = [];
         if (days) line1.push('📅 ' + days + ' day' + (days > 1 ? 's' : ''));
-        if (flightMins) line1.push('✈️ ' + Math.round(flightMins / 60) + 'h');
 
         var line2 = [];
         if (costD.tier)  line2.push('💰 ' + (COST_SYM[costD.tier] || costD.tier));
