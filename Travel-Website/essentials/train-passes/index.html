@@ -35,11 +35,17 @@
 .elig-badge {
   display: inline-flex; align-items: center; gap: 5px;
   font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
-  text-transform: uppercase; padding: 3px 9px; border-radius: 4px;
+  text-transform: uppercase; padding: 3px 9px; border-radius: var(--fam-radius, 6px);
   border: 1px solid; white-space: nowrap; cursor: pointer;
   transition: opacity .15s; user-select: none;
 }
-.elig-badge:focus { outline: 2.5px solid currentColor; outline-offset: 2px; }
+/* Selection ring is tied to the JS is-on class, not :focus — :focus fired
+   on every click and stayed stuck on a badge after it was toggled OFF
+   (deselected), since the browser's own focus target and this page's
+   activeElig state were two different things that only agreed by
+   coincidence. :focus-visible is kept separately for real keyboard nav. */
+.elig-badge:focus-visible { outline: 2.5px solid currentColor; outline-offset: 2px; }
+.elig-badge.is-on { outline: 2.5px solid currentColor; outline-offset: 2px; }
 .elig-badge.dimmed { opacity: 0.38; }
 .e-orange { background: var(--warm,#fdf8f0); color: #8a4a10; border-color: rgba(184,134,90,.4); }
 .e-yellow { background: #fff8e0; color: #7a5800;  border-color: rgba(122,88,0,.4); }
@@ -473,11 +479,12 @@
     function toggle() {
       if (activeElig === badge.dataset.elig) {
         activeElig = null;
-        eligBadges.forEach(function (b) { b.classList.remove('dimmed'); });
+        eligBadges.forEach(function (b) { b.classList.remove('dimmed'); b.classList.remove('is-on'); });
       } else {
         activeElig = badge.dataset.elig;
         eligBadges.forEach(function (b) {
           b.classList.toggle('dimmed', b.dataset.elig !== activeElig);
+          b.classList.toggle('is-on', b.dataset.elig === activeElig);
         });
       }
       applyFilters();
