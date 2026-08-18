@@ -1544,7 +1544,8 @@
 /* 2026-08-18: web-travel-style.css: added the 8 approved badge-family colour tokens (--fam-*, light+dark) plus shared .badge / .pill-badge / .fam-* classes — the single source pages read instead of hardcoding family hex. Checkpoint only, no page converted yet. web-travel-style.css -> v70. CACHE to v1085. */
 /* 2026-08-18: badge families corrected to SPEC — radius 6px->4px, gap 6px->5px (Formatting.html#sec-badges), plus the border ladder: rest rgba(...,.4) -> selected rgba(...,.85) via new --fam-*-rgb triplets. The ring alone was not the selected state. web-travel-style.css -> v71. CACHE to v1086. */
 /* 2026-08-18: badges — no emoji in a label except the family dots (owner rule). Comment-only in the CSS, but the guard bumps on any shared-asset change. web-travel-style.css -> v72. CACHE to v1087. */
-var CACHE = 'travel-cache-v1087';
+/* 2026-08-18: badge system — NO HOVER anywhere (owner rule; the terracotta Option-B hover is retired), and badge/pill-badge collapsed to ONE box differing only by case. web-travel-style.css -> v73. CACHE to v1088. */
+var CACHE = 'travel-cache-v1088';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1552,7 +1553,7 @@ var CACHE = 'travel-cache-v1087';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 246,'toolbar.js': 754, 'mobile.css': 87, 'web-travel-style.css': 72, 'guides-index-style.css': 17, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 246,'toolbar.js': 754, 'mobile.css': 87, 'web-travel-style.css': 73, 'guides-index-style.css': 17, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
