@@ -792,6 +792,25 @@ input[type="text"]::placeholder,
   margin-top: var(--search-gap, 32px) !important;
   margin-bottom: var(--search-gap, 32px) !important;
 }
+/* ── AND THE SAME GAP WHEN THERE IS NO SEARCH (2026-08-18) ────────────────
+   The rule above only reaches a SEARCH wrapper, so a page whose first block is
+   something else got whatever margin that block happened to carry. Measured
+   across the site: 13 pages had their first content box at 0px from the
+   terracotta band — an alert banner, a legend, a stat tile, a jump strip or a
+   filter row sitting flush against the colour — against 32px everywhere else.
+
+   Two shapes, the same two the search rule uses: the band's own next sibling,
+   or the first child of the wrapper that follows it. `.hero-ground` is excluded
+   because it PAINTS a band of its own and carries the gap inside its padding —
+   a margin there opens a stripe of page background between the two bands
+   (Forty-third non-negotiable). No !important, so the search rule above still
+   wins wherever both apply, and a page that deliberately sets its own spacing
+   still wins on specificity. */
+.hero-band + :not(.hero-ground):not(.wrap),
+.hero-band + .wrap > :first-child {
+  margin-top: var(--search-gap, 32px);
+}
+
 .hero-band + .search-wrap > input[type="search"],
 .hero-band + .search-row > input[type="search"],
 .hero-band + .search-box > input[type="search"],
