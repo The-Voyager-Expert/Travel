@@ -1547,7 +1547,7 @@ var CACHE = 'travel-cache-v1082';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 245,'toolbar.js': 752, 'mobile.css': 87, 'web-travel-style.css': 69, 'guides-index-style.css': 15, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 245,'toolbar.js': 752, 'mobile.css': 87, 'web-travel-style.css': 69, 'guides-index-style.css': 16, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
