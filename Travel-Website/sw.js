@@ -1540,7 +1540,8 @@
 /* 2026-08-18: stop spacing measured to the BOX, not the text: prose->panel top now 16px (was 0, so only the prose's own 10px separated them), and the title->prose 16px re-aimed past the injected note nodes that had been swallowing it since the note feature shipped toolbar.js -> v751. CACHE to v1081. */
 /* 2026-08-18: Map day label shows at every width; guides mosaic to 4 columns on desktop; pinned card to light terracotta with the guide pill matched to Before you go toolbar.js -> v752. CACHE to v1082. */
 /* 2026-08-18: action row: separated pills on the section-chip tokens, gold labels, marks that take the label colour; bookmark card to solid terracotta toolbar.js -> v753. CACHE to v1083. */
-var CACHE = 'travel-cache-v1083';
+/* 2026-08-18: action-row marks were a 0.31px hairline; filled currentColor now toolbar.js -> v754. CACHE to v1084. */
+var CACHE = 'travel-cache-v1084';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1548,7 +1549,7 @@ var CACHE = 'travel-cache-v1083';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 246,'toolbar.js': 753, 'mobile.css': 87, 'web-travel-style.css': 69, 'guides-index-style.css': 17, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 246,'toolbar.js': 754, 'mobile.css': 87, 'web-travel-style.css': 69, 'guides-index-style.css': 17, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

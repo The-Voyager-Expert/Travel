@@ -1160,17 +1160,43 @@ window.TVE.home = (function () {
      reused, never redrawn) — a hand-cut copy loses the optical normalisation
      the specimen's viewBox carries and renders visibly undersized beside its
      neighbours. Each entry keeps its OWN vb for the same reason.
+     FLATTEN THE FILL, DROP THE RIM — never the other way round. Every
+     catalogue shape here is a FILLED shape wearing a 0.5 hairline rim
+     (fill="url(#gm-X)" stroke="var(--c-X-rim)" stroke-width="0.5"). The rim
+     exists to part a gradient fill from the ground; a flat mark has no gradient
+     and needs no rim. Moving currentColor onto the STROKE instead and keeping
+     that 0.5 turns a solid shape into a 0.5-unit outline — at 15px in a
+     24-unit box that is 0.31 CSS px, a sub-pixel hairline the browser
+     antialiases to about a third of one pixel of ink. Five of these six
+     shipped that way on 2026-08-18 and the row read as five labels with no
+     icons; the sixth, 'download', looked fine only because #617 is genuinely a
+     stroke drawing at 2.3 (1.44px) and had nothing to flatten. Nothing errors,
+     nothing is blank — the mark is simply too faint to see, which is why it
+     survived review. So: fill="currentColor" and no stroke, EXCEPT where the
+     catalogue itself drew strokes.
      The light shapes that survive as knockouts — the tick on #1265, the
      currency glyph on #375, the pin's hole on #40 — take --c-pill-bg rather
-     than currentColor, because a one-colour mark swallows them otherwise.
+     than currentColor, because a one-colour mark swallows them otherwise. The
+     front coin on #375 takes a --c-pill-bg rim for the same reason: two solid
+     currentColor discs overlapping merge into one blob without it.
      To change a drawing: re-run the script, do not edit the path by hand. */
   var GM_MONO = {
-    'cal-export': { vb: '0.10 -0.90 23.81 23.81', m: '<path fill="none" stroke="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" stroke-width="0.6"/>' },
-    'country-map': { vb: '0 0 24 24', m: '<path fill="none" stroke="currentColor" d="M2 5.2 8.6 3v16L2 21.2z" stroke-width="0.5"/><path opacity=".42" fill="none" stroke="currentColor" d="M8.6 3 15.4 5.2v16L8.6 19z" stroke-width="1" stroke-linejoin="round" /><path fill="none" stroke="currentColor" d="M15.4 5.2 22 3v16l-6.6 2.2z" stroke-width="0.5"/><path fill="none" stroke="var(--c-pill-bg,#fdf8f0)" d="M17.4 5.6a2.3 2.3 0 0 0-2.3 2.3c0 1.7 2.3 4.3 2.3 4.3s2.3-2.6 2.3-4.3a2.3 2.3 0 0 0-2.3-2.3z" stroke-width="0.5"/>' },
+    'cal-export': { vb: '0.10 -0.90 23.81 23.81', m: '<path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>' },
+    'country-map': { vb: '0 0 24 24', m: '<path fill="currentColor" d="M2 5.2 8.6 3v16L2 21.2z"/><path fill="currentColor" opacity=".42" d="M8.6 3 15.4 5.2v16L8.6 19z"/><path fill="currentColor" d="M15.4 5.2 22 3v16l-6.6 2.2z"/><path fill="var(--c-pill-bg,#fdf8f0)" d="M17.4 5.6a2.3 2.3 0 0 0-2.3 2.3c0 1.7 2.3 4.3 2.3 4.3s2.3-2.6 2.3-4.3a2.3 2.3 0 0 0-2.3-2.3z"/>' },
     'download': { vb: '0 0 24 24', m: '<path fill="none" stroke="currentColor" d="M12 4v11.4" stroke-width="2.3" stroke-linecap="round"/><path fill="none" stroke="currentColor" d="M6.8 10.2 12 15.4l5.2-5.2" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><path fill="none" stroke="currentColor" d="M5.4 19.6h13.2" stroke-width="2.3" stroke-linecap="round"/>' },
-    'exchange': { vb: '0 0 24 24', m: '<circle opacity=".42" fill="none" stroke="currentColor" cx="8.4" cy="14.6" r="6.6" stroke-width="0.5"/><circle fill="none" stroke="currentColor" cx="16.2" cy="9.4" r="6.2" stroke-width="0.5"/><path fill="none" stroke="var(--c-pill-bg,#fdf8f0)" d="M16.2 6.2v6.4M14.5 7.9h3.4M14.5 10.9h3.4" stroke-width="1.1" stroke-linecap="round"/>' },
-    'check': { vb: '0 0 24 24', m: '<circle fill="none" stroke="currentColor" cx="12" cy="12" r="10.6" stroke-width="0.5"/><path fill="none" stroke="var(--c-pill-bg,#fdf8f0)" d="M6.8 12.4 10.4 16l6.8-8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>' },
-    'pin': { vb: '0 0 24 24', m: '<path fill="none" stroke="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" stroke-width="0.5" fill-rule="evenodd"/>' }
+    /* #375's currency glyph is DROPPED, not knocked out. It lives inside the
+       front coin, which at the shipped 15px is a 7.75px disc — the three
+       strokes land at ~2px total and render as a smudge that reads '\u2021',
+       not as money. Mono already drops what cannot resolve at this size (the
+       inner coins, the gloss, #12's dashed route line); this is the same call.
+       Two solid overlapping discs parted by a --c-pill-bg rim read as coins on
+       their own, and the rim follows the token into dark mode. The specimen
+       stays #375 rather than #379/#381, which draw a literal $ or EUR: this
+       pill converts the reader's own currency into the guide's, so the mark
+       must stay currency-neutral (Fiftieth non-negotiable). */
+    'exchange': { vb: '0 0 24 24', m: '<circle fill="currentColor" cx="8.4" cy="14.6" r="6.6"/><circle fill="currentColor" stroke="var(--c-pill-bg,#fdf8f0)" stroke-width="1.1" cx="16.2" cy="9.4" r="6.2"/>' },
+    'check': { vb: '0 0 24 24', m: '<circle fill="currentColor" cx="12" cy="12" r="10.6"/><path fill="none" stroke="var(--c-pill-bg,#fdf8f0)" d="M6.8 12.4 10.4 16l6.8-8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>' },
+    'pin': { vb: '0 0 24 24', m: '<path fill="currentColor" fill-rule="evenodd" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>' }
   };
   /* mono=true forces the flat currentColor mark and SKIPS the coloured sprite.
      Passed explicitly at the action-row call sites rather than inferred from the
