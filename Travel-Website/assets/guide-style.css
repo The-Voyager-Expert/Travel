@@ -1313,6 +1313,20 @@ a.lounge-arrival-chip:visited { color: #C04E1A; }
   border-radius: 4px 4px 0 0;
   padding: 8px 14px;
 }
+/* The same title→prose 16px, for the RUNTIME DOM. toolbar.js injects
+   .tve-note-saved and .tve-note-edit `afterend` of .stop-header, so once the
+   script runs the prose is child 4 and the rule above lands on a display:none
+   note element — measured, the gap was 10px (the generic .stop-row margin), not
+   the 16 it declares. The authored HTML really does have the prose at child 2,
+   which is why the contract reads correct in every guide file and in every diff
+   and only breaks in the browser.
+   MARGIN ONLY, deliberately: the card background, radius and padding above are
+   NOT restored here. They have not rendered since the note feature shipped, so
+   turning them on now would repaint 237 guides in a pass that was asked to fix a
+   gap. That is a separate, visible change and it is the owner's call. */
+.stop-block > .tve-note-edit + * {
+  margin-top: 16px;
+}
 /* Zero prose bottom padding when a booking box follows so the join uses only
    the first child's 6px margin as spacing. */
 .stop-block > :nth-child(2):has(+ .tour-box),
@@ -1325,11 +1339,12 @@ a.lounge-arrival-chip:visited { color: #C04E1A; }
 .stop-block > :nth-child(2):has(+ .stop-row) {
   padding-bottom: 14px;
 }
-/* Push the first stop-row (Read More / Wikipedia link) away from the prose card.
-   Space lives outside the white tile, not inside it. */
-.stop-block > :nth-child(2) + .stop-row {
-  margin-top: 16px;
-}
+/* NOTE: a rule was added here on 2026-08-18 to push the Read More row away from
+   the prose, and it matched NOTHING — at runtime the sibling after :nth-child(2)
+   is .tve-note-edit, not a .stop-row. The gap is set on the box's own top edge
+   instead (see .stop-row:has(> a[href*="en.wikipedia.org"]) below), which is
+   both the correct element to measure to and a selector that survives the note
+   injection. Do not re-add a :nth-child(2)-based spacing rule here. */
 /* Card directly after prose (no Wikipedia row) — glue to the white prose block.
    padding-top: 0 so the 6px div margin inside the box is the only gap. */
 .stop-block > :nth-child(2) + .tour-box,
@@ -1505,7 +1520,20 @@ a.lounge-arrival-chip:visited { color: #C04E1A; }
    and the transit banners. Using the token rather than the hex means the dark
    block themes the panel with the rest of the guide and needs no override. */
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) {
-  margin-top: 0;
+  /* THE GAP IS MEASURED PROSE → THE BOX, ALWAYS (owner rule 2026-08-18: "prose
+     to the BOX of the next thing always"). This row is the box's top edge — it
+     is where the tinted panel starts — so the gap under the description belongs
+     here and nowhere else. 16px to match the title → prose gap above it.
+     It collapses over the prose's own 10px margin-bottom and wins.
+
+     Do NOT try to set this from the prose side with a :nth-child(2) selector.
+     toolbar.js injects .tve-note-saved and .tve-note-edit `afterend` of
+     .stop-header, so at RUNTIME the prose is child 4, not child 2 — every
+     :nth-child(2) rule in this file lands on a display:none note element. The
+     authored HTML does have the prose at child 2, which is why the contract
+     reads correct in every guide and in every diff, and only breaks once the
+     script runs. This selector matches the real element either way. */
+  margin-top: 16px;
   margin-bottom: 0;
   background: var(--c-next-bg);
   border-top: 1px solid #e4ddd0;
