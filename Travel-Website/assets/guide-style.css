@@ -692,6 +692,23 @@ a.title-hotel-request:visited { color: #8a6c1a; }   /* owner rule 2026-07-28: no
   }
   #ics-pill-row > .overview-extra-link:nth-child(even) { border-left-width: 0 !important; }
   #ics-pill-row > .overview-extra-link:nth-child(n+3)  { border-top-width: 0 !important; }
+  /* THE CURRENCY PILL TAKES THE WHOLE ROW when it is the odd one out (owner
+     rule 2026-08-18: "since we have a odd number of pills ... make the currency
+     pill occupy the space of two pills. it looks very odd the way it is now").
+     The row is a 2-column grid and the fifth pill sat alone in the last row
+     with an empty cell beside it — on all 237 guides now that the USD bail is
+     gone, where before it was only the 177 non-dollar ones.
+
+     Conditioned on `:nth-child(odd):last-child`, not applied flat: the moment a
+     sixth pill is added the row is even again, the pairs are correct, and this
+     rule stops matching on its own rather than leaving one pill mysteriously
+     double width. It must exist in BOTH phone blocks — this file carries the
+     pill grid twice, under (pointer: fine) and (pointer: coarse) — and a fix
+     applied to one looks completely right in a diff.
+     Enforced: brain_check.check_currency_pill_spans_pill_row (static, counts
+     both blocks) and validate_mobile_render.py §10 (measures the rendered box,
+     so a rule that is present but outranked still fails). */
+  #ics-pill-row > #tve-cur-pill:nth-child(odd):last-child { grid-column: 1 / -1; }
 }
 @media (max-width: 600px) and (pointer: coarse) {
   #ics-pill-row {
@@ -708,6 +725,23 @@ a.title-hotel-request:visited { color: #8a6c1a; }   /* owner rule 2026-07-28: no
   }
   #ics-pill-row > .overview-extra-link:nth-child(even) { border-left-width: 0 !important; }
   #ics-pill-row > .overview-extra-link:nth-child(n+3)  { border-top-width: 0 !important; }
+  /* THE CURRENCY PILL TAKES THE WHOLE ROW when it is the odd one out (owner
+     rule 2026-08-18: "since we have a odd number of pills ... make the currency
+     pill occupy the space of two pills. it looks very odd the way it is now").
+     The row is a 2-column grid and the fifth pill sat alone in the last row
+     with an empty cell beside it — on all 237 guides now that the USD bail is
+     gone, where before it was only the 177 non-dollar ones.
+
+     Conditioned on `:nth-child(odd):last-child`, not applied flat: the moment a
+     sixth pill is added the row is even again, the pairs are correct, and this
+     rule stops matching on its own rather than leaving one pill mysteriously
+     double width. It must exist in BOTH phone blocks — this file carries the
+     pill grid twice, under (pointer: fine) and (pointer: coarse) — and a fix
+     applied to one looks completely right in a diff.
+     Enforced: brain_check.check_currency_pill_spans_pill_row (static, counts
+     both blocks) and validate_mobile_render.py §10 (measures the rendered box,
+     so a rule that is present but outranked still fails). */
+  #ics-pill-row > #tve-cur-pill:nth-child(odd):last-child { grid-column: 1 / -1; }
 }
 
 #ams-advisory { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; background:var(--c-alt-bg); border-top:1px solid var(--c-alt-border); border-bottom:1px solid var(--c-alt-border); }
@@ -763,6 +797,8 @@ a.title-hotel-request:visited { color: #8a6c1a; }   /* owner rule 2026-07-28: no
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
+  /* Anchor for the ✕ — see .tve-cur-x. */
+  position: relative;
   /* -8px pulls the panel up through #ics-pill-row's 14px bottom margin so it
      reads as the pill expanding rather than as a separate card below it. */
   margin: -8px 0 16px;
@@ -775,7 +811,28 @@ a.title-hotel-request:visited { color: #8a6c1a; }   /* owner rule 2026-07-28: no
    this the panel would ship permanently open. Same trap as every other
    display-carrying class in this file. */
 #tve-cur-panel[hidden] { display: none; }
-.tve-cur-row { display: flex; align-items: center; gap: 8px; width: 100%; }
+/* The standalone-✕ standard, to the letter (owner rule 2026-07-28): ✕ U+2715,
+   13px, #7a7068, hover #3d3a32, background:none, border:none, and NEVER a
+   border-radius — a circle or pill here is the exact drift that standard was
+   written to stop. Registered in _X_STANDARD_SELECTORS in brain_check.py.
+   It exists because tapping the pill again was the ONLY way out and nobody
+   found it (owner, 2026-08-18: "i always have a problem figuring out what to do
+   to close get out of this section"). The 44px hit area comes from a
+   transparent ::after rather than from padding: padding would push the glyph
+   off the panel's top-right corner. */
+.tve-cur-x {
+  position: absolute; top: 8px; right: 10px;
+  font-size: 13px; line-height: 1; color: #7a7068;
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: inherit;
+}
+.tve-cur-x:hover { color: #3d3a32; }
+.tve-cur-x::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 44px; height: 44px; transform: translate(-50%, -50%);
+}
+/* padding-right clears the ✕ so the destination amount never runs under it. */
+.tve-cur-row { display: flex; align-items: center; gap: 8px; width: 100%; padding-right: 22px; box-sizing: border-box; }
 .tve-cur-field { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
 .tve-cur-sym { font-size: 13px; font-weight: 700; color: var(--c-action-text); white-space: nowrap; }
 /* The reader's own currency is a PICKER; the guide's stays a fixed label
@@ -833,6 +890,10 @@ a.title-hotel-request:visited { color: #8a6c1a; }   /* owner rule 2026-07-28: no
    lands right on the wrap point. */
 .tve-cur-more { color: var(--c-index-accent); text-decoration: none; font-weight: 600; white-space: nowrap; }
 .tve-cur-more:visited { color: #7a5c0e; }  /* literal hex — browsers don't resolve var() in :visited */
+@media (prefers-color-scheme: dark) {
+  /* The standard's dark hover is #f5f3ef; the rest colour is shared. */
+  .tve-cur-x:hover { color: #f5f3ef; }
+}
 .tve-cur-more:hover { text-decoration: underline; }
 /* Fixed 96px fields overflow the row at 320px (2 × 96 + labels + gaps > the
    264px of content a 320px viewport leaves once page and panel padding are
@@ -841,11 +902,26 @@ a.title-hotel-request:visited { color: #8a6c1a; }   /* owner rule 2026-07-28: no
 @media (max-width: 600px) and (pointer: coarse) {
   .tve-cur-field { flex: 1 1 0; }
   .tve-cur-in { width: auto; flex: 1 1 0; min-width: 0; }
-  /* The picker is the one control on this row a reader has to READ before they
-     can use it, so on a phone the row stacks rather than squeezing a 9.5em
-     select, a 16px number field, an "=" and a second pair onto 393px. */
+  /* The picker takes its own line with its amount field, and the destination
+     pair drops to the second:
+
+         [ EUR — Euro ▾ ] [        60 ]
+         = ¥ [                   11054 ]
+
+     flex-wrap ALONE does not do this and shipped looking like it had: flex
+     shrinks a `flex:1 1 0` item to nothing long before it asks for a second
+     line, so the picker took the half-row at its 16px iOS-safe width and the
+     amount input beside it collapsed to a ~20px sliver behind the "=" — with
+     the reader's number still in it, invisible. `flex: 1 0 100%` on the field
+     that holds the picker is what actually forces the break.
+     The 58% cap then makes the two AMOUNT boxes read as a pair; uncapped, the
+     picker took 284 of 365px and its amount came out a third the width of the
+     one below it. The cap is on the picker because it is the only item here
+     that can afford to lose width — it truncates to the ISO, which leads the
+     label and identifies the currency on its own. */
   .tve-cur-row { flex-wrap: wrap; }
-  .tve-cur-pick { font-size: 16px; max-width: 100%; flex: 0 1 auto; }
+  .tve-cur-mine { flex: 1 0 100%; }
+  .tve-cur-pick { font-size: 16px; flex: 1 1 auto; max-width: 58%; }
 }
 
 /* Transient confirmation toast (Save for offline). Fixed bottom-centre, fades in,

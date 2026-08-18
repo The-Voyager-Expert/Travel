@@ -7470,6 +7470,14 @@ window.TVE.home = (function () {
       /* Replaces the empty .tve-cur-sym label the field was built with, so the
          picker sits exactly where the "US$" tag used to. */
       mine.wrap.replaceChild(pick, mine.wrap.firstChild);
+      /* Named so the phone rule can give THIS field its own line. The picker is
+         ~156px at the 16px iOS-safe size, and .tve-cur-field is flex:1 1 0 on a
+         phone — so on a 393px screen the picker ate the half-row and the amount
+         input beside it collapsed to a ~20px sliver behind the "=". The number
+         the reader had typed was still in there and invisible. Measured, not
+         guessed: the row does not wrap on its own, because flex shrinks the
+         input to nothing before it ever needs a second line. */
+      mine.wrap.classList.add('tve-cur-mine');
 
       var loc = _field(sym || c.iso, 'Amount in ' + c.name);
       var eq = document.createElement('span');
@@ -7525,6 +7533,31 @@ window.TVE.home = (function () {
       loc.input.placeholder = 'Amount';
 
       /* ── Reference line — the rate, its currency, and the way out ── */
+      /* ── The way out ──────────────────────────────────────────────────────
+         Tapping the pill again closes the panel, and that was the ONLY way out —
+         which nobody finds (owner, 2026-08-18: "i always have a problem figuring
+         out what to do to close get out of this section"). An explicit ✕ is the
+         answer. It follows the site's standalone-✕ standard exactly — the ✕
+         character is U+2715, never U+00D7, 13px #7a7068, no background, no
+         border, no radius — and `.tve-cur-x` is registered in
+         _X_STANDARD_SELECTORS in brain_check.py, without which that check
+         hard-fails on an unregistered class. */
+      var xBtn = document.createElement('button');
+      xBtn.type = 'button';
+      xBtn.className = 'tve-cur-x';
+      xBtn.textContent = '✕';
+      xBtn.setAttribute('aria-label', 'Close the currency converter');
+      xBtn.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        panel.hidden = true;
+        pill.classList.remove('tve-cur-on');
+        pill.setAttribute('aria-expanded', 'false');
+        /* Focus goes back to the control that opened it — otherwise a keyboard
+           or VoiceOver reader is left on a button that no longer exists. */
+        pill.focus();
+      });
+      panel.appendChild(xBtn);
+
       var note = document.createElement('div');
       note.className = 'tve-cur-note';
       var lede = document.createTextNode('');
