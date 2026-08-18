@@ -43,9 +43,12 @@
     align-items: center;
     justify-content: center;
   }
+  /* "All" is a reset, not a family — but it still may not be white:
+     var(--surface)/#fff as a fill is banned on anything badge-anchored.
+     Uses the page tint so it reads as a sibling of the family pills. */
   .filter-btn[data-type="all"] {
-    background: var(--surface);
-    border-color: var(--border);
+    background: var(--surface2);
+    border-color: var(--border-strong);
     color: var(--muted);
   }
   @media (min-width: 601px), (pointer: fine) {
@@ -187,7 +190,7 @@
 
   <div class="controls">
     <span class="filter-label">Type:</span>
-    <button class="filter-btn pill-badge is-on active" data-type="all"        onclick="filterCruises('all',this)" aria-pressed="true">All</button>
+    <button class="filter-btn pill-badge active" data-type="all"        onclick="filterCruises('all',this)" aria-pressed="true">All</button>
     <button class="filter-btn pill-badge fam-grey" data-type="ocean"      onclick="filterCruises('ocean',this)" aria-pressed="false">Ocean</button>
     <button class="filter-btn pill-badge fam-pink" data-type="river"      onclick="filterCruises('river',this)" aria-pressed="false">River</button>
     <button class="filter-btn pill-badge fam-red" data-type="expedition" onclick="filterCruises('expedition',this)" aria-pressed="false">Expedition</button>
@@ -1463,5 +1466,30 @@ function filterCruises(type, btn) {
 }
 </script>
 
+
+<script>
+/* Every pill in a row is the same size — the widest label's width, shorter
+   labels centred inside it. Rows are sized independently of each other.
+   CSS cannot do this: grid-auto-columns:1fr on an intrinsically-sized
+   container does not equalise to the widest item. */
+(function () {
+  function equalise() {
+    document.querySelectorAll('.controls, .filter-bar, .card-tags').forEach(function (row) {
+      var items = [].slice.call(row.children).filter(function (el) {
+        return el.classList.contains('pill-badge') || el.classList.contains('badge');
+      });
+      if (items.length < 2) return;
+      items.forEach(function (el) { el.style.width = ''; });
+      var max = 0;
+      items.forEach(function (el) { max = Math.max(max, el.getBoundingClientRect().width); });
+      items.forEach(function (el) { el.style.width = max + 'px'; });
+    });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(equalise);
+  document.addEventListener('DOMContentLoaded', equalise);
+  window.addEventListener('resize', equalise);
+  equalise();
+})();
+</script>
 </body>
 </html>
