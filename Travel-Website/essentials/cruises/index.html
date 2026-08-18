@@ -32,26 +32,14 @@
     color: var(--muted);
     margin-right: 4px;
   }
-  /* Shape, size, colour: ALL from .pill-badge / .fam-* in the shared CSS.
-     This rule sets layout only and must NOT declare border-color or color —
-     the page stylesheet loads after the shared one, so a bare .filter-btn
-     colour here beats .fam-* on equal specificity and every category button
-     silently renders neutral (that exact bug shipped once). The neutral look
-     is scoped to [data-type="all"], which is a reset, not a family. */
+  /* Filter buttons — layout only. Size and colour: .pill-badge / .fam-* in
+     the shared CSS (ONE BOX rule: pill-badge and badge are the same element).
+     No border-color or color here — a page-level rule beats .fam-* at equal
+     specificity and silently makes every button neutral (that bug shipped). */
   .filter-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-  }
-  /* "All" is a reset, not a family — but it still may not be white:
-     var(--surface)/#fff as a fill is banned on anything badge-anchored.
-     Uses the page tint so it reads as a sibling of the family pills. */
-  .filter-btn[data-type="all"] {
-    background: var(--surface2);
-    border-color: var(--border-strong);
-    color: var(--muted);
-  }
-  @media (min-width: 601px), (pointer: fine) {
   }
 
   /* ── Cruise cards ── */
@@ -190,7 +178,7 @@
 
   <div class="controls">
     <span class="filter-label">Type:</span>
-    <button class="filter-btn pill-badge active" data-type="all"        onclick="filterCruises('all',this)" aria-pressed="true">All</button>
+    <button class="filter-btn pill-badge fam-orange is-on" data-type="all"        onclick="filterCruises('all',this)" aria-pressed="true">All</button>
     <button class="filter-btn pill-badge fam-grey" data-type="ocean"      onclick="filterCruises('ocean',this)" aria-pressed="false">Ocean</button>
     <button class="filter-btn pill-badge fam-pink" data-type="river"      onclick="filterCruises('river',this)" aria-pressed="false">River</button>
     <button class="filter-btn pill-badge fam-red" data-type="expedition" onclick="filterCruises('expedition',this)" aria-pressed="false">Expedition</button>
@@ -1447,8 +1435,8 @@
 
 <script>
 function filterCruises(type, btn) {
-  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-  btn.classList.add('active');
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('is-on'); b.setAttribute('aria-pressed', 'false'); });
+  btn.classList.add('is-on');
   btn.setAttribute('aria-pressed', 'true');
   var cards = document.querySelectorAll('.cruise-card');
   var sections = document.querySelectorAll('.type-section');
