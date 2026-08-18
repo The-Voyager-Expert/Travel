@@ -1530,7 +1530,8 @@
    ::after. The Currency pill now spans the whole 2-column phone pill row when it is the odd one out, and
    the left amount field no longer collapses to a sliver behind the "=" at 393px.
    toolbar.js -> v746, guide-style.css -> v241. CACHE to v1069. */
-var CACHE = 'travel-cache-v1073';
+/* 2026-08-18: toolbar.js comments only — five stale references to an in-guide Hotels & Flights panel that does not exist, corrected to describe the code as it is (8529b096). No behaviour change; the bump is here because the push guard cannot tell a comment from a behaviour and satisfying it is cheaper than arguing with it. toolbar.js -> v748. CACHE to v1074. */
+var CACHE = 'travel-cache-v1074';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1538,7 +1539,7 @@ var CACHE = 'travel-cache-v1073';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 241,'toolbar.js': 747, 'mobile.css': 87, 'web-travel-style.css': 68, 'guides-index-style.css': 15, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 241,'toolbar.js': 748, 'mobile.css': 87, 'web-travel-style.css': 68, 'guides-index-style.css': 15, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
