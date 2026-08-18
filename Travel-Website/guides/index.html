@@ -190,27 +190,35 @@
   font-weight: 700; color: var(--text, #17150f); margin: 0 0 .6rem; text-wrap: balance; }
 .gi-lead p { margin: 0; font-size: 1.02rem; line-height: 1.65; color: var(--muted, #6a6660); }
 
-/* FEATURE ROWS. Screenshot left (fixed width), explanation right. The big
-   cards keep the original proportions; the small-feature rows use a narrower
-   thumbnail so the text carries the visual weight.
-   .gi-card-sm shrinks the shot column and lightens the border so small-feature
-   rows read as a supporting list rather than equal-weight cards. */
-.gi-cards { display: flex; flex-direction: column; gap: clamp(10px, 1.6vw, 16px); }
+/* FEATURE CARDS — TWO PER ROW, FOUR TOTAL (owner rule 2026-08-18: "we have 8
+   we should do 4 with 2 in each row looks way too much until the guides show
+   up"). The block sits ABOVE the 237-card mosaic, so its whole job is to be
+   read in one glance and got past — eight full-width rows pushed the guides
+   themselves below the fold on every screen.
+
+   Screenshot ON TOP, caption under it — not the old screenshot-left/text-right.
+   In a half-width cell a 340px shot column leaves the caption ~120px, which
+   wraps a four-word heading onto three lines. Stacking also fixes the "maps
+   screenshot too big" complaint for free: the map is now half the width it was.
+
+   .gi-shot carries an explicit aspect-ratio because the four sources are
+   different shapes (1544x1276, 1456x1048, 1400x809, 1544x284). Without it the
+   two cards in a row have different image heights and the captions no longer
+   line up across the row. */
+.gi-cards { display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(10px, 1.6vw, 16px); align-items: start; }
 .gi-card { background: var(--surface, #fff); border: 1px solid var(--border2, #e6e2da);
   border-radius: 14px; overflow: hidden;
-  display: grid; grid-template-columns: minmax(0, 340px) 1fr; align-items: stretch; }
-.gi-card-sm { border-color: var(--border, #dad6ce);
-  grid-template-columns: minmax(0, 200px) 1fr; }
-.gi-shot { display: block; background: #f5f4f0; border-right: 1px solid var(--border2, #e6e2da); }
-.gi-card-sm .gi-shot { border-right-color: var(--border, #dad6ce); }
-.gi-shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  display: grid; grid-template-rows: auto 1fr; height: 100%; }
+.gi-shot { display: block; background: #f5f4f0;
+  border-bottom: 1px solid var(--border2, #e6e2da); aspect-ratio: 16 / 9; }
+.gi-shot img { display: block; width: 100%; height: 100%; object-fit: cover;
+  object-position: top center; }
 /* A caption is ONE line of label and ONE short line under it. */
-.gi-body { padding: 18px 22px; display: flex; flex-direction: column; justify-content: center; }
+.gi-body { padding: 16px 20px; display: flex; flex-direction: column; justify-content: center; }
 .gi-body h3 { margin: 0 0 .35rem; font-size: 1.02rem; font-weight: 700; letter-spacing: -.015em;
   color: var(--text, #17150f); }
-.gi-card-sm .gi-body h3 { font-size: .94rem; }
 .gi-body p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--muted, #6a6660); }
-.gi-card-sm .gi-body p { font-size: .85rem; }
 
 /* THE SCAN-LIST. Every feature a guide carries, as LABELS — never sentences.
    Multicol, not grid: 26 items of one line each balance into even columns by
@@ -285,13 +293,9 @@
 @media (max-width: 1000px) { .gi-list { columns: 3; } }
 @media (max-width: 760px) {
   .gi { padding: 0 16px; }
-  .gi-card { grid-template-columns: 1fr; }
-  .gi-card-sm { grid-template-columns: 1fr; }
-  .gi-shot { border-right: none; border-bottom: 1px solid var(--border2, #e6e2da); }
-  .gi-card-sm .gi-shot { border-bottom-color: var(--border, #dad6ce); }
-  /* Small-feature cards collapse the shot entirely on phones — the label and
-     description carry the idea without requiring a tiny thumbnail. */
-  .gi-card-sm .gi-shot { display: none; }
+  /* One column on a phone. Two half-width cards at 393px gives each a ~180px
+     screenshot, at which point the thing being demonstrated is unreadable. */
+  .gi-cards { grid-template-columns: 1fr; }
   /* Two columns of short labels on a phone, not one: 26 items in a single
      column is a wall to scroll past, which is the thing the owner objected to.
      They are labels, so they fit. */
@@ -342,7 +346,7 @@
   <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-orbited-globe"/></svg></div>
   <div>
     <div class="page-intro-head">Free travel guides, city by city — what to see, where to stay, how long to spend</div>
-    <div class="page-intro-sub">Day-by-day itineraries for cities around the world, each built the same way: what to see and in what order, how long each stop takes, how to get between them on foot or by taxi, where to stay, and what is honestly worth skipping. Every guide is listed here, grouped by country. To narrow the list by trip type, length, region or language, start from the <a href="/index.html">home page</a> &mdash; each filter is explained there.</div>
+    <div class="page-intro-sub">Day-by-day itineraries for cities around the world, each built the same way: what to see and in what order, how long each stop takes, how to get between them on foot or by ride app, where to stay, and what is honestly worth skipping. Every guide is listed here, grouped by country. To narrow the list by trip type, length, region or language, start from the <a href="/index.html">home page</a> &mdash; each filter is explained there.</div>
   </div>
 </div>
 
@@ -740,7 +744,7 @@
            leads to the next one. /guides/athens.html at 820px / 2x, clip
            x 46, y 1496, 728 x 524. -->
       <span class="gi-shot"><img src="/assets/guides-intro/guide-stop.png"
-        alt="A single stop in the Athens guide: Syntagma Square with a thirty-minute estimate, opening hours, a copyable address, a photo, and a row reading twelve minutes on foot or four by car to the next stop"
+        alt="A single stop in the Athens guide: Syntagma Square with a thirty-minute estimate, opening hours, a copyable address, a photo, and a row reading twelve minutes on foot or four by ride app to the next stop"
         loading="lazy" width="1456" height="1048"></span>
       <div class="gi-body">
         <h3>Every stop, spelled out</h3>
@@ -766,22 +770,6 @@
     </div>
 
     <div class="gi-card">
-      <!-- Screenshot: a day header and its first stop, with a note saved, the
-           star on and the actions visible. /guides/athens.html at 820px / 2x —
-           click the ★ on the first stop, click its ✎, type the note, Save, then
-           clip from the day header to the bottom of the saved note. Drive the
-           real controls rather than seeding localStorage: notes are keyed
-           internally and a hand-written key renders nothing. -->
-      <span class="gi-shot"><img src="/assets/guides-intro/day-tools.png"
-        alt="A day heading reading Day 1 with Map day and Copy day buttons, then the first stop starred and carrying a personal note about the guard change"
-        loading="lazy" width="1472" height="582"></span>
-      <div class="gi-body">
-        <h3>Copy it. Map it. Note it.</h3>
-        <p>Tick off, share, star or scribble on any stop.</p>
-      </div>
-    </div>
-
-    <div class="gi-card">
       <!-- Screenshot: the Currency pill expanded on a live guide.
            /guides/athens.html at 820px / 2x — click #tve-cur-pill, put a number
            in the first field, clip the pill row plus #tve-cur-panel. The rate
@@ -795,47 +783,6 @@
       </div>
     </div>
 
-    <div class="gi-card gi-card-sm">
-      <!-- Screenshot: the guide stop row with its tick checked and the stop
-           visually marked as done. /guides/athens.html at 820px / 2x — click
-           the ✓ circle on any stop, clip the stop header row only
-           (~1472 x 200px). The tick, the dim treatment and the strikethrough
-           are what makes this shot distinct from the day-tools card. -->
-      <span class="gi-shot"><img src="/assets/guides-intro/guide-stop.png"
-        alt="A guide stop with the tick-off circle checked and the stop row visually dimmed to show it is done"
-        loading="lazy" width="1456" height="1048"></span>
-      <div class="gi-body">
-        <h3>Tick off as you go</h3>
-        <p>Check a stop when you leave &mdash; it dims so you always know where you are in the day without scrolling back up.</p>
-      </div>
-    </div>
-
-    <div class="gi-card gi-card-sm">
-      <!-- Screenshot: the guide action row with the Calendar button highlighted,
-           or the currency panel row showing all four action pills.
-           /guides/athens.html at 820px / 2x — clip the pill row (#ics-pill-row
-           or the action strip just above #tve-cur-panel), ~1544 x 180px. -->
-      <span class="gi-shot"><img src="/assets/guides-intro/currency.png"
-        alt="The guide action row showing Calendar, Offline, Maps and Currency buttons side by side"
-        loading="lazy" width="1544" height="284"></span>
-      <div class="gi-body">
-        <h3>Add a day to Apple Calendar</h3>
-        <p>Tap <strong>Calendar</strong> on any day and it lands in your own calendar &mdash; with every stop, its address and how long you have there.</p>
-      </div>
-    </div>
-
-    <div class="gi-card gi-card-sm">
-      <!-- Screenshot: the Read About page header for a live guide. Load
-           /guides/athens-read-about.html at 820px / 2x, clip the top
-           ~1544 x 600px (hero, byline, first paragraph of the story). -->
-      <span class="gi-shot"><img src="/assets/guides-intro/guide-overview.png"
-        alt="The Read About page for Athens: a full-width photo of the Acropolis, the city name, and the opening paragraphs of the story"
-        loading="lazy" width="1544" height="1276"></span>
-      <div class="gi-body">
-        <h3>The story behind the city</h3>
-        <p>Every guide has a Read About page &mdash; the history, the character, and what makes the place worth the flight.</p>
-      </div>
-    </div>
   </div>
 
   <p class="gi-all">Everything in a guide</p>
@@ -886,7 +833,7 @@
       </span>
       <span class="gi-key-item">
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-delivery-car"/></svg>
-        <span><span class="gi-key-val">4 min</span><span class="gi-key-sep">—</span>by taxi</span>
+        <span><span class="gi-key-val">4 min</span><span class="gi-key-sep">—</span>by ride app</span>
       </span>
       <span class="gi-key-item">
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-pin"/></svg>
