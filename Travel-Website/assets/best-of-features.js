@@ -151,21 +151,52 @@
     /* Controls row: sort dropdown + favs pill */
     var row = el('div', 'bo-controls-row');
 
-    var sortSel = document.createElement('select');
-    sortSel.className = 'bo-sort-select';
-    [['default','Sort: Default'],['az','A → Z'],['za','Z → A'],['country','By country']].forEach(function (o) {
-      var opt = document.createElement('option');
-      opt.value = o[0]; opt.textContent = o[1];
-      sortSel.appendChild(opt);
+    /* Sort dropdown — same days-jump pill pattern as Filter by country */
+    var SORT_OPTS = [['default','Sort: Default'],['az','A → Z'],['za','Z → A'],['country','By country']];
+    var sortJump = el('div', 'days-jump');
+    var sortLblSpan = el('span', '', 'Sort: Default');
+    var sortToggle = document.createElement('button');
+    sortToggle.type = 'button';
+    sortToggle.className = 'days-jump-toggle disc-btn';
+    sortToggle.setAttribute('aria-expanded', 'false');
+    sortToggle.appendChild(sortLblSpan);
+    sortToggle.appendChild(el('span', 'disc-caret chev', '▾'));
+    var sortList = el('div', 'days-jump-list');
+    sortList.setAttribute('role', 'menu');
+    SORT_OPTS.forEach(function (o) {
+      var item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'days-jump-item' + (o[0] === 'default' ? ' on' : '');
+      item.textContent = o[1];
+      item.addEventListener('click', function () {
+        activeSort = o[0];
+        sortLblSpan.textContent = o[1];
+        [].slice.call(sortList.children).forEach(function (c) { c.classList.toggle('on', c === item); });
+        sortToggle.classList.toggle('has-active', o[0] !== 'default');
+        sortJump.classList.remove('open');
+        sortToggle.setAttribute('aria-expanded', 'false');
+        var nonDefault = activeSort !== 'default';
+        if (nonDefault && window._regionJumpReset) window._regionJumpReset();
+        if (regionJumpEl) regionJumpEl.style.display = nonDefault ? 'none' : '';
+        applyFilters(sections);
+      });
+      sortList.appendChild(item);
     });
-    sortSel.addEventListener('change', function () {
-      activeSort = this.value;
-      var nonDefault = activeSort !== 'default';
-      if (nonDefault && window._regionJumpReset) window._regionJumpReset();
-      if (regionJumpEl) regionJumpEl.style.display = nonDefault ? 'none' : '';
-      applyFilters(sections);
+    sortToggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var nowOpen = !sortJump.classList.contains('open');
+      sortJump.classList.toggle('open', nowOpen);
+      sortToggle.setAttribute('aria-expanded', String(nowOpen));
     });
-    row.appendChild(sortSel);
+    document.addEventListener('click', function (e) {
+      if (!sortJump.contains(e.target)) {
+        sortJump.classList.remove('open');
+        sortToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+    sortJump.appendChild(sortToggle);
+    sortJump.appendChild(sortList);
+    row.appendChild(sortJump);
 
     var favPill = el('span', 'bo-favs-pill', '♡ Saved');
     favPill.addEventListener('click', function () {
