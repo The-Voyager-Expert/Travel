@@ -1506,7 +1506,12 @@
 /* 2026-08-18: hero-band gap — the § 14 rule now covers pages with no search; 13 pages had their first block flush against the terracotta. web-travel-style.css bumped. */
 /* 2026-08-18: guide-style.css: Food Delivery / Getting Around keep the beige section frame on phones — the 2026-08-10 white-out left their title cards un-framed and reading as misaligned with every neighbouring section. guide-style.css -> v236. CACHE to v1063. */
 /* 2026-08-18: --rust-ink added — terracotta as text on a raised card cleared AA in dark (4.03 -> 5.18). web-travel-style.css bumped. */
-var CACHE = 'travel-cache-v1064';
+/* 2026-08-18: 🚌 Getting Around + 🚗 Food Delivery open with a plain-prose .extras-overview row
+   under the section title (owner rule) — new CSS: the row spans both grid tracks (left in the
+   fit-content(38%) NAME track a 320-char paragraph collapses to a word per line and stretches the
+   name column with it), and the first-entry 16px title gap now also fires after it. Guides are
+   precached, so readers need the new copy. guide-style.css -> v237. CACHE to v1065. */
+var CACHE = 'travel-cache-v1065';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1514,7 +1519,7 @@ var CACHE = 'travel-cache-v1064';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 236,'toolbar.js': 743, 'mobile.css': 87, 'web-travel-style.css': 68, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 237,'toolbar.js': 743, 'mobile.css': 87, 'web-travel-style.css': 68, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
