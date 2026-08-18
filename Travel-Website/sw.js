@@ -1,3 +1,4 @@
+/* 2026-08-18: HIKING ICONS — drawn at catalogue quality, not flat (owner). markRow already draws the coloured symbol when a mark's key is in GM_SPRITE and only falls back to a flat mask when it is not; the two new keys were mask-only, so Hiking was the ONE section title of sixteen without the gradient-and-rim treatment. #1233 (the Packing Checklist's own hiking boot) and #1349 (snow peak) added to GM_SPRITE verbatim from the catalogue, their own viewBoxes included. toolbar.js to 747. CACHE to v1070. */
 /* 2026-08-18: HIKING ICON — the boot mark REDRAWN. The catalogue separates the boot's sole from its upper by COLOUR with the two shapes overlapping; a mask has no colour, so copied verbatim the sole vanished into the upper and the mark rendered as a blob at 0.758 of its box, the smallest of the 39 marks. Sole is now a separate bar with a real gap, squared shaft, two lace slots knocked out with fill-rule:evenodd. Fill 0.90, level with walk and ride. guide-style.css to 240. CACHE to v1068. */
 /* 2026-08-18: HIKING — the optional guide section is wired: two drawn marks (#1233 boot on the title and its Trip Overview pill, #1349 peak on the terrain row) into MARKS, its Style-A card and the shared .extras-lead ask row into guide-style.css, and the pill ranked between Heads Up and Worth Knowing. No guide carries the section yet. toolbar.js to 744, guide-style.css to 238. CACHE to v1066. */
 /* 2026-08-18: dark-mode: manual ☀/🌙 toggle removed — OS prefers-color-scheme only. tve_theme localStorage key gone, data-theme never stamped on <html>, html[data-theme] CSS blocks removed. Dark mode still works via @media(prefers-color-scheme:dark). toolbar.js to 742. CACHE to v1056. */
@@ -1526,7 +1527,7 @@
    ::after. The Currency pill now spans the whole 2-column phone pill row when it is the odd one out, and
    the left amount field no longer collapses to a sliver behind the "=" at 393px.
    toolbar.js -> v746, guide-style.css -> v241. CACHE to v1069. */
-var CACHE = 'travel-cache-v1069';
+var CACHE = 'travel-cache-v1070';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1534,7 +1535,7 @@ var CACHE = 'travel-cache-v1069';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 241,'toolbar.js': 746, 'mobile.css': 87, 'web-travel-style.css': 68, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 241,'toolbar.js': 747, 'mobile.css': 87, 'web-travel-style.css': 68, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
