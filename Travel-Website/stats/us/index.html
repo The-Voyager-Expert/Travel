@@ -73,26 +73,38 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
 #compare-bar.active { display:block; }
 .cmp-inputs { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
 .cmp-input-wrap { position:relative; flex:1; min-width:180px; }
-.cmp-input { width:100%; padding:8px 12px 8px 34px; border:1px solid var(--border); border-radius:6px; background:var(--surface) var(--search-icon) no-repeat 11px center; color:var(--text); font-size:16px; box-sizing:border-box; }
+/* 36px explicit and 13px to match the buttons beside it. The 16px came from the
+   iOS auto-zoom guard, which does not apply here: mobile.css rule 7 already
+   forces 16px on every input at phone widths, so this only ever governed
+   desktop, where it made the three fields a step larger than the two buttons
+   sharing their row. */
+.cmp-input { width:100%; height:36px; padding:0 12px 0 34px; border:1.5px solid var(--border); border-radius:6px; background:var(--surface) var(--search-icon) no-repeat 11px center; color:var(--text); font-size:13px; box-sizing:border-box; }
 .cmp-input::placeholder { color: var(--c-search-placeholder); }
 .cmp-input:focus { outline:none; border-color:var(--rust); }
-.cmp-btn { height:36px; padding:0 18px; background:var(--surface,#ffffff); color: var(--rust,#C04E1A); border:none; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600; white-space:nowrap; }
+/* Filled, because it is the ACTION on this panel — the 2026-08-18 rule
+   (Formatting.html #sec-fill-vs-outline): filled at rest means an action,
+   outlined means selected. It was white with terracotta ink, which is the
+   OUTLINED treatment, so the one button that does something looked like the
+   three that do not. The dark-mode ink note below no longer applies to the
+   rest state and is kept only for the hover. */
+.cmp-btn { height:36px; padding:0 18px; background:#C04E1A; color:#fff; border:1.5px solid #C04E1A; border-radius:6px; cursor:pointer; font-size:13px; font-weight:700; white-space:nowrap; }
 .cmp-btn::after { content: '›'; margin-left: 6px; font-size: 16px; }
 .cmp-btn:hover { background:#8A3F18; color:#fff; }
 /* The hover fill is a DARK brown, so its label has to be white — 7.49:1. It was
    inheriting the terracotta rest ink, which on #8A3F18 is 1.55:1 in light and 2.05:1
    in dark: the button's own label was unreadable the whole time the pointer was on it.
    No validator caught it because none of them hover. */
-/* Rest ink in dark: --rust is #D4663A there, only 4.03:1 on the #2a2825 surface —
-   under AA for 13px text. #c8a060 is the site's dark action ink (--c-action-text) at
-   6.06:1. Scoped :not(:hover) so it cannot outrank the white hover label above —
-   `html[data-theme="dark"] .cmp-btn` is more specific than `.cmp-btn:hover`, which is
-   the same trap the also-on-this-site pill hit (CLAUDE.md, theme override scoped
-   :not(:hover):not(:active):not(:focus-visible)). */
-@media (prefers-color-scheme: dark) {
-  .cmp-btn:not(:hover) { color: var(--c-action-text, #c8a060); }
-}
-.cmp-btn-clear { height:36px; padding:0 14px; background:none; border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:13px; color:var(--muted); }
+/* The dark rest-ink override that stood here is DELETED. It set the label to
+   #c8a060 because the button was WHITE with terracotta ink and #D4663A is only
+   4.03:1 on a dark card. The button is filled terracotta now, so that gold sits
+   on #C04E1A at 1.99:1 — the label was unreadable the moment the fill landed,
+   and the dark-mode validator caught it on the first run.
+   A filled button keeps a white label in both modes: #fff on #C04E1A is 4.57:1
+   light and dark alike, because the fill does not flip. Nothing to override. */
+/* White, not `background:none`. It sat transparent while Compare, Expand all
+   and Collapse all were all white, so on the panel's tinted ground it read as
+   a different kind of control than its three neighbours. */
+.cmp-btn-clear { height:36px; padding:0 14px; background:var(--surface,#ffffff); border:1.5px solid var(--border); border-radius:6px; cursor:pointer; font-size:13px; color:var(--muted); }
 #compare-result { display:none; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:20px; overflow-x:auto; }
 #compare-result.active { display:block; }
 .cmp-table { width:100%; border-collapse:collapse; font-size:12px; color:var(--text); }
@@ -118,7 +130,9 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
 .cat-section.collapsed > *:not(.cat-sec-head){display:none}
 .cat-section.collapsed .cat-sec-head{border-bottom:none}
 .cat-controls{display:flex;justify-content:flex-end;gap:8px;margin:0 0 18px}
-.cat-ctrl-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;color:var(--text);cursor:pointer;font-family:inherit}
+/* 36px / 13px, matching the compare row directly above it. These were 28px/12px
+   — a second control size on the same screen, for no reason anyone could name. */
+.cat-ctrl-btn{height:36px;background:var(--surface);border:1.5px solid var(--border);border-radius:6px;padding:0 14px;font-size:13px;color:var(--text);cursor:pointer;font-family:inherit}
 .cat-ctrl-btn:hover{background:var(--bg, #f5f4f0);border-color:var(--rust)}
 .stat-jump{display:none}
 .stat-jump-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;font-size:13px;color: var(--text, #3d3a32);background:var(--surface);border:1px solid #b8b3a8;border-radius:6px;padding:10px 14px;cursor:pointer;font-family:inherit}
