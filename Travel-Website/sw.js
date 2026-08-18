@@ -1546,7 +1546,8 @@
 /* 2026-08-18: badges — no emoji in a label except the family dots (owner rule). Comment-only in the CSS, but the guard bumps on any shared-asset change. web-travel-style.css -> v72. CACHE to v1087. */
 /* 2026-08-18: badge system — NO HOVER anywhere (owner rule; the terracotta Option-B hover is retired), and badge/pill-badge collapsed to ONE box differing only by case. web-travel-style.css -> v73. CACHE to v1088. */
 /* 2026-08-18: Also in [Country] rendered on ZERO guides (should be 192) and both injected city strips built pre-flatten ../{dir}/{slug} hrefs that 404; day-trip-from.json was empty. Lookups now try both slug spellings, hrefs root-absolute, index rebuilt (63 destinations). toolbar.js -> v755. CACHE to v1089. */
-var CACHE = 'travel-cache-v1089';
+/* 2026-08-18: BOOKMARKS — the two writers of tve_pinned_guides disagreed on how to spell the same city, so every bookmark made from inside a guide was broken three ways at once. toolbar.js stored `'.' + pathname` (the pre-flatten relative shape) while guides/index.html stores the card's root-absolute href: the strip pill resolved ./guides/x.html against /guides/index.html and 404'd on /guides/guides/x.html (this, not a stale pre-flatten pin, is what the owner hit clicking a bookmarked Salzburg); the card never matched, so a bookmarked guide came back unmarked; and pinActive() was false on the guide you had just bookmarked, so tapping its outline icon stored a SECOND entry for the same city and burned one of the three slots. Href is now location.pathname, and a normalizePins() in BOTH readers repairs and de-duplicates what the bug already wrote into readers' browsers — localStorage is not migrated by a deploy. Two more, same feature: init() painted its buttons from the pin map it built BEFORE backfillFlags repaired it and never set .is-pinned at all, so a bookmarked card returned from a reload with a grey icon; and .dest-card--pinned set border-left-color to var(--accent), which is the exact gold the base .dest-card already paints — a no-op since the day it was written, leaving a bookmarked card pixel-identical to an unbookmarked one. Now #C04E1A, a literal. toolbar.js -> v756, guides-index-style.css -> v18. CACHE to v1090. */
+var CACHE = 'travel-cache-v1090';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1554,7 +1555,7 @@ var CACHE = 'travel-cache-v1089';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 246,'toolbar.js': 755, 'mobile.css': 87, 'web-travel-style.css': 73, 'guides-index-style.css': 17, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 246,'toolbar.js': 756, 'mobile.css': 87, 'web-travel-style.css': 73, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

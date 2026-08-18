@@ -4735,14 +4735,33 @@
   var SVG_OUT  = '<svg width="13" height="15" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
   var SVG_FILL = '<svg width="13" height="15" viewBox="0 0 12 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
 
+  /* Repair what the in-guide button's relative href already wrote into readers'
+     browsers: a stored `./guides/x.html` (or a bare `guides/x.html`) becomes the
+     one root-absolute spelling the cards use, and the duplicate pair it created
+     for a single city collapses to one entry. localStorage is not migrated by a
+     deploy, so the fix in toolbar.js only helps NEW bookmarks — this is what
+     rescues the ones already saved. Kept byte-identical to the copy in
+     toolbar.js: two writers, one store, and they have drifted apart once. */
+  function normalizePins(arr) {
+    var seen = {}, out = [], changed = false;
+    (arr || []).forEach(function (p) {
+      if (!p || !p.href) { changed = true; return; }
+      var h = String(p.href).replace(/^\.?\/?(?=guides\/)/, '/');
+      if (h !== p.href) { p.href = h; changed = true; }
+      if (seen[h]) { changed = true; return; }
+      seen[h] = 1; out.push(p);
+    });
+    if (changed) { try { localStorage.setItem(KEY, JSON.stringify(out)); } catch (e) {} }
+    return out;
+  }
   function getPins() {
     try {
       var raw = localStorage.getItem(KEY);
-      if (raw) return JSON.parse(raw) || [];
+      if (raw) return normalizePins(JSON.parse(raw) || []);
       var old = localStorage.getItem('tve_pinned_guide');
       if (old) {
         var d = JSON.parse(old);
-        if (d && d.href) { var arr = [d]; savePins(arr); localStorage.removeItem('tve_pinned_guide'); return arr; }
+        if (d && d.href) { var arr = normalizePins([d]); savePins(arr); localStorage.removeItem('tve_pinned_guide'); return arr; }
       }
       return [];
     } catch (e) { return []; }
@@ -4885,7 +4904,7 @@
       btn.setAttribute('aria-pressed', on ? 'true' : 'false');
       btn.title = on ? 'Remove bookmark' : 'Bookmark this guide';
       btn.innerHTML = on ? SVG_FILL : SVG_OUT;
-      if (on) card.classList.add('dest-card--pinned');
+      if (on) { btn.classList.add('is-pinned'); card.classList.add('dest-card--pinned'); }
       wrap.appendChild(btn);
 
       btn.addEventListener('click', function (e) {
@@ -4916,6 +4935,14 @@
     });
 
     updateStrip();
+    /* AFTER updateStrip, not before. updateStrip runs backfillFlags, which is
+       what repairs a pin whose stored href predates the 2026-08-16 URL flatten
+       — so the pinnedMap this function built at the top of init was keyed on
+       hrefs that no longer match any card, and every button it painted from it
+       was painted from stale data. Re-syncing here reads the repaired pins and
+       is also the only thing that sets .is-pinned on the button: without it a
+       bookmarked card came back from a reload with a grey icon and no mark. */
+    syncAllPinStates();
   }
 
   if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); }

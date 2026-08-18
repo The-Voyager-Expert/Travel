@@ -2937,20 +2937,50 @@ window.TVE.home = (function () {
       var KEY  = 'tve_pinned_guides';
       var MAX  = 3;
       var name = document.title;
-      var pm   = location.pathname.match(/(\/guides\/.+)$/i);
-      var href = pm ? '.' + pm[1] : location.pathname;
+      /* ROOT-ABSOLUTE, and it must be BYTE-IDENTICAL to the guides-index card's
+         own href — that string is the store's only key, and the index writes
+         `/guides/salzburg.html` straight off the card. This used to build
+         `'.' + pathname`, the pre-flatten relative shape (Thirtieth
+         non-negotiable), and the two writers then disagreed on the spelling of
+         the same city, which broke all three surfaces at once: the strip pill
+         resolved `./guides/x.html` against `/guides/index.html` and 404'd on
+         `/guides/guides/x.html`; the card never matched, so a bookmarked guide
+         came back unmarked; and pinActive() was false on the guide you had just
+         bookmarked, so tapping its outline icon stored a SECOND entry for the
+         same city and burned one of the three slots. */
+      var href = location.pathname;
 
       var SVG_OUT  = '<svg width="14" height="16" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
       var SVG_FILL = '<svg width="14" height="16" viewBox="0 0 12 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
 
+      /* Repair what the relative-href bug above already wrote into readers'
+         browsers: a stored `./guides/x.html` (or a bare `guides/x.html`) is
+         rewritten to the one root-absolute spelling, and the duplicate pair it
+         created for a single city collapses to one entry. localStorage is not
+         migrated by a deploy, so shipping the fix alone would leave every
+         existing bookmark broken forever — the repair has to travel with it.
+         Kept byte-identical to the copy in guides/index.html: two writers, one
+         store, and they have already drifted apart once. */
+      function normalizePins(arr) {
+        var seen = {}, out = [], changed = false;
+        (arr || []).forEach(function (p) {
+          if (!p || !p.href) { changed = true; return; }
+          var h = String(p.href).replace(/^\.?\/?(?=guides\/)/, '/');
+          if (h !== p.href) { p.href = h; changed = true; }
+          if (seen[h]) { changed = true; return; }
+          seen[h] = 1; out.push(p);
+        });
+        if (changed) { try { localStorage.setItem(KEY, JSON.stringify(out)); } catch (e) {} }
+        return out;
+      }
       function getPins() {
         try {
           var raw = localStorage.getItem(KEY);
-          if (raw) return JSON.parse(raw) || [];
+          if (raw) return normalizePins(JSON.parse(raw) || []);
           var old = localStorage.getItem('tve_pinned_guide');
           if (old) {
             var d = JSON.parse(old);
-            if (d && d.href) { var arr = [d]; localStorage.setItem(KEY, JSON.stringify(arr)); localStorage.removeItem('tve_pinned_guide'); return arr; }
+            if (d && d.href) { var arr = normalizePins([d]); localStorage.setItem(KEY, JSON.stringify(arr)); localStorage.removeItem('tve_pinned_guide'); return arr; }
           }
           return [];
         } catch (e) { return []; }
