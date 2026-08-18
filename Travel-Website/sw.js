@@ -1512,7 +1512,14 @@
    fit-content(38%) NAME track a 320-char paragraph collapses to a word per line and stretches the
    name column with it), and the first-entry 16px title gap now also fires after it. Guides are
    precached, so readers need the new copy. guide-style.css -> v237. CACHE to v1065. */
-var CACHE = 'travel-cache-v1066';
+/* 2026-08-18: /currencies/ is a CONVERTER — any currency to any currency, opening on no result, with
+   the comparison table behind a "worth more?" button and sortable most/least value. The 73 per-country
+   blocks are gone; the page's rates now live in two baked literals (FXR/FXC) that build_currency_rates.py
+   and update_currency_rates.py read. Same rule reaches the in-guide 💱 pill: the reader PICKS their own
+   currency (52 of them) and the guide's currency is fixed — so the 60 US-dollar guides get the pill for
+   the first time. The page is precached, so readers need the new copy.
+   toolbar.js -> v745, guide-style.css -> v239. CACHE to v1067. */
+var CACHE = 'travel-cache-v1067';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1520,7 +1527,7 @@ var CACHE = 'travel-cache-v1066';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 238,'toolbar.js': 744, 'mobile.css': 87, 'web-travel-style.css': 68, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 239,'toolbar.js': 745, 'mobile.css': 87, 'web-travel-style.css': 68, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

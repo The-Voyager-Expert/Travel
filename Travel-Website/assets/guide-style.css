@@ -778,6 +778,26 @@ a.title-hotel-request:visited { color: #8a6c1a; }   /* owner rule 2026-07-28: no
 .tve-cur-row { display: flex; align-items: center; gap: 8px; width: 100%; }
 .tve-cur-field { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
 .tve-cur-sym { font-size: 13px; font-weight: 700; color: var(--c-action-text); white-space: nowrap; }
+/* The reader's own currency is a PICKER; the guide's stays a fixed label
+   (owner rule 2026-08-18). Sized and coloured to read as the label it replaced
+   rather than as a form control dropped into the row — same 13px/700 and the
+   same action-text colour as .tve-cur-sym, which is why the two rules sit
+   together. 16px on the phone is load-bearing for the same reason it is on
+   .tve-cur-in: iOS Safari zooms the whole page on focus for any control under
+   16px, and a <select> counts. */
+.tve-cur-pick {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-action-text);
+  background: var(--c-card-bg);
+  border: 1px solid var(--c-next-border);
+  border-radius: 4px;
+  padding: 5px 6px;
+  max-width: 11em;
+  cursor: pointer;
+}
+.tve-cur-pick:focus { outline: none; border-color: #C04E1A; }
 .tve-cur-eq { font-size: 14px; color: var(--c-text-muted); }
 .tve-cur-in {
   width: 96px;
@@ -797,9 +817,21 @@ a.title-hotel-request:visited { color: #8a6c1a; }   /* owner rule 2026-07-28: no
 }
 .tve-cur-in::-webkit-outer-spin-button,
 .tve-cur-in::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+/* -webkit-text-fill-color above is set on the INPUT, and a placeholder inherits
+   it — so without this rule the empty field's placeholder is painted in the
+   same weight and colour as a typed number and reads as a result. Both
+   properties are needed: the fill-color wins over `color` in WebKit. */
+.tve-cur-in::placeholder {
+  color: var(--c-text-muted);
+  -webkit-text-fill-color: var(--c-text-muted);
+  font-weight: 400;
+}
 .tve-cur-in:focus { outline: none; border-color: #C04E1A; }
 .tve-cur-note { font-size: 11px; line-height: 1.5; color: var(--c-text-muted); }
-.tve-cur-more { color: var(--c-index-accent); text-decoration: none; font-weight: 600; }
+/* nowrap so the "›" never orphans onto a line of its own — the note is one
+   sentence of small type and the link is its last clause, which at guide width
+   lands right on the wrap point. */
+.tve-cur-more { color: var(--c-index-accent); text-decoration: none; font-weight: 600; white-space: nowrap; }
 .tve-cur-more:visited { color: #7a5c0e; }  /* literal hex — browsers don't resolve var() in :visited */
 .tve-cur-more:hover { text-decoration: underline; }
 /* Fixed 96px fields overflow the row at 320px (2 × 96 + labels + gaps > the
@@ -809,6 +841,11 @@ a.title-hotel-request:visited { color: #8a6c1a; }   /* owner rule 2026-07-28: no
 @media (max-width: 600px) and (pointer: coarse) {
   .tve-cur-field { flex: 1 1 0; }
   .tve-cur-in { width: auto; flex: 1 1 0; min-width: 0; }
+  /* The picker is the one control on this row a reader has to READ before they
+     can use it, so on a phone the row stacks rather than squeezing a 9.5em
+     select, a 16px number field, an "=" and a second pair onto 393px. */
+  .tve-cur-row { flex-wrap: wrap; }
+  .tve-cur-pick { font-size: 16px; max-width: 100%; flex: 0 1 auto; }
 }
 
 /* Transient confirmation toast (Save for offline). Fixed bottom-centre, fades in,

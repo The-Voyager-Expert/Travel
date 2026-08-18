@@ -7258,16 +7258,29 @@ window.TVE.home = (function () {
 
   /* ── In-guide currency converter — collapsed pill on the action row ────────
      A 💱 Currency pill appended to #ics-pill-row that expands, in place, into a
-     two-field converter: US$ ⇄ local. Both fields are live inputs — editing
-     either rewrites the other — because a reader inside an itinerary needs the
-     conversion in both directions: budgeting outbound ("what is $60 here?") and
-     reading a price inbound ("the menu says ¥4,800").
+     two-field converter: YOUR currency ⇄ the currency of this place. Both
+     fields are live inputs — editing either rewrites the other — because a
+     reader inside an itinerary needs the conversion in both directions:
+     budgeting outbound ("what is €60 here?") and reading a price inbound ("the
+     menu says ¥4,800").
 
-     Adds no data pipeline. The rate is the one Currency-Guide.html already
-     carries: update_currency_rates.py refreshes that page monthly and now emits
-     assets/currency-rates.json from the same country blocks in the same pass, so
-     page and pill cannot quote different numbers. Reading the JSON instead of
-     the page keeps the cost at ~9 KB rather than the 1,800-line guide.
+     ONE SIDE IS A CHOICE AND THE OTHER IS NOT (owner rule 2026-08-18). The left
+     field carries a picker of all 52 currencies because the site never guesses
+     what the reader holds (Forty-seventh non-negotiable); the right is FIXED to
+     the currency of the country this guide is about, because that one is not the
+     reader's to pick — in Kyoto the price tag is in yen whatever is in your
+     pocket. Never make the right side a select "for symmetry": the any-to-any
+     converter is /currencies/, which the panel links to for exactly that reason.
+     Nothing is preselected and nothing is persisted — a currency restored from a
+     pick made days ago is a preselected currency by another name (rule 867).
+
+     Adds no data pipeline. The rate is the one /currencies/ already carries:
+     update_currency_rates.py refreshes that page monthly and emits
+     assets/currency-rates.json from the same baked FXR/FXC literals in the same
+     pass, so page and pill cannot quote different numbers. Reading the JSON
+     instead of the page keeps the cost at ~9 KB rather than the whole page. The
+     picker's option list is deduped from those same rows by ISO — no second
+     data source and no extra request.
 
      Country resolution reuses assets/country-guides.json — already fetched and
      sessionStorage-cached under tvecg by the "Also in [Country]" section, so on
@@ -7277,9 +7290,12 @@ window.TVE.home = (function () {
      holds display strings, four of them all-caps or accented (Curaçao, MALTA,
      PHILIPPINES, SOUTH AFRICA). Without the fold those four render no pill.
 
-     Renders nothing at all when the country is unknown or already on USD
-     (Ecuador, Puerto Rico, Turks and Caicos, United States) — a US$→US$ box is
-     noise. Like every fetch-backed feature it is invisible over file:// (§ 34). */
+     Renders nothing only when the country is unknown. It used to bail on USD as
+     well (Ecuador, Puerto Rico, Turks and Caicos, United States) because a
+     US$→US$ box is noise — true while the left field WAS US dollars, and false
+     the moment the reader picks their own, so those 60 guides now get the pill
+     like every other. Do not re-add that bail.
+     Like every fetch-backed feature it is invisible over file:// (§ 34). */
   (function () {
     if (!isRealGuide) return;
 
@@ -7295,13 +7311,19 @@ window.TVE.home = (function () {
         { minimumFractionDigits: dp, maximumFractionDigits: dp });
     }
 
-    /* Reference rate: mirrors fmt_rate() in update_currency_rates.py exactly so
-       the pill's "US$1 ≈ …" line is byte-identical to the page's. */
+    /* Reference rate. It used to mirror fmt_rate() in update_currency_rates.py
+       so the pill's "US$1 ≈ …" line was byte-identical to the per-country rate
+       row on /currencies/ — those rows were deleted on 2026-08-18 and there is
+       nothing left to match, so this now mirrors the CONVERTER's own ladder on
+       that page instead. The tail matters more than it used to: with the reader
+       picking their own currency the pair can be weak-per-strong, and the old
+       fixed 3 dp printed "1 JPY ≈ $0.006", which is true and says nothing. */
     function _curRate(r) {
       if (r >= 100) return r.toLocaleString('en-US', { maximumFractionDigits: 0 });
       if (r >= 1) return r.toLocaleString('en-US',
         { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      return r.toFixed(3);
+      if (r >= 0.01) return r.toLocaleString('en-US', { maximumFractionDigits: 4 });
+      return r.toLocaleString('en-US', { maximumFractionDigits: 6 });
     }
 
     function _curJSON(key, file, cb) {
@@ -7347,9 +7369,31 @@ window.TVE.home = (function () {
       var bySlug = (cg && cg._by_slug) || {};
       var country = bySlug[curr] || bySlug[curr + '.html'];
       var c = country && cur && cur.rates && cur.rates[_curFold(country)];
-      if (!c || !c.rate || c.iso === 'USD') return;
+      /* USD is NO LONGER a reason to render nothing (owner rule 2026-08-18).
+         While the left field was a hardcoded "US$" box, a US, Ecuador, Puerto
+         Rico or Turks-and-Caicos guide had a US$→US$ converter to offer, which
+         is noise — so the pill was suppressed on all 60 of them. Now that the
+         reader picks their OWN currency, a dollar destination is an ordinary
+         conversion target and those guides get the pill like everyone else. */
+      if (!c || !c.rate) return;
 
       var sym = c.sym || '';
+
+      /* One <option> per distinct currency, from the file this pill already
+         loads — no second data source, no new request. Rows are keyed by
+         country (75 of them) and eleven share the euro, so dedupe by ISO. */
+      var picks = [], seenIso = {};
+      for (var _k in cur.rates) {
+        var _r = cur.rates[_k];
+        if (!_r || !_r.iso || !_r.rate || seenIso[_r.iso]) continue;
+        seenIso[_r.iso] = 1;
+        picks.push(_r);
+      }
+      /* Sorted by ISO, and the ISO leads the label, because THAT is what the
+         list shows. Sorted by currency NAME the codes came out in an order
+         driven by words the reader cannot see — "AR$ ARS" first, because
+         "Argentine Peso" — which reads as no order at all. */
+      picks.sort(function (a, b) { return a.iso < b.iso ? -1 : a.iso > b.iso ? 1 : 0; });
 
       /* ── Pill ── */
       var pill = document.createElement('a');
@@ -7392,13 +7436,47 @@ window.TVE.home = (function () {
         return { wrap: wrap, input: input };
       }
 
-      var usd = _field('US$', 'Amount in US dollars');
+      /* ONE side is a choice and the other is not (owner rule 2026-08-18).
+         LEFT — the reader's own money, a picker: they may hold any currency and
+         the site never guesses which (Forty-seventh non-negotiable).
+         RIGHT — the currency of the place this guide is about, FIXED. It is not
+         a choice because it is not the reader's to make: in Kyoto the price tag
+         is in yen whatever else is in your pocket. Never turn it into a second
+         select "for symmetry" — that is the /currencies/ page, which this panel
+         links to precisely so this one can stay a two-field answer.
+         Nothing is preselected and nothing is remembered between visits: a
+         currency restored from a pick made days ago is a preselected currency
+         by another name (same rule as Time Zones, rule 867). */
+      var mine = _field('', 'Amount in your currency');
+      var pick = document.createElement('select');
+      pick.className = 'tve-cur-pick';
+      pick.id = 'tve-cur-pick';
+      pick.setAttribute('aria-label', 'Your currency');
+      var opt0 = document.createElement('option');
+      opt0.value = '';
+      opt0.textContent = 'Your currency';
+      pick.appendChild(opt0);
+      for (var pi = 0; pi < picks.length; pi++) {
+        var o = document.createElement('option');
+        o.value = picks[pi].iso;
+        /* Code AND name: the code is what a reader looks for and what makes the
+           list scannable, the name is what tells them they found the right one.
+           The closed control truncates the long ones — the open dropdown never
+           does, so nothing is actually hidden. */
+        o.textContent = picks[pi].iso + ' — ' + picks[pi].name;
+        o.title = picks[pi].name;
+        pick.appendChild(o);
+      }
+      /* Replaces the empty .tve-cur-sym label the field was built with, so the
+         picker sits exactly where the "US$" tag used to. */
+      mine.wrap.replaceChild(pick, mine.wrap.firstChild);
+
       var loc = _field(sym || c.iso, 'Amount in ' + c.name);
       var eq = document.createElement('span');
       eq.className = 'tve-cur-eq';
       eq.textContent = '=';
 
-      fields.appendChild(usd.wrap);
+      fields.appendChild(mine.wrap);
       fields.appendChild(eq);
       fields.appendChild(loc.wrap);
       panel.appendChild(fields);
@@ -7407,35 +7485,85 @@ window.TVE.home = (function () {
          from re-entering through the other field's own input event, which would
          round the number the reader is still typing out from under them. */
       var busy = false;
+      /* Cross rate through the US dollar, which is only the base the snapshot is
+         quoted in — the panel is not anchored to it and never names it unless
+         the reader picked it. `_mineRate` is looked up on every keystroke rather
+         than captured once, because the picker can change under the binding. */
+      function _mineRate() {
+        var iso = pick.value;
+        if (!iso) return 0;
+        for (var i = 0; i < picks.length; i++) if (picks[i].iso === iso) return picks[i].rate;
+        return 0;
+      }
       function _bind(src, dst, factor) {
         src.addEventListener('input', function () {
           if (busy) return;
+          var f = factor();
+          if (!f) { dst.value = ''; return; }     /* no currency chosen yet */
           busy = true;
           var n = parseFloat(src.value);
-          dst.value = (src.value === '' || isNaN(n)) ? '' : _curAmt(n * factor)
+          dst.value = (src.value === '' || isNaN(n)) ? '' : _curAmt(n * f)
             .replace(/,/g, '');   /* number inputs reject grouping separators */
           busy = false;
         });
       }
-      _bind(usd.input, loc.input, c.rate);
-      _bind(loc.input, usd.input, 1 / c.rate);
+      _bind(mine.input, loc.input, function () { var r = _mineRate(); return r ? c.rate / r : 0; });
+      _bind(loc.input, mine.input, function () { var r = _mineRate(); return r ? r / c.rate : 0; });
 
-      usd.input.value = '10';
-      loc.input.value = _curAmt(10 * c.rate).replace(/,/g, '');
+      /* Both fields open EMPTY. The old panel seeded "10" on the left because
+         the left was always US dollars; with no currency chosen there is no
+         amount to seed and a number sitting beside a blank one reads as a
+         result the panel has not produced.
+         The placeholder is a WORD, not a specimen number: .tve-cur-in forces
+         -webkit-text-fill-color to the primary text colour (iOS greys the value
+         without it), which paints the placeholder in that colour too — so a
+         numeric placeholder is indistinguishable from a typed value and the
+         empty panel read "10 JPY = $10.00", a conversion it had not done. The
+         ::placeholder rule in guide-style.css mutes it; the word makes it
+         unmistakable even where that rule is overridden. */
+      mine.input.placeholder = 'Amount';
+      loc.input.placeholder = 'Amount';
 
       /* ── Reference line — the rate, its currency, and the way out ── */
       var note = document.createElement('div');
       note.className = 'tve-cur-note';
-      note.appendChild(document.createTextNode(
-        'US$1 ≈ ' + sym + _curRate(c.rate) + ' · ' + c.name + ' (' + c.iso + ')' +
-        (cur._as_of ? ' · rates as of ' + cur._as_of : '') + ' · '
-      ));
+      var lede = document.createTextNode('');
+      note.appendChild(lede);
       var more = document.createElement('a');
       more.className = 'tve-cur-more';
-      more.href = base + 'currencies/#' + c.id;
-      more.textContent = 'Currency Guide ›';
+      more.href = base + 'currencies/';
+      more.textContent = 'See where your money is worth more ›';
       note.appendChild(more);
       panel.appendChild(note);
+
+      /* The reference line follows the picker. Before a currency is chosen it
+         says what the panel is waiting for and still names the destination
+         currency, because that half is known from the guide and is the fixed
+         side of the conversion. After, it quotes the pair in the reader's own
+         terms — never "US$1 ≈ …", which is the anchoring this pass removed.
+         The link goes to /currencies/ itself, not to /currencies/#Country: the
+         converter there now opens on nothing and the deep link would preselect
+         the destination as "To", which is the opposite of the question this
+         sentence asks — where else the same money goes further. */
+      function _syncNote() {
+        var iso = pick.value, r = _mineRate();
+        lede.nodeValue = (iso && r)
+          ? '1 ' + iso + ' ≈ ' + sym + _curRate(c.rate / r) + ' · ' +
+            c.name + ' (' + c.iso + ')' +
+            (cur._as_of ? ' · rates as of ' + cur._as_of : '') + ' · '
+          : 'Pick your currency to convert · prices here are in ' +
+            c.name + ' (' + c.iso + ')' +
+            (cur._as_of ? ' · rates as of ' + cur._as_of : '') + ' · ';
+      }
+      _syncNote();
+      pick.addEventListener('change', function () {
+        _syncNote();
+        /* Re-convert whatever is already typed rather than clearing it: the
+           reader who picked the wrong currency wants the same number in the
+           right one, not an empty box. */
+        var evtSrc = mine.input.value !== '' ? mine.input : loc.input;
+        evtSrc.dispatchEvent(new Event('input'));
+      });
 
       pill.addEventListener('click', function (e) {
         e.preventDefault(); e.stopPropagation();
@@ -7449,7 +7577,9 @@ window.TVE.home = (function () {
         panel.hidden = !open;
         pill.classList.toggle('tve-cur-on', open);
         pill.setAttribute('aria-expanded', open ? 'true' : 'false');
-        if (open) usd.input.focus();
+        /* The picker, not the amount box: with no currency chosen the amount
+           converts to nothing, so the picker is the first thing to answer. */
+        if (open) pick.focus();
       });
 
       /* iOS does not reliably fire :active on touch — same shim the rest of the
