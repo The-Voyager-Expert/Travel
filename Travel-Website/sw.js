@@ -1542,7 +1542,8 @@
 /* 2026-08-18: action row: separated pills on the section-chip tokens, gold labels, marks that take the label colour; bookmark card to solid terracotta toolbar.js -> v753. CACHE to v1083. */
 /* 2026-08-18: action-row marks were a 0.31px hairline; filled currentColor now toolbar.js -> v754. CACHE to v1084. */
 /* 2026-08-18: web-travel-style.css: added the 8 approved badge-family colour tokens (--fam-*, light+dark) plus shared .badge / .pill-badge / .fam-* classes — the single source pages read instead of hardcoding family hex. Checkpoint only, no page converted yet. web-travel-style.css -> v70. CACHE to v1085. */
-var CACHE = 'travel-cache-v1085';
+/* 2026-08-18: badge families corrected to SPEC — radius 6px->4px, gap 6px->5px (Formatting.html#sec-badges), plus the border ladder: rest rgba(...,.4) -> selected rgba(...,.85) via new --fam-*-rgb triplets. The ring alone was not the selected state. web-travel-style.css -> v71. CACHE to v1086. */
+var CACHE = 'travel-cache-v1086';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1550,7 +1551,7 @@ var CACHE = 'travel-cache-v1085';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 246,'toolbar.js': 754, 'mobile.css': 87, 'web-travel-style.css': 70, 'guides-index-style.css': 17, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 246,'toolbar.js': 754, 'mobile.css': 87, 'web-travel-style.css': 71, 'guides-index-style.css': 17, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
