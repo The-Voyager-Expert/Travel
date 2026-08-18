@@ -1488,7 +1488,14 @@
 /* 2026-08-17: Cloudflare Web Analytics beacon added to toolbar.js, host-gated to guidemydays.com. The site is set to 'Enable with JS Snippet installation', NOT Cloudflare's automatic setup: automatic injection happens in the proxy, and the domain is on Cloudflare DNS but DNS-only, so visitors reach GitHub Pages directly and nothing passes through Cloudflare to inject into - automatic would have recorded zero for ever. toolbar.js -> v740. CACHE to v1039. */
 /* 2026-08-18: guides-index-style.css — replace hardcoded #c8b99a with var(--c-search-focus-border) on #guide-search:focus. guides-index-style.css -> v14. CACHE to v1053. */
 /* 2026-08-18: trips: calendar icon changed from sprite <use> to inline flat SVG (Safari <use>+DOMContentLoaded timing); sw.js passes .ics requests through unintercepted so iOS text/calendar → Calendar hand-off works natively. CACHE to v1055. */
-var CACHE = 'travel-cache-v1056';
+/* 2026-08-18: Best-Of floating "🌍 N countries" pill (#tve-bo-jump) REMOVED — owner rule
+   "i dont want this type of pills anywhere". It also sat on top of .bo-compare-bar's Compare
+   and Clear buttons (fixed, bottom:20px, 28px tall, right 64vw) and swallowed their taps, so
+   Compare read as dead. Same pass unified the compare bar's three pills to one geometry
+   (28px / 999px radius / 12px 700) and gave the bar an iOS safe-area bottom padding.
+   Bumped toolbar.js min to 743, web-travel-style.css min to 63, mobile.css min to 87,
+   CACHE to v1057. */
+var CACHE = 'travel-cache-v1057';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1496,7 +1503,7 @@ var CACHE = 'travel-cache-v1056';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 235,'toolbar.js': 742, 'mobile.css': 86, 'web-travel-style.css': 62, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 235,'toolbar.js': 743, 'mobile.css': 87, 'web-travel-style.css': 63, 'guides-index-style.css': 14, 'read-about.css': 6, 'best-of-features.js': 1, 'best-of-cross-data.js': 23, 'weather.js': 8, 'trains.css': 5, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

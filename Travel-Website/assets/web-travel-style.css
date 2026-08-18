@@ -1887,16 +1887,31 @@ body > .hero-ground {
 .bo-star { font-size: 15px; color: var(--muted,#aaa); cursor: pointer; transition: color .1s; }
 .bo-star.bo-active { color: #e8a000; }
 .bo-no-favs { text-align: center; padding: 32px 20px; color: var(--muted,#6a6660); font-size: 14px; }
-.bo-compare-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #3d3a32; color: #fff; padding: 10px 20px; display: none; align-items: center; gap: 10px; z-index: 200; box-shadow: 0 -2px 12px rgba(0,0,0,.18); }
+/* Compare bar — ONE pill geometry for all three controls (owner rule
+   2026-08-18: "3 types of pills colors and size!"). The row used to carry a
+   12px-radius 3px-tall tint chip, an 8px-radius filled button and an
+   8px-radius translucent button, at two font sizes — three shapes for one
+   row. They now share 28px height, a 999px radius and 12px/700 type, and only
+   the FILL separates the roles: Compare is the true CTA (solid terracotta,
+   the Thirty-fifth non-negotiable's CTA carve-out), Clear is outlined per the
+   site's Option-B grammar, and the name chip is a quiet tint because it is
+   data, not a control. Keep the geometry identical if a fourth control is
+   ever added here.
+   `padding-bottom` clears the iOS home indicator, which sat over the buttons.
+   `min-width: 0` on the name list is load-bearing: a flex item defaults to
+   min-width:auto and refuses to shrink below its content, which is what
+   pushed "Clear" half off the right edge once a long place name was
+   selected. */
+.bo-compare-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #3d3a32; color: #fff; padding: 10px 16px calc(10px + env(safe-area-inset-bottom,0px)); display: none; align-items: center; gap: 10px; z-index: 200; box-shadow: 0 -2px 12px rgba(0,0,0,.18); }
 .bo-compare-bar.bo-show { display: flex; }
-.bo-compare-label { font-size: 13px; font-weight: 700; white-space: nowrap; }
-.bo-compare-names { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
-.bo-compare-name-tag { background: rgba(255,255,255,.15); border-radius: 12px; padding: 3px 10px; font-size: 12px; }
-.bo-compare-go, .bo-compare-clr { padding: 6px 14px; border-radius: 8px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; }
+.bo-compare-label { flex: 0 0 auto; font-size: 13px; font-weight: 700; white-space: nowrap; }
+.bo-compare-names { display: flex; flex-wrap: nowrap; gap: 6px; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+.bo-compare-name-tag { flex: 0 1 auto; min-width: 0; height: 32px; display: inline-flex; align-items: center; padding: 0 12px; border: 1.5px solid transparent; border-radius: 999px; background: rgba(255,255,255,.15); font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bo-compare-go, .bo-compare-clr { flex: 0 0 auto; height: 32px; min-height: 32px; padding: 0 14px; border: 1.5px solid transparent; border-radius: 999px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; -webkit-appearance: none; }
 .bo-compare-go { background: #C04E1A; color: #fff; }
-.bo-compare-go:hover { background: #a34e22; }
-.bo-compare-clr { background: rgba(255,255,255,.18); color: #fff; }
-.bo-compare-clr:hover { background: rgba(255,255,255,.28); }
+.bo-compare-go:hover { background: #8A3F18; }
+.bo-compare-clr { background: none; border-color: rgba(255,255,255,.45); color: #fff; }
+.bo-compare-clr:hover { background: rgba(255,255,255,.12); border-color: #fff; }
 .bo-modal { display: none; position: fixed; inset: 0; z-index: 300; align-items: center; justify-content: center; }
 .bo-modal.bo-open { display: flex; }
 .bo-modal-bg { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
@@ -1918,7 +1933,26 @@ body > .hero-ground {
 .bo-compare-col-links a:hover { text-decoration: underline; }
 @media (max-width: 600px) and (pointer: coarse) {
   .bo-chip { padding: 3px 10px; font-size: 12px; }
-  .bo-compare-bar { padding: 8px 12px; }
+  .bo-compare-bar { padding: 8px 12px calc(8px + env(safe-area-inset-bottom,0px)); }
+  /* All three keep ONE geometry on a phone too. § 7's blanket 40px tap-target
+     floor lands on the two <button>s only — the name chip is a <span> — so
+     without this the chip renders 32px beside two 40px buttons at 16px type,
+     which is the "3 types of pills colors and size" the owner was looking at.
+     Match the chip up to the buttons rather than shrinking the buttons: 40px
+     is the Apple/WCAG target and these two are the page's primary action.
+     The font-size needs !important to beat § 7's iOS-zoom guard, which is
+     written for text inputs and reaches these only because they are buttons. */
+  .bo-compare-name-tag, .bo-compare-go, .bo-compare-clr { height: 40px; min-height: 40px; }
+  .bo-compare-go, .bo-compare-clr { font-size: 13px !important; }
+  /* Three names + a label + two buttons do not fit 393px. Shrinking the chips
+     to fit gave "Ant… / Patag… / Bhu…", which names nothing. Drop the
+     "Compare:" label (the button beside it already says Compare) and let the
+     chips keep their natural width in a strip the reader can swipe, so every
+     name stays whole. */
+  .bo-compare-label { display: none; }
+  .bo-compare-names { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .bo-compare-names::-webkit-scrollbar { display: none; }
+  .bo-compare-name-tag { flex: 0 0 auto; }
   .bo-modal-box { max-height: 90vh; }
 }
 /* Best-Of active chip dark mode — placed after unconditional rule so the cascade wins */
