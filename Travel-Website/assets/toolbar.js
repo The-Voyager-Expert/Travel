@@ -7132,12 +7132,12 @@ window.TVE.home = (function () {
       var link = document.createElement('a');
       link.className = 'title-hotel-request';
       link.href = 'mailto:contact@guidemydays.com' +
-        '?subject=' + encodeURIComponent('Request a different hotel' + (city ? ' — ' + city : '')) +
+        '?subject=' + encodeURIComponent('Inquire for a different hotel' + (city ? ' — ' + city : '')) +
         '&body=' + encodeURIComponent(
           (city ? 'Guide: ' + city + '\n' : '') +
           (hotelName ? 'Hotel on the guide: ' + hotelName + '\n' : '') +
           '\nWhat I am looking for instead:\n');
-      link.textContent = 'Request a different hotel';
+      link.textContent = 'Inquire for a different hotel as your starting point';
       var addr = titlePage.querySelector('.title-address');
       (addr || hotel).insertAdjacentElement('afterend', link);
     }
