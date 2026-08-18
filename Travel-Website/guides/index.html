@@ -859,16 +859,32 @@
       <p>Every guide has an <strong>I&rsquo;ve Been</strong> button. Tap it and that city turns gold &mdash; gold for where you have been, terracotta for what is still ahead. Your map, in your own browser.</p>
       <a class="gx-btn" href="/maps/world/">Open the world map</a>
     </div>
-    <!-- Screenshot: the live world map with a reader's own list on it. Load
-         /maps/world/#mine=<slugs> at 820px / 2x, let the pins restore (the
-         hash paints them gold and turns the Visited display on by itself),
-         set the view over Europe where the pins separate instead of
-         clustering, hide the zoom and attribution controls, and capture the
-         #map element. The gold-against-terracotta contrast IS the feature: a
-         map of all-terracotta pins is only an index. -->
+    <!-- Screenshot: the live world map with a reader's own list on it. Reshot
+         2026-08-18 — the previous one was stale (its bar predated the "Restored
+         N places to this browser." confirmation) and its pins were clustered.
+         Recipe, and every step matters:
+           · Load /maps/world/#mine=<slugs> at 880x940 / 2x and let it settle.
+           · CLICK the "Europe" pill in #left-panel. Do NOT call map.setView —
+             the Leaflet instance is a `const map` in module scope and is not on
+             window, so a setView call silently does nothing and you ship the
+             world view.
+           · CLICK #visited-pill-mobile. The hash restores the list but does NOT
+             turn the Visited display on, so without this every pin renders
+             terracotta and the one thing the card is selling is absent.
+           · Zoom in TWO steps via .leaflet-control-zoom-in, then drag to centre
+             the pin mass. At the Europe default the pins cluster into count
+             bubbles (41 of them) and no individual city is legible; two steps
+             takes it to zero clusters.
+           · Hide #mine-hint (a transient toast) and the zoom/attribution
+             controls, then capture the #map element.
+           · Save as a QUANTIZED png (192 colours): flat map fills plus text
+             give 232 KB against 748 KB full-colour, where a JPEG of the same
+             thing fringes every city label.
+         The gold-against-terracotta contrast IS the feature: a map of
+         all-terracotta pins is only an index. -->
     <span class="gi-shot"><img src="/assets/guides-intro/visited-map.png"
       alt="The world map over Europe: gold pins on the cities marked as visited, terracotta pins on the ones still ahead, and a pill at the bottom reading Visited 27"
-      loading="lazy" width="1640" height="1108"></span>
+      loading="lazy" width="1640" height="1293"></span>
   </div>
 </section>
 
