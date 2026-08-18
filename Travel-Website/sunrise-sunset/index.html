@@ -28,7 +28,16 @@
     var(--surface2, #faf7f2);
   border: 1px solid rgba(192, 78, 26, 0.2);
   border-radius: clamp(0.7rem, 1.4vw, 1.1rem);
+  /* Two columns, mirroring .cf-hero on When to Go — same card, same split, so
+     the two timing pages read as the pair they were built to be. The right
+     half was empty at every width above 62rem, which is the exact problem the
+     Climate Finder spill was written to solve; see .sun-spill below. */
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: clamp(1.2rem, 3.2vw, 2.8rem);
+  align-items: center;
 }
+.sun-hero-copy { min-width: 0; }
 .sun-hero-top { display: flex; align-items: flex-start; gap: 16px; }
 .sun-hero-ic {
   flex-shrink: 0; color: var(--rust, #C04E1A);
@@ -37,7 +46,7 @@
 .sun-hero-h {
   font-size: clamp(1.6rem, 3.9vw, 2.9rem); line-height: 1.05;
   letter-spacing: -.03em; font-weight: 700; color: var(--text, #3d3a32);
-  margin: 0 0 clamp(0.5rem, 1.2vw, 0.85rem); max-width: 20ch;
+  margin: 0 0 clamp(0.5rem, 1.2vw, 0.85rem); max-width: 24ch;
   text-wrap: balance; text-transform: none;
 }
 .sun-hero-h em { font-style: normal; color: var(--rust, #C04E1A); }
@@ -50,12 +59,17 @@
    the decision, so it takes the width; the month is a refinement and stays at
    its content size. Labels are the same 10px caps the result card uses for
    SUNRISE / SUNSET, so the page reads as one thing top to bottom. */
+/* Stacked, not side by side. The comment above used to promise "the city is
+   the decision, so it takes the width" and the layout delivered the reverse:
+   twelve month pills on the same flex row pushed the city field down to 324px
+   while the refinement took ~720px. Two full-width tiers put the decision
+   first at full size and the refinement under it. */
 .sun-search {
-  display: flex; flex-wrap: wrap; align-items: flex-end;
-  gap: 12px; margin-top: clamp(1.1rem, 2.4vw, 1.6rem);
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 14px; margin-top: clamp(1.1rem, 2.4vw, 1.6rem);
 }
 .sun-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
-.sun-field-city { flex: 1 1 320px; }
+.sun-field-city { flex: 1 1 auto; }
 .sun-field-lab {
   font-size: 10px; font-weight: 700; letter-spacing: .14em;
   text-transform: uppercase; color: var(--muted, #6a6660);
@@ -79,7 +93,6 @@
    the mobile site (Toolbar.html § 42). */
 @media (max-width: 600px) and (pointer: coarse) {
   .sun-hero-top { gap: 12px; }
-  .sun-field-city { flex: 1 1 100%; }
 }
 
 /* ── Month pills ────────────────────────────────────────────────────────────
@@ -92,7 +105,13 @@
    Selected and hover are OUTLINED, never a filled terracotta gradient — the
    Twenty-fourth non-negotiable. Filled is for true CTAs only. */
 #sun-month { display: none; }
-.sun-months { display: flex; flex-wrap: wrap; gap: 5px; }
+/* A 6x2 grid, not wrapped flex. In a half-width hero column twelve pills of
+   different label widths wrap ragged (7 + 5, the second row short and
+   left-hanging); a fixed six-column grid keeps every pill the same size and
+   the block rectangular, the same reasoning as the phone grid below. */
+.sun-months {
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px;
+}
 .sun-mon {
   font: inherit; font-size: 13px; font-weight: 600;
   padding: 9px 14px; min-width: 52px;
@@ -106,19 +125,68 @@
   background: var(--surface, #fff);
 }
 .sun-mon:focus-visible { outline: 2px solid var(--c-search-focus-border); outline-offset: 2px; }
-/* A 4x3 grid on phones, not wrapped flex. Twelve pills at flex:1 1 auto wrap
-   5/5/2 and the last row stretches — Nov and Dec came out half the screen wide
-   each, which reads as a bug rather than a row of months. A fixed four-column
-   grid keeps every pill the same size and the block rectangular. */
+/* Dark mode: the SELECTED pill drops to the darker ground. The dark terracotta
+   #D4663A on --surface (#2a2825) measures 4.03:1 — under the 4.5 a 13px label
+   needs — and on --surface2 (#1e1c1a) it measures 4.7. No new colour is
+   introduced: it is the same token pair .cont-btn.on already uses for a
+   selected chip in dark. Light mode keeps the white fill the outlined-chip
+   standard asks for, so this rule stays inside the media query. */
+@media (prefers-color-scheme: dark) {
+  .sun-mon.on { background: var(--surface2, #1e1c1a); }
+}
+/* Four across on phones rather than six — at 393px a six-column row gives each
+   pill ~56px, which is under the 44px tap target once the 4px gaps and the
+   1.5px rims are taken out of it. */
 @media (max-width: 600px) and (pointer: coarse) {
-  /* Both fields take the full row — .sun-search is a wrapping flex row, so
-     without this the month field shrinks to its content and the grid below it
-     bunches into the left half of the screen. */
-  .sun-field-month { flex: 1 1 100%; }
-  .sun-months {
-    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px;
-  }
-  .sun-mon { min-width: 0; padding: 10px 4px; }
+  .sun-months { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .sun-mon { min-width: 0; padding: 11px 4px; }
+}
+
+/* ═══ THE SPILL ═══════════════════════════════════════════════════════════
+   Same job as .cf-spill on When to Go, written for the same reason: the hero
+   card's right half was empty at every width above 62rem. It fills it with
+   the page's own subject — one day's arc from sunrise to sunset, the motif
+   the sky card below draws for real once a city is picked.
+
+   It is DECORATION, not a result. It carries no city, no times and no id, and
+   it never changes. The results half of this page — .sky-card, #sun-arc,
+   .sun-city-label — is pinned by check_design_transition_intact and was
+   restored from git once already after a redesign replaced it; nothing here
+   touches it, and nothing here may grow into a second answer. */
+.sun-spill { min-width: 0; }
+.sun-spill-arc { display: block; width: 100%; height: auto; }
+.sun-spill-scale {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  margin: 6px 2px 0; font-size: 10px; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--muted, #6a6660);
+}
+.sun-spill-scale span:nth-child(2) { text-align: center; }
+.sun-spill-scale span:nth-child(3) { text-align: right; }
+/* The return half of the pair. When to Go's hero already carries "Weather by
+   city" and "Daylight by month"; this page linked back to neither, so the
+   three timing pages were a one-way chain. Same shape as .cf-spill-pill. */
+.sun-spill-pills {
+  display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0;
+}
+.sun-spill-pill {
+  display: inline-flex; align-items: center;
+  font: inherit; font-size: clamp(0.86rem, 0.95vw, 0.94rem); font-weight: 600;
+  padding: 0.62em 1.4em;
+  border: 1.5px solid #c8bfb0; border-radius: 999px;
+  background: transparent; color: var(--text, #3d3a32);
+  text-decoration: none;
+  transition: border-color .18s ease, color .18s ease;
+}
+a.sun-spill-pill:visited { color: #3d3a32; }  /* literal: var() is inert in :visited */
+.sun-spill-pill:hover, .sun-spill-pill:focus-visible, a.sun-spill-pill:hover:visited {
+  border-color: var(--rust, #C04E1A); color: var(--rust, #C04E1A);
+}
+/* One column below 62rem — the same breakpoint .cf-hero collapses at, so the
+   pair still matches at every width. The arc shortens rather than filling a
+   phone screen; the pills stay, because they are navigation, not decoration. */
+@media (max-width: 62rem) {
+  .sun-hero { grid-template-columns: 1fr; gap: clamp(1.1rem, 4vw, 1.6rem); }
+  .sun-spill-arc { max-height: clamp(84px, 22vw, 120px); }
 }
 
 /* ── Sky card ── */
@@ -227,13 +295,13 @@
 }
 .sun-note li + li::before { content: '·'; color: var(--border); }
 
-/* Remove page-header gradient stripe on this page */
-@media (min-width: 601px), (pointer: fine) {
-  .page-header {
-    border-bottom: none !important;
-    border-image: none !important;
-  }
-}
+/* The .page-header strip that used to sit above the hero is gone (2026-08-18),
+   and the rule that used to neutralise its gradient underline went with it.
+   It was the retired title strip — this was the last page on the site still
+   carrying one, and the hero's own <h1> is the page's heading. Do not put it
+   back: a bare uppercase kicker above a hero card is the shape every other
+   redesigned page dropped, and Weather and When to Go, the two pages this one
+   is a pair with, have never had one. */
 
 /* City name label above sky card */
 .sun-city-label {
@@ -285,15 +353,16 @@
   <div id="toolbar-mount" data-depth="1" data-maxwidth="1100" data-updated="2026-08-09"></div>
 <script src="/assets/toolbar.js?v=127"></script>
 
-  <div class="page-header">
-    <h1>SUNRISE &amp; SUNSET</h1>
-  </div>
+  <!-- No .page-header strip. It was the retired uppercase title strip and this
+       was the last page on the site still carrying one; the hero's <h1> below
+       is the page's heading. See the note in the stylesheet. -->
 
   <header class="sun-hero">
+    <div class="sun-hero-copy">
     <div class="sun-hero-top">
       <span class="sun-hero-ic"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-horizon-sun"/></svg></span>
       <div>
-        <h2 class="sun-hero-h">When the sun comes up, <em>and how long it stays</em>.</h2>
+        <h1 class="sun-hero-h">When the sun comes up, <em>and how long it stays</em>.</h1>
         <p class="sun-hero-lede">Sunrise and sunset for every destination on the site,
         month by month &mdash; enough to plan a sunrise viewpoint, judge how much daylight
         a short winter day leaves you, or work out whether a late arrival lands in the
@@ -334,6 +403,42 @@
       <option value="11">December</option>
     </select>
         </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="sun-spill">
+      <!-- Decoration, not a result: one generic day, no city, no times, no id.
+           The real per-city arc is #sun-arc inside .sky-card below and is not
+           touched by this. -->
+      <svg class="sun-spill-arc" viewBox="0 0 320 152" role="img" aria-label="A day's arc from sunrise, through midday, to sunset">
+        <defs>
+          <linearGradient id="sunSpillFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(192,78,26,.26)"/>
+            <stop offset="100%" stop-color="rgba(192,78,26,0)"/>
+          </linearGradient>
+        </defs>
+        <path d="M28 118 Q160 -18 292 118 Z" fill="url(#sunSpillFill)"/>
+        <path d="M28 118 Q160 -18 292 118" fill="none"
+              stroke="var(--rust, #C04E1A)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="8" y1="118" x2="312" y2="118"
+              stroke="var(--border, #e6e2da)" stroke-width="1.5"/>
+        <circle cx="160" cy="52" r="13" fill="var(--rust, #C04E1A)"/>
+        <circle cx="28" cy="118" r="5" fill="var(--rust, #C04E1A)"/>
+        <circle cx="292" cy="118" r="5" fill="var(--rust, #C04E1A)"/>
+        <line x1="28" y1="126" x2="28" y2="140"
+              stroke="var(--border, #e6e2da)" stroke-width="1.5"/>
+        <line x1="292" y1="126" x2="292" y2="140"
+              stroke="var(--border, #e6e2da)" stroke-width="1.5"/>
+      </svg>
+      <div class="sun-spill-scale" aria-hidden="true">
+        <span>Sunrise</span><span>Midday</span><span>Sunset</span>
+      </div>
+      <!-- The return links. When to Go's hero carries "Weather by city" and
+           "Daylight by month"; this page pointed back at neither. -->
+      <div class="sun-spill-pills">
+        <a href="/weather/" class="sun-spill-pill">Weather by city</a>
+        <a href="/when-to-go/" class="sun-spill-pill">When to go</a>
       </div>
     </div>
   </header>
