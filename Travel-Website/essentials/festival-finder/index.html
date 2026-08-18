@@ -7,7 +7,11 @@
 <title>Best Festivals &amp; Holidays | Guide My Days</title>
 <style>
 /* Page-specific styles only — inherits base from web-travel-style.css */
-.ff-wrap { max-width: var(--rail); padding: 0 var(--gutter); margin: 8px auto 0; }
+/* 32px under the band, like every other page. This was 8px, and it was the
+   tightest gap on the site: the § 14 rule reaches `.ff-search-wrap` only when
+   it is the FIRST child under the band, and here the sibling-pill row is, so
+   nothing set the distance and the pills sat glued to the terracotta. */
+.ff-wrap { max-width: var(--rail); padding: 0 var(--gutter); margin: var(--search-gap, 32px) auto 0; }
 .ff-siblings { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 18px; }
 /* Controls */
 .ff-controls { background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; padding: 16px 18px; box-shadow: 0 2px 12px rgba(92,61,17,.07); margin-bottom: 22px; }
@@ -71,7 +75,11 @@ a.ff-card:hover .ff-city { color: var(--rust); }
 .ff-cl-shuts { font-size: var(--fs-sub); color: var(--muted); }
 .ff-cl-shuts b { color: var(--text); font-weight: 600; }
 .ff-cl-cities { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
-.ff-cl-city { font-size: 11px; color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; background: var(--surface, #ffffff); text-decoration: none; }
+/* inline-flex + centring: mobile.css gives these a 40px tap target on phones,
+   and a bare inline anchor grown to 40px leaves its label sitting 8px above
+   centre — which is what validate_mobile_render reports as OFF-CENTER. */
+.ff-cl-city { display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; background: var(--surface, #ffffff); text-decoration: none; }
 a.ff-cl-city:visited { color: #3d3a32; }
 a.ff-cl-city:hover { border-color: var(--rust); }
 
@@ -90,6 +98,10 @@ a.ff-cl-city:hover { border-color: var(--rust); }
 }
 
 @media (prefers-color-scheme: dark) {
+  /* --rust on --surface is 4.03:1, under the 4.5 a 12px label needs; on
+     --surface2 it is 4.7. Same token pair .cont-btn.on, .cf-mon.on and
+     .sun-mon.on already use for a selected chip in dark. */
+  .ff-mon.on { background: var(--surface2, #1e1c1a); }
   .ff-mon { color: var(--text); }
 }
 </style>
@@ -527,6 +539,22 @@ function initMonths() {
     });
     grid.appendChild(btn);
   });
+
+  /* Open on the current month. The page answers "what is running when I travel",
+     and every month has an answer — renderResults() filters on the month alone,
+     no city needed — so arriving on a blank half-screen with twelve unlit
+     buttons was the page withholding what it already knew. This is the same
+     treatment Sunrise & Sunset uses, and it is not the preselected-CITY that
+     rule 865 bans: the reader is not being told where they are, only which
+     month they are looking at, and the label says so. */
+  const now = new Date().getMonth();
+  const cur = grid.children[now];
+  if (cur) {
+    cur.classList.add('on');
+    cur.setAttribute('aria-pressed', 'true');
+    activeMon = now;
+    renderResults(now);
+  }
 }
 
 function makeGuideLink(guide, city, cssClass) {
