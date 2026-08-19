@@ -8305,17 +8305,8 @@ window.TVE.home = (function () {
       '💳': 'card',
       '📍': 'pin',
       '🚶': 'walk',
-      /* 2026-08-19 — THESE TWO WERE TRANSPOSED, on 10,551 rows of the live site.
-         🚕 is the RIDE glyph every motion row authors (10,002 fleet-wide) and it
-         drew `delivery-car`; 🚗 is the 🚗 Food Delivery SECTION TITLE glyph (549)
-         and it drew `app-car`. The stale comment sat on the wrong line and is
-         corrected below. `ride` was defined in GM_SPRITE and reachable from NO
-         glyph at all — drawn, shipped, and never once rendered.
-         The guides author the right glyphs; only this table was wrong, so two
-         lines fix every row rather than 10,551 edits. Owner: "you have the wrong
-         car icon". */
-      '🚕': 'ride',                /* every motion / taxi row */
-      '🚗': 'delivery-car',        /* 🚗 Food Delivery section title */
+      '🚕': 'delivery-car',
+      '🚗': 'app-car',             /* Food Delivery section overview link */
       '🚐': 'van',        /* tour hotel-pickup row, 548 fleet-wide */
       '🏨': 'hotel',      /* the other half of that row */
       /* extras-sub rows. The survey is closed: across the fleet these rows
