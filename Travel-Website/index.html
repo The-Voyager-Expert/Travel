@@ -1071,13 +1071,11 @@ a.land-cta:hover:visited {
   border-radius: 999px; padding: 0.3em 0.85em; font: inherit;
   color: var(--rust, #C04E1A); cursor: pointer;
 }
-.fnd-chip:hover { background: var(--warm,#fdf4ed); border-color: rgba(192, 78, 26, .55); color: var(--rust, #C04E1A); }
 .fnd-more {
   margin-top: clamp(0.7rem, 1.6vw, 1rem); border: 1px solid var(--border,#e3ddd2);
   background: transparent; color: var(--text,#3d3a32); font: inherit; font-weight: 600;
   border-radius: 999px; padding: 0.5em 1.1em; cursor: pointer;
 }
-.fnd-more:hover { border-color: var(--rust, #C04E1A); color: var(--rust, #C04E1A); }
 .fnd-more::after { content: ' \25be'; }
 .fnd-more[aria-expanded="true"]::after { content: ' \25b4'; }
 #fnd-more-panel { margin-top: clamp(0.7rem, 1.6vw, 1rem); }
@@ -1120,8 +1118,41 @@ a.land-cta:hover:visited {
   color: var(--muted,#6a6660); font: inherit; border-radius: 999px;
   padding: 0.7em 1.2em; cursor: pointer;
 }
-.fnd-reset:hover { border-color: var(--rust, #C04E1A); color: var(--rust, #C04E1A); }
 .fnd-reset[hidden] { display: none !important; }
+/* ── ONE hover for every control in this card ────────────────────────────────
+   Owner rule 2026-08-19: "make sure all filter have the same hover". The card
+   had FIVE behaviours — the select pills had NO hover at all, the chips tinted
+   to var(--warm) with a .55 rim, and .fnd-more / .fnd-reset went terracotta on
+   the rim AND the font with no tint. Nothing looked wrong in isolation; they
+   only read as five when you move a pointer down the card.
+
+   The one behaviour is the site's Option B standard (owner rule 2026-07-30):
+   background goes var(--bg), the rim goes terracotta, THE FONT DOES NOT MOVE.
+   That last clause is the half that keeps drifting back — overriding colour on
+   hover is exactly the breach the Thirty-fifth non-negotiable records against
+   .ttchip:hover and .hcchip:hover, and it went unseen for a year there because
+   a terracotta hover looks deliberate. Here the ink already carries meaning:
+   a chip is terracotta because it is a picked value, .fnd-reset is muted
+   because it is the way out. Repainting both on hover erases that.
+
+   var(--bg), not var(--warm): the chips' old beige was a third tint answering
+   to nothing, and --bg is the value every other pill on the site tints to.
+
+   The :not(:has(select:disabled)) guard matters — a pruned select sits at
+   opacity .55 and must not light up under the pointer, or a dead option reads
+   as available. Never fold it away as redundant.
+
+   .fnd-go is deliberately NOT in this list. It is the filled true-CTA
+   (Thirty-fifth non-negotiable: filled is a button, outlined is selected) and
+   inverts on hover by its own grammar. ── */
+.fnd-ctl:hover:not(:has(select:disabled)),
+.fnd-chip:hover,
+.fnd-more:hover,
+.fnd-reset:hover {
+  background: var(--bg, #f5f4f0);
+  border-color: var(--rust, #C04E1A);
+}
+
 /* A filter set behind a shut panel has to stay visible somehow. */
 .fnd-more.on { border-color: var(--rust, #C04E1A); color: var(--rust, #C04E1A); }
 .fnd-res-empty { font-size: 0.92rem; color: var(--muted,#6a6660); margin: 0; }
@@ -2974,16 +3005,25 @@ window.lpGuideCard = function (href, flag, name, extra) {
              fetched from the train guide to get it. It marks a guide whose
              itinerary contains a day reached by train (the .train-header row);
              32 of the 96 European guides carry it. -->
-        <!-- The filter is BOOLEAN — `if (s.tr.length && !g.train) return false;`
-             — so the option says Yes, not "1". "1" read as a count the page
-             never counts, and as a chip it rendered "1 ×", which the owner read
-             as a multiplier (owner, 2026-08-19: "What 1x means?"). And no
-             trailing colon on the label: no other field in this card has one. -->
+        <!-- The options are BUILT FROM THE DATA (buildTrainOpts) and this
+             select ships carrying only "Any". Owner rule 2026-08-19: "the
+             results needs to be 1 day trip planed, 2 days trips planed etc, no
+             a yes and no answer" — so the answer is the real count of train day
+             trips the itinerary plans, not a flag. It shipped as `1`, which
+             rendered as the chip "1 ×" and read as a multiplier ("What 1x
+             means?"), and then briefly as Yes/No, which is what this reverses.
+
+             Hardcoding 1..5 here would go stale the first time a guide ships a
+             sixth train day, and silently: the option would simply never appear
+             and nobody would look. The counts present in the fleet today are
+             1 · 2 · 4 · 5 — note the gap at 3, which is exactly why the list
+             cannot be a range either.
+
+             No trailing colon on the label: no other field in this card has one. -->
         <div class="fnd-field" id="fnd-train-field" hidden>
           <label for="fnd-train">Day Trips by Train planned</label>
           <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-train"/></svg></span><select id="fnd-train">
             <option value="">Any</option>
-            <option value="1">Yes</option>
           </select></div>
         </div>
       </div>
@@ -3985,10 +4025,13 @@ window.lpGuideCard = function (href, flag, name, extra) {
             rel: rel,
             folder: rel.split('/')[0],
             lang: (card.getAttribute('data-lang') || '').split(/\s+/),
-            /* data-train marks a guide whose itinerary has a day reached by
-               train. It is already on the card; the continent train guides are
-               never fetched to work it out. */
-            train: card.getAttribute('data-train') === '1',
+            /* data-train is the NUMBER of day trips by train the itinerary
+               plans — day blocks carrying a .train-header. It is already on the
+               card (build_train_days.py writes it); the continent train guides
+               are never fetched to work it out. It was a boolean `"1"` until
+               2026-08-19, which is why anything reading it must take the value,
+               never test it against '1'. Absent means none. */
+            train: parseInt(card.getAttribute('data-train') || '0', 10) || 0,
             country: country ? (country.getAttribute('data-country') || '') : '',
             countryName: label ? (label.textContent.split('·')[0] || '').replace(/[\u{1F1E6}-\u{1F1FF}]/gu, '').trim() : '',
             flag: flagEl ? flagEl.textContent.trim() : ''
@@ -6519,13 +6562,54 @@ function render() {
 
      So: no nested run, no second render. Fix the controls first, then let the
      one run that follows read them. */
+  /* The Trains options are the counts the fleet actually carries — 1, 2, 4, 5
+     today, with a real gap at 3 — read off data-train and sorted. Built once,
+     from the data, for two reasons: a hardcoded list goes stale the first time
+     a guide ships a sixth train day AND it goes stale silently (the option just
+     never appears), and a range 1..max would offer a "3 day trips" line that no
+     guide answers. pruneSelects still runs over these afterwards, so an option
+     that dead-ends against the OTHER picks greys out as usual — this only keeps
+     the list honest about the dimension's own data.
+
+     It must build BEFORE pruneSelects, which is why it lives at the top of
+     syncTrain, which is the first line of run(). Rebuilding later would wipe
+     the disabled flags prune had just set. */
+  var trainOptsBuilt = false;
+  function buildTrainOpts(d) {
+    if (trainOptsBuilt || !fTrain || !d || !d.guides) return;
+    var seen = {};
+    d.guides.forEach(function (g) { if (g.train > 0) seen[g.train] = true; });
+    var counts = Object.keys(seen).map(Number).sort(function (a, b) { return a - b; });
+    if (!counts.length) return;          /* nothing to offer — leave Any alone */
+    trainOptsBuilt = true;
+    counts.forEach(function (n) {
+      var o = document.createElement('option');
+      o.value = String(n);
+      /* "1 day trip planned" · "2 day trips planned" — the owner's own wording,
+         and the chip under the field then reads the same, because addPick takes
+         the chip label straight off the selected option's text. */
+      o.textContent = n + (n === 1 ? ' day trip planned' : ' day trips planned');
+      fTrain.appendChild(o);
+    });
+  }
+
   function syncTrain() {
     var field = document.getElementById('fnd-train-field');
     if (!field) return;
     /* First interaction can land before the listing is parsed. Fetch it, and
        re-run once when it arrives so the control appears then. */
-    if (!CONT && window._lpData) {
-      window._lpData().then(function (d) { if (d && !CONT) { CONT = d.cont; run(); } });
+    /* `|| !trainOptsBuilt` matters: CONT can already be set by an earlier pass
+       while the options are still empty, and then this branch would never be
+       entered again and the select would sit on "Any" forever. Both guards flip
+       to true inside the callback, so it cannot loop. */
+    if ((!CONT || !trainOptsBuilt) && window._lpData) {
+      window._lpData().then(function (d) {
+        if (!d) return;
+        var wasBuilt = trainOptsBuilt;
+        buildTrainOpts(d);
+        if (!CONT) { CONT = d.cont; run(); }
+        else if (!wasBuilt && trainOptsBuilt) run();
+      });
     }
     var cts = picks.ct.map(function (p) { return p.value; });
     var cos = picks.co.map(function (p) { return p.value; });
@@ -6607,7 +6691,10 @@ function render() {
       if (s.ct.length && s.ct.indexOf(d.cont[g.country]) === -1) return false;
       if (s.lg.length && !anyOf(s.lg, function (l) { return g.lang.indexOf(l) > -1; })) return false;
       if (s.ty.length && !anyOf(s.ty, function (t) { return (d.themes[g.name] || []).indexOf(t) > -1; })) return false;
-      if (s.tr.length && !g.train) return false;
+      /* An exact count, not a floor: "2 day trips planned" means two.
+         Multi-pick is the way to widen it — 1 OR 2 — like every other
+         dimension here. Values stay strings, as addPick leaves them. */
+      if (s.tr.length && s.tr.indexOf(String(g.train)) === -1) return false;
       /* Same rule as climate and distance: a guide the budget page does not
          price is DROPPED from a priced answer rather than padded into it. 205
          of the 237 are priced. */
