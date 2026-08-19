@@ -4616,34 +4616,53 @@ a.also-in-country-pill:active {
     height: 0;
     order: 9;
   }
-  /* The duration chip and the status travel together to the second line, chip
-     first — the same pairing, in the same order, that desktop shows beside the
-     title (owner 2026-08-10). Leaving the chip on the first row cost a third line on any
-     long name: the name filled row 1, the chip was pushed down among the
-     share/star/notes icons, and the status fell below that again. Both facts
-     on one short row under the name is two lines, and it keeps the fact/control
-     split the desktop row has. */
+  /* The duration chip is the FIRST thing after the title and stays on the
+     title's own row — it drops to the second row only when the name has taken
+     the whole first row by itself (owner 2026-08-19).
+     This REVERSES the 2026-08-10 pairing that sent chip and status down
+     together: the chip now carries NO `order`, so it wraps by the ordinary
+     flex rule rather than being forced below unconditionally. That pairing was
+     costing a row on every stop whose name was short — the name sat alone on
+     row 1, the four controls wrapped to row 2, and the chip opened a third row
+     under both. Measured at 393px on Salzburg, headers go 100px -> 69px.
+     The STATUS keeps order:11 and stays below: that half of the 2026-08-10
+     arrangement is the original fix (the badge cost the name 59 of its 130px)
+     and is deliberately untouched. */
   .stop-dur {
-    order: 10;
+    margin-left: 8px;
+    margin-right: auto;
+    margin-top: 0;
+  }
+  /* The 8px stays on the CHIP and is deliberately not moved onto the name's
+     margin-right, which would look like the tidier way to keep a wrapped chip
+     flush at the 32px content edge. A margin on the name is part of the name's
+     outer size, so it enters the flex line-breaking decision: measured at
+     393px, "Hellbrunn Palace & Trick Fountains" (310px) went from fitting on
+     row 1 to being bumped below the stop number, and that header grew 69px ->
+     95px. The chip's own margin only ever decides whether the CHIP fits, which
+     is the wrap this change wants. Cost is an 8px indent on the chip when it
+     has wrapped; the header height is what matters here. */
+  /* Desktop hands the spacer to the status pill when one is present; on mobile
+     the status is on its own line below and can never be the first row's
+     spacer, so the chip keeps the job. Same specificity as the desktop rule it
+     overrides (`:has()` takes its argument's specificity) and later in the
+     file — a bare `.stop-dur` here would silently lose to it. */
+  .stop-header:has(.open-now-status) .stop-dur { margin-right: auto; }
+  .open-now-status {
+    order: 11;
     margin-left: 0;
     margin-right: 0;
     margin-top: 5px;
   }
-  .open-now-status {
-    order: 11;
-    margin-left: 8px;
-    margin-right: 0;
-    margin-top: 5px;
-  }
-  .stop-header:not(:has(.stop-dur)) .open-now-status { margin-left: 0; }
-  /* Neither is on the first row any more, so the NAME is the spacer again —
-     otherwise the four controls collapse onto the end of the name.
-     Both selectors are repeated verbatim from the desktop hand-down chain
-     above: `:has()` takes the specificity of its argument, so a plain
-     `.stop-header .stop-name` here would lose to them and the override would
-     silently do nothing. */
-  .stop-header:has(.stop-dur) .stop-name,
-  .stop-header:has(.open-now-status) .stop-name { margin-right: auto; }
+  /* The NAME takes the spacer back only when there is NO chip. With a chip on
+     the row the name must sit flush against it, and an auto margin between the
+     two is exactly what would push the chip out to the far edge — which is the
+     layout this change exists to end. The desktop chain already zeroes the
+     name when a chip is present, so only the status-only case needs restoring
+     here: desktop would hand that job to the status pill, which mobile has
+     moved off the row. `:has()` takes its argument's specificity, so this must
+     outrank the 0,3,0 desktop rules — it is 0,4,0. */
+  .stop-header:not(:has(.stop-dur)):has(.open-now-status) .stop-name { margin-right: auto; }
 }
 
 @media (prefers-color-scheme: dark) {
