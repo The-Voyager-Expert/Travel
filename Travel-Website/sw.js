@@ -1555,7 +1555,7 @@
 /* 2026-08-19: pills-rect-sweep — train-passes pill padding increased (height:34px removed, padding:9px 20px added). toolbar.js to 758, web-travel-style.css to 75. CACHE to v1093. */
 /* 2026-08-19: Getting Around + Food Delivery — the SIDE-BY-SIDE decision is reversed (owner: "they need to match the rest of the sections i changed my mind on the side by sides thing"). Two layers came off and both are shared assets, so both floors move. guide-style.css: the section's 2-column grid and the .ga-grid rules that laid entry cards ACROSS it are replaced by the stacked Style-A card every other Extras section draws. toolbar.js: _injectGAGrid() retired — neither section is injected at all any more. What the owner photographed was the .ga-grid count rules (.ga-grid:has(> .neigh-card:nth-child(3)), specificity (0,3,0)) outranking the phone collapse (0,1,0), so a three-entry Food Delivery stayed three ~110px columns at 393px with just-eat.fr broken to one letter per line. guide-style.css -> v248, toolbar.js -> v759. CACHE to v1097. */
 /* 2026-08-19: Export-to-Calendar modal — both buttons wear the extras pill (owner: "change to blond text and the cancel too and white background … no terracote fill"). The download button had shipped background:#C04E1A with color:#C04E1A — terracotta ink on a terracotta fill, so its label was INVISIBLE and the button read as a blank orange slab; nothing failed because both halves are individually legal colours. Cancel and Download now share one style string: #fdf8f0 ground, rgba(138,108,26,.25) rim, #8a6c1a ink — the light --c-pill-* values as LITERALS, because the overlay box is hardcoded #fff and the tokens would paint a dark pill on it under a dark OS. Date bar sized to its value and centred (width:200px;max-width:100%;margin:0 auto 18px) instead of width:100%. New gate: brain_check.check_ics_modal_buttons_are_pills (rule 904). toolbar.js -> v760. CACHE to v1098. */
-var CACHE = 'travel-cache-v1098';
+var CACHE = 'travel-cache-v1099';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1563,7 +1563,7 @@ var CACHE = 'travel-cache-v1098';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 248,'toolbar.js': 760, 'mobile.css': 87, 'web-travel-style.css': 76, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 7, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 249,'toolbar.js': 760, 'mobile.css': 87, 'web-travel-style.css': 76, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 7, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
