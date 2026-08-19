@@ -3433,9 +3433,14 @@ window.TVE.home = (function () {
     var _icsD = new Date(); _icsD.setDate(_icsD.getDate() + 1);
     dateInput.value = _icsD.getFullYear() + '-' +
       ('0' + (_icsD.getMonth() + 1)).slice(-2) + '-' + ('0' + _icsD.getDate()).slice(-2);
+    /* The date bar is sized to its own value and CENTRED in the box, not run to
+       the full 100% width (owner 2026-08-19: "a bit smaller to fit and centered").
+       A full-width bar left the date floating in a rail of empty gold border.
+       width + max-width, not width alone: the box is 90vw on a narrow phone. */
     dateInput.style.cssText =
-      'width:100%;padding:9px 11px;border:1.5px solid #c8a44a;border-radius:6px;' +
-      'font-size:16px;font-family:inherit;box-sizing:border-box;margin-bottom:18px;' +
+      'display:block;width:200px;max-width:100%;padding:9px 11px;' +
+      'border:1.5px solid rgba(138,108,26,.45);border-radius:6px;' +
+      'font-size:16px;font-family:inherit;box-sizing:border-box;margin:0 auto 18px;' +
       'color:#1b2531;-webkit-text-fill-color:#1b2531;background:#fff;' +
       'text-align:center;text-align-last:center;direction:ltr;touch-action:manipulation;';
     dateInput.addEventListener('focus', function () {
@@ -3450,18 +3455,31 @@ window.TVE.home = (function () {
     var bRow = document.createElement('div');
     bRow.style.cssText = 'display:flex;gap:10px;';
 
+    /* BOTH buttons wear the extras-section pill (owner 2026-08-19: "change to
+       blond text and the cancel too and white background … no terracota fill").
+       Values are the light-mode --c-pill-* tokens written as literals, because
+       this overlay is hardcoded light (box is #fff) and reading the tokens would
+       paint a dark pill on a white box under a dark OS.
+         bg  #fdf8f0            = --c-pill-bg
+         bd  rgba(138,108,26,.25) = --c-pill-bd
+         ink #8a6c1a            = --c-pill-text
+       The download button used to be background:#C04E1A with color:#C04E1A —
+       terracotta ink on a terracotta fill, so its label was invisible and the
+       button read as a blank orange slab. Never give this pair a filled
+       terracotta background: the filled fill is reserved for true CTAs
+       (apply-btn / apply-link / badge / city-row) and these are pills. */
+    var _icsPill =
+      'flex:1;padding:8px 10px;border:1px solid rgba(138,108,26,.25);border-radius:6px;' +
+      'background:#fdf8f0;color:#8a6c1a;font-size:13px;cursor:pointer;font-family:inherit;' +
+      'white-space:nowrap;';
+
     var cancelBtn = document.createElement('button');
     cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
-    cancelBtn.style.cssText =
-      'flex:1;padding:8px 14px;border:1.5px solid #ccc;border-radius:6px;' +
-      'background:#fff;font-size:13px;color:#5b636f;cursor:pointer;font-family:inherit;font-weight:500;';
+    cancelBtn.style.cssText = _icsPill + 'font-weight:500;';
 
     var dlBtn = document.createElement('button');
     dlBtn.type = 'button'; dlBtn.textContent = '↓ Download .ics';
-    dlBtn.style.cssText =
-      'flex:1;padding:8px 16px;border:none;border-radius:6px;' +
-      'background:#C04E1A;' +
-      'font-size:13px;font-weight:700;color:#C04E1A;cursor:pointer;font-family:inherit;';
+    dlBtn.style.cssText = _icsPill + 'font-weight:600;';
 
     function _closeICS() { overlay.style.display = 'none'; document.body.style.overflow = ''; }
     /* No click-outside-to-close: on iOS the native date picker dismissal
