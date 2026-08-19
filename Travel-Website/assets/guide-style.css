@@ -4018,11 +4018,102 @@ a.also-in-country-pill:active {
   padding: 12px 14px 14px;
   min-width: 0;
 }
+/* ── 🏨 Hotel Recommendations — the hotel name IS the link ──────────────────
+   It always was an anchor to the hotel's Booking.com page: _injectHotelAlternatives
+   builds an <a class="neigh-name ext-arrow"> whenever the entry carries a url.
+   It just never LOOKED like one, because this rule painted it in the body ink and
+   .ext-arrow — the shared chevron — is declared in web-travel-style.css, which a
+   guide does not load. So on all 237 guides every hotel read as plain bold text
+   and the owner reported them as unlinked (2026-08-19). Both halves are fixed
+   here: terracotta, and a chevron this stylesheet draws itself.
+   Never re-point this at .ext-arrow and never restore the body ink. */
 .neigh-name {
   font-size: 14px;
   font-weight: bold;
   color: var(--c-text-primary);
   margin-bottom: 5px;
+}
+a.neigh-name {
+  color: #C04E1A;
+  text-decoration: none;
+}
+a.neigh-name::after {
+  content: "\203A";
+  margin-left: 5px;
+  font-weight: bold;
+  opacity: 0.75;
+}
+a.neigh-name:hover { text-decoration: underline; }
+
+/* The score at the end of the note links to the page the score was read from —
+   click the number you are reading, land where it came from. Rendered only when
+   the note actually ends in the `· N.N Booking.com` fragment AND the entry has a
+   url; never invented (brain_check rule 810 pairs the two). */
+.neigh-why a.hr-src {
+  color: #C04E1A;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.neigh-why a.hr-src::after { content: "\203A"; margin-left: 4px; opacity: 0.75; }
+.neigh-why a.hr-src:hover { text-decoration: underline; }
+
+/* ── The four price tiers ───────────────────────────────────────────────────
+   Budget · Mid · Expensive · Luxury, grouped cheapest first, each opening on a
+   tier head. The tier is NEVER a chip on the card — that variant was built,
+   shown to the owner and rejected (2026-08-20), and it also hides an empty tier,
+   which is the one thing this section exists to make obvious.
+   The WORD sits in a fixed box so all four "from …" prices start at the same x
+   instead of stepping in and out down the section. */
+.hr-tier {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 20px 0 9px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hr-tier:first-child { margin-top: 4px; }
+.hr-tier .hr-word { display: inline-flex; align-items: center; gap: 8px; min-width: 176px; }
+.hr-tier .hr-from { font-weight: 600; letter-spacing: 0; text-transform: none; font-size: 12px; opacity: 0.8; }
+.hr-tier .hr-line { flex: 1; height: 1px; background: currentColor; opacity: 0.25; }
+.hr-tier.hr-budget { color: #2f7d32; }
+.hr-tier.hr-mid    { color: #1f6b8f; }
+.hr-tier.hr-exp    { color: #a8620a; }
+.hr-tier.hr-lux    { color: #6b2fa0; }
+
+/* THE COINS OVERLAP BY A THIRD — this is load-bearing, not decoration. The tier
+   mark is 1·2·3·4 of catalogue #381 (the $ / $$ / $$$ / $$$$ convention, drawn
+   rather than typed — never an emoji, CLAUDE.md Twenty-eighth non-negotiable).
+   Laid edge to edge four coins are 48px and burst the label box; stacked they
+   are 30px and sit in the same box as one, which is what lets every tier label
+   be the same size (owner rule: "i want all pills the same size"). */
+.hr-coins { display: inline-flex; align-items: center; flex: none; }
+.hr-coins svg { width: 1.15em; height: 1.15em; margin-left: -4px; }
+.hr-coins svg:first-child { margin-left: 0; }
+
+/* Dark partners. The light terracotta #C04E1A measures 3.5:1 on the dark card, so
+   the links take #D4663A — the site's one approved dark terracotta (CLAUDE.md
+   Thirty-fifth non-negotiable). The four tier hues lighten for the same reason;
+   they are the same families, not new colours. */
+@media (prefers-color-scheme: dark) {
+  a.neigh-name       { color: #D4663A; }
+  .neigh-why a.hr-src { color: #D4663A; }
+  .hr-tier.hr-budget { color: #7fc684; }
+  .hr-tier.hr-mid    { color: #79b9d8; }
+  .hr-tier.hr-exp    { color: #e0a862; }
+  .hr-tier.hr-lux    { color: #bd93e0; }
+}
+
+/* Phone: the fixed word box exists to line the four prices up in a column. At
+   393px there is no column to line up — one card per row — and holding 176px
+   pushes "from €1,100" off the end. Released, not shrunk. Phone only, gated on
+   pointer:coarse like every other phone rule here (CLAUDE.md Thirty-third). */
+@media (max-width: 600px) and (pointer: coarse) {
+  .hr-tier .hr-word { min-width: 0; }
+  .hr-tier { font-size: 12.5px; margin: 22px 0 10px; }
 }
 .neigh-why {
   font-size: 13px;

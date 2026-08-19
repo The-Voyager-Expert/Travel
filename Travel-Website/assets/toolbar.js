@@ -774,6 +774,12 @@ window.TVE.home = (function () {
      A key with no entry here keeps the old mask path untouched, so this can be
      completed icon by icon without a flag day. */
   var GM_SPRITE = {
+    /* Catalogue #381 — the single dollar coin, verbatim from Site-Icons.html.
+       Registered here so the 🏨 Hotel Recommendations tier heads can draw the
+       $ / $$ / $$$ / $$$$ price ladder as 1·2·3·4 real coins. It is a REUSE of
+       the catalogue drawing, never a redraw, and never an emoji — CLAUDE.md
+       Twenty-eighth non-negotiable. Nothing else may add a second coin. */
+    'coin': ['0.10 0.10 23.81 23.81', '<circle cx="12" cy="12" r="9" fill="url(#gm-cream)" stroke="var(--c-rim-warm)" stroke-width="0.6"/><circle cx="12" cy="12" r="9" fill="url(#gm-gloss)"/><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm.6-8.7c-1.7-.5-2.2-.9-2.2-1.5 0-.7.7-1.2 1.8-1.2 1.2 0 1.7.6 1.7 1.4h1.6c0-1.2-.8-2.3-2.2-2.6V6h-2.2v1.4c-1.3.3-2.3 1.2-2.3 2.5 0 1.5 1.3 2.3 3.2 2.8 1.7.4 2 1 2 1.6 0 .5-.3 1.2-1.8 1.2-1.4 0-1.9-.6-2-1.4H8.6c.1 1.5 1.2 2.4 2.5 2.7V18h2.2v-1.4c1.4-.3 2.4-1.1 2.4-2.5 0-1.8-1.6-2.5-3.1-2.8z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/>'],
     'ticket-solid': ['1 5.5 22 13', '<path fill-rule="evenodd" fill="url(#gm-rust)" stroke="var(--c-rust-rim)" stroke-width="0.5" d="M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5ZM16.3 8.5h1.3v1.7h-1.3ZM16.3 11.15h1.3v1.7h-1.3ZM16.3 13.8h1.3v1.7h-1.3Z"/><path d="M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5ZM16.3 8.5h1.3v1.7h-1.3ZM16.3 11.15h1.3v1.7h-1.3ZM16.3 13.8h1.3v1.7h-1.3Z" fill="url(#gm-gloss)"/>'],
     'ticket-torn': ['1 5.5 22 13', '<path fill-rule="evenodd" fill="url(#gm-rust)" stroke="var(--c-rust-rim)" stroke-width="0.5" d="M4 6.5H10.8l0.9 2.2-1.8 2.2 1.8 2.2-1.8 2.2 0.9 2.2H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5Z"/><path fill-rule="evenodd" fill="url(#gm-rust)" stroke="var(--c-rust-rim)" stroke-width="0.5" d="M13.2 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H13.2l0.9-2.2-1.8-2.2 1.8-2.2-1.8-2.2 0.9-2.2ZM16.3 8.5h1.3v1.7h-1.3ZM16.3 11.15h1.3v1.7h-1.3ZM16.3 13.8h1.3v1.7h-1.3Z"/><path fill-rule="evenodd" fill="url(#gm-gloss)" d="M13.2 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H13.2l0.9-2.2-1.8-2.2 1.8-2.2-1.8-2.2 0.9-2.2ZM16.3 8.5h1.3v1.7h-1.3ZM16.3 11.15h1.3v1.7h-1.3ZM16.3 13.8h1.3v1.7h-1.3Z"/>'],
 
@@ -6563,10 +6569,62 @@ window.TVE.home = (function () {
     wrap.id = 'hotel-alternatives';
     var h = document.createElement('div');
     h.className = 'extras-title';
-    h.textContent = '🏨 Alternative Hotel Recommendations';
-    var grid = document.createElement('div');
-    grid.className = 'neigh-grid';
-    entry.h.forEach(function (hotel) {
+    /* RENAMED 2026-08-20 (owner): "Alternative Hotel Recommendations" →
+       "Hotel Recommendations". The old wording said these were the runners-up;
+       with four price tiers they are the recommendations. */
+    h.textContent = '🏨 Hotel Recommendations';
+    wrap.appendChild(h);
+
+    /* ── Four price tiers, grouped, cheapest first ─────────────────────────
+       Budget · Mid · Expensive · Luxury. Every guide must carry at least one
+       hotel in EACH — enforced hard-fail by validate_itinerary.py. The tier is
+       a HEAD above its group and never a chip on the card: that variant was
+       built, shown to the owner and rejected (2026-08-20), and a chip also
+       hides an empty tier, which is the one thing this section must reveal.
+       Entries with no `tier` render ungrouped, ABOVE the tiers, so the fleet
+       keeps rendering while the backfill runs — a reader never sees a broken
+       section because the data is mid-migration. */
+    var TIERS = [
+      ['budget',    'Budget',    1, 'hr-budget'],
+      ['mid',       'Mid',       2, 'hr-mid'],
+      ['expensive', 'Expensive', 3, 'hr-exp'],
+      ['luxury',    'Luxury',    4, 'hr-lux']
+    ];
+
+    function coinRow(n) {
+      var s = document.createElement('span');
+      s.className = 'hr-coins';
+      /* iconSVG draws the registered catalogue sprite. Never an emoji here and
+         never a hand-drawn shape — CLAUDE.md Twenty-eighth non-negotiable. */
+      var i, markup = '';
+      for (i = 0; i < n; i++) {
+        markup += '<svg viewBox="0.10 0.10 23.81 23.81" aria-hidden="true"><use href="#gm-i-coin"></use></svg>';
+      }
+      s.innerHTML = markup;
+      return s;
+    }
+
+    function tierHead(label, coins, cls, from) {
+      var row = document.createElement('div');
+      row.className = 'hr-tier ' + cls;
+      var word = document.createElement('span');
+      word.className = 'hr-word';
+      word.appendChild(coinRow(coins));
+      word.appendChild(document.createTextNode(label));
+      row.appendChild(word);
+      if (from) {
+        var f = document.createElement('span');
+        f.className = 'hr-from';
+        f.textContent = 'from ' + from;
+        row.appendChild(f);
+      }
+      var line = document.createElement('span');
+      line.className = 'hr-line';
+      row.appendChild(line);
+      return row;
+    }
+
+    function makeCard(hotel) {
       var card = document.createElement('div');
       card.className = 'neigh-card';
       var nameEl;
@@ -6575,6 +6633,10 @@ window.TVE.home = (function () {
         nameEl.href = hotel.url;
         nameEl.target = '_blank';
         nameEl.rel = 'noopener noreferrer';
+        /* .ext-arrow stays for anything that DOES load web-travel-style.css;
+           guide-style.css draws its own chevron on a.neigh-name because a guide
+           does not load that stylesheet. Removing either is what made every
+           hotel on the fleet read as plain text until 2026-08-20. */
         nameEl.className = 'neigh-name ext-arrow';
       } else {
         nameEl = document.createElement('div');
@@ -6583,13 +6645,44 @@ window.TVE.home = (function () {
       nameEl.textContent = hotel.name;
       var note = document.createElement('div');
       note.className = 'neigh-why';
-      note.textContent = hotel.note;
+      /* The score at the end of the note becomes the link to the page it was
+         read from — click the number you are reading. Only when the note really
+         ends in that fragment AND the entry carries a url; a score is never
+         invented and never linked to something it did not come from
+         (brain_check.check_hotel_alt_score_has_matching_url, rule 810). */
+      var m = hotel.url && /^(.*?)(\d(?:\.\d)?\s+Booking\.com)\s*$/.exec(hotel.note || '');
+      if (m) {
+        note.appendChild(document.createTextNode(m[1]));
+        var src = document.createElement('a');
+        src.href = hotel.url;
+        src.target = '_blank';
+        src.rel = 'noopener noreferrer';
+        src.className = 'hr-src';
+        src.textContent = m[2];
+        note.appendChild(src);
+      } else {
+        note.textContent = hotel.note;
+      }
       card.appendChild(nameEl);
       card.appendChild(note);
-      grid.appendChild(card);
+      return card;
+    }
+
+    function gridOf(list) {
+      var g = document.createElement('div');
+      g.className = 'neigh-grid';
+      list.forEach(function (hotel) { g.appendChild(makeCard(hotel)); });
+      return g;
+    }
+
+    var untiered = entry.h.filter(function (x) { return !x.tier; });
+    if (untiered.length) wrap.appendChild(gridOf(untiered));
+    TIERS.forEach(function (tr) {
+      var list = entry.h.filter(function (x) { return x.tier === tr[0]; });
+      if (!list.length) return;
+      wrap.appendChild(tierHead(tr[1], tr[2], tr[3], (entry.from || {})[tr[0]]));
+      wrap.appendChild(gridOf(list));
     });
-    wrap.appendChild(h);
-    wrap.appendChild(grid);
     var anCity = AN_NEIGHBORHOOD_CITIES[slug];
     if (anCity) {
       var anPills = document.createElement('div');
