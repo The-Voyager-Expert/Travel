@@ -1549,7 +1549,8 @@
 /* 2026-08-18: Also in [Country] rendered on ZERO guides (should be 192) and both injected city strips built pre-flatten ../{dir}/{slug} hrefs that 404; day-trip-from.json was empty. Lookups now try both slug spellings, hrefs root-absolute, index rebuilt (63 destinations). toolbar.js -> v755. CACHE to v1089. */
 /* 2026-08-18: BOOKMARKS — the two writers of tve_pinned_guides disagreed on how to spell the same city, so every bookmark made from inside a guide was broken three ways at once. toolbar.js stored `'.' + pathname` (the pre-flatten relative shape) while guides/index.html stores the card's root-absolute href: the strip pill resolved ./guides/x.html against /guides/index.html and 404'd on /guides/guides/x.html (this, not a stale pre-flatten pin, is what the owner hit clicking a bookmarked Salzburg); the card never matched, so a bookmarked guide came back unmarked; and pinActive() was false on the guide you had just bookmarked, so tapping its outline icon stored a SECOND entry for the same city and burned one of the three slots. Href is now location.pathname, and a normalizePins() in BOTH readers repairs and de-duplicates what the bug already wrote into readers' browsers — localStorage is not migrated by a deploy. Two more, same feature: init() painted its buttons from the pin map it built BEFORE backfillFlags repaired it and never set .is-pinned at all, so a bookmarked card returned from a reload with a grey icon; and .dest-card--pinned set border-left-color to var(--accent), which is the exact gold the base .dest-card already paints — a no-op since the day it was written, leaving a bookmarked card pixel-identical to an unbookmarked one. Now #C04E1A, a literal. toolbar.js -> v756, guides-index-style.css -> v18. CACHE to v1090. */
 /* 2026-08-19: sibling-pill dark-mode WCAG AA fix — #D4663A on #2a2825 measured 4.03:1 on festival-finder, sports-calendar, neighborhoods. Added @media (prefers-color-scheme:dark) { .sibling-pill { color: var(--text) } } to web-travel-style.css, same fix as .an-cbtn in neighborhoods. web-travel-style.css to 74. CACHE to v1091. */
-var CACHE = 'travel-cache-v1092';
+/* 2026-08-19: pills-rect-sweep — train-passes pill padding increased (height:34px removed, padding:9px 20px added). toolbar.js to 758, web-travel-style.css to 75. CACHE to v1093. */
+var CACHE = 'travel-cache-v1093';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1557,7 +1558,7 @@ var CACHE = 'travel-cache-v1092';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 246,'toolbar.js': 757, 'mobile.css': 87, 'web-travel-style.css': 74, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 246,'toolbar.js': 758, 'mobile.css': 87, 'web-travel-style.css': 75, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 6, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
