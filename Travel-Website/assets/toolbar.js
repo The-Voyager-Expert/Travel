@@ -8788,10 +8788,9 @@ window.TVE.home = (function () {
        go", "Festival finder", "Sports calendar") across 17 pages. Neither emoji
        sweep touched those files, so unlike the footer pills these were never
        stripped; they simply never had an icon, and sat bare next to rows that
-       now draw one (owner 2026-08-11: "these lost icons too"). Same href
-       resolution, so no second mapping to keep in sync. External targets
-       (weather.com, windy.com …) resolve to nothing and stay text. */
-    var pills = document.querySelectorAll('.also-on-this-site-pill,.sibling-pill');
+       now draw one (owner 2026-08-11: "these lost icons too"). REVERSED 2026-08-19
+       (owner: "no emojis on pills") — sibling-pill text rows stay icon-free. */
+    var pills = document.querySelectorAll('.also-on-this-site-pill');
     if (!pills.length) return;
 
     /* KEYED ON THE PAGE SLUG, NOT THE FILENAME (rewritten 2026-08-16 for the
