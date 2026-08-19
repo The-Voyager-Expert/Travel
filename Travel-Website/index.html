@@ -2986,38 +2986,42 @@ window.lpGuideCard = function (href, flag, name, extra) {
           </select></div>
         </div>
 
-        <!-- ── Trains: EUROPE ONLY, and it shows itself ─────────────────────
+        <!-- ── Day Trips by Train: it shows itself, and it counts ──────────
              Owner, 2026-08-17: "under country if the person end up in the
-             filter in a country in europe add train filter."
+             filter in a country in europe add train filter." Then, 2026-08-19:
+             "after country if have train trip need to show this filter and the
+             use can decide if they prefer a country that more places to go
+             nearby meaning how many day trips has been planned for them."
 
-             It appears the moment the reader's selection lands in Europe —
-             Continent set to Europe, or a European country picked — and hides
-             again when it does not, because outside Europe a train day is a
-             one-off (Melbourne to Ballarat) rather than a way of travelling,
-             and a control that is almost always empty reads as broken.
+             THE REVEAL IS DATA, NOT A CONTINENT. It appears whenever the
+             country/continent scope contains a guide with day trips, and hides
+             when it does not. It was gated on Europe, which was right only
+             while data-train meant the itinerary's own train days — 32 of 96
+             European guides. It now counts DAY TRIPS BY TRAIN entries and 130
+             guides across the fleet carry them, Bangkok to Chiang Mai included,
+             so a Europe gate hides a filter with real answers everywhere else.
 
              Hiding it CLEARS it. A filter that keeps narrowing the list from
-             behind a hidden control is the exact bug the "More ways to filter
-             (n)" counter exists to prevent, and it would be invisible here.
+             behind a hidden control is invisible to the reader, and the (n)
+             counter that used to catch that is gone.
 
-             The data is data-train on the guide's own card in
-             /guides/index.html — already there, already correct, nothing
-             fetched from the train guide to get it. It marks a guide whose
-             itinerary contains a day reached by train (the .train-header row);
-             32 of the 96 European guides carry it. -->
-        <!-- The options are BUILT FROM THE DATA (buildTrainOpts) and this
-             select ships carrying only "Any". Owner rule 2026-08-19: "the
-             results needs to be 1 day trip planed, 2 days trips planed etc, no
-             a yes and no answer" — so the answer is the real count of train day
-             trips the itinerary plans, not a flag. It shipped as `1`, which
-             rendered as the chip "1 ×" and read as a multiplier ("What 1x
-             means?"), and then briefly as Yes/No, which is what this reverses.
+             THE COUNT IS THE #day-trips-by-train SECTION, not the itinerary's
+             train days. Both exist and they are different sets — 130 guides vs
+             56 — and the owner picked this one ("YES day trip by train page has
+             the data"): a train DAY is somewhere already in the plan, a section
+             ENTRY is somewhere the reader could add, which is what "places to go
+             nearby" asks. build_train_days.py writes the count to data-train on
+             the card, reusing build_day_trips.py's parser rather than adding a
+             second reading of the same section.
 
-             Hardcoding 1..5 here would go stale the first time a guide ships a
-             sixth train day, and silently: the option would simply never appear
-             and nobody would look. The counts present in the fleet today are
-             1 · 2 · 4 · 5 — note the gap at 3, which is exactly why the list
-             cannot be a range either.
+             THE OPTIONS ARE BUILT FROM THE DATA (buildTrainOpts) and this
+             select ships carrying only "Any". It shipped as `1`, which rendered
+             as the chip "1 ×" and read as a multiplier ("What 1x means?"), then
+             briefly as Yes/No, which the owner reversed. Hardcoding a list here
+             would go stale the first time a guide ships an eighth day trip, and
+             silently: the option would simply never appear and nobody would
+             look. Today the fleet carries 1 · 2 · 3 · 5 · 6 · 7 — note the gap
+             at 4, which is why the list cannot be a range either.
 
              No trailing colon on the label: no other field in this card has one. -->
         <div class="fnd-field" id="fnd-train-field" hidden>
@@ -4025,12 +4029,13 @@ window.lpGuideCard = function (href, flag, name, extra) {
             rel: rel,
             folder: rel.split('/')[0],
             lang: (card.getAttribute('data-lang') || '').split(/\s+/),
-            /* data-train is the NUMBER of day trips by train the itinerary
-               plans — day blocks carrying a .train-header. It is already on the
-               card (build_train_days.py writes it); the continent train guides
-               are never fetched to work it out. It was a boolean `"1"` until
-               2026-08-19, which is why anything reading it must take the value,
-               never test it against '1'. Absent means none. */
+            /* data-train is the NUMBER of entries in the guide's Day Trips by
+               Train section — the places already worked out for the reader,
+               with journey time and booking link. build_train_days.py writes it
+               to the card, so neither the section nor /essentials/day-trips/ is
+               fetched to work it out. It was a boolean `"1"` until 2026-08-19,
+               which is why anything reading it must take the VALUE and never
+               test it against '1'. Absent means none. */
             train: parseInt(card.getAttribute('data-train') || '0', 10) || 0,
             country: country ? (country.getAttribute('data-country') || '') : '',
             countryName: label ? (label.textContent.split('·')[0] || '').replace(/[\u{1F1E6}-\u{1F1FF}]/gu, '').trim() : '',
@@ -6543,33 +6548,34 @@ function render() {
     'o200':    function (n) { return n >= 200; }
   };
 
-  /* Which countries the Trains control belongs to. Read off the same CONTINENT
-     table every other filter uses, so a country added to Europe there turns the
-     control on here with no second list to remember. Held on its own because
-     the reveal has to answer synchronously as the reader changes a select. */
+  /* The continent table, and the resolved listing. Both are held here because
+     the Trains reveal has to answer SYNCHRONOUSLY as the reader changes a
+     select — see the race note on syncTrain below. */
   var CONT = null;
+  var DATA = null;
 
   /* Called at the TOP of run(), before state() is read, and it must stay there.
 
-     Leaving Europe has to clear the Trains value — a hidden control that keeps
-     filtering is invisible to the reader and to the "(n)" counter. The obvious
-     shape, clearing it and calling run() again, is a RACE and it shipped broken
-     for one round of testing: the outer run had already captured `tr: "1"`, the
+     Losing the trains scope has to clear the Trains value — a hidden control
+     that keeps filtering is invisible to the reader. The obvious shape,
+     clearing it and calling run() again, is a RACE and it shipped broken for
+     one round of testing: the outer run had already captured `tr: "1"`, the
      inner run registered its _lpData callback first, and the outer one resolved
-     last and painted the stale list over the fresh one. Switching Europe+trains
-     to Asia rendered 9 guides — the Asian ones with a train day — under a list
-     that no longer had a Trains filter on it.
+     last and painted the stale list over the fresh one. Switching a scope with
+     trains to one without rendered the old list under a Trains filter that was
+     no longer on the page.
 
      So: no nested run, no second render. Fix the controls first, then let the
-     one run that follows read them. */
-  /* The Trains options are the counts the fleet actually carries — 1, 2, 4, 5
-     today, with a real gap at 3 — read off data-train and sorted. Built once,
-     from the data, for two reasons: a hardcoded list goes stale the first time
-     a guide ships a sixth train day AND it goes stale silently (the option just
-     never appears), and a range 1..max would offer a "3 day trips" line that no
-     guide answers. pruneSelects still runs over these afterwards, so an option
-     that dead-ends against the OTHER picks greys out as usual — this only keeps
-     the list honest about the dimension's own data.
+     one run that follows read them. And the reveal is computed off the cached
+     DATA rather than a promise, so it can answer inside that first line. */
+  /* The Trains options are the counts the fleet actually carries — 1 · 2 · 3 ·
+     5 · 6 · 7 today, with a real gap at 4 — read off data-train and sorted.
+     Built once, from the data, for two reasons: a hardcoded list goes stale the
+     first time a guide ships an eighth day trip AND it goes stale silently (the
+     option simply never appears), and a range 1..max would offer a "4 day
+     trips" line that no guide answers. pruneSelects still runs over these
+     afterwards, so an option that dead-ends against the OTHER picks greys out
+     as usual — this only keeps the list honest about the dimension's own data.
 
      It must build BEFORE pruneSelects, which is why it lives at the top of
      syncTrain, which is the first line of run(). Rebuilding later would wipe
@@ -6606,18 +6612,41 @@ function render() {
       window._lpData().then(function (d) {
         if (!d) return;
         var wasBuilt = trainOptsBuilt;
+        DATA = d;
         buildTrainOpts(d);
         if (!CONT) { CONT = d.cont; run(); }
         else if (!wasBuilt && trainOptsBuilt) run();
       });
     }
+
+    /* ── The reveal, owner rule 2026-08-19 ─────────────────────────────────
+       "after country if have train trip need to show this filter and the use
+       can decide if they prefer a country that more places to go nearby."
+
+       So the question is asked of the DATA, not of a continent name. The
+       control shipped gated on Europe, which was right only while data-train
+       was the itinerary's own train days — 32 of 96 European guides. It now
+       counts Day Trips by Train entries and 130 guides across the fleet carry
+       them, Bangkok to Chiang Mai included, so a Europe gate hides a filter
+       that has real answers everywhere else.
+
+       Scope is the COUNTRY and CONTINENT picks alone, deliberately — not the
+       full filter state. Those two are what "after country" means, they are the
+       only picks that answer synchronously here, and folding in budget or
+       advisory would make the control appear and vanish while their data
+       fetches. Nothing picked = the whole fleet, and the fleet has trains, so
+       the control shows: a reader comparing destinations has not necessarily
+       narrowed to a country first. */
     var cts = picks.ct.map(function (p) { return p.value; });
     var cos = picks.co.map(function (p) { return p.value; });
-    var euro = cts.length ? cts.indexOf('Europe') > -1
-             : cos.length ? cos.some(function (c) { return (CONT && CONT[c]) === 'Europe'; })
-             : false;
-    field.hidden = !euro;
-    if (!euro) { picks.tr = []; if (fTrain) fTrain.value = ''; }
+    var hasTrains = !DATA ? false : DATA.guides.some(function (g) {
+      if (!(g.train > 0)) return false;
+      if (cos.length && cos.indexOf(g.country) === -1) return false;
+      if (cts.length && cts.indexOf(DATA.cont[g.country]) === -1) return false;
+      return true;
+    });
+    field.hidden = !hasTrains;
+    if (!hasTrains) { picks.tr = []; if (fTrain) fTrain.value = ''; }
   }
 
   var MON = ['January','February','March','April','May','June','July',
@@ -7029,6 +7058,13 @@ function render() {
     var opening = morePanel.hidden;
     morePanel.hidden = !opening;
     moreBtn.setAttribute('aria-expanded', String(opening));
+    /* The Trains field lives in this panel and shows itself off the listing, so
+       it has to be asked the moment the panel opens. Without this it stays
+       hidden until some OTHER control is touched — run() is what calls
+       syncTrain, and nothing calls run() on a panel that has no picks in it
+       yet. syncTrain, not run(): run() with nothing set clears the results
+       block, which would wipe an answer the reader is still reading. */
+    if (opening) syncTrain();
     /* Budget and advisory options can only be pruned once their pages have
        been read — fetch both the first time the panel opens (two small pages,
        nobody who keeps the panel shut pays), then re-prune so no option in the
