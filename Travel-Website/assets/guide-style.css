@@ -2768,47 +2768,48 @@ div.train .train-time   { padding: 2px 0; }
    every other link pill (Option B outlined). */
 #hiking .hike-pack { margin-top: 16px; }
 
-/* #191 Getting Around · #184 Food Delivery — SIDE-BY-SIDE entry rows
-   (owner rule 2026-08-08; replaces the 2026-05-19 stacked heading-over-body
-   block). Every entry in these two sections is ONE row of a single white card:
-   the entry name (.extras-sub) in the left column, its body (.transit-box —
-   the operator link, plus the description lines a transit mode carries) in the
-   right column. The section itself is the 2-column grid, so the name column is
-   one width down the whole section and every name/link pair lines up. The
-   .extras-title spans both columns and keeps its own card shape.
-   Enforced: brain_check check_getting_around_side_by_side (HARD-FAIL) — both
-   the CSS below and the per-guide alternating .extras-sub/.transit-box pairs
-   the grid depends on. Do NOT restore the stacked shape. */
-#getting-around,
-#food-delivery {
-  display: grid;
-  /* Name column sizes to the longest name in the section so every link lines up,
-     but is capped at 38% of the section so a long transit-mode name (e.g.
-     "#195 Chao Phraya Express Boat") can never squeeze its description column to a
-     word per line on a phone. */
-  grid-template-columns: fit-content(38%) minmax(0, 1fr);
-  align-items: stretch;
-}
-#getting-around > .extras-title,
-#food-delivery  > .extras-title {
-  grid-column: 1 / -1;
-  min-width: 0;
-}
+/* #191 Getting Around · #184 Food Delivery — STACKED entry cards, identical to
+   every other Extras section (owner rule 2026-08-19: "they need to match the
+   rest of the sections — i changed my mind on the side by sides thing").
+
+   This REVERSES two layers that had grown on top of each other:
+     (a) the 2026-08-08 SIDE-BY-SIDE grid — the section was `display: grid`
+         with `grid-template-columns: fit-content(38%) minmax(0, 1fr)`, entry
+         name in column 1, its .transit-box body in column 2, joined into one
+         card by a 4px-0-0-4px / 0-4px-4px-0 radius pair;
+     (b) the .ga-grid card grid injected on top of it by toolbar.js
+         _injectGAGrid(), which lifted every name/body pair into a .neigh-card
+         and laid 2–4 of those cards out ACROSS the section.
+
+   Layer (b) is what the owner photographed on a phone: `.ga-grid` collapses to
+   one column at (max-width: 600px), but the count rules that followed it
+   (`.ga-grid:has(> .neigh-card:nth-child(3))`) carry HIGHER specificity — (0,3,0)
+   against (0,1,0) — so a three-entry section stayed three columns at 393px.
+   Each card was ~110px wide and a domain like just-eat.fr broke to one letter
+   per line down the right edge of the section.
+
+   The shape below is the Style-A card every other section draws: the entry NAME
+   (.extras-sub) on top with the card's top corners, its BODY (.transit-box)
+   directly beneath with the bottom corners, one white card per entry, 14px of
+   beige between entries. Byte-for-byte the same values as #heads-up, #tours,
+   #cappuccino, #local-tastes and the rest — which is the point: these two
+   sections are no longer a special case at any breakpoint, so there is no
+   phone-only block here either.
+
+   NEVER re-add `display: grid` to these two sections, and never re-add the
+   .ga-grid injection for them. Enforced, hard-fail:
+   brain_check.check_getting_around_entry_cards (CSS half) and
+   validate_itinerary.py "paired entry rows" (the per-guide .extras-sub /
+   .transit-box pairing the card shape depends on). */
 
 /* SECTION OVERVIEW ROW (owner rule 2026-08-18) — one REQUIRED plain-prose row
    directly under the title and above the first entry, in these two sections
-   only. It is a full-width white card of the same family as the entry rows, so
+   only. Its own full-width white card of the same family as the entry cards, so
    the section still reads as one card system rather than a paragraph dropped on
-   the beige. It spans BOTH tracks for exactly the reason .extras-title does:
-   left in the fit-content(38%) NAME track a 320-character paragraph collapses
-   to a word per line and stretches the name column to match. Per-guide shape —
-   exactly one row, 80-320 chars, plain text, no icon, no link — is enforced by
-   validate_itinerary.py; the CSS half by brain_check
-   check_getting_around_side_by_side. */
+   the beige. Per-guide shape — exactly one row, 80-320 chars, plain text, no
+   icon, no link — is enforced by validate_itinerary.py. */
 #getting-around > .extras-overview,
 #food-delivery  > .extras-overview {
-  grid-column: 1 / -1;
-  min-width: 0;
   font-size: var(--fs-base);
   line-height: 1.55;
   color: var(--c-text-primary);
@@ -2819,131 +2820,28 @@ div.train .train-time   { padding: 2px 0; }
   margin: 16px 0 0;
 }
 
-/* The injected card grid must span BOTH tracks for the same reason the title does.
-   Without it the grid wraps to row 2 column 1 — the fit-content(38%) label track —
-   and its cards collapse to ~126px, breaking every domain to a letter per line. */
-#getting-around > .ga-grid,
-#food-delivery  > .ga-grid {
-  grid-column: 1 / -1;
-  min-width: 0;
-}
-
-/* Inside each card: name left, link right, one row. The card defaults to
-   flex-direction:column, which stacked the pair and left the link box at 95px in a
-   342px card — long domains broke mid-word with the card half empty. */
-#getting-around > .ga-grid > .neigh-card,
-#food-delivery  > .ga-grid > .neigh-card {
-  flex-direction: row;
-  align-items: center;
-  /* flex-start, NOT space-between: space-between pinned the link to the far card
-     edge and left a gulf between the name and its URL. */
-  justify-content: flex-start;
-  gap: 14px;
-}
-#getting-around > .ga-grid > .neigh-card > .extras-sub,
-#food-delivery  > .ga-grid > .neigh-card > .extras-sub {
-  flex: 0 0 auto;
-  margin: 0 !important;
-  border-radius: 4px;
-  border-right: 1.5px solid transparent;
-}
-/* text-align:LEFT — the link sits right after the name, one gap away (owner
-   2026-08-14: "url should be closer to the text"). The card itself is
-   untouched; only the text inside it moves. `text-align:right` here was
-   recreating by hand the exact gulf that justify-content:flex-start above was
-   chosen to avoid: the box is flex:1, so it already spans to the card edge and
-   right-aligning its text threw the domain across the card away from the name
-   it belongs to. */
-#getting-around > .ga-grid > .neigh-card > .transit-box,
-#food-delivery  > .ga-grid > .neigh-card > .transit-box {
-  flex: 1 1 auto;
-  min-width: 0;
-  text-align: left;
-}
+/* Values byte-identical to #heads-up / #tours / #cappuccino / #restaurants /
+   #downtown — the Style-A pair locked at the top of this file: heading
+   10px 14px 12px 14px / 4px 4px 0 0, body 0 14px 8px 14px / 0 0 4px 4px.
+   Copy them from a neighbouring section, never invent a near-miss: the whole
+   point of this pass is that these two sections measure the same as the ones
+   above and below them in a collapsed column. Do NOT zero a border here — the
+   1.5px transparent border every card carries paints as background (border-box
+   clipping), so the two halves already meet with no seam, and dropping one edge
+   makes these cards 3px shorter than their neighbours' for no visible gain. */
 #getting-around > .extras-sub,
 #food-delivery  > .extras-sub {
-  grid-column: 1;
   background: var(--c-card-bg);
-  border: 1.5px solid transparent;
-  border-right: 0;
-  border-radius: 4px 0 0 4px;
-  padding: 10px 14px;
-  margin: 14px 0 0 !important;
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
 }
 #getting-around > .transit-box,
 #food-delivery  > .transit-box {
-  grid-column: 2;
   background: var(--c-card-bg);
-  border-left: 0;
-  border-radius: 0 4px 4px 0;
-  padding: 10px 14px 10px 0;
-  margin: 14px 0 0 !important;
-}
-/* First entry row takes the uniform 16px title→content gap on BOTH halves so the
-   card's top edge is level across the two columns (the shared
-   `.extras-title + *` rule only reaches the left one). */
-#getting-around > .extras-title + .extras-sub,
-#getting-around > .extras-title + .extras-sub + .transit-box,
-#food-delivery  > .extras-title + .extras-sub,
-#food-delivery  > .extras-title + .extras-sub + .transit-box,
-#getting-around > .extras-overview + .extras-sub,
-#getting-around > .extras-overview + .extras-sub + .transit-box,
-#food-delivery  > .extras-overview + .extras-sub,
-#food-delivery  > .extras-overview + .extras-sub + .transit-box {
-  margin-top: 16px !important;
-}
-
-/* MOBILE — the ENTRY ROWS sit flush; the section keeps the beige frame
-   (owner rule 2026-08-18, correcting the 2026-08-10 shape).
-
-   2026-08-10 solved a real problem the wrong way. Three ride-app links each
-   separated by a 14px beige gap read as three separate cards inside a beige
-   box, so that pass whited out the SECTION — background: var(--c-card-bg) on
-   #getting-around / #food-delivery, plus a title stripped of its card ring.
-   That closed the gaps and cost the frame: on a phone every other extras
-   section draws a white title card inset inside a beige box, and these two
-   drew white-on-white, so their title card had no frame around it and their
-   white ground ran the section's own 18px padding wider on each side than the
-   card above and the card below. Every box measured identically to its
-   neighbours — no margin was wrong — yet in a column of collapsed sections two
-   rows read as knocked out of alignment, which is what the owner reported
-   three times (2026-08-18: "food delivery and getting around still showing
-   margin misaligned").
-
-   The gap fix never needed the white-out. The flush-row rules below are what
-   close the beige gutters between entries; they stand on their own. With the
-   section beige and its title back in its own card, the entry rows still form
-   ONE white block divided by hairlines — the 2026-08-10 intent — inside the
-   same beige frame every neighbouring section has.
-
-   NEVER re-add a background to these two sections at any breakpoint. Enforced,
-   hard-fail: brain_check.check_extras_section_frame_uniform (static, fleet-wide)
-   and validate_mobile_render.py §9 (render-level: the measured background of
-   every collapsible section on the page must match its neighbours'). Answer a
-   gap complaint with the row rules, never with the section ground. */
-@media (max-width: 600px) and (pointer: coarse) {
-  /* Rows sit flush — a hairline replaces the beige gap. Only the COLOR of the
-     already-present 1.5px transparent border moves, so no row shifts by 0.5px. */
-  #getting-around > .extras-sub,
-  #food-delivery  > .extras-sub,
-  #getting-around > .transit-box,
-  #food-delivery  > .transit-box {
-    margin-top: 0 !important;
-    border-top-color: rgba(0, 0, 0, 0.07);
-  }
-  /* First row keeps the uniform 16px title→content gap and takes no rule above
-     it — the gold title border is already the divider there. */
-  #getting-around > .extras-title + .extras-sub,
-  #getting-around > .extras-title + .extras-sub + .transit-box,
-  #food-delivery  > .extras-title + .extras-sub,
-  #food-delivery  > .extras-title + .extras-sub + .transit-box,
-  #getting-around > .extras-overview + .extras-sub,
-  #getting-around > .extras-overview + .extras-sub + .transit-box,
-  #food-delivery  > .extras-overview + .extras-sub,
-  #food-delivery  > .extras-overview + .extras-sub + .transit-box {
-    margin-top: 16px !important;
-    border-top-color: transparent;
-  }
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
 }
 
 /* Retired 2026-05-19 — .ride-apps was a pre-Style-A wrapper for the Getting
@@ -4145,8 +4043,21 @@ a.also-in-country-pill:active {
   .ga-grid { grid-template-columns: 1fr; gap: 7px; }
 }
 
-/* Getting Around / Food Delivery / Weekly Closures — compact card grids.
-   Injected by toolbar.js (_injectGAGrid, _injectWCGrid). */
+/* Weekly Closures — compact card grid, injected by toolbar.js (_injectWCGrid).
+
+   ONE consumer, deliberately. Getting Around and Food Delivery used this grid
+   too until 2026-08-19, when the owner reversed the side-by-side decision and
+   asked for both sections to match every other Extras section; _injectGAGrid()
+   and the rules that served it are retired, and neither section may be given a
+   card grid again. See § "#191 Getting Around · #184 Food Delivery — STACKED
+   entry cards" above.
+
+   The count rules that used to sit here — `.ga-grid:has(> .neigh-card:nth-child(3))`
+   and `:nth-child(4)` — went with them, and they were a live phone bug rather
+   than dead weight: at (0,3,0) they outranked BOTH the phone rule below (0,1,0)
+   and `.ga-grid.ga-auto` (0,2,0), so a three-entry section rendered three ~110px
+   columns at 393px whatever either rule asked for. Never re-add a specificity
+   that outranks the phone collapse. */
 .ga-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;  /* default 2-col */
@@ -4155,23 +4066,7 @@ a.also-in-country-pill:active {
 .ga-grid.ga-auto {
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 }
-/* Scale to the actual card count — 3rd card up to row 1, 4th card up to row 1 */
-.ga-grid:has(> .neigh-card:nth-child(3)) { grid-template-columns: repeat(3, 1fr); }
-.ga-grid:has(> .neigh-card:nth-child(4)) { grid-template-columns: repeat(4, 1fr); }
 .extras-section .extras-title:has(+ .ga-grid) { margin-bottom: 0; }
-/* extras-sub + transit-box cards: name stacked above link, centered */
-.ga-grid .neigh-card:has(.extras-sub) {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 10px 14px;
-}
-.ga-grid .neigh-card .extras-sub { margin: 0; text-align: center; }
-.ga-grid .neigh-card .transit-box { margin: 0; text-align: center; overflow-wrap: break-word; word-break: break-all; }
-.ga-grid .neigh-card .transit-box > div { margin-top: 0; }
-.ga-grid .neigh-card .transit-box a { white-space: normal; }
 /* stop-row cards (weekly closures): cancel the stale #weekly-closures .stop-row
    rules (padding/border-radius) that survive DOM-injection into .neigh-card */
 .ga-grid .neigh-card .stop-row { margin: 0; padding: 0 !important; font-size: var(--fs-stop-row); border-radius: 0 !important; }

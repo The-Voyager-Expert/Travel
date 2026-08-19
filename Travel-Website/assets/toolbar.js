@@ -6515,34 +6515,22 @@ window.TVE.home = (function () {
     _injectHotelAlternatives();
   }
 
-  /* ── Getting Around + Food Delivery — 2-column card grid ──────────────────
-     Moves .extras-sub + .transit-box pairs into .neigh-card wrappers inside
-     a .ga-grid. Elements are moved not cloned so _injectRowMarks still finds
-     and marks .extras-sub wherever it lives. Fires for both sections. */
-  function _injectGAGrid(sectionId) {
-    var section = document.getElementById(sectionId);
-    if (!section) return;
-    var pairs = [], i, el, next;
-    for (i = 0; i < section.children.length; i++) {
-      el = section.children[i];
-      if (!el.classList.contains('extras-sub')) continue;
-      next = el.nextElementSibling;
-      if (!next || !next.classList.contains('transit-box')) return;
-      if (next.children.length !== 1 || next.querySelector('.stop-row')) return;
-      pairs.push([el, next]);
-    }
-    if (pairs.length < 2) return;
-    var grid = document.createElement('div');
-    grid.className = 'ga-grid';
-    pairs.forEach(function (pair) {
-      var card = document.createElement('div');
-      card.className = 'neigh-card';
-      card.appendChild(pair[0]);
-      card.appendChild(pair[1]);
-      grid.appendChild(card);
-    });
-    section.appendChild(grid);
-  }
+  /* ── _injectGAGrid — RETIRED 2026-08-19 (owner rule: "they need to match the
+     rest of the sections — i changed my mind on the side by sides thing").
+
+     It lifted every .extras-sub + .transit-box pair in 🚌 Getting Around and
+     🚗 Food Delivery into a .neigh-card and laid 2–4 of those cards out ACROSS
+     the section. Both sections now draw the same stacked Style-A card as every
+     other Extras section, straight from the authored markup, with no injection
+     at all — guide-style.css § "#191 Getting Around · #184 Food Delivery —
+     STACKED entry cards".
+
+     Never re-add it, and never give either section a card grid by any other
+     route. Enforced, hard-fail: brain_check.check_getting_around_entry_cards
+     bans `_injectGAGrid` and a `.ga-grid` reaching either section id.
+
+     _injectWCGrid below is a different section and is untouched. ── */
+
   /* ── Weekly Closures — auto-fill card grid ─────────────────────────────────
      Wraps each .stop-row in a .neigh-card inside a .ga-grid.ga-auto (auto-fill
      columns that adapt from 2 to 4 entries). Only fires for 2+ stop-rows. */
@@ -6566,14 +6554,8 @@ window.TVE.home = (function () {
     section.appendChild(grid);
   }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      _injectGAGrid('getting-around');
-      _injectGAGrid('food-delivery');
-      _injectWCGrid();
-    });
+    document.addEventListener('DOMContentLoaded', _injectWCGrid);
   } else {
-    _injectGAGrid('getting-around');
-    _injectGAGrid('food-delivery');
     _injectWCGrid();
   }
 
