@@ -1050,12 +1050,26 @@ a.land-cta:hover:visited {
 .fnd-ctl select:disabled { cursor: not-allowed; }
 /* Multi-pick chips (owner rule 2026-08-17): each value picked in a select
    lands here as a removable outlined pill — same rest/hover rim ladder as
-   every pill on the site (.30 rest, .55 hover, Thirty-fifth non-negotiable). */
+   every pill on the site (.30 rest, .55 hover, Thirty-fifth non-negotiable).
+
+   A chip is a SELECTED value, so its ink is terracotta, never ink-black
+   (owner rule 2026-08-19: "make sure all filters same font look and color").
+   That is the site's own chip grammar — `.ttchip` carries gold #8a6c1a while
+   unpicked and `.ttchip.on` terracotta once chosen — and it is why the chip is
+   NOT the gold of the select above it: the select is showing its "Any …"
+   placeholder, the chip is showing a choice. It also matched its own hover
+   already, which is what made the black rest state read as an oversight.
+
+   The ground is var(--surface), not #fff: a hardcoded white chip in dark mode
+   painted --text #e8e5e0 on white at 1.15:1 — the value was invisible. And
+   `font: inherit` stands alone with no font-size after it, so the chip reads at
+   the size of the select whose value it echoes (mobile.css already forces both
+   to 16px on a phone; this is what makes desktop agree). */
 .fnd-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
 .fnd-chip {
-  background: #fff; border: 1px solid rgba(192, 78, 26, .30);
+  background: var(--surface, #fff); border: 1px solid rgba(192, 78, 26, .30);
   border-radius: 999px; padding: 0.3em 0.85em; font: inherit;
-  font-size: 0.8rem; color: var(--text,#3d3a32); cursor: pointer;
+  color: var(--rust, #C04E1A); cursor: pointer;
 }
 .fnd-chip:hover { background: var(--warm,#fdf4ed); border-color: rgba(192, 78, 26, .55); color: var(--rust, #C04E1A); }
 .fnd-more {
@@ -2960,11 +2974,16 @@ window.lpGuideCard = function (href, flag, name, extra) {
              fetched from the train guide to get it. It marks a guide whose
              itinerary contains a day reached by train (the .train-header row);
              32 of the 96 European guides carry it. -->
+        <!-- The filter is BOOLEAN — `if (s.tr.length && !g.train) return false;`
+             — so the option says Yes, not "1". "1" read as a count the page
+             never counts, and as a chip it rendered "1 ×", which the owner read
+             as a multiplier (owner, 2026-08-19: "What 1x means?"). And no
+             trailing colon on the label: no other field in this card has one. -->
         <div class="fnd-field" id="fnd-train-field" hidden>
-          <label for="fnd-train">Nearby Train trips planned:</label>
+          <label for="fnd-train">Day Trips by Train planned</label>
           <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-train"/></svg></span><select id="fnd-train">
             <option value="">Any</option>
-            <option value="1">1</option>
+            <option value="1">Yes</option>
           </select></div>
         </div>
       </div>
@@ -6830,13 +6849,13 @@ function render() {
 
   /* The advanced panel shuts, and a filter set inside it must not vanish with
      it — otherwise a visitor sees a short list and nothing on screen explaining
-     why it is short. The count rides on the button. */
+     why it is short. The button goes terracotta (.on) while anything inside is
+     set; it carries NO count (owner rule 2026-08-19). */
   function syncChrome(s) {
     var n = s.ty.length + s.lg.length + s.ct.length + s.bd.length +
             s.sf.length + s.co.length + s.tr.length;
     var btn = document.getElementById('fnd-more');
     if (btn) {
-      btn.textContent = n ? 'More ways to filter (' + n + ')' : 'More ways to filter';
       btn.classList.toggle('on', n > 0);
     }
     var reset = document.getElementById('fnd-reset');
