@@ -1562,7 +1562,8 @@
 
 /* 2026-08-19: icon 1344 restaurants-hotel — the knife was falling off its own handle. Its blade sat +1.12 off the handle axis, so the whole belly hung right of the stick and the utensil read as toppling (the fork was correct at -0.01). Blade re-centred and its belly turned to face the plate, which is also the right way round for a place setting; handle stock matched to the fork at 1.40 (was 1.19 against 1.85); tops levelled, tip 4.50 against the fork's 5.02 (was 2.40); tip given a true horizontal tangent to kill a visible kink. Geometry only - every fill, rim token and stroke-width is byte-identical, so the gradient-plus-same-family-rim treatment is untouched and the treatment backlog stays 30 of 183. The catalogue specimen in Site-Icons.html moved in the same pass and the two copies are byte-identical. toolbar.js -> v764. CACHE to v1103. */
 /* 2026-08-20: icon 1326 / GM_SPRITE exchange redrawn (owner pick 2026-08-20): the two coins now carry two STRAIGHT arrows between them in opposite directions, replacing the loop that ran around the outside and landed its arrowheads on top of the coins. Same coins as the reworked #379 - gold with an amber dollar, navy with a navy euro, cream faces, gloss on both - and each arrow takes the colour of the coin it leaves, so the mark says dollar to euro and euro to dollar without introducing a new hue. The old drawing paired a green coin with a gold one. It also drops the two gm-paper specular ellipses, which carried no rim and were the reason this sprite sat in the icon-treatment backlog; the full-disc gloss already gives the sheen, every shape now classifies ok, and the backlog falls to 29. toolbar.js -> v766. CACHE to v1105. */
-var CACHE = 'travel-cache-v1105';
+/* 2026-08-20: Currencies nav row now draws the exchange mark (#1326) instead of 'money' (owner 2026-08-20). The page is a converter - any currency to any currency - and the two-coin mark with opposing arrows says convert, where the banknote-and-coin said money generally. Icon field only: no href, label or order moved, so TOOLBAR_ITEMS_LOCK, which is keyed on paths, is untouched and check_toolbar_items_locked passes. toolbar.js -> v767. CACHE to v1106. */
+var CACHE = 'travel-cache-v1106';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1575,7 +1576,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 250,'toolbar.js': 766, 'mobile.css': 87, 'web-travel-style.css': 76, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 7, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 250,'toolbar.js': 767, 'mobile.css': 87, 'web-travel-style.css': 76, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 7, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

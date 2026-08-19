@@ -1328,7 +1328,7 @@ window.TVE.home = (function () {
        back by eye. Label only: no href moves, so TOOLBAR_ITEMS_LOCK — which is
        keyed on paths — does not move either. */
     { href: base + 'plugs/', text: 'Plug Adaptors', icon: 'plug' },
-    { href: base + 'currencies/', text: 'Currencies', icon: 'money' },
+    { href: base + 'currencies/', text: 'Currencies', icon: 'exchange' },
     { href: base + 'time-zones/', text: 'Time Zones', icon: 'clock' },
     { href: 'mailto:contact@guidemydays.com', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
      to the form. NOT base + ... — a mailto must not be depth-prefixed.
