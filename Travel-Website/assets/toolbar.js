@@ -3343,6 +3343,12 @@ window.TVE.home = (function () {
 
     var cityEl = document.querySelector('.title-city');
     var city = cityEl ? cityEl.textContent.trim() : (document.title || 'Trip');
+    /* The guide's own slug, off the URL — `/guides/milan.html` and `/guides/milan`
+       both give `milan`. It names the served .ics and anchors every event UID, so
+       it must be stable: derived from the path, never from the display city, whose
+       accents and spaces would land in both. */
+    var _slug = (location.pathname.split('/').pop() || '')
+      .replace(/\.html?$/i, '').toLowerCase().replace(/[^a-z0-9-]/g, '-') || 'trip';
 
     var dayBlocks = document.querySelectorAll('.day-block[id^="day"]');
     if (!dayBlocks.length) return;
@@ -3499,11 +3505,19 @@ window.TVE.home = (function () {
         return s.replace(/\\/g, '\\\\').replace(/;/g, '\\;')
                 .replace(/,/g, '\\,').replace(/\n/g, '\\n');
       }
-      var _ts = new Date().getTime();
+      /* A BARE VCALENDAR — no METHOD:PUBLISH, no X-WR-CALNAME, no NAME, no
+         REFRESH-INTERVAL / X-PUBLISHED-TTL. Every one of those declares the
+         file a *published calendar*, and Apple answers a calendar by offering
+         to SUBSCRIBE to it or by adding it as a calendar of its own — which is
+         not an export (owner rule, Thirty-first non-negotiable: "it is not
+         subscribe, calendar is another thing"). METHOD:PUBLISH was here until
+         2026-08-19 and is the one that reads as boilerplate, because every ICS
+         example on the internet carries it. Never put any of them back. */
+      var _stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
       var out = [
         'BEGIN:VCALENDAR', 'VERSION:2.0',
         'PRODID:-//Guide My Days//Guide Calendar//EN',
-        'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+        'CALSCALE:GREGORIAN',
       ];
       days.forEach(function (day, i) {
         var d0 = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i);
@@ -3529,7 +3543,12 @@ window.TVE.home = (function () {
         });
         var desc = descParts.length ? _esc(descParts.join('\n\n')) : '';
         out.push('BEGIN:VEVENT');
-        out.push('UID:' + _ts + '-day' + day.num + '@guidemydays.com');
+        /* STABLE UID — same guide, same start date, same event id every time,
+           so re-exporting CORRECTS the days already in the calendar instead of
+           duplicating them (the rule Trips already follows). It used to be
+           Date.now(), which made every export a fresh set of events. */
+        out.push('UID:' + _slug + '-' + _fmtDate(base) + '-day' + day.num + '@guidemydays.com');
+        out.push('DTSTAMP:' + _stamp);
         out.push('DTSTART;VALUE=DATE:' + _fmtDate(d0));
         out.push('DTEND;VALUE=DATE:' + _fmtDate(d1));
         out.push('SUMMARY:' + summary);
@@ -3538,24 +3557,82 @@ window.TVE.home = (function () {
       });
       out.push('END:VCALENDAR');
 
-      var icsContent = out.join('\r\n');
-      var filename = city.toLowerCase().replace(/\s+/g, '-') + '-trip.ics';
-      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      var blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-      var url = URL.createObjectURL(blob);
-      _closeICS();
-      if (isIOS) {
-        /* iOS: navigate to blob URL without download attribute — Safari detects
-           text/calendar MIME and routes to Calendar "Add to Calendar" prompt.
-           The download attribute caused a share sheet instead; data: URIs are
-           blocked by WebKit navigation policy. */
-        window.location.href = url;
-      } else {
+      var icsContent = out.join('\r\n') + '\r\n';
+      var icsPath = '/guides/ics/' + _slug + '-' + _fmtDate(base) + '.ics';
+
+      /* ── Delivery — hand Calendar a SERVED FILE, never a blob ─────────────
+         Measured on iOS 26.5 in the Simulator, 2026-08-19, all three:
+           · blob: URL navigation  → a BLANK PAGE. No Calendar, no prompt,
+             nothing. This is what shipped here until today, under a comment
+             claiming it "routes to the Add to Calendar prompt" — a claim that
+             had never been measured. On the Trips page the same blob produced a
+             Save-As panel titled with a raw UUID, which is what the owner saw.
+           · a real text/calendar response → iOS opens its native ADD TO
+             CALENDAR sheet: title, date, All-day, the stops in Notes.
+           · the same response synthesised by the SERVICE WORKER → identical
+             sheet. This is the one that makes the feature possible at all.
+
+         WHY A SERVICE WORKER AND NOT A FILE ON DISK. Trips can publish one
+         static .ics per booking because a booking has real dates. A guide has
+         none — the reader picks Day 1 in the modal above — so the file would
+         have to exist for every guide × every start date, which is ~86,000
+         files on a static host. There is no server here to build one on demand.
+         So the page WRITES the response into Cache Storage and then navigates
+         to its URL; sw.js answers that one path out of the cache and deletes it
+         (see sw.js → GUIDE ICS OUTBOX). The URL is same-origin and 404s on the
+         network, so the service worker is the only thing that can answer it —
+         which is exactly how it was tested.
+
+         NEVER go back to a blob, an <a download>, a data: URI or webcal:// —
+         the first three were shipped and rejected (Thirty-first non-negotiable)
+         and the fourth is the subscribe scheme. Never window.open(): it returns
+         null by specification, so testing its return value reads every
+         successful open as a failure. */
+      var _fallback = function () {
+        /* Only when there is no service worker at all — an old browser, or a
+           context where registration is refused. A file in Downloads is not the
+           behaviour the owner asked for, but it is the last thing that works,
+           and it is strictly better than the blank page this replaces. */
         var a = document.createElement('a');
-        a.href = url; a.download = filename;
+        var burl = URL.createObjectURL(new Blob([icsContent], { type: 'text/calendar;charset=utf-8' }));
+        a.href = burl; a.download = _slug + '-trip.ics';
         document.body.appendChild(a); a.click();
-        setTimeout(function () { URL.revokeObjectURL(url); if (a.parentNode) a.parentNode.removeChild(a); }, 1500);
-      }
+        setTimeout(function () {
+          URL.revokeObjectURL(burl);
+          if (a.parentNode) a.parentNode.removeChild(a);
+        }, 1500);
+      };
+
+      _closeICS();
+
+      if (!('serviceWorker' in navigator) || !window.caches) { _fallback(); return; }
+
+      /* Wait for a controller before stashing. On a first-ever visit the page
+         loaded before the worker existed, so `controller` is still null even
+         though the registration is active — sw.js calls clients.claim(), which
+         fires controllerchange shortly after. Without this wait the navigation
+         reaches the network, where nothing is served, and the reader gets a 404. */
+      var _ready = navigator.serviceWorker.ready.then(function () {
+        if (navigator.serviceWorker.controller) return;
+        return new Promise(function (res) {
+          navigator.serviceWorker.addEventListener('controllerchange', res, { once: true });
+          setTimeout(res, 2500);
+        });
+      });
+
+      _ready.then(function () {
+        if (!navigator.serviceWorker.controller) throw new Error('no controller');
+        return caches.open('gmd-ics-outbox').then(function (c) {
+          return c.put(new Request(icsPath), new Response(icsContent, {
+            headers: { 'Content-Type': 'text/calendar; charset=utf-8' }
+          }));
+        });
+      }).then(function () {
+        /* Same-tab navigation, no target=_blank and no download attribute:
+           Safari intercepts the text/calendar response and hands it to Calendar
+           while the guide stays in the back stack. */
+        window.location.href = icsPath;
+      })['catch'](_fallback);
     });
 
     bRow.appendChild(cancelBtn); bRow.appendChild(dlBtn);

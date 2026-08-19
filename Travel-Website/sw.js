@@ -1557,7 +1557,14 @@
 /* 2026-08-19: Export-to-Calendar modal — both buttons wear the extras pill (owner: "change to blond text and the cancel too and white background … no terracote fill"). The download button had shipped background:#C04E1A with color:#C04E1A — terracotta ink on a terracotta fill, so its label was INVISIBLE and the button read as a blank orange slab; nothing failed because both halves are individually legal colours. Cancel and Download now share one style string: #fdf8f0 ground, rgba(138,108,26,.25) rim, #8a6c1a ink — the light --c-pill-* values as LITERALS, because the overlay box is hardcoded #fff and the tokens would paint a dark pill on it under a dark OS. Date bar sized to its value and centred (width:200px;max-width:100%;margin:0 auto 18px) instead of width:100%. New gate: brain_check.check_ics_modal_buttons_are_pills (rule 904). toolbar.js -> v760. CACHE to v1098. */
 /* 2026-08-19: MARKS: the taxi glyph drew a delivery car toolbar.js -> v761. CACHE to v1100. */
 /* 2026-08-19: revert 2026-08-19 car mapping toolbar.js -> v762. CACHE to v1101. */
-var CACHE = 'travel-cache-v1101';
+/* 2026-08-19: guide Export to Calendar — the blob is GONE. Measured in the iOS 26.5 Simulator: navigating to a blob: URL produced a BLANK PAGE (no Calendar, no prompt) — the delivery that had shipped here for months under a comment claiming it routed to the Add to Calendar prompt, which had never been measured; the same blob on Trips gave the owner a Save-As panel titled with a raw UUID. A real text/calendar response opens iOS's native Add To Calendar sheet, and — the finding that makes this possible — so does one SYNTHESISED BY THIS WORKER, which reverses the note in the fetch handler that said interception bypassed the hand-off. A guide cannot have a static .ics (the reader picks Day 1, so it would be ~86,000 files), so toolbar.js writes the .ics into the gmd-ics-outbox cache and navigates to /guides/ics/{slug}-{yyyymmdd}.ics, which 404s on the network and is answered here, once, then deleted. The outbox is exempt from the activate sweep or a new worker eats the reader's file. Same pass: METHOD:PUBLISH removed from the guide .ics (it declares a published calendar, which is what makes Apple offer to SUBSCRIBE), DTSTAMP added, and UIDs made stable so re-exporting corrects instead of duplicating. toolbar.js -> v763. CACHE to v1102. */
+
+var CACHE = 'travel-cache-v1102';
+
+/* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
+   once by the fetch handler below, and EXEMPT from the activate sweep — it is
+   the reader's own file in flight, not a copy of anything on the server. */
+var ICS_OUTBOX = 'gmd-ics-outbox';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1565,7 +1572,7 @@ var CACHE = 'travel-cache-v1101';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 249,'toolbar.js': 762, 'mobile.css': 87, 'web-travel-style.css': 76, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 7, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 249,'toolbar.js': 763, 'mobile.css': 87, 'web-travel-style.css': 76, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 7, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
@@ -1592,7 +1599,12 @@ self.addEventListener('activate', function (e) {
   e.waitUntil(
     caches.keys().then(function (keys) {
       return Promise.all(keys.map(function (k) {
-        if (k !== CACHE) return caches.delete(k);
+        /* ICS_OUTBOX is EXEMPT from the sweep. It is not a copy of anything on
+           the server — it holds a guide calendar the reader just built, waiting
+           for the navigation one tick behind it. Sweeping it here would delete
+           that file on any load that installs a new worker, and the export
+           would 404 with nothing to show for it. */
+        if (k !== CACHE && k !== ICS_OUTBOX) return caches.delete(k);
       }));
     }).then(function () { return self.clients.claim(); })
   );
@@ -1605,12 +1617,44 @@ self.addEventListener('fetch', function (e) {
   try { url = new URL(req.url); } catch (_) { return; }
   if (url.origin !== self.location.origin) return;
 
-  /* .ics calendar files — pass through without interception.
-     When the service worker intercepts a text/calendar navigation and returns
-     the response via respondWith(), iOS Safari's system-level hand-off to
-     Calendar.app is bypassed — the response goes to the browser instead.
-     Returning early here lets the browser make the request itself so the
-     native text/calendar → Calendar interception works normally. */
+  /* ── GUIDE ICS OUTBOX — the one .ics path this worker ANSWERS ──────────
+     A guide's calendar cannot be a file on the server: the reader picks Day 1
+     in the export modal, so it would have to exist for every guide x every
+     start date (~86,000 files) and there is no server here to build one on
+     demand. Instead toolbar.js writes the finished .ics into this cache and
+     navigates to its URL; we answer it here, then delete it — it is a one-shot
+     hand-off, not a cache of anything.
+
+     The path 404s on the network, deliberately: nothing but this worker can
+     answer it, which is exactly how it was tested.
+
+     Measured in the iOS 26.5 Simulator on 2026-08-19: a response synthesised
+     here reaches Apple Calendar's native "Add To Calendar" sheet, identically
+     to a real served file. That REVERSES the note this block replaced, which
+     said interception bypassed the hand-off; whatever was true when it was
+     written, it is not true now, and the whole guide export rests on it. If a
+     future iOS breaks it, the symptom is the reader landing on a 404 page --
+     re-measure before changing the delivery. */
+  if (url.pathname.indexOf('/guides/ics/') === 0) {
+    e.respondWith(
+      caches.open(ICS_OUTBOX).then(function (c) {
+        return c.match(req).then(function (hit) {
+          if (!hit) {
+            return new Response('This calendar link has already been used. Open the guide and export again.',
+              { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+          }
+          c['delete'](req);
+          return hit;
+        });
+      })
+    );
+    return;
+  }
+
+  /* Every OTHER .ics — the per-booking files under /trips/ics/ — passes
+     through untouched. Those are real files on the server and the browser
+     fetches them itself; this bypass predates the outbox above and is not
+     changed by it. */
   if (url.pathname.endsWith('.ics')) return;
 
   /* Rewrite stale asset version URLs so iOS HTTP cache is bypassed */
