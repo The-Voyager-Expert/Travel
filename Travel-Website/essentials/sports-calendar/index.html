@@ -35,16 +35,23 @@
 .sc-mon-abbr { display: block; font-size: 12px; }
 
 /* Sport filter */
-.sc-sport-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.sc-sport-row { display: flex; flex-wrap: nowrap; gap: 8px; margin-top: var(--search-gap,32px); }
 .sc-sport-btn {
   display: inline-flex; align-items: center; gap: 5px;
-  border: 1px solid var(--border2); border-radius: 20px; cursor: pointer;
-  padding: 6px 14px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--muted);
-  background: var(--surface, #fff); transition: border-color .15s, color .15s, background .15s, box-shadow .15s;
+  border: 1px solid; border-radius: 999px; cursor: pointer;
+  padding: 9px 20px; font-family: inherit; font-size: 13px; font-weight: 600;
+  transition: border-color .15s, color .15s, background .15s, box-shadow .15s;
   white-space: nowrap;
 }
-.sc-sport-btn:hover { background: #fdf4ed; border-color: rgba(192,78,26,.55); color: var(--rust, #C04E1A); }
-.sc-sport-btn.on { background: #fdf4ed; border-color: rgba(192,78,26,.85); color: var(--rust, #C04E1A); font-weight: 600; }
+.sc-sport-btn[data-sport="all"]      { background: var(--fam-yellow-bg); border-color: var(--fam-yellow-bd); color: var(--fam-yellow-ink); }
+.sc-sport-btn[data-sport="tennis"]   { background: var(--fam-green-bg);  border-color: var(--fam-green-bd);  color: var(--fam-green-ink); }
+.sc-sport-btn[data-sport="f1"]       { background: var(--fam-red-bg);    border-color: var(--fam-red-bd);    color: var(--fam-red-ink); }
+.sc-sport-btn[data-sport="football"] { background: var(--fam-blue-bg);   border-color: var(--fam-blue-bd);   color: var(--fam-blue-ink); }
+.sc-sport-btn[data-sport="rugby"]    { background: var(--fam-purple-bg); border-color: var(--fam-purple-bd); color: var(--fam-purple-ink); }
+.sc-sport-btn[data-sport="marathon"] { background: var(--fam-orange-bg); border-color: var(--fam-orange-bd); color: var(--fam-orange-ink); }
+.sc-sport-btn[data-sport="cycling"]  { background: var(--fam-pink-bg);   border-color: var(--fam-pink-bd);   color: var(--fam-pink-ink); }
+.sc-sport-btn[data-sport="other"]    { background: var(--fam-grey-bg);   border-color: var(--fam-grey-bd);   color: var(--fam-grey-ink); }
+.sc-sport-btn.on { background: var(--surface,#fff) !important; border-width: 1.5px !important; border-color: rgba(192,78,26,.85) !important; color: var(--rust,#C04E1A) !important; box-shadow: 0 0 0 2px rgba(192,78,26,.20); }
 
 /* Section headings */
 .sc-section-head { display: flex; align-items: center; gap: 10px; margin: 28px 0 14px; padding-bottom: 9px; border-bottom: 2px solid var(--border2); }
@@ -135,7 +142,7 @@ a.sc-card:hover .sc-city { color: var(--rust); }
 <div class="sc-wrap">
 
   <div class="sc-search-wrap">
-    <input type="search" id="sc-city-search" class="search-input" placeholder="City" aria-label="Search by city" autocomplete="off" style="width:var(--search-w, 440px);max-width:100%;">
+    <input type="search" id="sc-city-search" class="search-input" placeholder="City or country" aria-label="Search by city" autocomplete="off" style="width:var(--search-w, 440px);max-width:100%;">
   </div>
 
   <div class="sc-siblings">
@@ -363,6 +370,7 @@ function initSportFilter() {
   SPORT_TYPES.forEach(s => {
     const btn = document.createElement('button');
     btn.className = 'sc-sport-btn' + (s === 'All' ? ' on' : '');
+    btn.setAttribute('data-sport', s.toLowerCase());
     btn.textContent = (SPORT_ICONS[s] || '') + ' ' + s;
     btn.setAttribute('aria-label', 'Filter: ' + s);
     btn.setAttribute('aria-pressed', s === 'All' ? 'true' : 'false');
