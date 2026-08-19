@@ -43,6 +43,7 @@ Last updated: 2026-06-26
 - [x] Day Trips by Train - Extra Section.html
 - [x] Pickleball - Extra Section.html
 - [x] Michelin Restaurants - Extra Section.html
+- [x] Hiking - Extra Section.html
 - [x] Heads Up - Extra Section.html
 - [x] Worth Knowing - Extra Section.html
 
