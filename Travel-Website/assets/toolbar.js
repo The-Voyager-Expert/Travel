@@ -1223,7 +1223,7 @@ window.TVE.home = (function () {
     if (!d) return iconSVG(null, size, key);
     /* THE SPECIMEN'S OWN viewBox, never a fixed square. Catalogue drawings are
        optically normalised inside their own box — #46 is '0.10 -0.90 23.81
-       23.81' — so forcing '0 0 24 24' shifts and rescales the artwork. That is
+       23.81'— so forcing '0 0 24 24' shifts and rescales the artwork. That is
        the exact failure Site-Icons.html § size standard describes, and it is
        invisible until the mark sits beside a correctly-boxed neighbour. */
     return '<svg class="gm-ic gm-ic-mono" width="' + size + '" height="' + size +
@@ -1249,7 +1249,7 @@ window.TVE.home = (function () {
       ? 'fill="none" stroke="var(--rust,#C04E1A)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"'
       : 'fill="var(--rust,#C04E1A)"';
     return '<svg viewBox="' + (NAV_VIEWBOX[key] || '0 0 24 24') + '" width="' + size + '" height="' + size + '" ' + attrs +
-           ' aria-hidden="true">' + markup + '</svg>';
+           'aria-hidden="true">' + markup + '</svg>';
   }
 
   /* Write `text` into `el` as a label span, plus the row's SVG icon when the
@@ -2612,7 +2612,7 @@ window.TVE.home = (function () {
   window.addEventListener('resize', _padForFixedBar);
 
   /* ── Guide-page back-strip — REMOVED (owner rule 2026-08-15) ──────────────
-     The mobile-only #tve-back-guides strip ('🖨 Print Guide' · 'Before You Go' ·
+     The mobile-only #tve-back-guides strip ('Print Guide' · 'Before You Go' ·
      '‹ All Guides', and the '‹ {City}' variant on stops-map) is gone with the
      rest of the hand-built mobile navigation. Owner: "remove all navigation
      made by us use the native one for mobile." The reader's own back gesture
@@ -2825,7 +2825,7 @@ window.TVE.home = (function () {
           var pill = document.createElement('a');
           pill.className = 'overview-extra-link';
           pill.href = mapHref;
-          pill.innerHTML = monoSVG('country-map', 15) + ' All Stops Map';
+          pill.innerHTML = monoSVG('country-map', 15) + 'All Stops Map';
           gelRow.appendChild(pill);
         }
       };
@@ -2859,7 +2859,7 @@ window.TVE.home = (function () {
         var text = el.textContent || '';
         var m = /^Day\s+\d+/.exec(text);
         if (!m) return;
-        var rest = text.slice(m[0].length).replace(/^\s*–\s*/, ' · ');
+        var rest = text.slice(m[0].length).replace(/^\s*–\s*/, '· ');
         /* Strip any legacy 🚆 that may still be in guides during migration
            (validator now hard-fails on 🚆 in overview-day-title; this keeps
            the render correct while guides are being updated). */
@@ -2876,7 +2876,7 @@ window.TVE.home = (function () {
           var mk = document.createElement('span');
           mk.innerHTML = iconSVG(NAV_ICONS['train'], 15, 'train');
           el.appendChild(mk);
-          el.appendChild(document.createTextNode(' Train Day' + _tdParts[1]));
+          el.appendChild(document.createTextNode('Train Day' + _tdParts[1]));
         } else {
           el.appendChild(document.createTextNode(rest));
         }
@@ -3441,13 +3441,13 @@ window.TVE.home = (function () {
     var bTitle = document.createElement('div');
     bTitle.style.cssText = 'margin-bottom:5px;padding-right:28px;';
     var bTitleText = document.createElement('span');
-    bTitleText.innerHTML = monoSVG('cal-export', 15) + ' Export to Calendar';
+    bTitleText.innerHTML = monoSVG('cal-export', 15) + 'Export to Calendar';
     bTitleText.style.cssText = 'font-size:15px;font-weight:700;color:#1b2531;';
     bTitle.appendChild(bTitleText);
 
     var bSub = document.createElement('div');
     bSub.textContent = 'When does Day 1 start? All ' + days.length +
-      ' day' + (days.length === 1 ? '' : 's') + ' will be added to your calendar.';
+      'day' + (days.length === 1 ? '' : 's') + 'will be added to your calendar.';
     bSub.style.cssText = 'font-size:13px;color:#5b636f;margin-bottom:16px;line-height:1.45;';
 
     var dateInput = document.createElement('input');
@@ -3538,7 +3538,7 @@ window.TVE.home = (function () {
       days.forEach(function (day, i) {
         var d0 = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i);
         var d1 = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i + 1);
-        var summary = _esc(day.header + (day.header.indexOf(city) >= 0 ? '' : ' · ' + city));
+        var summary = _esc(day.header + (day.header.indexOf(city) >= 0 ? '' : '· ' + city));
         var descParts = [];
         day.stops.forEach(function (s, si) {
           var lines = ['▸ ' + (si + 1) + '. ' + s.name.toUpperCase()];
@@ -3553,7 +3553,7 @@ window.TVE.home = (function () {
           if (hasPractical) lines.push('');
           if (s.hours) lines.push(s.hours);
           if (s.duration) lines.push(s.duration);
-          if (s.ticketUrl) lines.push('🎟️ ' + s.ticketUrl);
+          if (s.ticketUrl) lines.push('' + s.ticketUrl);
           if (s.warning) lines.push(s.warning);
           descParts.push(lines.join('\n'));
         });
@@ -3660,7 +3660,7 @@ window.TVE.home = (function () {
     /* ── Trigger link — <a> matches the other pills exactly, terracotta border only ── */
     var trigBtn = document.createElement('a');
     trigBtn.href = 'javascript:void(0)';
-    trigBtn.innerHTML = monoSVG('cal-export', 15) + ' Export to Calendar';
+    trigBtn.innerHTML = monoSVG('cal-export', 15) + 'Export to Calendar';
     trigBtn.className = 'overview-extra-link';
     trigBtn.addEventListener('click', function (e) {
       e.preventDefault(); e.stopPropagation();
@@ -4250,7 +4250,7 @@ window.TVE.home = (function () {
     var IDX  = { mon:0, monday:0, tue:1, tuesday:1, wed:2, wednesday:2, thu:3, thursday:3,
                  fri:4, friday:4, sat:5, saturday:5, sun:6, sunday:6 };
     var _TM  = '\\d{1,2}(?::\\d{2})?\\s*(?:am|pm)';
-    var RE_RANGE = new RegExp('(' + _TM + ')\\s*[-–—]\\s*(' + _TM + ')', 'i');
+    var RE_RANGE = new RegExp('(' + _TM + ')\\s*[-–—]\\s*('+ _TM + ')', 'i');
     var RE_DAYNM = /(Mondays?|Tuesdays?|Wednesdays?|Thursdays?|Fridays?|Saturdays?|Sundays?)/gi;
     var RE_24    = /open\s*24\s*\/\s*7|24\s*hours?|\bopen\s*24h\b|always\s+open|around\s+the\s+clock/i;
     var RE_DAILY = /\b(?:daily|every\s+day)\b/i;
@@ -4264,7 +4264,7 @@ window.TVE.home = (function () {
         val = '24h';
       } else {
         var m = txt.match(RE_RANGE);
-        if (m) val = m[1].trim() + ' – ' + m[2].trim();
+        if (m) val = m[1].trim() + '– ' + m[2].trim();
       }
       if (!val && RE_CLOSED.test(txt)) val = 'closed';
       if (!val) return null;
@@ -4310,7 +4310,7 @@ window.TVE.home = (function () {
         var v = week[i] === undefined ? 'closed' : week[i];
         var today = i === _todayI;
         var dEl = document.createElement('div');
-        dEl.className = 'tve-ph-d' + (today ? ' tve-ph-td' : '');
+        dEl.className = 'tve-ph-d' + (today ? 'tve-ph-td' : '');
         dEl.textContent = name;
         if (today) {
           var nw = document.createElement('span');
@@ -4320,17 +4320,17 @@ window.TVE.home = (function () {
         }
         var tEl = document.createElement('div');
         if (v === 'closed') {
-          tEl.className = 'tve-ph-t tve-ph-cl' + (today ? ' tve-ph-tt' : '');
+          tEl.className = 'tve-ph-t tve-ph-cl' + (today ? 'tve-ph-tt' : '');
           tEl.textContent = 'Closed';
         } else if (v === '24h') {
-          tEl.className = 'tve-ph-t tve-ph-24v' + (today ? ' tve-ph-tt' : '');
+          tEl.className = 'tve-ph-t tve-ph-24v' + (today ? 'tve-ph-tt' : '');
           var tag = document.createElement('span');
           tag.className = 'tve-ph-tag24';
           tag.textContent = '24h';
           tEl.appendChild(tag);
           tEl.appendChild(document.createTextNode('Open all day'));
         } else {
-          tEl.className = 'tve-ph-t' + (today ? ' tve-ph-tt' : '');
+          tEl.className = 'tve-ph-t' + (today ? 'tve-ph-tt' : '');
           tEl.textContent = v;
         }
         grid.appendChild(dEl);
@@ -4508,7 +4508,7 @@ window.TVE.home = (function () {
         var v = week[0] === undefined ? 'closed' : week[0];
         if (v === 'closed') return;
         el = document.createElement('div');
-        el.className = 'tve-ph' + (v === '24h' ? ' tve-ph-24' : '');
+        el.className = 'tve-ph' + (v === '24h' ? 'tve-ph-24' : '');
         el.innerHTML = iconSVG(NAV_ICONS['clock'], 15, 'clock') + ' ' + (v === '24h' ? 'Open 24h · every day' : 'Daily · ' + v);
       }
 
@@ -4573,16 +4573,16 @@ window.TVE.home = (function () {
     var pop = document.createElement('div');
     pop.className = 'addr-copy-pop';
     var optAddr = document.createElement('button');
-    optAddr.type = 'button'; optAddr.className = 'acp-btn'; optAddr.textContent = '📋  Copy address';
+    optAddr.type = 'button'; optAddr.className = 'acp-btn'; optAddr.textContent = 'Copy address';
     var optMaps = document.createElement('button');
-    optMaps.type = 'button'; optMaps.className = 'acp-btn'; optMaps.textContent = '🗺  Copy Maps link';
+    optMaps.type = 'button'; optMaps.className = 'acp-btn'; optMaps.textContent = 'Copy Maps link';
     var done = document.createElement('div');
-    done.className = 'addr-copy-done'; done.textContent = '✓ Copied';
+    done.className = 'addr-copy-done'; done.textContent = 'Copied';
     pop.appendChild(optAddr); pop.appendChild(optMaps);
     var optApple = null;
     if (/iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)) {
       optApple = document.createElement('button');
-      optApple.type = 'button'; optApple.className = 'acp-btn'; optApple.textContent = '🍎  Open in Apple Maps';
+      optApple.type = 'button'; optApple.className = 'acp-btn'; optApple.textContent = 'Open in Apple Maps';
       pop.appendChild(optApple);
     }
     pop.appendChild(done);
@@ -4719,8 +4719,8 @@ window.TVE.home = (function () {
     btn.className = 'overview-extra-link';
     btn.id = 'tve-offline-btn';
     btn.innerHTML = saved
-      ? monoSVG('check', 15) + ' Saved for Offline'
-      : monoSVG('download', 15) + ' Save for Offline';
+      ? monoSVG('check', 15) + 'Saved for Offline'
+      : monoSVG('download', 15) + 'Save for Offline';
     if (saved) {
       btn.classList.add('tve-saved');
       btn.style.setProperty('cursor', 'default', 'important');
@@ -4733,7 +4733,7 @@ window.TVE.home = (function () {
       var t = document.createElement('div');
       t.className = 'tve-toast';
       t.setAttribute('role', 'status');
-      t.textContent = '✓ Saved for Offline — available without a connection';
+      t.textContent = 'Saved for Offline — available without a connection';
       document.body.appendChild(t);
       /* Force a reflow so the opacity/transform transition fires reliably — more
          robust than requestAnimationFrame, which browsers throttle in background
@@ -4751,7 +4751,7 @@ window.TVE.home = (function () {
       if (localStorage.getItem(storageKey)) {
         /* Already saved → toggle back to the resting state (mirrors I've Been). */
         localStorage.removeItem(storageKey);
-        btn.innerHTML = monoSVG('download', 15) + ' Save for Offline';
+        btn.innerHTML = monoSVG('download', 15) + 'Save for Offline';
         btn.classList.remove('tve-saved');
         btn.style.setProperty('cursor', 'pointer', 'important');
         return;
@@ -4759,7 +4759,7 @@ window.TVE.home = (function () {
       btn.textContent = 'Saving…';
       var markSaved = function () {
         localStorage.setItem(storageKey, '1');
-        btn.textContent = '✓ Saved for Offline';
+        btn.textContent = 'Saved for Offline';
         btn.classList.add('tve-saved');
         btn.style.setProperty('cursor', 'default', 'important');
         showOfflineToast();
@@ -4838,22 +4838,22 @@ window.TVE.home = (function () {
 
     var btn = document.createElement('a');
     btn.href = 'javascript:void(0)';
-    btn.className = 'overview-extra-link' + (visited ? ' tve-been' : '');
+    btn.className = 'overview-extra-link' + (visited ? 'tve-been' : '');
     btn.id = 'tve-visited-btn';
     btn.innerHTML = visited
-      ? monoSVG('check', 15) + ' I’ve Been'
-      : monoSVG('pin', 15) + ' I’ve Been';
+      ? monoSVG('check', 15) + 'I’ve Been'
+      : monoSVG('pin', 15) + 'I’ve Been';
 
     btn.addEventListener('click', function (e) {
       e.preventDefault(); e.stopPropagation();
       var nowVisited = !!localStorage.getItem(storageKey);
       if (nowVisited) {
         localStorage.removeItem(storageKey);
-        btn.innerHTML = monoSVG('pin', 15) + ' I’ve Been';
+        btn.innerHTML = monoSVG('pin', 15) + 'I’ve Been';
         btn.classList.remove('tve-been');
       } else {
         localStorage.setItem(storageKey, '1');
-        btn.innerHTML = monoSVG('check', 15) + ' I’ve Been';
+        btn.innerHTML = monoSVG('check', 15) + 'I’ve Been';
         btn.classList.add('tve-been');
       }
     });
@@ -5149,7 +5149,7 @@ window.TVE.home = (function () {
       { name: 'Mount Royal Hotel', note: 'Independent — 138 Banff Avenue in the town centre, rooftop hot tubs, ski storage, mountain-view rooms · 8.4 Booking.com', url: 'https://www.booking.com/hotel/ca/mount-royal-banff.html' }
     ] },
     'bangkok': { h: [
-      { name: 'Mandarin Oriental Bangkok', note: 'Mandarin Oriental brand — 1876 Chao Phraya River landmark, celebrated Authors\' Wing, riverfront dining, Sala Rim Naam Thai restaurant · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/th/mandarin-oriental.html' },
+      { name: 'Mandarin Oriental Bangkok', note: 'Mandarin Oriental brand — 1876 Chao Phraya River landmark, celebrated Authors\'Wing, riverfront dining, Sala Rim Naam Thai restaurant · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/th/mandarin-oriental.html' },
       { name: 'The Peninsula Bangkok', note: 'Peninsula brand — all-suite riverside tower, rooftop infinity pool over the Chao Phraya, complimentary river ferry · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/th/peninsula-bangkok.html' },
       { name: 'Capella Bangkok', note: 'Capella brand — Chao Phraya riverside, 101 villas and suites, three pools, Côte by Mauro Colagreco dining, Auriga Spa · 9.6 Booking.com' , url: 'https://www.booking.com/hotel/th/capella-bangkok.html' },
       { name: 'Rosewood Bangkok', note: 'Rosewood brand — Ploenchit CBD skyline tower, rooftop pool, Nan Bei Chinese restaurant, Sense, a Rosewood Spa · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/th/rosewood-bangkok.html' }
@@ -5975,7 +5975,7 @@ window.TVE.home = (function () {
       { name: 'Petra Guest House Hotel', note: 'Independent boutique — at the siq entrance gate, Cave Bar in a 2,000-year-old Nabataean cave, unbeatable proximity to the Treasury · 8.9 Booking.com', url: 'https://www.booking.com/hotel/jo/guesthouse-petra.html' },
       { name: 'The Old Village Hotel & Resort Petra', note: 'Independent — village setting near the siq entrance, terrace pool with wadi views, traditional stone architecture · 9.0 Booking.com', url: 'https://www.booking.com/hotel/jo/the-old-village-amp-resort.html' },
       { name: 'Mövenpick Resort Petra', note: 'Mövenpick brand — Petra gate, walking distance to Treasury entrance, pool, Rüm Fusion restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/jo/movenpick-petra.html' },
-      { name: 'Petra Marriott Hotel', note: 'Marriott brand — beside the Petra visitors\' entrance, Al Iwan restaurant, outdoor pool · 8.5 Booking.com', url: 'https://www.booking.com/hotel/jo/petra-marriott.html' }
+      { name: 'Petra Marriott Hotel', note: 'Marriott brand — beside the Petra visitors\'entrance, Al Iwan restaurant, outdoor pool · 8.5 Booking.com', url: 'https://www.booking.com/hotel/jo/petra-marriott.html' }
     ] },
     'philadelphia': { h: [
       { name: 'The Logan Philadelphia, Curio Collection by Hilton', note: 'Hilton Curio — One Logan Square on the Parkway, indoor pool, spa, Urban Farmer steakhouse · 8.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-logan-philadelphia.html' },
@@ -6273,7 +6273,7 @@ window.TVE.home = (function () {
       { name: 'Hotel Vestibul Palace', note: 'Independent boutique — 7 suites inside the Roman Diocletian\'s Palace UNESCO walls, unrivalled historic setting · 9.4 Booking.com', url: 'https://www.booking.com/hotel/hr/vestibul-palace.html' },
       { name: 'Radisson Blu Resort & Spa, Split', note: 'Radisson brand — Stobreč beach and marina, spa, infinity pool · 8.4 Booking.com', url: 'https://www.booking.com/hotel/hr/radisson-blu-resort-split.html' },
       { name: 'Cornaro Hotel', note: 'Independent boutique — Diocletian\'s Palace Old Town edge, rooftop terrace with bar and hot tub · 9.1 Booking.com', url: 'https://www.booking.com/hotel/hr/cornaro.html' },
-      { name: 'Le Méridien Lav Split', note: 'Marriott brand — Podstrana beachfront 9 km south, indoor and outdoor pools, spa, tennis and kids\' club · 8.6 Booking.com', url: 'https://www.booking.com/hotel/hr/le-meridien-lav-split.html' }
+      { name: 'Le Méridien Lav Split', note: 'Marriott brand — Podstrana beachfront 9 km south, indoor and outdoor pools, spa, tennis and kids\'club · 8.6 Booking.com', url: 'https://www.booking.com/hotel/hr/le-meridien-lav-split.html' }
     ] },
     'stockholm': { h: [
       { name: 'Nobis Hotel Stockholm', note: 'Independent boutique — Norrmalmstorg Square, 201 rooms, spa, celebrated Gold Bar and restaurant · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/se/nobis.html' },
@@ -6582,7 +6582,7 @@ window.TVE.home = (function () {
     /* RENAMED 2026-08-20 (owner): "Alternative Hotel Recommendations" →
        "Hotel Recommendations". The old wording said these were the runners-up;
        with four price tiers they are the recommendations. */
-    h.textContent = '🏨 Hotel Recommendations';
+    h.textContent = 'Hotel Recommendations';
     wrap.appendChild(h);
 
     /* ── Four price tiers, grouped, cheapest first ─────────────────────────
@@ -6700,7 +6700,7 @@ window.TVE.home = (function () {
       var anLink = document.createElement('a');
       anLink.className = 'also-on-this-site-pill';
       anLink.href = base + 'essentials/neighborhoods/#' + encodeURIComponent(anCity);
-      anLink.textContent = '🏘 Which neighborhood to stay in';
+      anLink.textContent = 'Which neighborhood to stay in';
       anPills.appendChild(anLink);
       wrap.appendChild(anPills);
     }
@@ -7036,7 +7036,7 @@ window.TVE.home = (function () {
     wrap.className = 'extras-section';
     var h = document.createElement('div');
     h.className = 'extras-title';
-    h.innerHTML = iconSVG(NAV_ICONS['trophy'], 15, 'trophy') + ' Best Of';
+    h.innerHTML = iconSVG(NAV_ICONS['trophy'], 15, 'trophy') + 'Best Of';
     var pills = document.createElement('div');
     pills.className = 'also-on-this-site-pills';
     entries.forEach(function (entry) {
@@ -7152,13 +7152,13 @@ window.TVE.home = (function () {
          this row is the INBOUND view, so "🚆 · Train Day · Vienna" would read as
          a train day TO Vienna and state the opposite of the truth. */
       var lead = document.createElement('span');
-      lead.innerHTML = iconSVG(NAV_ICONS['train'], 15, 'train') + ' · Train Day from · ';
+      lead.innerHTML = iconSVG(NAV_ICONS['train'], 15, 'train') + '· Train Day from · ';
       cities.appendChild(lead);
       from.forEach(function (g, i) {
         if (i) {
           var sep = document.createElement('span');
           sep.className = 'tve-adtf-sep';
-          sep.textContent = ' · ';   /* inline now, so the spacing is in the text, not a flex gap */
+          sep.textContent = '· ';   /* inline now, so the spacing is in the text, not a flex gap */
           cities.appendChild(sep);
         }
         var a = document.createElement('a');
@@ -7335,7 +7335,7 @@ window.TVE.home = (function () {
       wrap.className = 'extras-section';
       var h = document.createElement('div');
       h.className = 'extras-title';
-      h.innerHTML = iconSVG(NAV_ICONS['map'], 15, 'map') + ' Also in ' + country;
+      h.innerHTML = iconSVG(NAV_ICONS['map'], 15, 'map') + 'Also in ' + country;
       var pills = document.createElement('div');
       pills.className = 'also-in-country-pills';
       siblings.forEach(function (g) {
@@ -7447,10 +7447,10 @@ window.TVE.home = (function () {
       var link = document.createElement('a');
       link.className = 'title-hotel-request';
       link.href = 'mailto:contact@guidemydays.com' +
-        '?subject=' + encodeURIComponent('Inquire for a different hotel' + (city ? ' — ' + city : '')) +
+        '?subject=' + encodeURIComponent('Inquire for a different hotel' + (city ? '— ' + city : '')) +
         '&body=' + encodeURIComponent(
-          (city ? 'Guide: ' + city + '\n' : '') +
-          (hotelName ? 'Hotel on the guide: ' + hotelName + '\n' : '') +
+          (city ? 'Guide: ' + city + '\n': '') +
+          (hotelName ? 'Hotel on the guide: ' + hotelName + '\n': '') +
           '\nWhat I am looking for instead:\n');
       link.textContent = 'Inquire for a different hotel as your starting point';
       var addr = titlePage.querySelector('.title-address');
@@ -7506,7 +7506,7 @@ window.TVE.home = (function () {
       var items = [];
       if (facts.lang)   items.push(['language', 'Language', facts.lang]);
       if (facts.cost)   items.push(['money', 'Cost tier',
-                                    facts.cost + (facts.cost_detail ? ' · ' + facts.cost_detail : '')]);
+                                    facts.cost + (facts.cost_detail ? '· ' + facts.cost_detail : '')]);
       if (facts.plug)   items.push(['plug', 'Plug type', facts.plug]);
       if (facts.months) items.push(['sun', 'Best months', facts.months]);
       if (!items.length) return;
@@ -7732,7 +7732,7 @@ window.TVE.home = (function () {
       pill.href = 'javascript:void(0)';
       pill.className = 'overview-extra-link';
       pill.id = 'tve-cur-pill';
-      pill.innerHTML = monoSVG('exchange', 15) + ' Currency';
+      pill.innerHTML = monoSVG('exchange', 15) + 'Currency';
       pill.setAttribute('aria-expanded', 'false');
       pill.setAttribute('aria-controls', 'tve-cur-panel');
       pill.style.setProperty('flex', '1 1 0', 'important');
@@ -7795,7 +7795,7 @@ window.TVE.home = (function () {
            list scannable, the name is what tells them they found the right one.
            The closed control truncates the long ones — the open dropdown never
            does, so nothing is actually hidden. */
-        o.textContent = picks[pi].iso + ' — ' + picks[pi].name;
+        o.textContent = picks[pi].iso + '— ' + picks[pi].name;
         o.title = picks[pi].name;
         pick.appendChild(o);
       }
@@ -7913,12 +7913,12 @@ window.TVE.home = (function () {
       function _syncNote() {
         var iso = pick.value, r = _mineRate();
         lede.nodeValue = (iso && r)
-          ? '1 ' + iso + ' ≈ ' + sym + _curRate(c.rate / r) + ' · ' +
+          ? '1 ' + iso + '≈ ' + sym + _curRate(c.rate / r) + '· ' +
             c.name + ' (' + c.iso + ')' +
-            (cur._as_of ? ' · rates as of ' + cur._as_of : '') + ' · '
+            (cur._as_of ? '· rates as of ' + cur._as_of : '') + '· '
           : 'Pick your currency to convert · prices here are in ' +
             c.name + ' (' + c.iso + ')' +
-            (cur._as_of ? ' · rates as of ' + cur._as_of : '') + ' · ';
+            (cur._as_of ? '· rates as of ' + cur._as_of : '') + '· ';
       }
       _syncNote();
       pick.addEventListener('change', function () {
@@ -8269,7 +8269,7 @@ window.TVE.home = (function () {
     topBtn.innerHTML =
       '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
         '<path d="M6.5 10V3M3 6l3.5-3 3.5 3" stroke="currentColor" stroke-width="1.6"' +
-        ' stroke-linecap="round" stroke-linejoin="round"/>' +
+        'stroke-linecap="round" stroke-linejoin="round"/>' +
       '</svg>';
     document.body.appendChild(topBtn);
 
@@ -8396,7 +8396,7 @@ window.TVE.home = (function () {
 
         btn.addEventListener('click', function() {
           var url = window.location.href.replace(/#.*$/, '') + '#' + blockId;
-          var shareText = stopName + (addrText ? ' — ' + addrText : '');
+          var shareText = stopName + (addrText ? '— ' + addrText : '');
           if (navigator.share) {
             navigator.share({ title: stopName, text: shareText, url: url }).catch(function() {});
             return;
@@ -8445,6 +8445,15 @@ window.TVE.home = (function () {
      left alone. 🚤 🚢 🚊 🚝 🚆 🚡 (about 50 rows, car-free and rail cities) have
      no mask yet and still render as emoji — they are not in MARKS. */
   function _injectRowMarks() {
+    /* RETIRED 2026-08-20 — the owner had every emoji and every icon deleted from
+       the site: "DELETE EVERY SINGLE ICON AND EMOJIS" / "we will add after they
+       all break. this is months of it" / "we use way less work it is much easier
+       to add then keeping this nightmare". No source carries a glyph any more, so
+       this sweep has nothing to match; the early return makes that explicit and
+       stops the machinery below running over every row of every page for nothing.
+       The table and the drawing code are left in place deliberately — they are what
+       the owner will re-add icons FROM, and deleting them is a separate pass. */
+    return;
     /* The isRealGuide gate used to sit HERE, on the first line, so this whole
        function was a no-op on every non-guide page. That is why the budget
        chips on index.html still showed Apple emoji although 💰 and ✨ have had
@@ -8606,7 +8615,7 @@ window.TVE.home = (function () {
        render as a stray box. */
     var RE = new RegExp('(' + Object.keys(MARKS).map(function (k) {
       return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }).join('|') + ')️?', 'g');
+    }).join('|') + ')?', 'g');
 
     /* CSS-INJECTED TITLES. Fifteen section titles are not DOM text at all —
        guide-style.css writes them with `#tours .extras-title:empty::before {
@@ -8919,7 +8928,7 @@ window.TVE.home = (function () {
     var keys = Object.keys(INDEX_GLYPH_ICON);
     var RE = new RegExp('(' + keys.map(function (k) {
       return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }).join('|') + ')️?', 'g');
+    }).join('|') + ')?', 'g');
 
     var scope = document.querySelectorAll(
       '.pill-row a,.pill-row button,.disc-btn,.seg-btn,.lang-menu-item,' +
@@ -9298,12 +9307,12 @@ window.TVE.home = (function () {
     var _starOut =
       '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">' +
         '<path d="M7 1.5l1.55 3.14 3.47.5-2.51 2.45.59 3.46L7 9.27l-3.1 1.63.59-3.46L2 4.99l3.47-.5z"' +
-        ' stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>' +
+        'stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>' +
       '</svg>';
     var _starFill =
       '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">' +
         '<path d="M7 1.5l1.55 3.14 3.47.5-2.51 2.45.59 3.46L7 9.27l-3.1 1.63.59-3.46L2 4.99l3.47-.5z"' +
-        ' stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="currentColor"/>' +
+        'stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="currentColor"/>' +
       '</svg>';
     var _closeSvg =
       '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
@@ -9328,7 +9337,7 @@ window.TVE.home = (function () {
     fabStarPath.setAttribute('stroke-width', '0.5');
     fabStar.appendChild(fabStarPath);
 
-    var fabLabel = document.createTextNode(' Wishlist ');
+    var fabLabel = document.createTextNode('Wishlist ');
     var fabCnt   = document.createElement('span');
     fabCnt.id    = 'tve-wl-fab-cnt';
     fab.appendChild(fabStar);
@@ -9361,7 +9370,7 @@ window.TVE.home = (function () {
     function _renderPanel() {
       var arr = _load();
       var n   = arr.length;
-      ptitle.textContent  = n === 1 ? 'Wishlist · 1 stop' : 'Wishlist · ' + n + ' stops';
+      ptitle.textContent  = n === 1 ? 'Wishlist · 1 stop' : 'Wishlist · ' + n + 'stops';
       fabCnt.textContent  = n;
       fab.classList.toggle('tve-wl-fab-on', n > 0);
 
@@ -9369,7 +9378,7 @@ window.TVE.home = (function () {
       if (n === 0) {
         var emptyDiv = document.createElement('div');
         emptyDiv.className = 'tve-wl-empty';
-        emptyDiv.textContent = 'Tap a stop\'s ★ to save it here. Saves appear grouped by guide.';
+        emptyDiv.textContent = 'Tap a stop\'s  to save it here. Saves appear grouped by guide.';
         pbody.appendChild(emptyDiv);
         return;
       }
@@ -9413,7 +9422,7 @@ window.TVE.home = (function () {
 
           var rmBtn = document.createElement('button');
           rmBtn.type = 'button'; rmBtn.className = 'tve-wl-prow-rm';
-          rmBtn.setAttribute('aria-label', 'Remove ' + (entry.stopName || '') + ' from wishlist');
+          rmBtn.setAttribute('aria-label', 'Remove ' + (entry.stopName || '') + 'from wishlist');
           rmBtn.innerHTML = _closeSvg;
           rmBtn.dataset.stopId = entry.stopId;
           rmBtn.addEventListener('click', function(e) {
@@ -9487,13 +9496,13 @@ window.TVE.home = (function () {
       guideOrder.forEach(function(g) {
         lines.push(g + ':');
         byGuide[g].forEach(function(e) {
-          lines.push('  · ' + e.stopName + (e.day ? ' (' + e.day + ')' : '') + (e.href ? ' — ' + e.href : ''));
+          lines.push('· ' + e.stopName + (e.day ? ' (' + e.day + ')' : '') + (e.href ? '— ' + e.href : ''));
         });
       });
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(lines.join('\n')).then(function() {
           var orig = pcopy.textContent;
-          pcopy.textContent = '✓ Copied';
+          pcopy.textContent = 'Copied';
           setTimeout(function() { pcopy.textContent = orig; }, 1800);
         }).catch(function() {});
       }
@@ -9529,10 +9538,10 @@ window.TVE.home = (function () {
 
         var btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'tve-wl-btn' + (isSaved ? ' tve-wl-saved' : '');
+        btn.className = 'tve-wl-btn' + (isSaved ? 'tve-wl-saved' : '');
         btn.dataset.stopId = stopId;
         btn.setAttribute('title', isSaved ? 'Remove from wishlist' : 'Save to wishlist');
-        btn.setAttribute('aria-label', stopName + (isSaved ? ' — remove from wishlist' : ' — save to wishlist'));
+        btn.setAttribute('aria-label', stopName + (isSaved ? '— remove from wishlist' : '— save to wishlist'));
         btn.innerHTML = isSaved ? _starFill : _starOut;
 
         btn.addEventListener('click', function() {
@@ -9541,13 +9550,13 @@ window.TVE.home = (function () {
             btn.classList.remove('tve-wl-saved');
             btn.innerHTML = _starOut;
             btn.setAttribute('title', 'Save to wishlist');
-            btn.setAttribute('aria-label', stopName + ' — save to wishlist');
+            btn.setAttribute('aria-label', stopName + '— save to wishlist');
             _removeEntry(stopId);
           } else {
             btn.classList.add('tve-wl-saved');
             btn.innerHTML = _starFill;
             btn.setAttribute('title', 'Remove from wishlist');
-            btn.setAttribute('aria-label', stopName + ' — remove from wishlist');
+            btn.setAttribute('aria-label', stopName + '— remove from wishlist');
             btn.style.transform = 'scale(1.35)';
             setTimeout(function() { btn.style.transform = ''; }, 200);
             _addEntry(stopId, guideName, stopName, day, href);
@@ -9610,13 +9619,13 @@ window.TVE.home = (function () {
     var _pencilSvg =
       '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
         '<path d="M8.9 1.6l2.5 2.5-6.6 6.6-3.1.6.6-3.1z" stroke="currentColor"' +
-        ' stroke-width="1.3" stroke-linejoin="round"/>' +
+        'stroke-width="1.3" stroke-linejoin="round"/>' +
         '<line x1="7.7" y1="2.8" x2="10.2" y2="5.3" stroke="currentColor" stroke-width="1.3"/>' +
       '</svg>';
     var _pencilFillSvg =
       '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
         '<path d="M8.9 1.6l2.5 2.5-6.6 6.6-3.1.6.6-3.1z" stroke="currentColor"' +
-        ' stroke-width="1.3" stroke-linejoin="round" fill="currentColor"/>' +
+        'stroke-width="1.3" stroke-linejoin="round" fill="currentColor"/>' +
       '</svg>';
 
     /* ── CSS ─────────────────────────────────────────────────────────────── */
@@ -9723,7 +9732,7 @@ window.TVE.home = (function () {
     var cHdr   = document.createElement('div'); cHdr.className = 'tve-notes-hdr';
     var cTitle = document.createElement('span'); cTitle.className = 'tve-notes-hdr-t';
     var cPrint = document.createElement('button');
-    cPrint.type = 'button'; cPrint.className = 'tve-notes-act'; cPrint.innerHTML = iconSVG(NAV_ICONS['printer'], 13, 'printer') + ' Print';
+    cPrint.type = 'button'; cPrint.className = 'tve-notes-act'; cPrint.innerHTML = iconSVG(NAV_ICONS['printer'], 13, 'printer') + 'Print';
     cPrint.setAttribute('aria-label', 'Print my trip notes');
     var cClear = document.createElement('button');
     cClear.type = 'button'; cClear.className = 'tve-notes-act'; cClear.textContent = 'Clear all';
@@ -9744,7 +9753,7 @@ window.TVE.home = (function () {
       var ids = order.filter(function (id) { return notes[id]; });
       var n   = ids.length;
       card.classList.toggle('tve-note-on', n > 0);
-      cTitle.textContent = n === 1 ? 'My Trip Notes · 1 note' : 'My Trip Notes · ' + n + ' notes';
+      cTitle.textContent = n === 1 ? 'My Trip Notes · 1 note' : 'My Trip Notes · ' + n + 'notes';
 
       cBody.innerHTML = '';
       ids.forEach(function (id) {
@@ -9796,9 +9805,9 @@ window.TVE.home = (function () {
       printSheet.innerHTML = '';
       var cityEl = document.querySelector('.title-city');
       var h1 = document.createElement('div'); h1.className = 'tve-np-h1';
-      h1.textContent = 'My Trip Notes' + (cityEl ? ' — ' + cityEl.textContent.trim() : '');
+      h1.textContent = 'My Trip Notes' + (cityEl ? '— ' + cityEl.textContent.trim() : '');
       var sub = document.createElement('div'); sub.className = 'tve-np-sub';
-      sub.textContent = ids.length === 1 ? '1 note' : ids.length + ' notes';
+      sub.textContent = ids.length === 1 ? '1 note' : ids.length + 'notes';
       printSheet.appendChild(h1); printSheet.appendChild(sub);
 
       ids.forEach(function (id) {
@@ -9874,7 +9883,7 @@ window.TVE.home = (function () {
           btn.classList.toggle('tve-note-has', has);
           btn.innerHTML = has ? _pencilFillSvg : _pencilSvg;
           btn.setAttribute('title', has ? 'Edit your note' : 'Add a private note');
-          btn.setAttribute('aria-label', stopName + (has ? ' — edit your note' : ' — add a private note'));
+          btn.setAttribute('aria-label', stopName + (has ? '— edit your note' : '— add a private note'));
           savedTxt.textContent = notes[id] || '';
           saved.classList.toggle('tve-note-on', has && !edit.classList.contains('tve-note-on'));
         }
@@ -10649,7 +10658,7 @@ window.TVE.home = (function () {
            row can reach it; it inserts its own. */
         '<span class="lac-iata"><span class="gm-mk gm-mk-c" aria-hidden="true">' +
         '<svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span><span' +
-        ' style="margin-right:4px"></span><span class="gm-mk-src">✈ </span>' +
+        'style="margin-right:4px"></span><span class="gm-mk-src"> </span>' +
         info.iata + '</span>' +
         '<span class="lac-div">|</span>' +
         '<span class="lac-name">' + info.name + '</span>';
@@ -10837,7 +10846,7 @@ window.TVE.home = (function () {
           if (n) {
             var cnt = document.createElement('span');
             cnt.className = 'ovd-count';
-            cnt.textContent = n + (n === 1 ? ' stop' : ' stops');
+            cnt.textContent = n + (n === 1 ? 'stop' : 'stops');
             title.appendChild(cnt);
           }
         }
@@ -11098,7 +11107,7 @@ window.TVE.home = (function () {
       var city  = _cityName();
       var label = _dayLabel(hdr) || 'Day';
 
-      var out = [city ? city + ' — ' + label : label, ''];
+      var out = [city ? city + '— ' + label : label, ''];
 
       var hotel = block.querySelector('.hotel-first');
       if (hotel) { out.push(hotel.textContent.replace(/\s+/g, ' ').trim(), ''); }
@@ -11124,7 +11133,7 @@ window.TVE.home = (function () {
           );
           if (mapEl) {
             var addr = mapEl.textContent.replace(/\s+/g, ' ').trim();
-            if (addr) out.push('   📍 ' + addr);
+            if (addr) out.push('' + addr);
           }
           return;
         }
@@ -11135,7 +11144,7 @@ window.TVE.home = (function () {
           /* A hop before any stop has been emitted has nothing to attach to. */
           if (!n) return;
           var hop = el.textContent.replace(/\s+/g, ' ').trim();
-          if (hop) out.push('   ' + hop);
+          if (hop) out.push('' + hop);
           out.push('');
         }
       });
@@ -11189,7 +11198,7 @@ window.TVE.home = (function () {
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'tve-copy-day-btn';
-        btn.setAttribute('aria-label', 'Copy ' + label + ' as text');
+        btn.setAttribute('aria-label', 'Copy ' + label + 'as text');
         btn.setAttribute('title', 'Copy this day as plain text');
         btn.innerHTML = _copySvg + '<span>Copy day</span>';
 
@@ -11209,7 +11218,7 @@ window.TVE.home = (function () {
           e.preventDefault();
           e.stopPropagation();
           _write(_dayText(block, hdr)).then(function (ok) {
-            _flash(ok ? 'Copied' : 'Press ⌘C');
+            _flash(ok ? 'Copied' : 'Press C');
           });
         }
 
@@ -11383,7 +11392,7 @@ window.TVE.home = (function () {
         a.href = url;
         a.target = '_blank';
         a.rel = 'noopener';
-        a.setAttribute('aria-label', 'Open ' + label + ' as a route in Google Maps');
+        a.setAttribute('aria-label', 'Open ' + label + 'as a route in Google Maps');
         a.setAttribute('title', 'Open this day as one Google Maps route');
         a.innerHTML = _pinSvg + '<span>Map day</span>';
 
@@ -11760,9 +11769,9 @@ window.TVE.home = (function () {
          it so the change is still announced with the status text gone. */
       if (allCount) allCount.setAttribute('aria-live', 'polite');
       if (allChip) {
-        allChip.setAttribute('title', 'Showing all ' + stops.length + ' stops');
+        allChip.setAttribute('title', 'Showing all ' + stops.length + 'stops');
         allChip.setAttribute('aria-label',
-          'Show all stops — all ' + stops.length + ' showing');
+          'Show all stops — all ' + stops.length + 'showing');
       }
 
       /* ── Filtering ── */
@@ -11822,11 +11831,11 @@ window.TVE.home = (function () {
         if (allCount) allCount.textContent = all ? stops.length : hidden;
         if (allChip) {
           allChip.setAttribute('title', all
-            ? 'Showing all ' + stops.length + ' stops'
-            : hidden + ' of ' + stops.length + ' stops hidden — pick All to restore the day flow');
+            ? 'Showing all ' + stops.length + 'stops'
+            : hidden + 'of ' + stops.length + 'stops hidden — pick All to restore the day flow');
           allChip.setAttribute('aria-label', all
-            ? 'Show all stops — all ' + stops.length + ' showing'
-            : 'Show all stops — ' + hidden + ' of ' + stops.length + ' currently hidden');
+            ? 'Show all stops — all ' + stops.length + 'showing'
+            : 'Show all stops — ' + hidden + 'of ' + stops.length + 'currently hidden');
         }
       }
 
