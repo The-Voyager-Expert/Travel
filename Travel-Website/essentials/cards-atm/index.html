@@ -19,25 +19,9 @@
 .pills { font-family: inherit; display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
 .pill {
   display: inline-flex; align-items: center; justify-content: center;
-  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border2);
-  background: var(--surface, #ffffff); font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; color: var(--muted, #6a6660);
-  cursor: pointer; transition: background .15s, border-color .15s, color .15s; white-space: nowrap;
-}
-.pill:hover { font-family: inherit; background: var(--bg,#f5f4f0); border-color: var(--c-terracotta); }
-.pill.active { font-family: inherit; background: var(--surface,#ffffff); color: var(--rust,#C04E1A); border-color: var(--c-terracotta); }
-
-/* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Formatting/Formatting.html#src-desktoppill.
-   8 filter pills → full-width proportional stretch, squared corners, touching
-   borders, black text, terracotta hover, muted-grey #f0ede8 .active. .active
-   wins over :hover / :focus so it can't flip to terracotta after click.
-   Mobile grid untouched. */
-@media (min-width: 601px), (pointer: fine) {
-  .pills { gap: 6px; }
-  .pill { flex: 0 0 auto; height: 34px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: var(--rust, #C04E1A); border: 1px solid rgba(192,78,26,.65); border-radius: var(--fam-radius, 4px); margin-left: 0; background: var(--surface, #ffffff); }
-  .pill:hover { background: #fdf4ed; border-color: rgba(192,78,26,.55); }
-  .pill.active,
-  .pill.active:hover,
-  .pill.active:focus { background: #fdf4ed; border: 1px solid rgba(192,78,26,.85); color: var(--rust,#C04E1A); font-weight: 600; }
+  flex: 1 1 auto; height: 34px; padding: 0 14px; border-width: 1px; border-style: solid;
+  border-radius: var(--fam-radius,4px); font-family: inherit; font-size: 13px; font-weight: 600;
+  line-height: 1; cursor: pointer; white-space: nowrap;
 }
 #no-results { display: none; color: var(--muted); font-size: 13px; margin-bottom: 12px; text-align: center; }
 /* ── Section header ── */
@@ -85,23 +69,25 @@
   .pills { font-family: inherit; display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
   .pill { font-family: inherit; white-space: nowrap; text-align: center; height: 36px; display: flex; align-items: center; justify-content: center; }
 }
-@media (prefers-color-scheme: dark) {
-  .pill { color: var(--text); }
-}
 /* Category badges — injected per card row by section type */
 .ca-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
-/* Colored filter pills — ink border for clear visibility; fam-* bg switches in dark mode automatically */
-.pill[data-filter="credit"],   .pill[data-filter="credit"]:hover   { background:var(--fam-yellow-bg); border-color:var(--fam-yellow-ink); color:var(--fam-yellow-ink); }
-.pill[data-filter="debit"],    .pill[data-filter="debit"]:hover    { background:var(--fam-blue-bg);   border-color:var(--fam-blue-ink);   color:var(--fam-blue-ink); }
-.pill[data-filter="prepaid"],  .pill[data-filter="prepaid"]:hover  { background:var(--fam-purple-bg); border-color:var(--fam-purple-ink); color:var(--fam-purple-ink); }
-.pill[data-filter="networks"], .pill[data-filter="networks"]:hover { background:var(--fam-grey-bg);   border-color:var(--fam-grey-ink);   color:var(--fam-grey-ink); }
-.pill[data-filter="exchange"], .pill[data-filter="exchange"]:hover { background:var(--fam-green-bg);  border-color:var(--fam-green-ink);  color:var(--fam-green-ink); }
-.pill[data-filter="tips"],     .pill[data-filter="tips"]:hover     { background:var(--fam-orange-bg); border-color:var(--fam-orange-ink); color:var(--fam-orange-ink); }
-.pill[data-filter="cash"],     .pill[data-filter="cash"]:hover     { background:var(--fam-red-bg);    border-color:var(--fam-red-ink);    color:var(--fam-red-ink); }
-.pill[data-filter].active { font-weight:600; }
-@media (prefers-color-scheme: dark) {
-  .pill.active, .pill.active:hover, .pill.active:focus { background: var(--surface2,#1e1c1a); color: var(--text); border-color: var(--border2); }
-}
+/* Filter pills — fam-* tokens, no hover, active = darker border only */
+.pill[data-filter="all"]          { background:var(--fam-yellow-bg); border-color:var(--fam-yellow-bd); color:var(--fam-yellow-ink); }
+.pill[data-filter="all"].active   { border-color:rgba(var(--fam-yellow-rgb),.85); }
+.pill[data-filter="credit"]         { background:var(--fam-pink-bg);   border-color:var(--fam-pink-bd);   color:var(--fam-pink-ink); }
+.pill[data-filter="credit"].active  { border-color:rgba(var(--fam-pink-rgb),.85); }
+.pill[data-filter="debit"]         { background:var(--fam-blue-bg);   border-color:var(--fam-blue-bd);   color:var(--fam-blue-ink); }
+.pill[data-filter="debit"].active  { border-color:rgba(var(--fam-blue-rgb),.85); }
+.pill[data-filter="prepaid"]         { background:var(--fam-purple-bg); border-color:var(--fam-purple-bd); color:var(--fam-purple-ink); }
+.pill[data-filter="prepaid"].active  { border-color:rgba(var(--fam-purple-rgb),.85); }
+.pill[data-filter="networks"]         { background:var(--fam-grey-bg);   border-color:var(--fam-grey-bd);   color:var(--fam-grey-ink); }
+.pill[data-filter="networks"].active  { border-color:rgba(var(--fam-grey-rgb),.85); }
+.pill[data-filter="exchange"]         { background:var(--fam-green-bg);  border-color:var(--fam-green-bd);  color:var(--fam-green-ink); }
+.pill[data-filter="exchange"].active  { border-color:rgba(var(--fam-green-rgb),.85); }
+.pill[data-filter="tips"]         { background:var(--fam-orange-bg); border-color:var(--fam-orange-bd); color:var(--fam-orange-ink); }
+.pill[data-filter="tips"].active  { border-color:rgba(var(--fam-orange-rgb),.85); }
+.pill[data-filter="cash"]         { background:var(--fam-red-bg);    border-color:var(--fam-red-bd);    color:var(--fam-red-ink); }
+.pill[data-filter="cash"].active  { border-color:rgba(var(--fam-red-rgb),.85); }
 </style>
 <link rel="stylesheet" href="/assets/mobile.css?v=53">
 <!-- seo:start — generated by Brain/scripts/build/build_seo.py · do not hand-edit -->
