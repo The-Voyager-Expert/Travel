@@ -1586,7 +1586,8 @@
 // 2026-08-20 — web-travel-style.css floor 79 -> 80 (badge header comment rewrite, 7819558f).
 // 2026-08-20 — two cribs bumped for the same floor at once and the merge landed v1127 after v1128 had shipped; v1129 restores a strictly increasing CACHE.
 // 2026-08-20 — a.neigh-name gains :visited (literal hex — var() is dead inside :visited), light and dark, so a clicked hotel link stops going browser-purple. guide-style.css -> v254. CACHE to v1130.
-var CACHE = 'travel-cache-v1130';
+/* 2026-08-20: guides-index-style.css: filter-active-bar names the filter it clears toolbar.js -> v780. CACHE to v1131. */
+var CACHE = 'travel-cache-v1131';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1599,7 +1600,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 253,'toolbar.js': 779, 'mobile.css': 87, 'web-travel-style.css': 80, 'guides-index-style.css': 20, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 253,'toolbar.js': 780, 'mobile.css': 87, 'web-travel-style.css': 80, 'guides-index-style.css': 20, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
