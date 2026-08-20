@@ -5897,22 +5897,33 @@ function render() {
       });
       out += '</tr>';
 
-      /* Flight row — from the reader's own airport, not from mine (owner,
-         2026-08-15). The row header names the origin because the number is
-         meaningless without it, and the two cases are kept visibly apart:
-         Seattle gets FMAP's measured routing and its "1 connection" subtitle,
-         anyone else gets "~10h 8m · flying time, estimated" and no routing at
-         all. Inventing a connection count for a journey nobody has planned
-         would be the one genuinely misleading thing this row could do — see the
-         note on TVE.home for why flying time is what gets estimated. */
+      /* Flight row — from the reader's own airport, and from NO airport until
+         they have named one (owner rule 2026-08-20: "should not have any
+         fallback" · "nothing about seattle ever unless i search seattle").
+
+         So there are three cases, not two, and the first is the new one:
+
+           no origin set -> THE ROW IS NOT RENDERED AT ALL. Not a dash, not a
+                            "set your airport" cell — a row of placeholders in
+                            a comparison table reads as missing data about the
+                            cities, which is exactly the wrong thing to say.
+           origin is the airport FMAP was measured from -> its exact routing,
+                            layovers and connection subtitle included.
+           any other origin -> "~10h 8m · flying time, estimated", no routing.
+
+         Inventing a connection count for a journey nobody has planned would be
+         the one genuinely misleading thing this row could do — see the note on
+         TVE.home for why flying time is what gets estimated. */
       var HOME = window.TVE && window.TVE.home;
-      var homeDefault = !HOME || HOME.isDefault();
-      /* The default origin's code comes from TVE.home.FALLBACK, never a literal:
-         one place on the site names it, and a page that spells it out can never
-         be told apart from a page that is anchored to it. */
-      var homeCode = homeDefault ? (HOME && HOME.FALLBACK.code) : HOME.get().code;
+      var home = HOME && HOME.get();
+      /* The one airport the site holds measured routings for is named by
+         TVE.home.ROUTINGS_FROM and nowhere else: a page that spells it out can
+         never be told apart from a page that is anchored to it. */
+      var homeExact = !!(home && HOME.ROUTINGS_FROM && home.code === HOME.ROUTINGS_FROM);
       var AIRXY = (window._lpAirports && window._lpAirports.xy) || null;
       var AIRBY = (window._lpAirports && window._lpAirports._by_slug) || null;
+      if (home) {
+      var homeCode = home.code;
       out += '<tr><td class="cmp-row-label">Flight<br>from ' + esc(homeCode) + '</td>';
       sel.forEach(function(c) {
         /* FMAP is keyed by the bare slug ('athens') since the 2026-08-16 URL
@@ -5920,7 +5931,7 @@ function render() {
            root-absolute href, so this row showed '—' for every city. */
         var key = c.href.split('/').pop().replace(/\.html$/, '');
         var f = FMAP[key];
-        if (homeDefault) {
+        if (homeExact) {
           if (f && f.r !== 'home') {
             out += '<td class="cmp-col"><span class="cmp-v">' + f.t + '</span>' +
               '<span class="cmp-sub">' + (fltLabels[f.r]||f.r) + (f.o ? ' · ' + esc(stripIcons(f.o)) : '') + '</span>' +
@@ -5943,6 +5954,7 @@ function render() {
         }
       });
       out += '</tr>';
+      }
 
       /* Needs-visa row (US citizen) */
       out += '<tr><td class="cmp-row-label">Needs Visa<br><span style="font-weight:400;letter-spacing:0;text-transform:none">US citizen</span></td>';
@@ -6459,14 +6471,17 @@ function render() {
   }
 
   /* ── Home city ────────────────────────────────────────────────────────────
-     TVE.home holds the reader's airport; airports.json holds the destination
-     positions. With the default home the two are never consulted at all and
-     every number below comes from FMAP exactly as it always did.
+     TVE.home holds the reader's airport — or null, until they pick one, in
+     which case nothing on this page is measured at all. airports.json holds the
+     destination positions; when the picked airport is the one FMAP was measured
+     from, neither is consulted and every number comes from FMAP as it always
+     did.
 
-     AIR is fetched once, lazily, and only when a non-default home actually
-     needs it — a Seattle reader never pays the 29 KB. Until it lands, a
-     distance-filtered run reports that it is still loading rather than
-     silently returning the guides it happens to be able to measure. */
+     AIR is fetched once, lazily, and only when a reader who has actually picked
+     an airport needs it — nobody pays the 29 KB for a distance they never asked
+     for. Until it lands, a distance-filtered run reports that it is still
+     loading rather than silently returning the guides it happens to be able to
+     measure. */
   var HOME = (window.TVE && window.TVE.home) || null;
   var AIR = null, airPending = false;
   function loadAir(then) {
@@ -6480,6 +6495,8 @@ function render() {
       .then(function (a) { AIR = window._lpAirports = a || {}; airPending = false; then(); })
       .catch(function () { AIR = window._lpAirports = {}; airPending = false; then(); });
   }
+  /* "the reader has not picked an airport" — since 2026-08-20 that is the whole
+     of it: there is no default to fall back on and nothing measured is shown. */
   function homeIsDefault() { return !HOME || HOME.isDefault(); }
 
   /* The guide's own destination airport, from the same _by_slug map the
@@ -6507,12 +6524,18 @@ function render() {
     /* FMAP is keyed by bare slug ("athens"), not by g.rel ("/guides/athens.html")
        — the rel lookup matched nothing for all 237 guides. */
     var f = d.fmap[slugOf(g)];
-    if (homeIsDefault()) {
+    var h = HOME && HOME.get();
+    /* No airport picked, no distance. Returning a number here would be
+       answering "how far is it?" for a reader who has not said from where —
+       owner rule 2026-08-20. The caller drops the guide, exactly as it does
+       for a guide with no FMAP entry. */
+    if (!h) return null;
+    if (HOME.ROUTINGS_FROM && h.code === HOME.ROUTINGS_FROM) {
       var m = journeyMins(f);
-      return m === null ? null : { mins: m, exact: true, home: HOME && HOME.FALLBACK.code,
+      return m === null ? null : { mins: m, exact: true, home: h.code,
                                    text: f.t || '', atHome: f.r === 'home' };
     }
-    var h = HOME.get(), p = destPos(g);
+    var p = destPos(g);
     if (!p) return null;
     if (destCode(g) === h.code) return { mins: 0, exact: false, home: h.code, text: '', atHome: true };
     var mins = HOME.estimate(p[0], p[1]);
@@ -7150,18 +7173,15 @@ function render() {
     var homeNote = document.getElementById('fnd-home-note');
 
     var rows = [], active = -1;
-    var defaultCode = HOME.FALLBACK.code; // the one origin FMAP has exact data for
 
     function label(r) { return r[1] + ' (' + r[0] + ')' + (r[2] ? ' · ' + r[2] : ''); }
 
     function syncHome() {
       var h = HOME.get();
       homeNote.textContent = '';
-      if (!HOME.isDefault()) {
-        homeIn.value = h.city + ' (' + h.code + ')';
-      } else {
-        homeIn.value = '';
-      }
+      /* Empty until the reader picks. There is no city to show them, because
+         there is no default any more — owner rule 2026-08-20. */
+      homeIn.value = h ? (h.city + ' (' + h.code + ')') : '';
       /* The Routing/Stops sync that stood here went with its control — owner
          rule 2026-08-17: nothing on this form is Seattle-anchored any more. */
     }
@@ -7183,9 +7203,11 @@ function render() {
     function choose(r) {
       var h = HOME.fromRow(r);
       if (!h) return;
-      /* Selecting the default airport (SEA) clears the explicit override so
-         homeIsDefault() stays true and the Stops/FMAP filter keeps working. */
-      if (h.code === defaultCode) { HOME.clear(); } else { HOME.set(h); }
+      /* Every pick is STORED, including the airport FMAP was measured from.
+         That airport used to be the default, so picking it cleared the
+         override instead — with no default left there is nothing to fall back
+         to, and clearing would silently un-pick what the reader just chose. */
+      HOME.set(h);
       homeList.hidden = true;
       rows = []; active = -1;
       syncHome();
