@@ -1583,8 +1583,7 @@
 // 2026-08-20 — badge + pill-to-badge become one element: both ALL CAPS, one box.
 // 2026-08-20 — --fam-gap floor 5px -> 10px (badge/pill-to-badge strips).
 // 2026-08-20 — badge/pill comment wording: the gap floor, equal both ways.
-/* 2026-08-20: badge/pill comment matches the shipped rules toolbar.js -> v780. CACHE to v1127. */
-var CACHE = 'travel-cache-v1127';
+var CACHE = 'travel-cache-v1126';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1597,7 +1596,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 253,'toolbar.js': 780, 'mobile.css': 87, 'web-travel-style.css': 79, 'guides-index-style.css': 20, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 253,'toolbar.js': 779, 'mobile.css': 87, 'web-travel-style.css': 79, 'guides-index-style.css': 20, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
