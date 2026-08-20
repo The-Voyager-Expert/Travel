@@ -1584,7 +1584,8 @@
 // 2026-08-20 — --fam-gap floor 5px -> 10px (badge/pill-to-badge strips).
 // 2026-08-20 — badge/pill comment wording: the gap floor, equal both ways.
 // 2026-08-20 — web-travel-style.css floor 79 -> 80 (badge header comment rewrite, 7819558f).
-var CACHE = 'travel-cache-v1127';
+// 2026-08-20 — two cribs bumped for the same floor at once and the merge landed v1127 after v1128 had shipped; v1129 restores a strictly increasing CACHE.
+var CACHE = 'travel-cache-v1129';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
