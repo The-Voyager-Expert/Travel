@@ -2598,10 +2598,13 @@
      says so in as many words: "The routings are not thrown away — that was
      never the fix." So, per the Forty-seventh non-negotiable:
 
-       · home is the FALLBACK  → FMAP's measured journey, layovers and all.
-       · home is anywhere else → a great-circle FLYING time from TVE.home,
-         rendered with "~" and labelled an estimate. No hub is invented and
-         no leg is claimed.
+       · NOTHING PICKED        → no time at all, and the note asks for an
+         airport. There is no default origin any more (owner 2026-08-20).
+       · the airport the routings were measured from → FMAP's measured
+         journey, layovers and all.
+       · anywhere else → a great-circle FLYING time from TVE.home, rendered
+         with "~" and labelled an estimate. No hub is invented and no leg is
+         claimed.
 
      WHAT WENT WITH IT: the Stops filter and the routing legend. A routing is
      not a distance and cannot be estimated, so those pills could only ever
@@ -2611,9 +2614,21 @@
      The region filter, the destination IATA and the onward-travel note all
      stay: those describe the destination, not the origin. */
   var HOMEf = window.TVE && window.TVE.home;
-  function homeIsDefault() { return !HOMEf || HOMEf.isDefault(); }
-  function homeCode() { return HOMEf ? HOMEf.get().code : ''; }
-  function homeCity() { return HOMEf ? HOMEf.get().city : ''; }
+  /* THREE states now, not two (owner rule 2026-08-20: "should not have any
+     fallback" · "nothing about seattle ever unless i search seattle"):
+       homeNone()  — nothing picked. No times, no ranking, no city named.
+       homeExact() — the airport FMAP's routings were measured from: its real
+                     legs, hubs and layovers.
+       otherwise   — a great-circle flying-time estimate from the reader's own.
+     get() returns null in the first case, so every read of it is guarded. */
+  function homeGet() { return HOMEf ? HOMEf.get() : null; }
+  function homeNone() { return !homeGet(); }
+  function homeExact() {
+    var h = homeGet();
+    return !!(h && HOMEf.ROUTINGS_FROM && h.code === HOMEf.ROUTINGS_FROM);
+  }
+  function homeCode() { var h = homeGet(); return h ? h.code : ''; }
+  function homeCity() { var h = homeGet(); return h ? h.city : ''; }
 
   var fst = { dur:'all', reg:'all', q:'', qh:null };
   function parseQuery(raw) {
@@ -2682,7 +2697,10 @@
      no minutes and drops out of the view, the same rule the finder applies to
      a guide with no FMAP entry rather than guessing a number for it. */
   function paintCards() {
-    var deflt = homeIsDefault();
+    /* The measured branch belongs to the airport the routings were measured
+       from — NOT to "the reader has not chosen", which now shows nothing. */
+    var deflt = homeExact();
+    var none = homeNone();
     /* Drives the legend: it explains routing dots, which only the measured
        branch draws. Class rather than an inline style, because the legend's
        own display is set by `body.mode-flights .flegend`. */
@@ -2694,7 +2712,14 @@
       var d = a._fm;
       var line = a.querySelector('.flt'), brk = a.querySelector('.fbreak');
       var mins = null;
-      if (deflt) {
+      if (none) {
+        /* Nothing picked: no number, no dot, no routing. A card still lists its
+           destination — it just does not claim a distance from an airport the
+           reader has never named. */
+        line.innerHTML = '';
+        brk.textContent = '';
+        a.style.borderLeftColor = 'var(--border2, #e6e2da)';
+      } else if (deflt) {
         mins = fmapMins(d);
         line.innerHTML = '<span class="fdot r-' + d.r + '"></span><span class="ftime">' + fmtMins(mins) + '</span> ' + RL[d.r]
           + '<span class="fiata">' + d.i + '</span>';
@@ -2768,18 +2793,20 @@
     if (nameEl) nameEl.textContent = homeCity() ? homeCity() + ' (' + homeCode() + ')' : 'your airport';
     if (!noteEl) return;
     var n = items.filter(function (a) { return a.hasAttribute('data-mins'); }).length;
-    noteEl.textContent = homeIsDefault()
-      ? 'Measured routings from ' + homeCity() + ' (' + homeCode() + ') — real legs, real hubs, layovers included. '
-        + 'Set your own airport to see every destination from where you actually fly.'
+    noteEl.textContent = homeNone()
+      ? 'Set your airport above to see how long each destination takes to reach.'
+      : homeExact()
+      ? 'Measured routings from ' + homeCity() + ' (' + homeCode() + ') — real legs, real hubs, layovers included.'
       : 'Flying time, estimated from ' + homeCity() + ' (' + homeCode() + ') — no connections assumed, so a real '
         + 'journey will be longer. ' + n + ' of ' + items.length + ' destinations have a mapped airport.';
   }
 
-  /* airports.json is only needed once the reader leaves the default: on the
-     fallback the view already has its measured numbers and fetches nothing. */
+  /* airports.json is needed only to ESTIMATE: with nothing picked there is
+     nothing to measure, and on the airport the routings were measured from the
+     view already has its numbers. Neither case fetches. */
   var airPending = false;
   function withAirports(then) {
-    if (window._lpAirports || homeIsDefault()) { then(); return; }
+    if (window._lpAirports || homeNone() || homeExact()) { then(); return; }
     if (airPending) return;
     airPending = true;
     fetch('/assets/airports.json')
@@ -2835,11 +2862,10 @@
     function choose(r) {
       var h = HOMEf.fromRow(r);
       if (!h) return;
-      /* Picking the default airport CLEARS the override rather than storing it,
-         so the view goes back to the measured routings instead of estimating a
-         city it has exact data for. Same rule as the landing finder and
-         Destination Records; the code comes from FALLBACK, never spelled out. */
-      if (h.code === (HOMEf.FALLBACK && HOMEf.FALLBACK.code)) { HOMEf.clear(); } else { HOMEf.set(h); }
+      /* Every pick is stored, the routings' own airport included: with no
+         default left there is nothing to clear back to, and clearing would
+         silently un-pick what the reader just chose. */
+      HOMEf.set(h);
       list.hidden = true; rows = []; active = -1;
       input.value = '';
       repaint();
@@ -3370,17 +3396,17 @@
        airport set gets "~10h 8m", flagged as estimated flying time, with no
        invented connection count. */
     var HOMEcmp = window.TVE && window.TVE.home;
-    var homeDefault = !HOMEcmp || HOMEcmp.isDefault();
-    /* The default origin's code comes from TVE.home.FALLBACK, never a literal:
-       the site names its one exact-data home in exactly one place (toolbar.js
-       §43), and every other surface reads it from there. The landing page's
-       copy of this engine has always done it this way; this one spelled 'SEA'
-       and was missed by check_no_hardcoded_home_base, whose Family A pattern
-       wants the place literal directly after the '=' and so reads straight
-       past a ternary. Forty-seventh non-negotiable. */
-    var homeCode = homeDefault ? (HOMEcmp && HOMEcmp.FALLBACK.code) : HOMEcmp.get().code;
+    var cmpHome = HOMEcmp && HOMEcmp.get();
+    /* The one airport the site holds measured routings for is named by
+       TVE.home.ROUTINGS_FROM and nowhere else (toolbar.js §43). With NO airport
+       picked the whole row is omitted rather than filled with dashes — a row of
+       placeholders in a comparison table reads as missing data about the
+       cities, which is the wrong thing to say. Owner rule 2026-08-20. */
+    var homeDefault = !!(cmpHome && HOMEcmp.ROUTINGS_FROM && cmpHome.code === HOMEcmp.ROUTINGS_FROM);
     var AIRXY = (window._lpAirports && window._lpAirports.xy) || null;
     var AIRBY = (window._lpAirports && window._lpAirports._by_slug) || null;
+    if (cmpHome) {
+    var homeCode = cmpHome.code;
     out += '<tr><td class="cmp-row-label">Flight<br>from ' + esc(homeCode) + '</td>';
     sel.forEach(function(c) {
       /* FMAP is keyed by CITY SLUG ('athens') since 2026-08-16. It used to be
@@ -3416,6 +3442,7 @@
       }
     });
     out += '</tr>';
+    }
 
     /* Needs-visa row (US citizen) */
     out += '<tr><td class="cmp-row-label">Needs Visa<br><span style="font-weight:400;letter-spacing:0;text-transform:none">US citizen</span></td>';

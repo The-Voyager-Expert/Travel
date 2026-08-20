@@ -96,6 +96,11 @@ a.rank-city { color: var(--text); font-weight: 400; }
 a.rank-city:visited { color: var(--text, #3d3a32); }
 a.rank-city::after { content: " →"; color: #C04E1A; font-weight: 600; margin-left: 3px; }
 .rank-rg { font-size: 9.5px; letter-spacing: 0.08em; color: var(--muted); white-space: nowrap; }
+/* Shown in place of a distance-ranked block while no airport is picked. Takes
+   the block's own card so the grid keeps its shape rather than collapsing to a
+   bare sentence on the page ground. */
+.rank-empty { background: var(--surface); border: 1px solid var(--border); border-radius: 9px;
+  padding: 14px; margin: 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
 .rank-val { font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; min-width: 55px; text-align: right; }
 
 /* cost tier badge */
@@ -395,10 +400,17 @@ function parseHM(txt) {
   return (+(m[1] || 0)) * 60 + (+(m[2] || 0));
 }
 
-/* The default origin is read off TVE.home's own FALLBACK, never spelled out
-   here. One city name on the site, in the module that owns it — so a page can
-   never drift from it, and a page that hardcodes it can never look correct. */
-function homeIsDefault() { return !HOME || HOME.isDefault(); }
+/* THERE IS NO DEFAULT ORIGIN (owner rule 2026-08-20: "should not have any
+   fallback" · "nothing about seattle ever unless i search seattle"). Until the
+   reader picks an airport this page ranks nothing by distance and names no
+   city: the three distance blocks say so and hand them the picker. The one
+   airport the site holds measured routings for is named by
+   TVE.home.ROUTINGS_FROM and nowhere else, and it never selects itself. */
+function homeNone() { return !HOME || !HOME.get(); }
+function homeIsDefault() {
+  var h = HOME && HOME.get();
+  return !!(h && HOME.ROUTINGS_FROM && h.code === HOME.ROUTINGS_FROM);
+}
 function homeBase() { return (HOME && HOME.get()) || { city: '', code: '' }; }
 function homeCity() { return homeBase().city; }
 function homeCode() { return homeBase().code; }
@@ -414,6 +426,7 @@ function homeCode() { return homeBase().code; }
 var SAME_METRO_KM = 100;
 
 function homeMins(d) {
+  if (homeNone()) return null;
   if (homeIsDefault()) return d.fr === 'home' ? null : parseHM(d.ft);
   var code = destCode(d.slug);
   if (!code || code === homeCode()) return null;
@@ -442,6 +455,35 @@ function measured() {
 function paintHomeSections() {
   var rows = measured();
   var city = homeCity();
+
+  /* No airport picked: the three distance-ordered blocks cannot be built and
+     are NOT filled with a ranking from somewhere nobody chose. Each says what
+     it needs; the picker is in the section title directly above. The blocks
+     that do not depend on an origin — Very Safe, Mild Summer — still paint, so
+     the section is never empty. */
+  if (homeNone()) {
+    var ask = '<p class="rank-empty">Set your airport above and this ranks every '
+            + 'destination from where you actually fly.</p>';
+    document.getElementById('flight-grid').innerHTML = ask;
+    document.getElementById('safety-grid').innerHTML =
+      rankBlock('<svg class="gm-icon" data-icon="dot-green" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-green"/></svg>', 'Very Safe \u2014 Top Picks',
+        rankRows(entries.filter(function(d) { return d.safe === 'Very Safe'; }).slice(0, 10),
+          function() { return safeBadge('Very Safe'); })) + ask;
+    var mildOnly = entries.filter(function(d) {
+      return d.hi && d.hi.length > 6 && d.hi[6] >= 20 && d.hi[6] <= 26 &&
+        (d.safe === 'Very Safe' || d.safe === 'Safe');
+    }).sort(function(a, b) { return b.hi[6] - a.hi[6]; });
+    document.getElementById('combos-grid').innerHTML = ask +
+      rankBlock('', 'Mild Summer + Safe (20\u201326\u00b0C)',
+        rankRows(mildOnly.slice(0, 10), function(d) {
+          return '<span class="rank-val">' + d.hi[6].toFixed(1) + '\u00b0C Jul</span>';
+        }));
+    var nm = document.getElementById('rec-home-name');
+    var nt = document.getElementById('rec-home-note');
+    if (nm) nm.textContent = 'your airport';
+    if (nt) nt.textContent = 'Pick the airport you fly from to rank these lists by how far each destination really is.';
+    return;
+  }
   var byMins = {};
   rows.forEach(function(x) { byMins[x.d.slug] = x.mins; });
 
@@ -500,16 +542,17 @@ function paintHomeSections() {
   if (nameEl) nameEl.textContent = city + ' (' + homeCode() + ')';
   if (noteEl) {
     noteEl.textContent = homeIsDefault()
-      ? 'Measured routings. Set your own airport to rank every list from where you actually fly.'
+      ? 'Measured routings from ' + city + ' (' + homeCode() + ') \u2014 real legs, real hubs, layovers included.'
       : 'Flying time, estimated from ' + city + ' (' + homeCode() + ') \u2014 no connections assumed. '
         + rows.length + ' of ' + entries.length + ' destinations have a mapped airport.';
   }
 }
 
-/* airports.json is only needed once the reader leaves the default: on SEA the
-   page has its measured numbers already and fetches nothing. */
+/* airports.json is only needed to ESTIMATE: with nothing picked there is
+   nothing to measure, and on the airport the routings were measured from the
+   page has its numbers already. Neither case fetches. */
 function withAirports(then) {
-  if (AIR || homeIsDefault()) { then(); return; }
+  if (AIR || homeNone() || homeIsDefault()) { then(); return; }
   if (airPending) return;
   airPending = true;
   fetch('/assets/airports.json')
@@ -550,11 +593,10 @@ paintHomeSections();
   function choose(r) {
     var h = HOME.fromRow(r);
     if (!h) return;
-    /* Picking the default airport clears the override rather than storing it,
-       so the page goes back to the measured routings instead of estimating a
-       city it has exact data for — the same rule the landing finder applies.
-       The code comes from TVE.home.FALLBACK, never spelled out here. */
-    if (h.code === (HOME.FALLBACK && HOME.FALLBACK.code)) { HOME.clear(); } else { HOME.set(h); }
+    /* Every pick is stored, the routings' own airport included: with no
+       default left there is nothing to clear back to, and clearing would
+       silently un-pick what the reader just chose. */
+    HOME.set(h);
     list.hidden = true; rows = []; active = -1;
     input.value = '';
     withAirports(paintHomeSections);

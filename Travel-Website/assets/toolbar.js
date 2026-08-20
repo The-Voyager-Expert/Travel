@@ -63,6 +63,18 @@ window.TVE.isPhone = function () {
      home is not  ->  a great-circle ESTIMATE from the reader's own airport,
                       always rendered with a leading "~" and never presented
                       as a routing. No hub is invented, no leg is claimed.
+     NO HOME SET  ->  NOTHING. No number, no ranking, no city name. Owner rule
+                      2026-08-20: "should not have any fallback" · "nothing
+                      about seattle ever unless i search seattle."
+
+   THERE IS NO DEFAULT ORIGIN. get() returns null until the reader picks an
+   airport, and every surface that measures from one omits its number, its row
+   or its whole block until then — the same rule Time Zones has carried since
+   2026-08-16 (rule 867), and for the same reason: a default nobody chose is
+   still one person's city, however carefully it is labelled. SEA survives in
+   ROUTINGS_FROM alone, which is not a home: it is the airport FMAP's 237
+   routings were MEASURED from, so a reader who picks it gets those exact
+   numbers instead of an estimate. It never selects itself.
 
    WHAT IS ESTIMATED IS FLYING TIME, and that choice is the load-bearing one.
    Fitted against the 69 nonstop routings FMAP already holds — the ones where
@@ -91,12 +103,13 @@ window.TVE.isPhone = function () {
    it as precedent. Spec: Toolbar.html § 46. */
 window.TVE.home = (function () {
   var KEY = 'tve_home_city';
-  /* Seattle stays the fallback because it is the one home the site has exact
-     data for: with no choice stored, FMAP's own numbers are correct rather
-     than merely plausible. Every surface labels it, and every label is a
-     control — the default is never silent. */
-  var FALLBACK = { code: 'SEA', city: 'Seattle', country: 'US',
-                   lat: 47.45, lon: -122.31, isDefault: true };
+  /* NOT a home and never selected as one — the airport FMAP's 237 routings
+     were measured from. A reader who picks it gets those exact journeys; a
+     reader who picks anything else gets an estimate; a reader who has picked
+     nothing gets no number at all. The fallback that used to stand here made
+     this the origin for everyone who had not chosen, which is the one thing
+     the owner has now ruled out outright. */
+  var ROUTINGS_FROM = 'SEA';
   var subs = [];
 
   function read() {
@@ -105,13 +118,15 @@ window.TVE.home = (function () {
       if (!raw) return null;
       var h = JSON.parse(raw);
       /* A stored home without coordinates cannot answer a distance question,
-         and half-answering is worse than falling back to the exact data. */
+         and half-answering is worse than answering nothing. */
       if (!h || !h.code || typeof h.lat !== 'number' || typeof h.lon !== 'number') return null;
       return h;
     } catch (e) { return null; }
   }
 
-  function get() { return read() || FALLBACK; }
+  /* NULL when the reader has not picked. Every caller checks; none substitutes
+     a city of its own, which is what a fallback here was. */
+  function get() { return read(); }
 
   function set(h) {
     if (!h || !h.code) return get();
@@ -128,8 +143,10 @@ window.TVE.home = (function () {
 
   function clear() {
     try { localStorage.removeItem(KEY); } catch (e) {}
-    subs.forEach(function (fn) { try { fn(FALLBACK); } catch (e) {} });
-    return FALLBACK;
+    /* null, not a replacement city — subscribers repaint into the no-origin
+       state exactly as they do on a first visit. */
+    subs.forEach(function (fn) { try { fn(null); } catch (e) {} });
+    return null;
   }
 
   function km(aLat, aLon, bLat, bLon) {
@@ -149,6 +166,7 @@ window.TVE.home = (function () {
   function estimate(destLat, destLon) {
     if (typeof destLat !== 'number' || typeof destLon !== 'number') return null;
     var h = get();
+    if (!h) return null;              /* no origin picked — there is no distance */
     return Math.round(44 + km(h.lat, h.lon, destLat, destLon) / 14);
   }
 
@@ -246,8 +264,12 @@ window.TVE.home = (function () {
   }
 
   return {
-    KEY: KEY, FALLBACK: FALLBACK,
+    KEY: KEY, ROUTINGS_FROM: ROUTINGS_FROM,
     get: get, set: set, clear: clear,
+    /* isDefault() is now literally "nothing is set" — kept under its old
+       name because every consumer already branches on it, but the branch it
+       guards changed meaning: it used to mean "use SEA", it now means
+       "show nothing and ask". */
     isDefault: function () { return !read(); },
     km: km, estimate: estimate, fmt: fmt,
     fold: fold, lookup: lookup, names: names, fromRow: fromRow,
