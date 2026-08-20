@@ -1585,7 +1585,8 @@
 // 2026-08-20 — badge/pill comment wording: the gap floor, equal both ways.
 // 2026-08-20 — web-travel-style.css floor 79 -> 80 (badge header comment rewrite, 7819558f).
 // 2026-08-20 — two cribs bumped for the same floor at once and the merge landed v1127 after v1128 had shipped; v1129 restores a strictly increasing CACHE.
-var CACHE = 'travel-cache-v1129';
+// 2026-08-20 — a.neigh-name gains :visited (literal hex — var() is dead inside :visited), light and dark, so a clicked hotel link stops going browser-purple. guide-style.css -> v254. CACHE to v1130.
+var CACHE = 'travel-cache-v1130';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
