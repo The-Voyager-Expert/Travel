@@ -698,9 +698,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   var pop=document.createElement('div');
   pop.className='addr-copy-pop';
   var optAddr=document.createElement('button');
-  optAddr.type='button';optAddr.className='acp-btn';optAddr.textContent='📋  Copy address';
+  optAddr.type='button';optAddr.className='acp-btn';optAddr.textContent='Copy address';
   var optMaps=document.createElement('button');
-  optMaps.type='button';optMaps.className='acp-btn';optMaps.textContent='🗺  Copy Maps link';
+  optMaps.type='button';optMaps.className='acp-btn';optMaps.textContent='Copy Maps link';
   var done=document.createElement('div');
   done.className='addr-copy-done';done.textContent='✓ Copied';
   pop.appendChild(optAddr);pop.appendChild(optMaps);
@@ -914,7 +914,10 @@ document.addEventListener('DOMContentLoaded',()=>{
       +(wx?'<span class="nu-wx" title="Tap to switch °C / °F">'+wx+'</span>':'')
     +'</a><div class="nu-chips">';
   trips.forEach(function(t){
-    var nuEmoji={now:'🟢',set:'🟠',hold:'🟡',tbd:'⚫'}[t.st.status]||'⚫';
+    var _nuDot=function(c){return '<svg class="gm-icon" data-icon="dot-'+c+'" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-'+c+'"/></svg>';};
+    /* Drawn spheres, not emoji circles (owner 2026-08-20): a coloured emoji
+       is a fixed platform colour that cannot re-tint for dark mode. */
+    var nuEmoji=_nuDot({now:'green',set:'orange',hold:'yellow',tbd:'black'}[t.st.status]||'black');
     html+='<a class="nu-chip '+t.st.status+'" href="#'+t.id+'">'
       +nuEmoji+' '+t.flag+' '+esc(t.name)
       +' <span class="nu-c">'+chipCount(t.st)+'</span></a>';
@@ -1194,7 +1197,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     var inD=ds[0], outD=ds.length>1?ds[ds.length-1]:addDays(inD,1);
     if(outD<inD) outD=addDays(inD,1);
     var nameEl=card.querySelector('.hotel-name');
-    var name=nameEl?nameEl.textContent.replace(/\s+/g,' ').replace(/📍/g,'').trim():'Stay';
+    var name=nameEl?nameEl.textContent.replace(/\s+/g,' ').trim():'Stay';
     var addrEl=card.querySelector('.hotel-addr');
     /* The address is a Maps anchor now (guide treatment, 2026-08-14) — read it
        from there. The old firstChild-text-node read returned '' the moment the
