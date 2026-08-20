@@ -112,8 +112,10 @@ a.apply-btn::after { content: ' ›'; }
 .tips-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
 
 /* ── Badge filter ── */
-.legend-filter { cursor: pointer; user-select: none; }
-.legend-filter.filter-on { outline: 2.5px solid currentColor; outline-offset: 2px; }
+.legend-filter { user-select: none; }
+/* Selection is the shared .is-on — the currentColor ring AND the family
+   border darkening .4 -> .85. The page used to hand-roll the ring alone,
+   which is only half the selected state; never re-add a local copy. */
 .country-row.row-hidden { display: none; }
 .region-head.sect-hidden, .country-list.sect-hidden { display: none; }
 
@@ -177,10 +179,10 @@ a.apply-btn::after { content: ' ›'; }
   <div class="controls-bar">
     <!-- Speed legend — each badge is a filter button -->
     <div class="legend-strip">
-      <span class="legend-item"><span class="spd badge fam-grey spd-free legend-filter" data-filter="spd-free" role="button" tabindex="0" aria-pressed="false">NOT REQUIRED</span> <span class="legend-label">No visa for US citizens</span></span>
-      <span class="legend-item"><span class="spd badge fam-green spd-fast legend-filter" data-filter="spd-fast" role="button" tabindex="0" aria-pressed="false">E-VISA / FAST</span> <span class="legend-label">Hours to 3 days</span></span>
-      <span class="legend-item"><span class="spd badge fam-yellow spd-std legend-filter" data-filter="spd-std" role="button" tabindex="0" aria-pressed="false">1–2 WEEKS</span> <span class="legend-label">Apply 2+ weeks ahead</span></span>
-      <span class="legend-item"><span class="spd badge fam-orange spd-slow legend-filter" data-filter="spd-slow" role="button" tabindex="0" aria-pressed="false">3+ WEEKS</span> <span class="legend-label">Consulate or appointment required</span></span>
+      <span class="legend-item"><span class="spd pill-badge fam-grey spd-free legend-filter" data-filter="spd-free" role="button" tabindex="0" aria-pressed="false">NOT REQUIRED</span> <span class="legend-label">No visa for US citizens</span></span>
+      <span class="legend-item"><span class="spd pill-badge fam-green spd-fast legend-filter" data-filter="spd-fast" role="button" tabindex="0" aria-pressed="false">E-VISA / FAST</span> <span class="legend-label">Hours to 3 days</span></span>
+      <span class="legend-item"><span class="spd pill-badge fam-yellow spd-std legend-filter" data-filter="spd-std" role="button" tabindex="0" aria-pressed="false">1–2 WEEKS</span> <span class="legend-label">Apply 2+ weeks ahead</span></span>
+      <span class="legend-item"><span class="spd pill-badge fam-orange spd-slow legend-filter" data-filter="spd-slow" role="button" tabindex="0" aria-pressed="false">3+ WEEKS</span> <span class="legend-label">Consulate or appointment required</span></span>
     </div>
     <!-- Region jump nav -->
     <nav class="region-jump" aria-label="Jump to region">
@@ -815,12 +817,12 @@ a.apply-btn::after { content: ' ›'; }
       var cls = btn.dataset.filter;
       if (active === cls) {
         active = null;
-        filters.forEach(function(b) { b.classList.remove('filter-on'); b.setAttribute('aria-pressed','false'); });
+        filters.forEach(function(b) { b.classList.remove('is-on'); b.setAttribute('aria-pressed','false'); });
         showAll();
       } else {
         active = cls;
-        filters.forEach(function(b) { b.classList.remove('filter-on'); b.setAttribute('aria-pressed','false'); });
-        btn.classList.add('filter-on');
+        filters.forEach(function(b) { b.classList.remove('is-on'); b.setAttribute('aria-pressed','false'); });
+        btn.classList.add('is-on');
         btn.setAttribute('aria-pressed','true');
         document.querySelectorAll('.country-row').forEach(function(row) {
           row.classList.toggle('row-hidden', !row.querySelector('.' + cls));
