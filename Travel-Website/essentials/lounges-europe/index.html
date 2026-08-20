@@ -56,15 +56,11 @@ a.nav-link:visited { color: #C04E1A; }
 .legend-group-label { font-size: var(--fs-sub,12px); letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
 /* legend-item — badge-compliant base + li-* color variants (fam-* tokens) */
 .legend-item {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
-  border-radius: 4px; line-height: 1.5;
-  padding: 2px 8px; border: 1px solid;
+  /* box, colour and case all come from the shared .badge + .fam-* classes in
+     web-travel-style.css — this class is a layout hook only. It used to set
+     its own 12px / 2px 8px near-miss of the shared box; never re-add one.
+     Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
 }
-.legend-item.li-navy  { background: var(--fam-blue-bg);   border-color: var(--fam-blue-bd);   color: var(--fam-blue-ink); }
-.legend-item.li-green { background: var(--fam-green-bg);  border-color: var(--fam-green-bd);  color: var(--fam-green-ink); }
-.legend-item.li-gold  { background: var(--fam-orange-bg); border-color: var(--fam-orange-bd); color: var(--fam-orange-ink); }
-.legend-item.li-sas   { background: var(--fam-purple-bg); border-color: var(--fam-purple-bd); color: var(--fam-purple-ink); }
 .country-block { margin-bottom: 24px; }
 /* .country-header / .country-name canonical place+color+size+font now shared in web-travel-style.css + mobile.css (owner rule 2026-07-29) */
 .country-header {
@@ -74,7 +70,16 @@ a.nav-link:visited { color: #C04E1A; }
 .country-airports { font-size: var(--fs-sub,12px); color: var(--muted); letter-spacing: 0.04em; }
 .airport-card { background: var(--surface, #ffffff); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
 .section-label { font-size: var(--fs-sub,12px); letter-spacing: 0.18em; text-transform: uppercase; padding: 7px 20px; border-bottom: 1px solid var(--border2, #e6e2da); }
-.tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; text-transform: uppercase; padding: 1px 5px; border-radius: 3px; border: 1px solid var(--border2, #e6e2da); background: var(--warm, #fdf8f0); color: var(--muted); white-space: nowrap; }
+/* Box from the shared .badge rule (the markup writes class="tag badge fam-*").
+   The only .tag-own property is the neutral ground for the rare untagged
+   chip (Europe: "T2 & T3", "Flagship Europe") — a bare .tag with no family.
+   This class used to carry its own 10px / 1px 5px / radius-3px box that
+   outranked the shared one; never re-add box properties here.
+   Scoped :not([class*="fam-"]) because this <style> loads AFTER the shared
+  sheet: an unscoped .tag at equal specificity outranks .fam-* and paints
+  every family-tagged chip grey — measured live before this guard existed. */
+.tag:not([class*="fam-"]) {
+  border-color: var(--border2, #e6e2da); background: var(--warm, #fdf8f0); color: var(--muted); }
 .meta-label { font-size: var(--fs-sub,12px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); flex-shrink: 0; min-width: 72px; }
 .meta-value { font-size: var(--fs-sub,12px); color: var(--text, #1a1917); line-height: 1.4; }
 .no-access { font-size: var(--fs-sub,12px); color: var(--muted); font-style: italic; padding: 9px 20px; }
@@ -98,7 +103,7 @@ a.nav-link:visited { color: #C04E1A; }
  .wrap > .legend:first-of-type { display: none !important; }
  /* Legend network badges stretch to fill the row evenly instead of wrapping
     at their natural (uneven) content width — owner rule 2026-07-29. */
- .legend-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+ .legend-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--fam-gap, 10px); }
  .legend-item { width: 100%; justify-content: center; white-space: normal; word-break: break-word; }
  /* Disable hover lift effects on touch — iOS `:hover` fires inconsistently on scroll */
  .country-block:hover, .airport-card:hover, .trip:hover, .dest-card:hover {
@@ -267,15 +272,15 @@ html { scroll-behavior: smooth; }
  <div class="legend-group">
  <div class="legend-group-label">SkyTeam</div>
  <div class="legend-items">
- <div class="legend-item li-navy"><svg class="gm-icon" data-icon="dot-blue" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-blue"/></svg> Air France · KLM · Delta · Virgin Clubhouse · SkyTeam Lounge</div>
- <div class="legend-item li-sas"><svg class="gm-icon" data-icon="dot-purple" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-purple"/></svg> SAS Lounges &amp; Partner Access</div>
+ <div class="legend-item badge fam-blue"><svg class="gm-icon" data-icon="dot-blue" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-blue"/></svg> Air France · KLM · Delta · Virgin Clubhouse · SkyTeam Lounge</div>
+ <div class="legend-item badge fam-purple"><svg class="gm-icon" data-icon="dot-purple" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-purple"/></svg> SAS Lounges &amp; Partner Access</div>
  </div>
  </div>
  <div class="legend-group">
  <div class="legend-group-label">Other</div>
  <div class="legend-items">
- <div class="legend-item li-green"><svg class="gm-icon" data-icon="dot-green" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-green"/></svg> Priority Pass</div>
- <div class="legend-item li-gold"><svg class="gm-icon" data-icon="dot-orange" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-orange"/></svg> AmEx Centurion</div>
+ <div class="legend-item badge fam-green"><svg class="gm-icon" data-icon="dot-green" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-green"/></svg> Priority Pass</div>
+ <div class="legend-item badge fam-orange"><svg class="gm-icon" data-icon="dot-orange" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-orange"/></svg> AmEx Centurion</div>
  </div>
  </div>
  </div>
@@ -545,7 +550,7 @@ html { scroll-behavior: smooth; }
  </div>
  </div>
  <div class="lounge-item">
- <div class="lounge-header"><span class="lounge-name">Escape Lounge</span><span class="tag">T2 &amp; T3</span></div>
+ <div class="lounge-header"><span class="lounge-name">Escape Lounge</span><span class="tag badge">T2 &amp; T3</span></div>
  <div class="meta">
  <div class="meta-row"><span class="meta-label">Terminals</span><span class="meta-value">T2 (all passengers) · T3 (Ryanair flights only)</span></div>
  <div class="meta-row"><span class="meta-label">Hours</span><span class="meta-value">Daily 4:00 AM – 8:00 PM</span></div>
@@ -746,7 +751,7 @@ html { scroll-behavior: smooth; }
  <div class="airport-note">T1 is Lufthansa / Star Alliance. T2 for non-Star Alliance carriers including SkyTeam. T3 (opened 2026) has the SkyTeam flagship lounge.</div>
  <div class="section-label skyteam"><svg class="gm-icon" data-icon="dot-blue" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-blue"/></svg> SkyTeam — Air France · SkyTeam Flagship</div>
  <div class="lounge-item">
- <div class="lounge-header"><span class="lounge-name">SkyTeam Lounge — T3</span><span class="tag">Flagship Europe</span></div>
+ <div class="lounge-header"><span class="lounge-name">SkyTeam Lounge — T3</span><span class="tag badge">Flagship Europe</span></div>
  <div class="meta">
  <div class="meta-row"><span class="meta-label">Terminal</span><span class="meta-value">T3, 4th floor mezzanine, non-Schengen international zone</span></div>
  <div class="meta-row"><span class="meta-label">Hours</span><span class="meta-value">Daily — hours align with international departures from T3</span></div>

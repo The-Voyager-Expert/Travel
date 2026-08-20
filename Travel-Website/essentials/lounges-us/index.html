@@ -57,14 +57,11 @@ a.nav-link:visited { color: #6a6660; }
 .legend-group-label { font-size: var(--fs-sub,12px); letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
 /* legend-item — badge-compliant base + li-* color variants (fam-* tokens) */
 .legend-item {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
-  border-radius: 4px; line-height: 1.5;
-  padding: 2px 8px; border: 1px solid;
+  /* box, colour and case all come from the shared .badge + .fam-* classes in
+     web-travel-style.css — this class is a layout hook only. It used to set
+     its own 12px / 2px 8px near-miss of the shared box; never re-add one.
+     Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
 }
-.legend-item.li-navy  { background: var(--fam-blue-bg);   border-color: var(--fam-blue-bd);   color: var(--fam-blue-ink); }
-.legend-item.li-green { background: var(--fam-green-bg);  border-color: var(--fam-green-bd);  color: var(--fam-green-ink); }
-.legend-item.li-gold  { background: var(--fam-orange-bg); border-color: var(--fam-orange-bd); color: var(--fam-orange-ink); }
 .group-header {
  display: flex; align-items: center; gap: 12px;
  margin: 14px 0 8px;
@@ -75,7 +72,16 @@ a.nav-link:visited { color: #6a6660; }
 .airport-city { font-size: var(--fs-body,14px); color: var(--text, #1a1917); }
 .airport-full { font-size: var(--fs-body,14px); color: var(--muted); }
 .section-label { font-size: var(--fs-sub,12px); letter-spacing: 0.18em; text-transform: uppercase; padding: 7px 20px; border-bottom: 1px solid var(--border2, #e6e2da); }
-.tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; text-transform: uppercase; padding: 1px 5px; border-radius: 3px; border: 1px solid var(--border2, #e6e2da); background: var(--warm, #fdf8f0); color: var(--muted); white-space: nowrap; }
+/* Box from the shared .badge rule (the markup writes class="tag badge fam-*").
+   The only .tag-own property is the neutral ground for the rare untagged
+   chip (Europe: "T2 & T3", "Flagship Europe") — a bare .tag with no family.
+   This class used to carry its own 10px / 1px 5px / radius-3px box that
+   outranked the shared one; never re-add box properties here.
+   Scoped :not([class*="fam-"]) because this <style> loads AFTER the shared
+  sheet: an unscoped .tag at equal specificity outranks .fam-* and paints
+  every family-tagged chip grey — measured live before this guard existed. */
+.tag:not([class*="fam-"]) {
+  border-color: var(--border2, #e6e2da); background: var(--warm, #fdf8f0); color: var(--muted); }
 /* .tag.temp sizing+colour from .badge .fam-yellow in web-travel-style.css */
 /* .tag.flagship sizing+colour from .badge .fam-blue in web-travel-style.css */
 .meta-label { font-size: var(--fs-body,14px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); flex-shrink: 0; min-width: 72px; }
@@ -97,7 +103,7 @@ a.nav-link:visited { color: #6a6660; }
  .nav-link { flex-shrink: 0; padding: 5px 8px; font-size: var(--fs-sub,12px); }
  /* Legend network badges stretch to fill the row evenly instead of wrapping
     at their natural (uneven) content width — owner rule 2026-07-29. */
- .legend-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+ .legend-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--fam-gap, 10px); }
  .legend-item { width: 100%; justify-content: center; white-space: normal; word-break: break-word; }
 }
 .hub-jump-list{display:none;margin-top:8px;background:var(--surface, #ffffff);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
@@ -255,16 +261,16 @@ html { scroll-behavior: smooth; }
  <div class="legend-group">
  <div class="legend-group-label">SkyTeam</div>
  <div class="legend-items">
- <div class="legend-item li-navy"><svg class="gm-icon" data-icon="dot-blue" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-blue"/></svg> Delta Sky Club</div>
- <div class="legend-item li-navy"><svg class="gm-icon" data-icon="dot-blue" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-blue"/></svg> Delta One Lounge</div>
- <div class="legend-item li-navy"><svg class="gm-icon" data-icon="dot-blue" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-blue"/></svg> Air France · KLM · Virgin Atlantic</div>
+ <div class="legend-item badge fam-blue"><svg class="gm-icon" data-icon="dot-blue" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-blue"/></svg> Delta Sky Club</div>
+ <div class="legend-item badge fam-blue"><svg class="gm-icon" data-icon="dot-blue" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-blue"/></svg> Delta One Lounge</div>
+ <div class="legend-item badge fam-blue"><svg class="gm-icon" data-icon="dot-blue" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-blue"/></svg> Air France · KLM · Virgin Atlantic</div>
  </div>
  </div>
  <div class="legend-group">
  <div class="legend-group-label">Other</div>
  <div class="legend-items">
- <div class="legend-item li-green"><svg class="gm-icon" data-icon="dot-green" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-green"/></svg> Priority Pass</div>
- <div class="legend-item li-gold"><svg class="gm-icon" data-icon="dot-orange" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-orange"/></svg> AmEx Centurion</div>
+ <div class="legend-item badge fam-green"><svg class="gm-icon" data-icon="dot-green" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-green"/></svg> Priority Pass</div>
+ <div class="legend-item badge fam-orange"><svg class="gm-icon" data-icon="dot-orange" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-orange"/></svg> AmEx Centurion</div>
  </div>
  </div>
  </div>
