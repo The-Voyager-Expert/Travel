@@ -95,7 +95,7 @@
     fab.setAttribute('aria-label', 'Weather — typical high/low by month');
     /* Inline SVG thermometer in currentColor (white on the banner — the emoji
        was too low-contrast against the banner background). */
-    fab.innerHTML = '🌡 Weather';
+    fab.textContent = 'Weather';
     fab.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
     });
@@ -176,11 +176,11 @@
            The Flight time view on the guides index answers that question properly,
            with a picker and an estimate labelled as one. */
         var line1 = [];
-        if (days) line1.push('📅 ' + days + ' day' + (days > 1 ? 's' : ''));
+        if (days) line1.push(days + ' day' + (days > 1 ? 's' : ''));
 
         var line2 = [];
-        if (costD.tier)  line2.push('💰 ' + (COST_SYM[costD.tier] || costD.tier));
-        if (safeD.level) line2.push('🛡 ' + safeD.level);
+        if (costD.tier)  line2.push(COST_SYM[costD.tier] || costD.tier);
+        if (safeD.level) line2.push(safeD.level);
 
         return '<div style="font-weight:700;color:' + GOLD + ';margin-bottom:4px;">' + cityLabel + '</div>' +
           (line1.length ? '<div style="margin-bottom:2px;">' + line1.join(' · ') + '</div>' : '') +

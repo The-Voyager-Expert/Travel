@@ -774,6 +774,50 @@ window.TVE.home = (function () {
      A key with no entry here keeps the old mask path untouched, so this can be
      completed icon by icon without a flag day. */
   var GM_SPRITE = {
+    /* Weather codes need a rain, a storm and a wind drawing: the strip used
+       to print Apple weather emoji and now draws like everything else.
+       Straight from the catalogue, never redrawn. */
+    /* Site-Icons.html #302 */
+    'wx-rain': ['0 0 24 24', '<path d="M7 14.6a4 4 0 0 1 .5-8 5.4 5.4 0 0 1 10 1.4 3.3 3.3 0 0 1-.5 6.6z" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="1" stroke-linejoin="round" /><path d="M7 14.6a4 4 0 0 1 .5-8 5.4 5.4 0 0 1 10 1.4 3.3 3.3 0 0 1-.5 6.6z" fill="url(#gm-gloss)"/> <g stroke="var(--c-blue)" stroke-width="2.1" stroke-linecap="round"> <path d="M7.6 17.2 6.4 20.4"/><path d="M12 17.2 10.8 20.4"/><path d="M16.4 17.2 15.2 20.4"/> </g>'],
+    /* Site-Icons.html #303 */
+    'wx-storm': ['0 0 24 24', '<path d="M7 14.2a4 4 0 0 1 .5-8 5.4 5.4 0 0 1 10 1.4 3.3 3.3 0 0 1-.5 6.6z" fill="url(#gm-stone)" stroke="var(--c-stone-rim)" stroke-width="0.5"/><path d="M7 14.2a4 4 0 0 1 .5-8 5.4 5.4 0 0 1 10 1.4 3.3 3.3 0 0 1-.5 6.6z" fill="url(#gm-gloss)"/> <path d="M13.4 14.6 9 20.2h2.9l-1 3.4 4.6-6.2h-3z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/>'],
+    /* Site-Icons.html #305 */
+    'wx-wind': ['0 0 24 24', '<g stroke="var(--c-sky)" stroke-width="2.1" stroke-linecap="round" fill="none"> <path d="M2.4 8h11.2a2.6 2.6 0 1 0-2.6-2.6"/> <path d="M2.4 12.4h14.4a2.9 2.9 0 1 1-2.9 2.9"/> <path d="M2.4 16.8h7.2"/> </g>'],
+    /* Site-Icons.html #306 */
+    'wx-moon': ['0 0 24 24', '<path d="M16.4 2.6a9.6 9.6 0 1 0 5 12.8A7.6 7.6 0 0 1 16.4 2.6z" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/><path d="M16.4 2.6a9.6 9.6 0 1 0 5 12.8A7.6 7.6 0 0 1 16.4 2.6z" fill="url(#gm-gloss)"/><g fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"><circle cx="8.6" cy="6.4" r="1.1"/><circle cx="5.4" cy="10.6" r="0.8"/><circle cx="11" cy="4.2" r="0.7"/></g>'],
+
+    /* ── The dots ────────────────────────────────────────────────────────
+       Site-Icons.html § Dots, specimens 856-867. These replace the 🟡🟢🔴🔵🟣🟠⚫
+       emoji the badge families used to print (owner 2026-08-20: "use our dots
+       not emojis"). Each carries its own gradients - the ids are unique per
+       colour, so they cannot collide - plus the two specular ellipses that
+       give the sphere its sheen. Never redraw one: an emoji dot is a fixed
+       platform colour that cannot re-tint, which is the whole reason they go. */
+    /* Site-Icons.html #856 - Dot red */
+    'dot-red': ['0 0 24 24', '<defs><radialGradient id="dot-red" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#ff8878"/><stop offset="52%" stop-color="#e03a2b"/><stop offset="100%" stop-color="#8a1a11"/></radialGradient><radialGradient id="dot-red-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#ff8878" stop-opacity="0.55"/><stop offset="100%" stop-color="#ff8878" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-red)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-red-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #857 - Dot orange */
+    'dot-orange': ['0 0 24 24', '<defs><radialGradient id="dot-orange" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#ffb75f"/><stop offset="52%" stop-color="#ef7d18"/><stop offset="100%" stop-color="#8f4408"/></radialGradient><radialGradient id="dot-orange-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#ffb75f" stop-opacity="0.55"/><stop offset="100%" stop-color="#ffb75f" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-orange)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-orange-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #858 - Dot yellow */
+    'dot-yellow': ['0 0 24 24', '<defs><radialGradient id="dot-yellow" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#ffe886"/><stop offset="52%" stop-color="#f3c02e"/><stop offset="100%" stop-color="#a2740a"/></radialGradient><radialGradient id="dot-yellow-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#ffe886" stop-opacity="0.55"/><stop offset="100%" stop-color="#ffe886" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-yellow)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-yellow-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #859 - Dot green */
+    'dot-green': ['0 0 24 24', '<defs><radialGradient id="dot-green" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#a6e473"/><stop offset="52%" stop-color="#57b334"/><stop offset="100%" stop-color="#2a6a17"/></radialGradient><radialGradient id="dot-green-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#a6e473" stop-opacity="0.55"/><stop offset="100%" stop-color="#a6e473" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-green)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-green-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #860 - Dot teal */
+    'dot-teal': ['0 0 24 24', '<defs><radialGradient id="dot-teal" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#84e4d8"/><stop offset="52%" stop-color="#26a596"/><stop offset="100%" stop-color="#0f5f58"/></radialGradient><radialGradient id="dot-teal-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#84e4d8" stop-opacity="0.55"/><stop offset="100%" stop-color="#84e4d8" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-teal)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-teal-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #861 - Dot blue */
+    'dot-blue': ['0 0 24 24', '<defs><radialGradient id="dot-blue" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#95cbf2"/><stop offset="52%" stop-color="#2c80c9"/><stop offset="100%" stop-color="#123f68"/></radialGradient><radialGradient id="dot-blue-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#95cbf2" stop-opacity="0.55"/><stop offset="100%" stop-color="#95cbf2" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-blue)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-blue-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #862 - Dot purple */
+    'dot-purple': ['0 0 24 24', '<defs><radialGradient id="dot-plum" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#d8abe4"/><stop offset="52%" stop-color="#9a58b6"/><stop offset="100%" stop-color="#523067"/></radialGradient><radialGradient id="dot-plum-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#d8abe4" stop-opacity="0.55"/><stop offset="100%" stop-color="#d8abe4" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-plum)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-plum-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #863 - Dot pink */
+    'dot-pink': ['0 0 24 24', '<defs><radialGradient id="dot-pink" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#ffadc7"/><stop offset="52%" stop-color="#e76890"/><stop offset="100%" stop-color="#88304e"/></radialGradient><radialGradient id="dot-pink-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#ffadc7" stop-opacity="0.55"/><stop offset="100%" stop-color="#ffadc7" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-pink)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-pink-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #864 - Dot brown */
+    'dot-brown': ['0 0 24 24', '<defs><radialGradient id="dot-brown" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#d5a677"/><stop offset="52%" stop-color="#95603a"/><stop offset="100%" stop-color="#4a2d1d"/></radialGradient><radialGradient id="dot-brown-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#d5a677" stop-opacity="0.55"/><stop offset="100%" stop-color="#d5a677" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-brown)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-brown-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #865 - Dot grey */
+    'dot-grey': ['0 0 24 24', '<defs><radialGradient id="dot-grey" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#dedbd6"/><stop offset="52%" stop-color="#98928a"/><stop offset="100%" stop-color="#4a4641"/></radialGradient><radialGradient id="dot-grey-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#dedbd6" stop-opacity="0.55"/><stop offset="100%" stop-color="#dedbd6" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-grey)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-grey-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #866 - Dot black */
+    'dot-black': ['0 0 24 24', '<defs><radialGradient id="dot-black" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#7a7a7a"/><stop offset="52%" stop-color="#2c2c2c"/><stop offset="100%" stop-color="#040404"/></radialGradient><radialGradient id="dot-black-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#7a7a7a" stop-opacity="0.55"/><stop offset="100%" stop-color="#7a7a7a" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-black)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-black-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+    /* Site-Icons.html #867 - Dot white */
+    'dot-white': ['0 0 24 24', '<defs><radialGradient id="dot-white" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#ffffff"/><stop offset="52%" stop-color="#efebe5"/><stop offset="100%" stop-color="#aea79e"/></radialGradient><radialGradient id="dot-white-b" cx="50%" cy="88%" r="46%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="10.8" fill="url(#dot-white)"/><circle cx="12" cy="12" r="10.8" fill="url(#dot-white-b)"/><ellipse cx="9.1" cy="7.6" rx="4.3" ry="3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.42" transform="rotate(-28 9.1 7.6)"/><ellipse cx="8.2" cy="6.6" rx="1.9" ry="1.2" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" opacity="0.55" transform="rotate(-28 8.2 6.6)"/>'],
+
     /* Catalogue #381 — the single dollar coin, verbatim from Site-Icons.html.
        Registered here so the 🏨 Hotel Recommendations tier heads can draw the
        $ / $$ / $$$ / $$$$ price ladder as 1·2·3·4 real coins. It is a REUSE of
@@ -1042,6 +1086,16 @@ window.TVE.home = (function () {
     '--c-sky:#66caff;--c-grape:#9d5fd6;--c-wine:#c9584a;--c-pine:#3fa876;--c-slate:#8ea3b2;--c-paper-shade:#dad4cb;--c-cream-shade:#cfc3ae;' +
     '--c-rim-warm:#e0873f;--c-rim-cool:#a9bac8;--c-tire-shade:#38312d;--c-tire-rim:#8d8480;--c-stone-shade:#736a60;--c-stone-rim:#b8b0a6;--c-tan-shade:#c79050;--c-tan-rim:#ffcd94;--c-cocoa-shade:#8e4e19;--c-cocoa-rim:#d39764;--c-rust-shade:#c46619;--c-rust-rim:#ffa963;--c-clay-shade:#c4653a;--c-clay-rim:#ffa881;--c-red-shade:#c25141;--c-red-rim:#ff9788;--c-rose-shade:#c24e65;--c-rose-rim:#ff94aa;--c-plum-shade:#a937ae;--c-plum-rim:#eb80ef;--c-sun-shade:#c7a13c;--c-sun-rim:#ffdd82;--c-amber-shade:#c47728;--c-amber-rim:#ffb871;--c-green-shade:#5aba31;--c-green-rim:#9ef479;--c-leaf-shade:#499320;--c-leaf-rim:#8fd26a;--c-teal-shade:#1ab5a2;--c-teal-rim:#64efde;--c-blue-shade:#2e86c4;--c-blue-rim:#76c6fe;--c-navy-shade:#225d8f;--c-navy-rim:#6da5d6;--c-sky-shade:#509ec7;--c-sky-rim:#94daff;--c-grape-shade:#73459c;--c-grape-rim:#ba8fe2;--c-wine-shade:#934036;--c-wine-rim:#d98a80;--c-pine-shade:#30805a;--c-pine-rim:#79c29f;--c-slate-shade:#6c7c87;--c-slate-rim:#b0bfc9}}' +
     '.gm-ic{display:inline-block;vertical-align:-0.15em;flex-shrink:0}' +
+    /* .gm-icon is the icon AS AUTHORED IN THE HTML (icons_direct.py, owner
+       2026-08-20). It replaced .gm-mk, which was painted at load over an
+       authored emoji. 1.2em matches what the mark used to occupy, so no row
+       reflows; the gap to the following word is the space that already sits
+       after it in the source, never a margin here - a margin would also
+       apply to the icons that sit alone in a pill. This rule ships from
+       toolbar.js so it reaches guides and non-guide pages alike, which load
+       different stylesheets. */
+    '.gm-icon{display:inline-block;width:1.2em;height:1.2em;vertical-align:-0.22em;flex-shrink:0}' +
+    '.gm-icon svg,.gm-icon use{width:100%;height:100%}' +
     '.gm-mk.gm-mk-c{background:none;-webkit-mask:none;mask:none;line-height:0;'
     /* the svg inside is 1.2em; without matching the BOX to it the mark
        overflows its own 1em width and sits on top of the text. */
@@ -2860,10 +2914,9 @@ window.TVE.home = (function () {
         var m = /^Day\s+\d+/.exec(text);
         if (!m) return;
         var rest = text.slice(m[0].length).replace(/^\s*–\s*/, ' · ');
-        /* Strip any legacy 🚆 that may still be in guides during migration
-           (validator now hard-fails on 🚆 in overview-day-title; this keeps
-           the render correct while guides are being updated). */
-        rest = rest.replace(/🚆\s*(?:·\s*)?(?=Train\s+Day)/g, '');
+        /* The station glyph that used to lead a Train Day title is a drawing
+           in the markup now (icons_direct.py, 2026-08-20), so textContent
+           never contains it and there is nothing left to strip here. */
         var num = document.createElement('span');
         num.className = 'overview-day-num';
         num.textContent = m[0];
@@ -3078,7 +3131,7 @@ window.TVE.home = (function () {
       banner.id  = 'ams-advisory';
       var icon = document.createElement('span');
       icon.className   = 'ams-icon';
-      icon.textContent = '🏔';
+      icon.innerHTML = monoSVG('mountain', 16);
       var body = document.createElement('div');
       body.className = 'ams-body';
       var lbl = document.createElement('div');
@@ -3353,6 +3406,26 @@ window.TVE.home = (function () {
      on confirm it downloads an .ics file with one all-day VEVENT per guide
      day, each pre-filled with that day's stop list from .stop-name elements.
      Entirely client-side — no backend, no accounts. */
+
+  /* ── What a row IS, read off the drawing it carries ────────────────────────
+     Owner 2026-08-20: "no more marks to then change to icons use the icons
+     itself". A row used to open with an authored emoji and toolbar.js swapped
+     it for a drawing at load; now the drawing is IN the HTML and the glyph is
+     gone, so nothing can test textContent for it any more.
+
+     `data-icon` names the drawing, `data-role` names the row. They are not the
+     same thing and must not be collapsed into one: 'hours' and 'duration' both
+     draw the clock (Site-Icons.html #60, reused exactly as that page intends),
+     so a test on the DRAWING cannot tell an opening-hours row from an
+     average-visit-time row — and those two feed different features. Always
+     branch on the role. */
+  function _gmRole(el) {
+    if (!el) return '';
+    var ic = el.querySelector(':scope > svg.gm-icon[data-role]')
+          || el.querySelector('svg.gm-icon[data-role]');
+    return ic ? ic.getAttribute('data-role') : '';
+  }
+
   function _injectICSExport() {
     var overviewDays = document.querySelectorAll('.overview-day');
     if (!overviewDays.length) return;
@@ -3388,23 +3461,23 @@ window.TVE.home = (function () {
           if (!stopAddr && mapsEl) {
             stopAddr = mapsEl.textContent.trim();
             stopAddrHref = mapsEl.href;
-          } else if (!stopDesc && !txt.startsWith('📖')) {
+          } else if (!stopDesc && _gmRole(row) !== 'readmore') {
             stopDesc = txt;
           }
         });
         /* Ticket/tour box rows (plain divs, not .stop-row) — hours, duration, warnings, ticket */
         [].forEach.call(sb.querySelectorAll('.ticket-box > div, .tour-box > div'), function (div) {
           var txt = div.textContent.trim();
-          var first = txt.charAt(0);
-          if (!stopHours && (first === '🏛' || txt.slice(0,2) === '🏛')) {
+          var role = _gmRole(div);
+          if (!stopHours && role === 'hours') {
             stopHours = txt;
-          } else if (!stopDuration && (first === '⏰' || txt.slice(0,2) === '⏰')) {
+          } else if (!stopDuration && role === 'duration') {
             stopDuration = txt;
-          } else if (!stopWarning && (first === '⚠' || txt.slice(0,2) === '⚠')) {
+          } else if (!stopWarning && role === 'warn') {
             stopWarning = txt;
           } else if (!stopTicketUrl) {
             var ticketLink = div.querySelector('a[href]:not([href*="google.com/maps"])');
-            if (ticketLink && (txt.slice(0,2) === '🎟' || txt.charAt(0) === '🎟')) {
+            if (ticketLink && _gmRole(div) === 'ticket') {
               stopTicketUrl = ticketLink.href;
             }
           }
@@ -3546,14 +3619,14 @@ window.TVE.home = (function () {
           /* Location block */
           var hasLoc = s.addr || s.href;
           if (hasLoc) lines.push('');
-          if (s.addr) lines.push('📍 ' + s.addr);
+          if (s.addr) lines.push(s.addr);
           if (s.href) lines.push(s.href);
           /* Practical info block */
           var hasPractical = s.hours || s.duration || s.ticketUrl || s.warning;
           if (hasPractical) lines.push('');
           if (s.hours) lines.push(s.hours);
           if (s.duration) lines.push(s.duration);
-          if (s.ticketUrl) lines.push('🎟️ ' + s.ticketUrl);
+          if (s.ticketUrl) lines.push(s.ticketUrl);
           if (s.warning) lines.push(s.warning);
           descParts.push(lines.join('\n'));
         });
@@ -3758,10 +3831,9 @@ window.TVE.home = (function () {
       [].forEach.call(sb.querySelectorAll('.tour-box > div, .ticket-box > div'), function (div) {
         if (durDiv) return;
         var txt = div.textContent.trim();
-        var first = txt.charAt(0);
-        if (first === '⏰' || txt.slice(0, 2) === '⏰') {
+        if (_gmRole(div) === 'duration') {
           durDiv = div;
-          durText = txt.replace(/^⏰\s*/, '').trim();
+          durText = txt;   /* the glyph is an <svg> now, so the text is already clean */
         }
       });
       if (!durDiv || !durText) return;
@@ -3997,7 +4069,7 @@ window.TVE.home = (function () {
     if (!isRealGuide) return;
     var srcRows = [];
     [].forEach.call(document.querySelectorAll('.tour-box > div, .ticket-box > div'), function (d) {
-      if (d.textContent.trim().slice(0, 2) === '🏛') srcRows.push(d);
+      if (_gmRole(d) === 'hours') srcRows.push(d);
     });
     if (!srcRows.length) return;
 
@@ -4459,7 +4531,7 @@ window.TVE.home = (function () {
     groups.forEach(function (grp) {
       var parts = [];
       grp.rows.forEach(function (r) {
-        r.textContent.replace(/^🏛️?\s*/, '').trim().split('·').forEach(function (x) {
+        r.textContent.trim().split('·').forEach(function (x) {
           x = x.trim();
           if (x) parts.push(x);
         });
@@ -4573,16 +4645,18 @@ window.TVE.home = (function () {
     var pop = document.createElement('div');
     pop.className = 'addr-copy-pop';
     var optAddr = document.createElement('button');
-    optAddr.type = 'button'; optAddr.className = 'acp-btn'; optAddr.textContent = '📋  Copy address';
+    optAddr.type = 'button'; optAddr.className = 'acp-btn';
+    optAddr.innerHTML = monoSVG('list', 14) + ' Copy address';
     var optMaps = document.createElement('button');
-    optMaps.type = 'button'; optMaps.className = 'acp-btn'; optMaps.textContent = '🗺  Copy Maps link';
+    optMaps.type = 'button'; optMaps.className = 'acp-btn';
+    optMaps.innerHTML = monoSVG('country-map', 14) + ' Copy Maps link';
     var done = document.createElement('div');
     done.className = 'addr-copy-done'; done.textContent = '✓ Copied';
     pop.appendChild(optAddr); pop.appendChild(optMaps);
     var optApple = null;
     if (/iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)) {
       optApple = document.createElement('button');
-      optApple.type = 'button'; optApple.className = 'acp-btn'; optApple.textContent = '🍎  Open in Apple Maps';
+      optApple.type = 'button'; optApple.className = 'acp-btn'; optApple.textContent = 'Open in Apple Maps';
       pop.appendChild(optApple);
     }
     pop.appendChild(done);
@@ -4628,7 +4702,7 @@ window.TVE.home = (function () {
       '<path d="M3 4.5H2.5C1.67 4.5 1 5.17 1 6V14C1 14.83 1.67 15.5 2.5 15.5H9.5C10.33 15.5 11 14.83 11 14V13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
       '</svg>';
     [].forEach.call(rows, function (row) {
-      if (!row.textContent.trimStart().startsWith('📍')) return;
+      if (_gmRole(row) !== 'addr') return;
       var anchor = row.querySelector('a[href*="google.com/maps"]');
       if (!anchor) return;
       var addr = anchor.textContent.trim();
@@ -6582,7 +6656,7 @@ window.TVE.home = (function () {
     /* RENAMED 2026-08-20 (owner): "Alternative Hotel Recommendations" →
        "Hotel Recommendations". The old wording said these were the runners-up;
        with four price tiers they are the recommendations. */
-    h.textContent = '🏨 Hotel Recommendations';
+    h.innerHTML = monoSVG('hotel', 15) + ' Hotel Recommendations';
     wrap.appendChild(h);
 
     /* ── Four price tiers, grouped, cheapest first ─────────────────────────
@@ -6700,7 +6774,7 @@ window.TVE.home = (function () {
       var anLink = document.createElement('a');
       anLink.className = 'also-on-this-site-pill';
       anLink.href = base + 'essentials/neighborhoods/#' + encodeURIComponent(anCity);
-      anLink.textContent = '🏘 Which neighborhood to stay in';
+      anLink.innerHTML = monoSVG('neighborhoods', 14) + ' Which neighborhood to stay in';
       anPills.appendChild(anLink);
       wrap.appendChild(anPills);
     }
@@ -7539,16 +7613,13 @@ window.TVE.home = (function () {
           'font-size:12px;font-weight:500;line-height:1.35;' +
           'color:var(--c-text-primary,#3d3a32);white-space:nowrap;';
         var ico = document.createElement('span');
-        /* Coloured symbol wins when one exists — this strip builds its own mark
-         and so never passes through the row sweep, exactly like the hours-band
-         clock and the lounge chip. Without this branch the pill keeps the flat
-         single-colour CSS mask while the rest of the page is drawn. */
-      if (GM_SPRITE[it[0]]) {
-        ico.className = 'gm-mk gm-mk-c';
-        ico.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-' + it[0] + '"/></svg>';
-      } else {
-        ico.className = 'gm-mk gm-mk-' + it[0];
-      }
+        /* Drawn from GM_SPRITE, like every icon on the site. A key with no
+           drawing gets nothing rather than a flat single-colour mask: the mask
+           classes are retired along with the mark system. */
+        if (GM_SPRITE[it[0]]) {
+          ico.className = 'gm-icon';
+          ico.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-' + it[0] + '"/></svg>';
+        }
         ico.setAttribute('aria-hidden', 'true');
         /* .gm-mk sizes itself at 1em; the pill's own font-size is 12px, so the
            mark lands at 12px without a second source of truth for the size. */
@@ -8044,18 +8115,28 @@ window.TVE.home = (function () {
     var cityNorm = _normCity(rawCity);
 
     /* WMO weather-code → emoji */
+    /* WMO weather code -> a DRAWING, never an Apple weather emoji (owner
+       2026-08-20). Every value is a GM_SPRITE key and every one of those is a
+       numbered specimen in Site-Icons.html § Weather: 299 clear, 300 partly
+       cloudy, 301 overcast, 302 rain, 303 storm, 304 snow. Fog has no drawing
+       of its own and takes overcast, which is what fog looks like from inside
+       it; that is a reuse, not a new mark. */
     var WMO = {
-      0:'☀️', 1:'🌤️', 2:'🌥️', 3:'☁️',
-      45:'🌫️', 48:'🌫️',
-      51:'🌦️', 53:'🌦️', 55:'🌧️',
-      56:'🌧️', 57:'🌧️',
-      61:'🌧️', 63:'🌧️', 65:'🌧️',
-      66:'🌧️', 67:'🌧️',
-      71:'🌨️', 73:'🌨️', 75:'❄️', 77:'🌨️',
-      80:'🌦️', 81:'🌧️', 82:'⛈️',
-      85:'🌨️', 86:'❄️',
-      95:'⛈️', 96:'⛈️', 99:'⛈️'
+      0:'wx-clear', 1:'wx-partly', 2:'wx-partly', 3:'wx-overcast',
+      45:'wx-overcast', 48:'wx-overcast',
+      51:'wx-rain', 53:'wx-rain', 55:'wx-rain',
+      56:'wx-rain', 57:'wx-rain',
+      61:'wx-rain', 63:'wx-rain', 65:'wx-rain',
+      66:'wx-rain', 67:'wx-rain',
+      71:'wx-snow', 73:'wx-snow', 75:'wx-snow', 77:'wx-snow',
+      80:'wx-rain', 81:'wx-rain', 82:'wx-storm',
+      85:'wx-snow', 86:'wx-snow',
+      95:'wx-storm', 96:'wx-storm', 99:'wx-storm'
     };
+    /* The strip sized its emoji with font-size; a drawing is sized as a box. */
+    function _wxIcon(code, px) {
+      return monoSVG(WMO[code] || 'wx-partly', px);
+    }
     var DAY = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
     function _wxUnit() {
@@ -8117,8 +8198,8 @@ window.TVE.home = (function () {
         dayDiv.textContent = DAY[dt.getDay()];
 
         var iconDiv = document.createElement('div');
-        iconDiv.style.cssText = 'font-size:' + (isMobile ? '17px' : '22px') + ';line-height:1.2;';
-        iconDiv.textContent = WMO[daily.weathercode[i]] || '🌡️';
+        iconDiv.style.cssText = 'line-height:1.2;';
+        iconDiv.innerHTML = _wxIcon(daily.weathercode[i], isMobile ? 17 : 22);
 
         var tempDiv = document.createElement('div');
         tempDiv.style.cssText =
@@ -8148,8 +8229,8 @@ window.TVE.home = (function () {
         }
 
         var nowIcon = document.createElement('div');
-        nowIcon.style.cssText = 'font-size:' + (isMobile ? '16px' : '20px') + ';line-height:1.2;';
-        nowIcon.textContent = WMO[data.current.weather_code] || '🌡️';
+        nowIcon.style.cssText = 'line-height:1.2;';
+        nowIcon.innerHTML = _wxIcon(data.current.weather_code, isMobile ? 16 : 20);
         nowBlock.appendChild(nowIcon);
 
         var nowTemp = document.createElement('div');
@@ -8372,7 +8453,7 @@ window.TVE.home = (function () {
         var addrText = '';
         [].forEach.call(block.querySelectorAll('.stop-row'), function(row) {
           if (addrText) return;
-          if (row.textContent.indexOf('📍') >= 0) {
+          if (_gmRole(row) === 'addr') {
             var a = row.querySelector('a');
             if (a) addrText = a.textContent.trim();
           }
@@ -8422,421 +8503,24 @@ window.TVE.home = (function () {
   }
   _injectShareStopButtons();
 
-  /* ── Row marks — 📍 / 🚶 / 🚕 drawn instead of Apple emoji (owner 2026-08-11) ─
-     Owner, on the motion row: "do this rows … has the walk and car time from
-     stops to stops", and on the address row: "pin needs to get done too".
+  /* ── The row marks are RETIRED. Icons are in the HTML now ─────────────────
+     Owner 2026-08-20: "no more marks to then change to icons use the icons
+     itself".
 
-     The emoji is WRAPPED, never replaced. Each glyph gets a hidden
-     .gm-mk-src span next to a .gm-mk mark, so the row's textContent comes out
-     byte-identical. That is deliberate and load-bearing — three consumers read
-     these rows as text and would break on a substitution:
-       · _injectAddrCopy  — `textContent.trimStart().startsWith('📍')`
-       · _injectShareStopButtons — `textContent.indexOf('📍') >= 0`
-       · the ICS + clipboard exports, which rebuild '📍 ' + addr
-     Registering last is belt-and-braces on top of that, not the mechanism.
+     `MARKS`, `markRow` and `_injectRowMarks` lived here: a row authored an
+     emoji, and at load the emoji was wrapped in a hidden .gm-mk-src span and
+     a .gm-mk mark was drawn beside it. The reader never saw an emoji, but the
+     emoji was still the KEY the whole system read — which is why deleting the
+     glyphs from the source (2026-08-20) stopped every icon on the site from
+     drawing rather than removing a picture.
 
-     Guide HTML is untouched. The glyphs stay authored in all 245 guides where
-     Motion Rule.html and Icon Order and Format.html govern them and the
-     validators read them off disk — this is render-time only, exactly like the
-     ⏰ duration chip and the 🏛 hours band. Marks are drawn in guide-style.css.
+     Brain/scripts/build/icons_direct.py did the migration once, in the source:
+     each glyph is now the drawing itself, <svg class="gm-icon" data-icon="KEY"
+     data-role="ROLE"><use href="#gm-i-KEY"/></svg>. Nothing is rewritten at
+     render time, so there is nothing here to run.
 
-     Scope is deliberately narrow: motion rows, and box rows that LEAD with 📍.
-     A .stop-row of prose can legitimately contain any of these glyphs and is
-     left alone. 🚤 🚢 🚊 🚝 🚆 🚡 (about 50 rows, car-free and rail cities) have
-     no mask yet and still render as emoji — they are not in MARKS. */
-  function _injectRowMarks() {
-    /* The isRealGuide gate used to sit HERE, on the first line, so this whole
-       function was a no-op on every non-guide page. That is why the budget
-       chips on index.html still showed Apple emoji although 💰 and ✨ have had
-       marks for months (owner 2026-08-12) — the missing selector was the
-       obvious cause and not the real one. The gate now sits below, after the
-       shared machinery, so a non-guide surface can opt in explicitly by name.
-       It is NOT removed: every sweep below it targets guide structure
-       (.tour-box, .stop-row, .extras-*), and Trip-Essentials pages carry some
-       of those class names without loading guide-style.css — running them
-       there would replace visible emoji with 1em spans that have no
-       mask-image, i.e. blank. Add a surface here one selector at a time, and
-       only once its stylesheet carries the .gm-mk rules. */
-    var MARKS = {
-      /* Holiday-Chooser + climate filter chips on index.html — the last
-         emoji a reader actually saw. All of these resolve to GM_SPRITE keys,
-         so markRow draws <use href="#gm-i-KEY"> and NO css mask is needed;
-         that is what blocked the previous pass, which only had the mask path
-         in mind and would have blanked the row. */
-      '🏖': 'beach',  /* Beach chip */
-      '🌲': 'pine-forest-chip',  /* Nature chip */
-      '🎨': 'artframe',  /* Art & museums chip */
-      '🌃': 'night-sky',  /* Nightlife chip */
-      '🏝': 'island',  /* Islands chip */
-      '🎿': 'ski',  /* Snow / ski chip */
-      '🍷': 'wine',  /* Wine chip */
-      '🛝': 'kids',  /* Kids friendly chip */
-      '🎢': 'ferris',  /* Amusement chip */
-      '🌴': 'palm',  /* Hot & humid chip */
-      '☀': 'sun-clear',  /* Warm & sunny chip */
-      '🌤': 'partly-cloudy',  /* Mild chip */
-      '🍂': 'leaf-autumn',  /* Cool chip */
-      '❄': 'snowflake',  /* Cold chip */
-
-      /* Mid-range budget chip on index.html — the only 💳 anywhere under
-         Travel-Website/. Mask lives in guides-index-style.css, and a copy sits
-         in guide-style.css so a guide that authors one later draws a card
-         instead of a blank span. */
-      '💳': 'card',
-      '📍': 'pin',
-      '🚶': 'walk',
-      '🚕': 'delivery-car',
-      '🚗': 'app-car',             /* Food Delivery section overview link */
-      '🚐': 'van',        /* tour hotel-pickup row, 548 fleet-wide */
-      '🏨': 'hotel',      /* the other half of that row */
-      /* extras-sub rows. The survey is closed: across the fleet these rows
-         lead with exactly six glyphs — 📅 2342 · 🚕 375 · 🚊 148 · 🚄 56 ·
-         🚢 29 · 🚎 17 — so covering them leaves no mixed state in that band. */
-      '📅': 'cal-export',
-      '🚊': 'van',        /* tram — the van shape is a boxy vehicle front and */
-      '🚎': 'van',        /* trolleybus — reads for all three at 15px */
-      '🚄': 'train',
-      '🚢': 'ship',
-      '🚤': 'ship',       /* island transfers — Maldives et al */
-      /* Tour/Day-Trip stat row: "⏳ 5 hr 30 min · 👥 Small group". */
-      '⏳': 'hourglass',
-      '👥': 'people',
-      /* Closed-day row, position 3 — 1,436 fleet-wide and the loudest emoji
-         left on a stop: the Apple sign is saturated red-and-white and sat
-         directly under the terracotta clock of the hours band, so one two-row
-         block rendered in two unrelated colour systems. Draws the circle-slash
-         the toolbar already uses for the Scams & Traps nav entry — the owner
-         picked it by pointing at that row (2026-08-11: "replace by the icon
-         drawing we are using now this is the one it should be there"), so the
-         site has ONE prohibition mark, not two drawings of the same idea. */
-      '🚫': 'closed',
-      /* Booking row — "🎫 book at: {operator}", 619 fleet-wide. U+1F3AB, NOT
-         the U+1F39F 🎟 that .ticket-flag retired in 2026-08, which is exactly
-         why it survived that pass and kept showing an emoji next to drawn
-         siblings. Same whole-ticket silhouette as .ticket-flag. */
-      '🎫': 'ticket',
-      '💵': 'money',      /* "💵 Cash Only" — same shape the 💰 rows draw */
-      /* 3,496 rows — one on EVERY stop, the most-repeated emoji left on the
-         site. Lives on the Wikipedia link under the stop description, so it
-         appeared once per stop in full Apple colour against a terracotta
-         column. Reached through the .stop-row > a selector below. */
-      '📖': 'book',
-      /* Hours. On a STOP the authored 🏛 row is hidden and _upgradeStopHours
-         redraws it as the .tve-ph band, which leads with the clock — so the
-         restaurant, cafe and bar entries, which get no band, were the one
-         place hours still showed the classical-building emoji, directly above
-         a drawn pin. Mapping it to the SAME clock is what makes those rows
-         match a stop (owner: "we are not using emojis on these anymore we need
-         to match he stops look"). */
-      '🏛': 'clock-stop',
-      /* Caveat row, position 6 — 691 fleet-wide. It sat between the drawn free
-         flag above it and the drawn pin below, the last emoji in the box. No
-         warning triangle existed in NAV_ICONS (scams is a circle-slash), so
-         this one is authored: a solid triangle with the bar and dot cut out by
-         fill-rule evenodd, weighted to match the pin and the ticket flag. */
-      '⚠': 'warn',
-      /* 🗺 U+1F5FA — the All Stops Map action pill. Every other pill in that
-         row (Export to Calendar, Preview Optimized, Save for Offline, I've
-         Been, Hotels & Flights, Currency) is drawn by toolbar.js, but this one
-         could not be: its label is authored in each guide's HTML, not in the
-         ITEMS table, so the 2026-08-11 pill-row pass had to skip it and it was
-         left as the one emoji in a row of drawn icons. Reaching it from here
-         is exactly what a render-time pass over authored markup is for. Same
-         `map` shape and viewBox the toolbar uses. Also covers the Nearby
-         Guides pill, which leads with the same glyph. */
-      '🗺': 'country-map',
-      /* Section pills + their matching .extras-title headings (owner: "can you
-         change pills after and match the sections?"). Both surfaces move on the
-         same table, so a pill and the section it jumps to can never drift apart.
-         Six reuse shapes already in the set; six are authored because the
-         toolbar had no equivalent. the station glyph is deliberately absent — it is banned
-         site-wide (CLAUDE.md twentieth non-negotiable) and the Train Stations
-         pill correctly authors 🚆. */
-      '🚌': 'van',          /* Getting Around */
-      '🚆': 'train-station',        /* Train Stations */
-      '🗓': 'wall-calendar',     /* Weekly Closures */
-      '⭐': 'star',          /* Michelin · Best Of */
-      '🫕': 'restaurants-hotel',  /* Restaurants Near Hotel */
-      '🍽': 'restaurants',  /* Downtown Restaurants — same shape, same thing */
-      '☕': 'coffee',        /* Cappuccino */
-      '🍮': 'dessert',      /* Local Tastes */
-      '🎭': 'theatre',      /* Shows */
-      '❗': 'bang',          /* Heads Up */
-      '✨': 'sparkle',      /* Worth Knowing */
-      '💥': 'burst',        /* Also on this site */
-      /* "Also on this site" pills + the title-card facts. Every one of these
-         links to a Trip-Essentials page that ALREADY has a toolbar icon, so
-         they reuse it verbatim — the pill and the nav entry for the same page
-         now draw the same shape. 🏘 takes the neighbourhoods house (owner
-         2026-08-11: "no idea what this icon is i cant see it" — the Apple
-         glyph is three tiny houses, illegible at 15px). */
-      '🌅': 'sunset',
-      '🔌': 'plug',
-      '💰': 'money',
-      '🛡': 'safety-guide',
-      '🪪': 'visas',
-      '📊': 'chart',
-      '🗣': 'language',
-      '🕐': 'clock-stop',        /* Time Zones pill · the local-time chip */
-      '🏘': 'boutique',        /* Which neighborhood to stay in */
-      /* The last three emoji left on a section chip — the row the owner was
-         looking at when they said "all pills should look right" (2026-08-11).
-         🌍 reuses NAV_ICONS.globe so the World Map pill and the World Map nav
-         entry draw the same shape; ⛲ and 🏓 are authored because no nav icon
-         fits and reusing `map` would have put one silhouette on two chips in
-         the same row. */
-      '🌍': 'globe',        /* World Map */
-      '⛲': 'cathedral',     /* Day Trips — 128 sections */
-      '🏓': 'paddle',       /* Pickleball — 54 sections */
-      /* Hiking (owner rule 2026-08-18). The boot is catalogue #1233 — the SAME
-         drawing the Packing Checklist carries on its own Hiking card, which is
-         also where the section's closing pill points. The peak is #1349 and leads
-         the terrain row (distance · ascent). Both are authored glyphs in guide
-         HTML like every other section icon; without a row here they render as
-         Apple emoji and check_row_glyphs_are_drawn hard-fails. */
-      '🥾': 'hiking-boot',
-      '⛰': 'peak'
-    };
-    /* Built FROM MARKS rather than hand-written. The previous hand-kept
-       pattern had to be edited in lockstep with the table and the two leads
-       differ (📍 is \uD83D, 🏨 is \uD83C, ⏳ is BMP), which is exactly the kind
-       of edit that silently half-lands. Add a row to MARKS and the matcher
-       follows. Trailing ️ is swallowed into the match so the variation
-       selector rides inside the hidden span instead of being left behind to
-       render as a stray box. */
-    var RE = new RegExp('(' + Object.keys(MARKS).map(function (k) {
-      return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }).join('|') + ')️?', 'g');
-
-    /* CSS-INJECTED TITLES. Fifteen section titles are not DOM text at all —
-       guide-style.css writes them with `#tours .extras-title:empty::before {
-       content: "📅 Tours" }`. Pseudo-element content is not in the DOM, so the
-       walker below cannot see those glyphs and those headers were the ones
-       still showing emoji after every other surface was drawn.
-
-       Reading the computed content and writing it back as real text fixes it in
-       one move: the element stops being :empty, so the ::before rule stops
-       applying, and the normal mark path then treats it like any other title.
-       The collapse chevron is ::after and is unaffected. */
-    function materialiseTitle(t) {
-      if (t.childNodes.length) return;                 /* already real text */
-      var c = getComputedStyle(t, '::before').content;
-      if (!c || c === 'none' || c === 'normal') return;
-      c = c.replace(/^"|"$/g, '').replace(/\\([0-9a-f]{1,6}) ?/gi, function (_, h) {
-        return String.fromCodePoint(parseInt(h, 16));
-      });
-      if (c.trim()) t.textContent = c;
-    }
-
-    /* `bare` hides the glyph WITHOUT drawing a mark in its place. Used for an
-       .extras-sub whose section header already carries the same mark: Train
-       Stations repeated the train on every station and Getting Around the car
-       on every ride app, so the column read as one icon stamped down the page
-       (owner 2026-08-11: "lets not repeat the icon below only in the header" ·
-       "same for the train station leave the icon only on the tile"). The glyph
-       still stays in the DOM inside .gm-mk-src — textContent is unchanged here
-       for exactly the same reasons as everywhere else. */
-    function markRow(row, bare, only) {
-      if (row.getAttribute('data-gm-marked')) return;
-      /* The band's own source rows are display:none and _upgradeStopHours
-         parses them — leave them exactly as authored. Marking them would gain
-         nothing visible and would put wrapper spans inside markup another
-         injector reads. */
-      if (row.classList.contains('tve-ph-src')) return;
-      row.setAttribute('data-gm-marked', '1');
-      var walker = document.createTreeWalker(row, NodeFilter.SHOW_TEXT, null);
-      var texts = [], n;
-      while ((n = walker.nextNode())) {
-        RE.lastIndex = 0;
-        if (RE.test(n.nodeValue)) texts.push(n);
-      }
-      texts.forEach(function (tn) {
-        var s = tn.nodeValue, frag = document.createDocumentFragment();
-        var last = 0, m;
-        RE.lastIndex = 0;
-        while ((m = RE.exec(s))) {
-          /* `only` restricts a pass to one glyph, so an inline sweep can pick
-             up a rating star mid-sentence without also redrawing whatever else
-             the line happens to mention. */
-          if (only && m[1] !== only) continue;
-          if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
-          if (!bare) {
-            var mk = document.createElement('span');
-            var mkey = MARKS[m[1]];
-            /* Coloured symbol if there is one, else the original mask class.
-               The wrapper span is kept either way so sizing, alignment and the
-               .gm-mk selectors other injectors rely on are unchanged. */
-            /* INSIDE THE ACTION ROW the mark is MONO, like every other pill
-               there (owner 2026-08-18). The 🗺 All Stops Map pill is the one
-               action pill whose label is authored in each guide's HTML rather
-               than built by toolbar.js, so it reaches its icon through this
-               render-time pass instead of monoSVG — and without this branch it
-               kept the full-colour green-and-blue sprite while the four pills
-               beside it had gone mono. That is the carnival surviving in the
-               one place nobody would look for it. */
-            if (GM_MONO[mkey] && row.closest && row.closest('#ics-pill-row')) {
-              mk.className = 'gm-mk gm-mk-c gm-mk-mono';
-              mk.innerHTML = monoSVG(mkey, 15);
-            } else if (GM_SPRITE[mkey]) {
-              mk.className = 'gm-mk gm-mk-c';
-              mk.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-' + mkey + '"/></svg>';
-            } else {
-              mk.className = 'gm-mk gm-mk-' + mkey;
-            }
-            mk.setAttribute('aria-hidden', 'true');
-            frag.appendChild(mk);
-          }
-          var src = document.createElement('span');
-          src.className = 'gm-mk-src';
-          src.textContent = m[0];          /* keeps textContent identical */
-          frag.appendChild(src);
-          last = m.index + m[0].length;
-        }
-        if (last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
-        tn.parentNode.replaceChild(frag, tn);
-      });
-    }
-
-    /* ── NON-GUIDE SURFACES ─────────────────────────────────────────────────
-       Runs on every page, above the guide gate. The Travel-budget filter chips
-       on index.html author "💰 Budget (under $100)", "💳 Mid-range", "✨
-       Premium" and were the last authored emoji on the Guides Index. Their
-       stylesheet (guides-index-style.css) carries its own copy of the .gm-mk
-       rules — without that this pass would blank them, so the two ship
-       together.
-
-       Covers both chip rows on index.html: the budget filter (💰 💳 ✨) and
-       the climate filter (🌴 ☀ 🌤 🍂 ❄). All five climate glyphs resolve to
-       GM_SPRITE keys — palm · sun-clear · partly-cloudy · leaf-autumn ·
-       snowflake — and guides-index-style.css carries the matching masks, so
-       the entire row draws. Measured 2026-08-18: 0 of the 62 glyphs in MARKS
-       render flat and 0 render blank.
-
-       Explicit wrapper, never `forEach.call(list, markRow)` — see the note on
-       the motion sweep below for what that costs. */
-    [].forEach.call(document.querySelectorAll('#tt-budget-chips .ttchip,#tt-climate-chips .ttchip,.hcchip'),
-      function (row) { markRow(row); });
-
-    if (!isRealGuide) return;
-
-    /* Motion rows — every glyph in them is a mark by definition.
-       NOTE the explicit wrapper. Passing `markRow` straight to forEach hands it
-       (element, index, array) — which was harmless until markRow grew `bare`
-       and `only` parameters, at which point every row after the first received
-       bare=index and only=the NodeList. A truthy `only` makes every match hit
-       `continue`, so the row was rebuilt as byte-identical plain text: no mark,
-       no hidden span, and the emoji left visible. It looked like a mobile bug
-       and was neither mobile nor a CSS problem. Never pass markRow by
-       reference to an iterator. */
-    [].forEach.call(
-      document.querySelectorAll('.next,.next-tram,.next-metro,.hotel-first,.arrive-first'),
-      function (row) { markRow(row); });
-    /* Box rows — only where the glyph LEADS the row, matching _injectAddrCopy's
-       own test, so a description that happens to mention a pin or a taxi is
-       untouched. Covers the 📍 address row and the 🚶/🚕 rows that Tours, Day
-       Trips, Shows and Train Stations entries carry.
-
-       The four box families are the ones guide-style.css already groups as one
-       (`.tour-box > div, .ticket-box > div, .entry-body > div, .station-box >
-       div, .shows-box > div` share the row-spacing rule). Scoping to them is
-       what keeps prose out: a .stop-row of description text is not a direct
-       child of any of them.
-
-       .extras-sub IS a row and is included — it is the per-entry heading that
-       carries "🚕 Uber", "📅 1. {tour name}", "🚊 {tram line}". Its glyph is a
-       row mark in every sense: it labels one entry, not a section.
-
-       .extras-title and .overview-extra-link are BOTH included — the section
-       heading and the pill that jumps to it (owner 2026-08-11, "can you change
-       pills after and match the sections?"). They were held back at first
-       precisely because they move together: the title set is mixed
-       food/transport/misc, so drawing only the vehicles would have left a drawn
-       bus beside an emoji fork. They ship together now, off ONE table, which is
-       what keeps a pill and its section from ever drifting apart.
-
-       NOT included: the floating "currently reading" strip, which builds its
-       own '📍 ' text in _injectStopStrip rather than carrying authored markup. */
-    [].forEach.call(
-      document.querySelectorAll('.tour-box > div,.ticket-box > div,' +
-                                '.entry-body > div,.station-box > div,.shows-box > div,' +
-                                /* Train and ferry booking rows live in a .transit-box or a
-                                   .train day block, neither of which was ever in this list — so
-                                   610 of the 619 booking rows kept their emoji even after the
-                                   glyph was given a mark. The box families are not
-                                   interchangeable, and a MARKS row does nothing for a row this
-                                   sweep never visits. */
-                                '.transit-box > div,.train > div,' +
-                                /* The Read more link, one per stop. Scoped to the anchor
-                                   rather than .stop-row so a description that happens to open
-                                   with a glyph is not swept — prose is not a row. */
-                                '.stop-row > a,' +
-                                '.extras-sub,.overview-extra-link,.extras-title,' +
-                                /* .open-now-local-time is NOT here: it is built by toolbar.js
-                                   and _updateLabel reassigns its textContent on a timer, which
-                                   wipes any mark this pass inserts. It carries its own mark,
-                                   built once beside the text span the timer updates. */
-                                '.also-on-this-site-pill'),
-      function (row) {
-        /* CSS-injected titles carry their glyph in a ::before, invisible to the
-           walker — turn them into real text before testing. No-op elsewhere. */
-        if (row.classList.contains('extras-title')) materialiseTitle(row);
-        var t = row.textContent.trimStart(), m;
-        RE.lastIndex = 0;
-        m = RE.exec(t);
-        if (!m || m.index !== 0) return;
-        /* An .extras-sub repeating its own section header's mark is noise: the
-           column reads as one icon stamped down the page. Hide the glyph and
-           draw nothing (owner 2026-08-11). Different mark = genuinely different
-           information, so it stays. */
-        var bare = false;
-        /* NOTE — the "also on this site" pills are NOT de-duplicated here.
-           _injectAlsoOnSiteIcons runs AFTER this pass, so at this point the pill
-           carries no <svg> yet and there is nothing to test for; that injector
-           removes the mark itself before inserting the nav icon. Do not add a
-           "does the row already have an icon" test here — it reads correctly and
-           does nothing. */
-        if (row.classList.contains('extras-sub')) {
-          var sec = row.closest('.extras-section,.worth-knowing');
-          var title = sec && sec.querySelector('.extras-title');
-          if (title) {
-            materialiseTitle(title);
-            var ht = title.textContent.trimStart(), hm;
-            RE.lastIndex = 0;
-            hm = RE.exec(ht);
-            /* ANY mark on the header is enough — not just an identical one.
-               Train Stations pairs a 🚆 header with 🚊 entries and Getting
-               Around a 🚌 header with 🚕 entries, so a same-glyph test left both
-               repeating down the column, which is the thing being removed. */
-            if (hm && hm.index === 0) bare = true;
-          }
-        }
-        markRow(row, bare);
-      });
-    /* RATING STARS MID-LINE. A row that LEADS with a glyph already has its
-       star drawn, because markRow converts every mark in the row — that is why
-       Tours entries came out right. Restaurant and Michelin entries lead with
-       the venue name instead ("ALMA Buenos Aires · 4.4⭐ · 640+ reviews"), so
-       the whole row was skipped and kept the gold Apple star mid-sentence
-       (owner 2026-08-11: "the starts in the middle is a emoji"). This sweep
-       picks those up, restricted to ⭐ so a description that mentions anything
-       else is untouched.
-
-       The box families are in this sweep for a second reason of their own: a
-       .ticket-box booking row LEADS with a .ticket-flag span, not a glyph, so
-       the leading-glyph pass above returns early on it and never reaches the
-       rating star at the end of the line — "… Skip-the-Line Access · 4.7⭐ ·
-       165+ reviews" kept a gold Apple star directly under a drawn ticket and a
-       drawn clock (owner 2026-08-11, on that exact row). */
-    [].forEach.call(
-      document.querySelectorAll('.extras-sub,.entry-body > div,.shows-box > div,' +
-                                '.ticket-box > div,.tour-box > div,.station-box > div'),
-      function (row) { if (row.textContent.indexOf('⭐') >= 0) markRow(row, false, '⭐'); });
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _injectRowMarks);
-  } else {
-    _injectRowMarks();
-  }
+     The consumers that used to test textContent for a glyph read _gmRole()
+     instead. Do not re-add a glyph-to-drawing swap of any kind. */
 
   /* ── The booking and free ticket marks, drawn ────────────────────────────────
      .ticket-flag / .free-flag paint through a CSS mask, which is monochrome and so
@@ -8882,85 +8566,15 @@ window.TVE.home = (function () {
      iconSVG rather than a .gm-mk mask on purpose: the mask classes live in
      guide-style.css, which Trip-Essentials pages do not load. An inline SVG
      needs no stylesheet and works on every page this strip appears on. */
-  /* ── Guides-Index pill icons — drawn, from the authored glyph ─────────────
-     Owner 2026-08-11: "the website index pills lost its icons too" · "under
-     trip escape lost too" · "we have most of them". Commit a4701fa3 (a SECOND
-     emoji sweep, separate from 043c9fe6 which did the Trip-Essentials pages)
-     stripped 76 lines of index.html — every pill, every Trip Escape option,
-     and even the text of the "LOCKED ICONS: Stats = 📊, Compare = 📶" comment
-     that was there to stop exactly this.
+  /* ── The index pill icon swap is RETIRED ──────────────────────────────────
+     `INDEX_GLYPH_ICON` and `_injectIndexPillIcons` walked the guides-index and
+     landing-page pills for an authored emoji and replaced each one with a
+     drawing. That is the same conversion `markRow` did on guide rows, and it
+     went for the same reason (owner 2026-08-20: "no more marks to then change
+     to icons use the icons itself").
 
-     The markup is restored, so the glyph is once again the authored source of
-     truth and that comment means something again. It is never rendered: this
-     pass swaps each one for the matching drawn icon, so the index chips draw
-     from the same set as the toolbar, the guides and the footer pills.
-
-     iconSVG rather than a .gm-mk mask, for the same reason as the footer
-     pills: the mask classes live in guide-style.css, which the index does not
-     load. ✓ and ✕ are deliberately absent — they are text glyphs with their
-     own locked treatment, not emoji. */
-  var INDEX_GLYPH_ICON = {
-    '✈': 'plane', '🛫': 'plane', '📊': 'chart', '📶': 'compare',
-    '🌆': 'triptype', '📅': 'calendar', '🗓': 'calendar', '🗣': 'language',
-    '📍': 'pin', '🌐': 'globe', '🌍': 'globe', '🌎': 'globe', '🌏': 'globe',
-    '🗺': 'country-map', '🏆': 'trophy', '📋': 'list', '💰': 'money', '💳': 'card',
-    '🏠': 'neighborhoods', '🛡': 'safety-guide', '✨': 'star',
-    '🚗': 'rental-cars', '🚕': 'rental-cars', '🚆': 'train', '🚄': 'train',
-    '🚌': 'transit', '🚢': 'ship', '⛴': 'ship',
-    '🏝': 'island', '🏖': 'beach', '🎿': 'ski', '🎨': 'artframe',
-    '🎢': 'ferris', '🛝': 'kids', '🍽': 'restaurants', '🍷': 'wine',
-    '🌴': 'palm', '🌲': 'pine-forest-chip', '🍂': 'tree', '🏛': 'unesco',
-    '🌃': 'stage', '☀': 'sun', '🌤': 'sun', '❄': 'aurora', '🌡': 'sun'
-  };
-  function _injectIndexPillIcons() {
-    var isIndex = /\/(index\.html)?$/.test(location.pathname) ||
-                  document.querySelector('.pill-row, #btn-my-trips');
-    if (!isIndex) return;
-    var keys = Object.keys(INDEX_GLYPH_ICON);
-    var RE = new RegExp('(' + keys.map(function (k) {
-      return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }).join('|') + ')️?', 'g');
-
-    var scope = document.querySelectorAll(
-      '.pill-row a,.pill-row button,.disc-btn,.seg-btn,.lang-menu-item,' +
-      '#btn-my-trips,#lsp-topbar,#view-compare,#continentJumpLabel,' +
-      '.disc-panel button,.disc-panel a,.esc-opt,.esc-opt-label,' +
-      '#theme-panel .tchip,#tt-climate-chips .ttchip');
-    [].forEach.call(scope, function (el) {
-      if (el.getAttribute('data-gm-ico')) return;
-      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
-      var texts = [], n;
-      while ((n = walker.nextNode())) {
-        RE.lastIndex = 0;
-        if (RE.test(n.nodeValue)) texts.push(n);
-      }
-      if (!texts.length) return;
-      el.setAttribute('data-gm-ico', '1');
-      texts.forEach(function (tn) {
-        var s = tn.nodeValue, frag = document.createDocumentFragment(), last = 0, m;
-        RE.lastIndex = 0;
-        while ((m = RE.exec(s))) {
-          if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
-          var key = INDEX_GLYPH_ICON[m[1]];
-          if (navIcon(key)) {
-            var sp = document.createElement('span');
-            sp.innerHTML = iconSVG(navIcon(key), 13, key);
-            sp.setAttribute('aria-hidden', 'true');
-            sp.style.cssText = 'display:inline-block;vertical-align:-0.14em;line-height:0;';
-            frag.appendChild(sp);
-          }
-          last = m.index + m[0].length;
-        }
-        if (last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
-        tn.parentNode.replaceChild(frag, tn);
-      });
-    });
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _injectIndexPillIcons);
-  } else {
-    _injectIndexPillIcons();
-  }
+     Those pills carry <svg class="gm-icon"> in their markup now, written once
+     by Brain/scripts/build/icons_direct.py. Nothing is swapped at render time. */
 
   function _injectAlsoOnSiteIcons() {
     /* .sibling-pill is the same idea under another class — the cross-links a
@@ -9138,12 +8752,11 @@ window.TVE.home = (function () {
          (Icon Order and Format.html § 0). The drawn mark comes off the authored
          glyph instead, which is per-guide and can drift from the nav.
 
-         Only the LEADING mark is removed, and only once we know an icon is
+         Only the LEADING icon is removed, and only once we know a nav icon is
          going in — a pill whose target has no PAGE_ICON entry returns above and
-         keeps its drawn mark, which is the right fallback. The hidden
-         .gm-mk-src span stays, so textContent is still byte-identical. */
+         keeps the icon its markup authored, which is the right fallback. */
       var firstEl = a.firstElementChild;
-      if (firstEl && firstEl.classList && firstEl.classList.contains('gm-mk')) {
+      if (firstEl && firstEl.classList && firstEl.classList.contains('gm-icon')) {
         firstEl.parentNode.removeChild(firstEl);
       }
       var span = document.createElement('span');
@@ -10172,10 +9785,8 @@ window.TVE.home = (function () {
       [].forEach.call(sb.querySelectorAll('.tour-box > div, .ticket-box > div'), function(d) {
         if (txt) return;
         var t = d.textContent.trim();
-        /* 🏛 is surrogate pair 🏛; slice(0,2) covers both bare and VS16 variants */
-        if (t.slice(0, 2) === '🏛') {
-          /* Strip emoji + optional VS16 + space */
-          txt = t.slice(t.indexOf(' ') + 1).trim();
+        if (_gmRole(d) === 'hours') {
+          txt = t;   /* the glyph is an <svg> now, so the text is already clean */
         }
       });
       return txt;
@@ -10266,22 +9877,14 @@ window.TVE.home = (function () {
         while (timeLabel.firstChild) timeLabel.removeChild(timeLabel.firstChild);
         if (!info.hasTz) return;
         var _mk = document.createElement('span');
-        /* Same coloured-symbol swap as markRow. This site builds its own mark
-           because the hours band re-renders on a timer, so it never passes
-           through the row sweep. */
-        if (GM_SPRITE['clock']) {
-          _mk.className = 'gm-mk gm-mk-c';
-          _mk.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-clock-stop"/></svg>';
-        } else {
-          _mk.className = 'gm-mk gm-mk-clock';
-        }
+        /* Drawn directly, like every icon on the site now. There is no hidden
+           glyph span any more: nothing reads this label as text, and the emoji
+           it used to carry is gone from the source. */
+        _mk.className = 'gm-icon';
+        _mk.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-clock-stop"/></svg>';
         _mk.setAttribute('aria-hidden', 'true');
         _mk.style.marginRight = '5px';
-        var _src = document.createElement('span');
-        _src.className = 'gm-mk-src';
-        _src.textContent = '🕐 ';
         timeLabel.appendChild(_mk);
-        timeLabel.appendChild(_src);
         timeLabel.appendChild(document.createTextNode(info.city + ' \xb7 ' + info.timeStr));
       }
 
@@ -10644,12 +10247,12 @@ window.TVE.home = (function () {
       chip.className = 'lounge-arrival-chip';
       if (href) chip.href = href;
       chip.innerHTML =
-        /* Drawn plane, glyph kept hidden — same contract as every other mark.
-           This chip is built here rather than authored in a guide, so no MARKS
-           row can reach it; it inserts its own. */
-        '<span class="lac-iata"><span class="gm-mk gm-mk-c" aria-hidden="true">' +
-        '<svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span><span' +
-        ' style="margin-right:4px"></span><span class="gm-mk-src">✈ </span>' +
+        /* The plane is drawn, full stop. The hidden glyph span this used to
+           carry existed only to keep textContent byte-identical for the mark
+           sweep; that sweep is gone and nothing reads this chip as text. */
+        '<span class="lac-iata"><span class="gm-icon" aria-hidden="true"' +
+        ' style="margin-right:4px">' +
+        '<svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span>' +
         info.iata + '</span>' +
         '<span class="lac-div">|</span>' +
         '<span class="lac-name">' + info.name + '</span>';
@@ -11124,7 +10727,7 @@ window.TVE.home = (function () {
           );
           if (mapEl) {
             var addr = mapEl.textContent.replace(/\s+/g, ' ').trim();
-            if (addr) out.push('   📍 ' + addr);
+            if (addr) out.push('   ' + addr);
           }
           return;
         }
