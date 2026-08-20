@@ -95,14 +95,22 @@ window.TVE.isPhone = function () {
    "~10h flying" and then connects has been told the truth; one shown a
    fabricated "AMS · 1 stop" has not.
 
-   Storage is one key. set() also writes localStorage['tve_book_origin'], which
-   nothing on the site reads today: it is kept so a booking surface can adopt
-   the reader's airport without asking again. It is a WRITE-ONLY reservation,
-   not a link to a live surface — earlier wording here described an in-guide
-   "Hotels & Flights" panel that does not exist, and index.html's picker cited
-   it as precedent. Spec: Toolbar.html § 46. */
+   NOTHING IS SAVED (owner rule 2026-08-20, said several times: "no filter
+   should save anything" · "no user should have any filter search saved on
+   their cookies"). A pick lives for the current page load only — in a plain
+   JS variable, never localStorage — and is gone the moment the reader
+   reloads or navigates. This is deliberate and it is not a bug: the site
+   used to write the choice to localStorage so a reader who picked once
+   carried it to every later page, and that is exactly the behaviour the
+   owner ruled out. The write-only 'tve_book_origin' reservation for a
+   booking surface that was never built is gone with it. Spec: Toolbar.html
+   § 46. */
 window.TVE.home = (function () {
-  var KEY = 'tve_home_city';
+  /* A pick lives here for the current page load and NOWHERE ELSE — no
+     localStorage, no sessionStorage, no cookie. Reset to null on every fresh
+     load, which is the whole point: nothing a reader picks on one page visit
+     is still there on the next. */
+  var picked = null;
   /* NOT a home and never selected as one — the airport FMAP's 237 routings
      were measured from. A reader who picks it gets those exact journeys; a
      reader who picks anything else gets an estimate; a reader who has picked
@@ -112,37 +120,30 @@ window.TVE.home = (function () {
   var ROUTINGS_FROM = 'SEA';
   var subs = [];
 
-  function read() {
-    try {
-      var raw = localStorage.getItem(KEY);
-      if (!raw) return null;
-      var h = JSON.parse(raw);
-      /* A stored home without coordinates cannot answer a distance question,
-         and half-answering is worse than answering nothing. */
-      if (!h || !h.code || typeof h.lat !== 'number' || typeof h.lon !== 'number') return null;
-      return h;
-    } catch (e) { return null; }
-  }
+  /* A previous version of this file DID persist the pick; this purges
+     whatever it left behind rather than ever reading it back. A stray value
+     from before this change must not quietly resurrect itself as a pick the
+     current visit never made. */
+  try {
+    localStorage.removeItem('tve_home_city');
+    localStorage.removeItem('tve_book_origin');
+  } catch (e) {}
 
-  /* NULL when the reader has not picked. Every caller checks; none substitutes
-     a city of its own, which is what a fallback here was. */
-  function get() { return read(); }
+  /* NULL when the reader has not picked THIS PAGE LOAD. Every caller checks;
+     none substitutes a city of its own, which is what a fallback here was. */
+  function get() { return picked; }
 
   function set(h) {
     if (!h || !h.code) return get();
     var next = { code: String(h.code).toUpperCase(), city: h.city || h.code,
                  country: h.country || '', lat: +h.lat, lon: +h.lon };
-    try {
-      localStorage.setItem(KEY, JSON.stringify(next));
-      /* One answer, two surfaces — see the header note on tve_book_origin. */
-      localStorage.setItem('tve_book_origin', next.code);
-    } catch (e) {}
+    picked = next;
     subs.forEach(function (fn) { try { fn(next); } catch (e) {} });
     return next;
   }
 
   function clear() {
-    try { localStorage.removeItem(KEY); } catch (e) {}
+    picked = null;
     /* null, not a replacement city — subscribers repaint into the no-origin
        state exactly as they do on a first visit. */
     subs.forEach(function (fn) { try { fn(null); } catch (e) {} });
@@ -264,13 +265,14 @@ window.TVE.home = (function () {
   }
 
   return {
-    KEY: KEY, ROUTINGS_FROM: ROUTINGS_FROM,
+    /* No KEY export: there is nothing stored to key. */
+    ROUTINGS_FROM: ROUTINGS_FROM,
     get: get, set: set, clear: clear,
     /* isDefault() is now literally "nothing is set" — kept under its old
        name because every consumer already branches on it, but the branch it
        guards changed meaning: it used to mean "use SEA", it now means
        "show nothing and ask". */
-    isDefault: function () { return !read(); },
+    isDefault: function () { return !picked; },
     km: km, estimate: estimate, fmt: fmt,
     fold: fold, lookup: lookup, names: names, fromRow: fromRow,
     onChange: function (fn) { if (typeof fn === 'function') subs.push(fn); }

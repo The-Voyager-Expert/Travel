@@ -1592,7 +1592,8 @@
 // 2026-08-20 — airlines.js joins MIN_VERSIONS at 2: its ?v=1 was frozen and untracked,
 // so the badge-box change in 957d9bc1 would never have reached a returning browser.
 // 2026-08-20 — .cont-btn:visited literal hex (var() is dead inside :visited, so the rule did nothing). web-travel-style.css -> v82. CACHE to v1135.
-var CACHE = 'travel-cache-v1135';
+/* 2026-08-20: TVE.home stops persisting — no filter saves anything, ever toolbar.js -> v780. CACHE to v1136. */
+var CACHE = 'travel-cache-v1136';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1605,7 +1606,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 254,'toolbar.js': 779, 'mobile.css': 87, 'web-travel-style.css': 82, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1, 'airlines.js': 2 };
+var MIN_VERSIONS = { 'guide-style.css': 254,'toolbar.js': 780, 'mobile.css': 87, 'web-travel-style.css': 82, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1, 'airlines.js': 2 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
