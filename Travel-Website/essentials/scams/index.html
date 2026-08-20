@@ -8,30 +8,23 @@
 <style>
 /* ── Badge legend (interactive filter) ── */
 .sc-legend {
-  display: flex; flex-wrap: nowrap; gap: 8px; justify-content: center;
+  display: flex; flex-wrap: nowrap; gap: var(--fam-gap,10px); justify-content: center;
   margin-top: var(--search-gap,32px); margin-bottom: 18px;
 }
 /* Reads the shared badge family tokens from web-travel-style.css — no
    hardcoded hex here. Light AND dark both come from --fam-*, so the two
    can never drift apart again (they had: 6 of 7 dark values were a hand-
    written second copy that no longer matched the doc). */
-.sc-badge {
-  display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600;
-  letter-spacing: 0; line-height: 1; padding: 9px 20px !important;
-  border: 1px solid; border-radius: 999px !important;
-  white-space: nowrap; cursor: pointer;
-}
-.sc-legend .sc-badge { cursor: pointer; user-select: none; }
+/* .sc-badge carries NO box and NO colour — it is a JS hook only. The shape,
+   the size, the case and the family colour all come from the shared
+   .badge / .pill-badge + .fam-* classes in web-travel-style.css, and the
+   selected state is .is-on (currentColor ring + border .4 -> .85). This page
+   used to set its own 13px / 600 / 9px 20px / radius 999px box and paint the
+   selection terracotta: an oval pill at the wrong size in the wrong case,
+   which is exactly what the shared box exists to stop. Never re-add a box
+   here. Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
 .sc-legend .sc-badge:focus-visible { outline: none; }
-.sc-legend .sc-badge.filter-on { background: var(--surface,#fff) !important; border-width: 1.5px !important; border-color: rgba(192,78,26,.85) !important; color: var(--rust,#C04E1A) !important; box-shadow: 0 0 0 2px rgba(192,78,26,.20); }
 
-.sc-badge.pick     { background: var(--fam-red-bg);    border-color: var(--fam-red-bd);    color: var(--fam-red-ink); }
-.sc-badge.distract { background: var(--fam-orange-bg); border-color: var(--fam-orange-bd); color: var(--fam-orange-ink); }
-.sc-badge.official { background: var(--fam-blue-bg);   border-color: var(--fam-blue-bd);   color: var(--fam-blue-ink); }
-.sc-badge.over     { background: var(--fam-yellow-bg); border-color: var(--fam-yellow-bd); color: var(--fam-yellow-ink); }
-.sc-badge.gift     { background: var(--fam-purple-bg); border-color: var(--fam-purple-bd); color: var(--fam-purple-ink); }
-.sc-badge.goods    { background: var(--fam-pink-bg);   border-color: var(--fam-pink-bd);   color: var(--fam-pink-ink); }
-.sc-badge.money    { background: var(--fam-grey-bg);   border-color: var(--fam-grey-bd);   color: var(--fam-grey-ink); }
 
 /* ── Region headers ── */
 .region-header {
@@ -96,8 +89,8 @@
      iOS Safari mis-applies :nth-child here (same reason toolbar.js
      _fixPillGridOrphans uses inline gridColumn for the guide pill grids).
      Locked badge shape props are untouched; only the width stretches. */
-  .sc-legend { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; }
-  .sc-legend .sc-badge { text-align: center; padding: 10px 18px !important; border-radius: 999px !important; }
+  .sc-legend { display: flex !important; flex-wrap: wrap !important; gap: var(--fam-gap,10px) !important; }
+  .sc-legend .sc-badge { text-align: center; }
   .scam-line { flex-direction: column; gap: 0; }
   .scam-label { flex: none; }
   .city-count { margin-left: 0; flex-basis: 100%; }
@@ -162,13 +155,13 @@
   </div>
 
   <div class="sc-legend" id="sc-legend" role="group" aria-label="Filter by scam type">
-    <span class="sc-badge pick"     data-filter="pick"     role="button" tabindex="0">Pickpocket</span>
-    <span class="sc-badge distract" data-filter="distract" role="button" tabindex="0">Distraction</span>
-    <span class="sc-badge official" data-filter="official" role="button" tabindex="0">Fake official</span>
-    <span class="sc-badge over"     data-filter="over"     role="button" tabindex="0">Overcharge</span>
-    <span class="sc-badge gift"     data-filter="gift"     role="button" tabindex="0">Forced gift</span>
-    <span class="sc-badge goods"    data-filter="goods"    role="button" tabindex="0">Fake goods</span>
-    <span class="sc-badge money"    data-filter="money"    role="button" tabindex="0">Card &amp; cash</span>
+    <span class="sc-badge pill-badge fam-red"     data-filter="pick"     role="button" tabindex="0">Pickpocket</span>
+    <span class="sc-badge pill-badge fam-orange" data-filter="distract" role="button" tabindex="0">Distraction</span>
+    <span class="sc-badge pill-badge fam-blue" data-filter="official" role="button" tabindex="0">Fake official</span>
+    <span class="sc-badge pill-badge fam-yellow"     data-filter="over"     role="button" tabindex="0">Overcharge</span>
+    <span class="sc-badge pill-badge fam-purple"     data-filter="gift"     role="button" tabindex="0">Forced gift</span>
+    <span class="sc-badge pill-badge fam-pink"    data-filter="goods"    role="button" tabindex="0">Fake goods</span>
+    <span class="sc-badge pill-badge fam-grey"    data-filter="money"    role="button" tabindex="0">Card &amp; cash</span>
   </div>
 
   <div id="list"></div>
@@ -956,10 +949,14 @@ var CITIES = [
                     .replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
+  /* modifier -> shared family class. The page never writes a colour. */
+  var FAM = { pick:'fam-red', distract:'fam-orange', official:'fam-blue',
+              over:'fam-yellow', gift:'fam-purple', goods:'fam-pink', money:'fam-grey' };
+
   function scamHTML(s) {
     return '<div class="scam" data-type="' + s.c + '">' +
       '<div class="scam-head">' +
-        '<span class="sc-badge ' + s.c + '">' + TYPES[s.c] + '</span>' +
+        '<span class="sc-badge badge ' + FAM[s.c] + '">' + TYPES[s.c] + '</span>' +
         '<span class="scam-name">' + esc(s.t) + '</span>' +
       '</div>' +
       '<div class="scam-line"><span class="scam-label">How it works</span><span>' + esc(s.how) + '</span></div>' +
@@ -1022,7 +1019,7 @@ var CITIES = [
     var on = activeType === t;
     activeType = on ? null : t;
     legendEl.querySelectorAll('.sc-badge').forEach(function (b) {
-      b.classList.toggle('filter-on', !on && b === el);
+      b.classList.toggle('is-on', !on && b === el);
       b.setAttribute('aria-pressed', String(!on && b === el));
     });
     render();
