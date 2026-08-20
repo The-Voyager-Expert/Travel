@@ -1568,7 +1568,8 @@
 /* 2026-08-20: the emoji-to-icon conversion is deleted (owner). MARKS, markRow and _injectRowMarks - 402 lines - turned an authored glyph into a drawn mark at load. Every emoji was deleted from the site source first, so the swap had nothing to convert; now the swap is gone too. Icons come back as icons, referenced directly, never as a character something rewrites at render time. The .gm-mk classes stay - they are the shared icon presentation used by injectors that draw directly. toolbar.js -> v770. CACHE to v1109. */
 /* 2026-08-20: Art & museums draws catalogue 227, the colonnade with no star badge (was 226) toolbar.js -> v771. CACHE to v1110. */
 /* 2026-08-20: the emoji sweep's whitespace damage undone across 249 files. The sweep that deleted every emoji also collapsed every whitespace run in every file it touched, which destroyed the single spaces inside JS string literals: (today ? ' tve-ph-td' : '') became 'tve-ph-td', so the class concatenated as tve-ph-dtve-ph-td, and ' aria-hidden="true">' lost the space separating it from the preceding attribute, so every monoSVG icon rendered malformed. Page indentation went with it. Each file was rebuilt from the pre-sweep source with ONLY the emoji removed and nothing else touched. Eight text-presentation glyphs the sweep took by accident are back: the standalone-X close control, the stop check mark, the em dash, the right arrow, the ellipsis, the command key, the box rule and the text star. No emoji returns. toolbar.js -> v772. CACHE to v1111. */
-var CACHE = 'travel-cache-v1111';
+/* 2026-08-20: THE EMOJI SWEEP IS REVERTED IN FULL (owner: "it is all wrong work"). Every one of the 249 files it touched is restored to its pre-sweep state, so MARKS, markRow and _injectRowMarks are back and every guide authors its glyph again - which means every icon on the site DRAWS again. The reader never saw an emoji: the glyph is the key the site reads to pick the drawing, and stripping it stopped the drawing rather than removing a picture. The sweep also collapsed every whitespace run in those files, which ate the single spaces inside JS string literals - (today ? ' tve-ph-td' : '') became 'tve-ph-td', so the class concatenated as tve-ph-dtve-ph-td, and ' aria-hidden="true">' lost the space before it, so every monoSVG icon rendered malformed - and it emptied a regex literal in trips/index.html into //g, which JS reads as a comment and which killed that whole inline script. All of it goes with the revert. The two owner icon picks that landed after the sweep are kept: the redrawn exchange coin (#1326) and Art & museums on catalogue 227, the starless colonnade. toolbar.js -> v773. CACHE to v1112. */
+var CACHE = 'travel-cache-v1112';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1581,7 +1582,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 250,'toolbar.js': 772, 'mobile.css': 87, 'web-travel-style.css': 76, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 7, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 250,'toolbar.js': 773, 'mobile.css': 87, 'web-travel-style.css': 76, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 7, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
