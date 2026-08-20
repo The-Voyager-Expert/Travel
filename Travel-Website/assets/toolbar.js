@@ -2205,12 +2205,10 @@ window.TVE.home = (function () {
 
   }
 
-  function guideNameFromHref(href) {
-    if (!href) return '';
-    var parts = href.split('/');
-    var folder = parts[parts.length - 2];
-    return (folder && folder !== '..') ? decodeURIComponent(folder) : '';
-  }
+  /* guideNameFromHref is DELETED (2026-08-20). Nothing called it, and it read
+     the guide name out of a FOLDER in the path — the pre-2026-08-16 URL shape,
+     retired when guides flattened to /guides/{city}.html. It could only ever
+     have returned the wrong thing. */
 
   /* ── Prev / Next — arrows flanking the .overview-title ───────────────────── */
   var btnStyle = 'display:inline-flex;align-items:center;justify-content:center;' +
@@ -7292,54 +7290,27 @@ window.TVE.home = (function () {
     }
   }());
 
-  /* ── End-section nav pills — injects overview-extra-link pills for the five
-     bottom sections (Also on This Site, Best Of, Nearby Guides, Alt. Hotels,
-     Also in Country) so they are reachable from the scrollable pill strip above
-     the guide days. Injected dynamically so pills only appear when the section
-     is present and has content. (owner rule 2026-08-06) */
-  function _injectEndSectionPills() {
-    if (!isRealGuide) return;
-    var row = document.querySelector('.overview-extras:not(#ics-pill-row)');
-    if (!row) return;
-    function addPill(href, text, icoKey) {
-      var a = document.createElement('a');
-      a.className = 'overview-extra-link';
-      a.href = href;
-      if (navIcon(icoKey)) {
-        a.style.cssText = 'display:inline-flex;align-items:center;gap:6px';
-        var s = document.createElement('span');
-        s.style.cssText = 'display:inline-flex;flex-shrink:0';
-        s.innerHTML = iconSVG(navIcon(icoKey), 14, icoKey);
-        a.appendChild(s);
-        a.appendChild(document.createTextNode(text));
-      } else {
-        a.textContent = text;
-      }
-      row.appendChild(a);
-    }
-    /* 1. Also on This Site — NO PILL (owner rule 2026-08-15). The extras row
-       used to carry an "Also on this site" jump pill; the section itself now
-       stands alone at the bottom of the guide, where the reader meets it after
-       the itinerary. Owner: "also in this site remove pill from extra sections
-       and will only show in the bottom." The #also-on-this-site section is
-       untouched and still required by the validators — only its shortcut in the
-       Trip Overview extras row is gone. Do not re-add the pill. */
-    /* 3. Nearby Guides — NO PILL (owner rule 2026-08-15), same call as "Also on
-       this site" above: "nearby guide remove to be a pills on extra section
-       also and will only show below in the own section too." The #nearby-guides
-       section still ships, still built by build_nearby_guides.py, and still
-       carries its own heading at the foot of the guide — only its shortcut in
-       the Trip Overview extras row is gone. Do not re-add the pill. */
-    /* 4. Alternative Hotel Recommendations — NO PILL (owner rule 2026-08-15).
-       Section still ships at the bottom of the guide; only the shortcut here is removed. */
-    /* 5. Also in Country — NO PILL (owner rule 2026-08-15).
-       Section still ships at the bottom of the guide; only the shortcut here is removed. */
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _injectEndSectionPills);
-  } else {
-    _injectEndSectionPills();
-  }
+  /* ── The end-section nav pills are RETIRED (owner rule 2026-08-15) ─────────
+     `_injectEndSectionPills` built five overview-extra-link pills into the strip
+     above the guide days — Also on This Site, Best Of, Nearby Guides, Alternative
+     Hotels, Also in Country. The owner removed all five that day, and what was
+     left was a function that queried the DOM, defined an addPill helper, and then
+     ran five comments. Deleted 2026-08-20; the rulings it carried are kept here
+     because each one is a "do not re-add" and they are the only record of it.
+
+     1. ALSO ON THIS SITE — no pill. Owner: "also in this site remove pill from
+        extra sections and will only show in the bottom." The #also-on-this-site
+        section is untouched and still required by the validators; only its
+        shortcut in the Trip Overview extras row is gone.
+     2. BEST OF — no pill. Same call, same day.
+     3. NEARBY GUIDES — no pill. Owner: "nearby guide remove to be a pills on
+        extra section also and will only show below in the own section too."
+        #nearby-guides still ships, still built by build_nearby_guides.py, and
+        still carries its own heading at the foot of the guide.
+     4. HOTEL RECOMMENDATIONS — no pill. Section still ships at the bottom.
+     5. ALSO IN COUNTRY — no pill. Section still ships at the bottom.
+
+     Do not re-add any of them, and do not re-add the injector. */
 
   /* ── Nearby Guides header icon ──────────────────────────────────────────
      That title is not DOM text: guide-style.css writes it with
@@ -9213,7 +9184,6 @@ window.TVE.home = (function () {
       try { localStorage.setItem(storageKey, JSON.stringify(map)); } catch (e) {}
     }
     var notes = _load();
-    function _count() { return Object.keys(notes).length; }
 
     /* ── SVG ─────────────────────────────────────────────────────────────── */
     var _pencilSvg =
