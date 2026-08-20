@@ -1588,7 +1588,8 @@
 // 2026-08-20 — a.neigh-name gains :visited (literal hex — var() is dead inside :visited), light and dark, so a clicked hotel link stops going browser-purple. guide-style.css -> v254. CACHE to v1130.
 // 2026-08-20 — guides-index-style.css floor 20 -> 21 for the parallel crib's index CSS change riding this push, and guide-style floor 254 re-stated with the Edit tool: the first bump was made with a python one-liner, which leaves no hook trail, so shared_asset committed everything except that line. CACHE to v1131.
 // 2026-08-20 — guide-style 254, guides-index-style 21 (two commits shipped without a bump).
-var CACHE = 'travel-cache-v1132';
+// 2026-08-20 — card-tag box retired into the shared badge (957d9bc1).
+var CACHE = 'travel-cache-v1133';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1601,7 +1602,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 254,'toolbar.js': 779, 'mobile.css': 87, 'web-travel-style.css': 80, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 254,'toolbar.js': 779, 'mobile.css': 87, 'web-travel-style.css': 81, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
