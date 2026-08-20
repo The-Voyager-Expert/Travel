@@ -7464,52 +7464,14 @@ window.TVE.home = (function () {
     }
   })();
 
-  /* ── "Request a different hotel" — guide title cards ──────────────────────
-     Owner rule 2026-08-15: "below the hotel in each guide write request a
-     diffrent hotel and when clicks opens the person email app with the
-     contact." A mailto: link under the hotel banner on every guide. It carries
-     the city and the hotel currently on the card in the subject and body, so
-     the reply arrives with the context already in it and the reader types only
-     what they actually want.
-
-     contact@guidemydays.com is the same address the Contact tab in ITEMS uses —
-     one inbox for the site, and a mailto is never depth-prefixed with `base`.
-
-     Injected from here rather than authored into 245 guide files: the title
-     card's shape is identical on every guide, so one injection covers the fleet
-     and a future wording change is one edit. Deferred to DOMContentLoaded —
-     this script runs at the top of <body>, before .title-page is parsed.
-     Styles (including the mobile order and the dark-mode colour) live in
-     guide-style.css next to the rest of the title-card rules. */
-  (function () {
-    if (!isRealGuide) return;
-    function buildHotelRequest() {
-      var titlePage = document.querySelector('.title-page');
-      if (!titlePage) return;
-      var hotel = titlePage.querySelector('.title-hotel');
-      if (!hotel) return;                                  /* no hotel, no ask */
-      if (titlePage.querySelector('.title-hotel-request')) return;
-      var cityEl = titlePage.querySelector('.title-city');
-      var city = cityEl ? (cityEl.textContent || '').trim() : '';
-      var hotelName = (hotel.textContent || '').trim();
-      var link = document.createElement('a');
-      link.className = 'title-hotel-request';
-      link.href = 'mailto:contact@guidemydays.com' +
-        '?subject=' + encodeURIComponent('Inquire for a different hotel' + (city ? ' — ' + city : '')) +
-        '&body=' + encodeURIComponent(
-          (city ? 'Guide: ' + city + '\n' : '') +
-          (hotelName ? 'Hotel on the guide: ' + hotelName + '\n' : '') +
-          '\nWhat I am looking for instead:\n');
-      link.textContent = 'Inquire for a different hotel as your starting point';
-      var addr = titlePage.querySelector('.title-address');
-      (addr || hotel).insertAdjacentElement('afterend', link);
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', buildHotelRequest);
-    } else {
-      buildHotelRequest();
-    }
-  })();
+  /* RETIRED 2026-08-20 (owner) — the "Inquire for a different hotel as your
+     starting point" line under the hotel banner. It was injected here onto
+     every guide title card (owner rule 2026-08-15) and the owner removed it:
+     "remove this sentence from the guides and move the next section up." The
+     card now ends on the hotel address and the pill row sits directly under
+     it. Its `.title-hotel-request` rules went out of guide-style.css in the
+     same pass — CSS that still describes a retired component is how the next
+     crib talks itself into re-adding it. Do not restore the injection. */
 
   /* ── Quick Facts strip — real guide pages only ────────────────────────────
      The four facts a reader checks before committing to an itinerary:
