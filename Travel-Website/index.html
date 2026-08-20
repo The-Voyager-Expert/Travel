@@ -2859,17 +2859,17 @@ window.lpGuideCard = function (href, flag, name, extra) {
 
         <div class="fnd-field">
           <label for="fnd-lang">Language</label>
+          <!-- THE OPTIONS ARE BUILT FROM THE DATA (buildLangOpts), never listed
+               here. The hand-written list that stood in this spot had drifted
+               from the tags it filters: Greek was missing with SEVEN guides
+               behind it — as many as Dutch, Chinese and Arabic, all of which
+               were offered — while Danish, Finnish and Turkish were offered
+               with one guide each. Vietnamese, Croatian, Tamil and Papiamento
+               were missing too. A language that exists in the data and not in
+               this list is unreachable, and nothing anywhere said so. Same
+               reasoning as the Day Trips by Train field directly below. -->
           <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-language-roundel"/></svg></span><select id="fnd-lang">
             <option value="">Any language</option>
-            <option value="en">English</option><option value="es">Spanish</option>
-            <option value="fr">French</option><option value="de">German</option>
-            <option value="it">Italian</option><option value="pt">Portuguese</option>
-            <option value="nl">Dutch</option><option value="ja">Japanese</option>
-            <option value="zh">Chinese</option><option value="ko">Korean</option>
-            <option value="ar">Arabic</option><option value="th">Thai</option>
-            <option value="tr">Turkish</option><option value="sv">Swedish</option>
-            <option value="no">Norwegian</option><option value="da">Danish</option>
-            <option value="fi">Finnish</option>
           </select></div>
         </div>
 
@@ -6657,6 +6657,47 @@ function render() {
      syncTrain, which is the first line of run(). Rebuilding later would wipe
      the disabled flags prune had just set. */
   var trainOptsBuilt = false;
+  /* ── Language options, from the tags ──────────────────────────────────────
+     Every code that appears in a data-lang attribute gets an option, named and
+     counted, ordered by how many guides carry it. A code with no name here
+     still gets an option under its own code rather than vanishing — the list
+     must never be shorter than the data. */
+  var LANG_NAMES = {
+    en: 'English', es: 'Spanish', fr: 'French', de: 'German', it: 'Italian',
+    pt: 'Portuguese', nl: 'Dutch', ja: 'Japanese', zh: 'Chinese', ko: 'Korean',
+    ar: 'Arabic', th: 'Thai', tr: 'Turkish', sv: 'Swedish', no: 'Norwegian',
+    da: 'Danish', fi: 'Finnish', el: 'Greek', hr: 'Croatian', cs: 'Czech',
+    hu: 'Hungarian', is: 'Icelandic', id: 'Indonesian', sl: 'Slovenian',
+    ca: 'Catalan', eu: 'Basque', pap: 'Papiamento', lb: 'Luxembourgish',
+    ms: 'Malay', ta: 'Tamil', et: 'Estonian', vi: 'Vietnamese', pl: 'Polish',
+    dz: 'Dzongkha', ka: 'Georgian', lo: 'Lao', lv: 'Latvian', lt: 'Lithuanian',
+    dv: 'Dhivehi', mt: 'Maltese', cnr: 'Montenegrin', ne: 'Nepali',
+    tl: 'Filipino', si: 'Sinhala'
+  };
+  var langOptsBuilt = false;
+  function buildLangOpts(d) {
+    var sel = document.getElementById('fnd-lang');
+    if (langOptsBuilt || !sel || !d || !d.guides) return;
+    var n = {};
+    d.guides.forEach(function (g) {
+      (g.lang || []).forEach(function (c) { if (c) n[c] = (n[c] || 0) + 1; });
+    });
+    var codes = Object.keys(n);
+    if (!codes.length) return;           /* nothing to offer — leave Any alone */
+    langOptsBuilt = true;
+    codes.sort(function (a, b) {
+      return n[b] - n[a] || (LANG_NAMES[a] || a).localeCompare(LANG_NAMES[b] || b);
+    });
+    codes.forEach(function (c) {
+      var o = document.createElement('option');
+      o.value = c;
+      /* Counted like the Country field, and for the same reason: the number is
+         what would have made the missing Greek obvious from the page itself. */
+      o.textContent = (LANG_NAMES[c] || c.toUpperCase()) + ' (' + n[c] + ')';
+      sel.appendChild(o);
+    });
+  }
+
   function buildTrainOpts(d) {
     if (trainOptsBuilt || !fTrain || !d || !d.guides) return;
     var seen = {};
@@ -6689,6 +6730,7 @@ function render() {
         if (!d) return;
         var wasBuilt = trainOptsBuilt;
         DATA = d;
+        buildLangOpts(d);
         buildTrainOpts(d);
         if (!CONT) { CONT = d.cont; run(); }
         else if (!wasBuilt && trainOptsBuilt) run();
