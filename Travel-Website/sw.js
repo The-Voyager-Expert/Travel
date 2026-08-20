@@ -1581,7 +1581,8 @@
 /* 2026-08-20: the "Inquire for a different hotel as your starting point" line is GONE from every guide title card (owner, on a Salzburg guide: "remove this sentence from the guides and move the next section up"). It was a mailto injected by toolbar.js under the hotel banner since 2026-08-15, carrying the city and the current hotel in its subject and body. Both halves go, not just the injection: the .title-hotel-request rules leave guide-style.css in light, dark and phone, because CSS that still describes a retired component is how the next crib talks itself into re-adding it, and an injection with no CSS renders an unstyled line rather than nothing at all. The card now ends on the address, so the pill row below moves up by the line and its 6px - nothing else moved, the element was in normal flow. The guides-index feature list loses the bullet advertising it in the same pass (Forty-sixth non-negotiable: a list selling something the guides no longer do is worse than one that says nothing), and rule 858's check is INVERTED: check_hotel_request_link_is_brand_gold pinned the line's colour and would have gone on passing vacuously on zero selectors, so it is replaced by check_hotel_request_line_retired, which fails if either half comes back. guide-style.css -> v253, toolbar.js -> v778. CACHE to v1120. */
 /* 2026-08-20: HEIGHTS MARK — catalogue #1423, a viaduct, added to GM_SPRITE as 'viaduct'. Owner picked the bridge without a figure from three rounds of candidates; the down arrow read as Download, the up arrow as Upload, and a suspension bridge read as the letter M, which is why this one is built on arches. A stop authors data-icon=viaduct data-role=heights. Arch strokes are 1.5, below the 3.0 subject threshold, so they are detail on a treated object and icon_treatment passes as drawn. Render-tested over http at 17/24/64px. toolbar.js -> v779. CACHE to v1121. */
 // 2026-08-20 — badge + pill-to-badge become one element: both ALL CAPS, one box.
-var CACHE = 'travel-cache-v1124';
+// 2026-08-20 — --fam-gap floor 5px -> 10px (badge/pill-to-badge strips).
+var CACHE = 'travel-cache-v1125';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1594,7 +1595,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 253,'toolbar.js': 779, 'mobile.css': 87, 'web-travel-style.css': 77, 'guides-index-style.css': 20, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 253,'toolbar.js': 779, 'mobile.css': 87, 'web-travel-style.css': 78, 'guides-index-style.css': 20, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
