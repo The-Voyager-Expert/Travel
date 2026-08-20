@@ -1582,7 +1582,7 @@
 /* 2026-08-20: HEIGHTS MARK — catalogue #1423, a viaduct, added to GM_SPRITE as 'viaduct'. Owner picked the bridge without a figure from three rounds of candidates; the down arrow read as Download, the up arrow as Upload, and a suspension bridge read as the letter M, which is why this one is built on arches. A stop authors data-icon=viaduct data-role=heights. Arch strokes are 1.5, below the 3.0 subject threshold, so they are detail on a treated object and icon_treatment passes as drawn. Render-tested over http at 17/24/64px. toolbar.js -> v779. CACHE to v1121. */
 // 2026-08-20 — badge + pill-to-badge become one element: both ALL CAPS, one box.
 // 2026-08-20 — --fam-gap floor 5px -> 10px (badge/pill-to-badge strips).
-/* 2026-08-20: TVE.home has no fallback: nothing is the reader's origin until they pick one toolbar.js -> v780. CACHE to v1126. */
+// 2026-08-20 — badge/pill comment wording: the gap floor, equal both ways.
 var CACHE = 'travel-cache-v1126';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
@@ -1596,7 +1596,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 253,'toolbar.js': 780, 'mobile.css': 87, 'web-travel-style.css': 78, 'guides-index-style.css': 20, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 253,'toolbar.js': 779, 'mobile.css': 87, 'web-travel-style.css': 79, 'guides-index-style.css': 20, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
