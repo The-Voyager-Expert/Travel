@@ -1096,11 +1096,7 @@ window.TVE.home = (function () {
        different stylesheets. */
     '.gm-icon{display:inline-block;width:1.2em;height:1.2em;vertical-align:-0.22em;flex-shrink:0}' +
     '.gm-icon svg,.gm-icon use{width:100%;height:100%}' +
-    '.gm-mk.gm-mk-c{background:none;-webkit-mask:none;mask:none;line-height:0;'
-    /* the svg inside is 1.2em; without matching the BOX to it the mark
-       overflows its own 1em width and sits on top of the text. */
-    + 'width:1.2em;height:1.2em;margin-right:0.2em;vertical-align:-0.22em}' +
-    '.gm-mk.gm-mk-c svg{width:1.2em;height:1.2em;display:block}';
+    '';
 
   /* One sprite and one style tag per page, inserted before anything asks for a
      symbol. Idempotent: a second call is a no-op. */
@@ -2015,7 +2011,7 @@ window.TVE.home = (function () {
          stripped from the rendered label here, not from the data. */
       var gico = navIcon(item.groupIcon);
       if (gico) {
-        labelText = labelText.replace(/^[^\x00-\x7E\s]+️?\s*/, '').trim() || labelText;
+        labelText = labelText.replace(/^[^\x00-\x7E\s]+\uFE0F?\s*/, '').trim() || labelText;
         var gs = document.createElement('span');
         gs.className = 'tb-ico';
         gs.innerHTML = iconSVG(gico, 13, item.groupIcon);
@@ -2112,7 +2108,7 @@ window.TVE.home = (function () {
       fs.innerHTML = iconSVG(fico, 13, item.icon);
       a.appendChild(fs);
       var fl = document.createElement('span');
-      fl.textContent = (item.text || '').replace(/^[^\x00-\x7E\s]+️?\s*/, '').trim() || item.text;
+      fl.textContent = (item.text || '').replace(/^[^\x00-\x7E\s]+\uFE0F?\s*/, '').trim() || item.text;
       a.appendChild(fl);
     } else {
       a.textContent = item.text;
@@ -2766,7 +2762,7 @@ window.TVE.home = (function () {
     function renameCappuccinoPill() {
       [].slice.call(document.querySelectorAll('.overview-extra-link[href="#cappuccino"]')).forEach(function (a) {
         /* Rewrite the TEXT NODES only. The leading glyph is swapped for a drawn
-           mark by _injectRowMarks, which leaves a hidden .gm-mk-src span behind
+           icon authored in the markup by icons_direct.py
            whose textContent must stay byte-identical (Twenty-fourth
            non-negotiable) — setting a.textContent would destroy both. */
         var w = document.createTreeWalker(a, NodeFilter.SHOW_TEXT, null), n;
@@ -7621,8 +7617,8 @@ window.TVE.home = (function () {
           ico.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-' + it[0] + '"/></svg>';
         }
         ico.setAttribute('aria-hidden', 'true');
-        /* .gm-mk sizes itself at 1em; the pill's own font-size is 12px, so the
-           mark lands at 12px without a second source of truth for the size. */
+        /* .gm-icon sizes itself at 1.2em; the pill's own font-size is 12px, so
+           the icon follows it without a second source of truth for the size. */
         ico.style.cssText = 'line-height:1;flex-shrink:0;';
         pill.appendChild(ico);
         pill.appendChild(document.createTextNode(it[2]));
@@ -8563,7 +8559,7 @@ window.TVE.home = (function () {
      when a nav icon changes. A pill whose target has no ITEMS entry simply
      stays text.
 
-     iconSVG rather than a .gm-mk mask on purpose: the mask classes live in
+     iconSVG rather than a CSS mask on purpose: the mask classes lived in
      guide-style.css, which Trip-Essentials pages do not load. An inline SVG
      needs no stylesheet and works on every page this strip appears on. */
   /* ── The index pill icon swap is RETIRED ──────────────────────────────────
@@ -8739,7 +8735,7 @@ window.TVE.home = (function () {
       if (key && mute && mute[key]) return;               /* repeated down the strip */
       if (!navIcon(key)) return;
       /* THE PILL MAY ALREADY CARRY A DRAWN MARK — take it out before inserting.
-         The guard above only catches an <svg>, and a .gm-mk is a CSS mask on a
+         The guard above only catches an <svg>, and a mask would be painted on a
          SPAN, so a pill whose authored glyph is in the MARKS table came through
          it and ended up with both: the sun twice on Weather, the shield twice
          on Safety Guide, the house twice on Which neighborhood (owner
