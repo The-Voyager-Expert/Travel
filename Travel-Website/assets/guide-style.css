@@ -177,9 +177,18 @@ body { opacity: 0; transition: none; }
   --fs-overview-day:   15px;   /* mobile .tours-group size — same as base */
   --fs-overview-stops: 13px;   /* day card stop list */
   --fs-overview-pills: 15px;   /* extras nav pills */
+  /* Trip Overview day rows — DELIBERATELY above --fs-base, and that is why it is
+     its own token. The Trip Overview is the block a reader scans first and comes
+     back to all day, and it had been sitting at the body size (15px) with the rail
+     labels smaller still. Raising it through --fs-overview-day-title was tried and
+     reverted repeatedly: check_font_size_consistency PINS that token to --fs-base,
+     so every attempt hard-failed and got put back — and that token also drives the
+     guides-index cards and .guide-nav, which the owner did not ask to resize.
+     One token, scoped to this block, pinned by check_trip_overview_font_size. */
+  --fs-overview-title: 17px;   /* Trip Overview day row (.overview-day-title / .ovd-stops) */
   --fs-stop-row:     15px;   /* stop row (icons + text) */
   --fs-extras-title: var(--fs-h2);   /* extra section title (mobile review-link) */
-  --fs-overview-day-title: 15px; /* day card city title, guide-nav, index cards */
+  --fs-overview-day-title: 15px; /* guides-index cards + .guide-nav — NOT the Trip Overview, which has --fs-overview-title */
 
   /* Print scale — @media print */
   --fs-print:        11px;
@@ -408,7 +417,7 @@ a.title-hotel-request:visited { color: #3d3a32; }   /* owner rule 2026-07-28: no
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   transform: scale(.97) translateY(1px);
 }
-.overview-day-title      { color: var(--c-text-primary); font-weight: normal; font-size: var(--fs-overview-day-title); }
+.overview-day-title      { color: var(--c-text-primary); font-weight: normal; font-size: var(--fs-overview-title); }
 /* Day-row rail — structure injected at runtime by toolbar.js _dayRowRail; the
    guide HTML keeps its single-string "Day N · stop · stop" title, so every static
    check that reads .overview-day-title is unaffected. Rows the script does not
@@ -533,7 +542,7 @@ a.title-hotel-request:visited { color: #3d3a32; }   /* owner rule 2026-07-28: no
      caption token — moving it would resize every address row and photo empty
      state on the guide as a side effect. */
   .ovd-num,
-  .ovd-count { font-size: 13px; }
+  .ovd-count { font-size: 14px; }
 }
 .overview-extras .overview-extra-link:visited { color: #8a6c1a; }  /* literal hex — browsers don't resolve var() in :visited */
 .overview-extras .overview-extra-link:hover   { text-decoration: none; }
@@ -4806,6 +4815,7 @@ a.neigh-name:hover { text-decoration: underline; }
     --fs-overview-day:       16.5px;
     --fs-overview-pills:     16.5px;
     --fs-overview-day-title: 16.5px;
+    --fs-overview-title:     18px;   /* Trip Overview day rows — one step above the phone base, same relationship as desktop */
     --fs-index-title:        16.5px;
     --fs-header:             16.5px;
     --fs-overview-stops:     15px;
@@ -4813,6 +4823,11 @@ a.neigh-name:hover { text-decoration: underline; }
   }
   .stop-name { font-size: 18.5px; }
   .stop-dur  { font-size: 13px; }
+  /* Rail labels follow the raised Trip Overview title (18px here) the same way
+     they follow it on desktop — at --fs-small they were the smallest type on
+     the row by 5px and read as a caption rather than the row's own label. */
+  .ovd-num,
+  .ovd-count { font-size: 14px; }
 
   /* ── 2 · Breathing room between the major blocks ─────────────────────────
      Every boundary the owner named, in page order: weather strip → pill row →
