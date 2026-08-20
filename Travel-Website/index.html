@@ -1206,6 +1206,21 @@ a.land-cta:hover:visited {
   border: 1px solid var(--border2,#e6e2da); border-radius: 14px;
 }
 .tl-panel[hidden] { display: none !important; }
+
+/* The answer belongs under the control that produced it (owner 2026-08-20:
+   "when we compare cities the results need to be just below the comparing
+   feature not below the stats"). Each panel is a child of its own card's row
+   and spans it, so opening Compare puts the table directly beneath the Compare
+   card and pushes Stats below it — rather than the panel sitting under the pair
+   and the results reading as the answer to whichever card you clicked last.
+   The gap alone spaces it, so the panel's own margin-top is dropped here.
+
+   The remaining card goes full width while a panel is open: half a row of card
+   left stranded beside a full-width table reads as a column that failed to
+   load. Closed, the two cards are the 2-up row again. */
+.qt-row > .tl-panel, .ask-row > .tl-panel { grid-column: 1 / -1; margin-top: 0; }
+.qt-row:has(> .tl-panel:not([hidden])) > .qt-card,
+.ask-row:has(> .tl-panel:not([hidden])) > .ask-card { grid-column: 1 / -1; }
 /* The panel fetches /guides/index.html on first open; without this it is an
    empty bordered box for the length of that request. */
 .tl-panel.waking { min-height: 5rem; position: relative; }
@@ -3080,14 +3095,6 @@ window.lpGuideCard = function (href, flag, name, extra) {
       <span class="ask-name">Help Me Choose</span>
       <span class="ask-desc">I don&rsquo;t know where I want to go.</span>
     </button>
-    <button type="button" class="ask-card" data-tool="trip-escape"
-            aria-expanded="false" aria-controls="tp-trip-escape">
-      <span class="ask-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-compass"/></svg></span>
-      <span class="ask-name">Trip Escape</span>
-      <span class="ask-desc">Show me destinations that feel completely different from home.</span>
-    </button>
-  </div>
-
   <div class="tl-panel" id="tp-help-choose" hidden>
       <!-- Not decoration and not removable. The Help Me Choose script binds every handler to this button and bails out entirely (`if (!btn) return`) when it is absent, so deleting it kills the widget with no error anywhere. The card above clicks it once to build the panel. -->
       <button id="btn-help-choose" hidden aria-hidden="true"></button>
@@ -3173,6 +3180,12 @@ window.lpGuideCard = function (href, flag, name, extra) {
       </div>
     </div>
   </div>
+    <button type="button" class="ask-card" data-tool="trip-escape"
+            aria-expanded="false" aria-controls="tp-trip-escape">
+      <span class="ask-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-compass"/></svg></span>
+      <span class="ask-name">Trip Escape</span>
+      <span class="ask-desc">Show me destinations that feel completely different from home.</span>
+    </button>
   <div class="tl-panel" id="tp-trip-escape" hidden>
       <!-- Not decoration and not removable. The Trip Escape script binds every handler to this button and bails out entirely (`if (!btn) return`) when it is absent, so deleting it kills the widget with no error anywhere. The card above clicks it once to build the panel. -->
       <button id="btn-trip-twin" hidden aria-hidden="true"></button>
@@ -3218,6 +3231,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
         <button id="tt-back" type="button" class="tt-back-btn">← Try again</button>
       </div>
     </div>
+  </div>
   </div>
 </section>
 
@@ -3410,24 +3424,32 @@ window.lpGuideCard = function (href, flag, name, extra) {
      exactly where it is in the hamburger (Trip Basics → Plug Adaptor) and in
      the Trip Resources block; this is an extra route to it, not a move.
      The three photos are the plug guide's own socket shots, already in the
-     repo under /plugs/imgs/ and credited on that page. -->
+     repo under /plugs/imgs/ and credited on that page.
+
+     ONE IMAGE PER TYPE, NEVER PER COUNTRY (Fifty-third non-negotiable). The
+     files are type-{letter}-plug.jpg / type-{letter}-wall-socket.jpg — a Type C
+     socket is a Type C socket, and the folder used to hold 676 files that were
+     30 unique pictures. These three pointed at the retired country names
+     (germany-tc- / united-kingdom-tg- / india-tm-) and 404'd on the live site
+     from the day that folder was deduped, so the tile rendered as three broken
+     images directly under the Best Of carousel. Address a plug by its TYPE. -->
 <section class="lp-plug">
   <a class="lp-plug-tile" href="/plugs/">
     <span class="lp-plug-shot">
       <span class="lp-plug-cell">
-        <span class="lp-plug-box"><img src="/plugs/imgs/germany-tc-wall-socket.jpg"
+        <span class="lp-plug-box"><img src="/plugs/imgs/type-c-wall-socket.jpg"
              alt="European Type C wall socket with two round holes"
              loading="lazy" width="600" height="600"></span>
         <span class="lp-plug-type">Type C</span>
       </span>
       <span class="lp-plug-cell">
-        <span class="lp-plug-box"><img src="/plugs/imgs/united-kingdom-tg-wall-socket.jpg"
+        <span class="lp-plug-box"><img src="/plugs/imgs/type-g-wall-socket.jpg"
              alt="UK Type G wall socket with three rectangular holes and a switch"
              loading="lazy" width="600" height="597"></span>
         <span class="lp-plug-type">Type G</span>
       </span>
       <span class="lp-plug-cell">
-        <span class="lp-plug-box"><img src="/plugs/imgs/india-tm-plug.jpg"
+        <span class="lp-plug-box"><img src="/plugs/imgs/type-m-plug.jpg"
              alt="Type M plug with three large round pins, used in South Africa and India"
              loading="lazy" width="435" height="600"></span>
         <span class="lp-plug-type">Type M</span>
@@ -3469,10 +3491,20 @@ window.lpGuideCard = function (href, flag, name, extra) {
      all-terracotta pins is just an index, and shows nothing a reader could not
      already see on the guides index.
 
-     Regenerate it the same way: seed a run of tve-visited-{slug} keys, turn the
-     Visited pill on (gold only paints while that filter is active), remove the
-     add-to-home-screen banner, and capture the map element at 393px / 3× with
-     the view set over Europe, where the pins separate instead of clustering. -->
+     Regenerate it the same way: open /maps/world/#mine={slug},{slug},... to
+     seed the list, turn the Visited pill on (gold only paints while that filter
+     is active), remove the add-to-home-screen banner, frame Europe with
+     map.fitBounds([[35.5,-1.0],[57.9,18.0]], {animate:false}) — where the pins
+     separate instead of clustering — and clip the bottom 631 CSS px of a 393 ×
+     852 viewport at 3×.
+
+     HIDE #mine-hint FOR THIS SHOT. The Back up / Clear all bar is not standing
+     chrome: it appears only while the Visited display is on, which is exactly
+     the state this capture needs, so it lands in frame and sits over the middle
+     of the map advertising two controls a reader will not find there. This step
+     is the gold pins; backing the list up is step 3 (map-4), which shows the
+     bar because that step is about it. Owner, on the version that carried it:
+     "this back up thing is not there anymore" (2026-08-20). -->
 <section class="lp-map">
   <a class="lp-map-tile" href="/maps/world/">
     <span class="lp-map-shot">
@@ -3651,12 +3683,6 @@ window.lpGuideCard = function (href, flag, name, extra) {
       <span class="qt-name">Compare cities</span>
       <span class="qt-desc">Up to five shortlisted cities side by side &mdash; days, weather, flight time.</span>
     </button>
-    <button type="button" class="qt-card" data-tool="stats" aria-expanded="false" aria-controls="tp-stats">
-      <span class="qt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-bar-chart"/></svg></span>
-      <span class="qt-name">Stats</span>
-      <span class="qt-desc">Guide counts and averages by region, the records page, and the world map.</span>
-    </button>
-  </div>
   <!-- ═══ COMPARE ══════════════════════════════════════════════════════════════
        The comparison itself, on this page. It used to be a link to
        /guides/#compare, which is a different page with a different way in: you
@@ -3690,6 +3716,11 @@ window.lpGuideCard = function (href, flag, name, extra) {
     <div id="compare-mount"></div>
     <div id="compare-view" hidden></div>
   </div>
+    <button type="button" class="qt-card" data-tool="stats" aria-expanded="false" aria-controls="tp-stats">
+      <span class="qt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-bar-chart"/></svg></span>
+      <span class="qt-name">Stats</span>
+      <span class="qt-desc">Guide counts and averages by region, the records page, and the world map.</span>
+    </button>
   <div class="tl-panel" id="tp-stats" hidden>
     <nav class="lp-links">
       <a href="/maps/world/">World map</a>
@@ -3703,6 +3734,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       <a href="/stats/us/">United States</a>
       <a href="/stats/canada/">Canada</a>
     </nav>
+  </div>
   </div>
 </section>
 
