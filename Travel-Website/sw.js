@@ -1566,7 +1566,8 @@
 /* 2026-08-20: trip-type filter icons — History and Art & museums, owner picks off the catalogue. History was drawn THREE ways at once: the filter chip carried 'moorish' (catalogue 1243, a horseshoe arch — Granada, Seville and Marrakech, and none of the other 120 history cities), while Help Me Choose and THEME_LABELS carried 'clock-stop' (catalogue 60, a clock face). Art & museums was worse: its filter chip carried 'tropical-bay' — a beach — against 'artframe' on the other two surfaces, so the Art filter had been showing a beach scene. Both now draw one mark on all three surfaces: History = catalogue 210 (new GM_SPRITE key 'basilica'), Art & museums = catalogue 226 ('museum-columned'). Two new sprite entries rather than a reuse, because neither drawing was in GM_SPRITE: the existing 'cathedral' key is deliberately the FOUNTAIN, mapped from ⛲ by MARKS across 128 Day Trips sections, 'church' is catalogue 228 (a different cathedral), and 'museum-amber' (217) is the same colonnade as 227 drawn as one flat-tinted silhouette. Both bodies are lifted verbatim from Site-Icons.html, so each keeps the catalogue treatment — gradient fill plus same-family rim — and renders as a coloured symbol, never a flat mask. toolbar.js -> v768. CACHE to v1107. */
 /* 2026-08-20: every emoji and icon deleted from the site source (owner). _injectRowMarks returns immediately - no source carries a glyph any more, so the sweep has nothing to match; the MARKS table and the drawing code stay because they are what icons get re-added FROM. Injected label strings stripped. toolbar.js -> v769. CACHE to v1108. */
 /* 2026-08-20: the emoji-to-icon conversion is deleted (owner). MARKS, markRow and _injectRowMarks - 402 lines - turned an authored glyph into a drawn mark at load. Every emoji was deleted from the site source first, so the swap had nothing to convert; now the swap is gone too. Icons come back as icons, referenced directly, never as a character something rewrites at render time. The .gm-mk classes stay - they are the shared icon presentation used by injectors that draw directly. toolbar.js -> v770. CACHE to v1109. */
-var CACHE = 'travel-cache-v1109';
+/* 2026-08-20: Art & museums draws catalogue 227, the colonnade with no star badge (was 226) toolbar.js -> v771. CACHE to v1110. */
+var CACHE = 'travel-cache-v1110';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1579,7 +1580,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 250,'toolbar.js': 770, 'mobile.css': 87, 'web-travel-style.css': 76, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 7, 'trains.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 250,'toolbar.js': 771, 'mobile.css': 87, 'web-travel-style.css': 76, 'guides-index-style.css': 18, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 23, 'weather.js': 9, 'trains.css': 7, 'trains.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
