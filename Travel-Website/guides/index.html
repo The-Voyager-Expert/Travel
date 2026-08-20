@@ -710,6 +710,12 @@
 </div><!-- /lang-content -->
 
 <div id="filter-active-bar">
+  <!-- refreshFilterHint() writes the active filter's own label in here — the
+       bar existed only as a clear button for as long as this span did not, so
+       every deep link and every chip pick showed "✕ clear" and nothing else,
+       with no way to tell WHICH of five facets it was clearing. querySelector
+       silently returned null and the label was dropped; nothing errored. -->
+  <span id="filter-active-label"></span>
   <button type="button" id="clear-all-filters">✕ clear</button>
 </div>
 <!-- ══ GUIDES INTRO — owner-directed 2026-08-18 ═══════════════════════════
@@ -4466,9 +4472,9 @@
       if (ci) label = ci.textContent.trim();
     }
     if (filterBar) {
-      var sp = filterBar.querySelector('span');
+      var sp = document.getElementById('filter-active-label');
       filterBar.classList.toggle('visible', !!label);
-      if (sp) sp.textContent = label || '';
+      if (sp) sp.textContent = label ? 'Filtering: ' + label : '';
     }
   }
   window._refreshFilterHint = refreshFilterHint;
