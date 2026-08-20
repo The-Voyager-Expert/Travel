@@ -9,10 +9,13 @@ function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 function tagsHTML(a) {
   var out = '';
   var al = ALLIANCES[a.al] || ALLIANCES['Independent'];
-  out += '<span class="card-tag ' + al.cls + '">' + al.label + '</span>';
+  /* "badge" carries the shared box (11px/700, 3px 8px, radius 4px, caps) —
+     .card-tag itself is a hook with no box (Badge-Pill-System). The tag-*
+     class paints the colour. */
+  out += '<span class="card-tag badge ' + al.cls + '">' + al.label + '</span>';
   (a.t || []).forEach(function(k) {
     var ty = TYPES[k];
-    if (ty) out += '<span class="card-tag ' + ty.cls + '">' + ty.label + '</span>';
+    if (ty) out += '<span class="card-tag badge ' + ty.cls + '">' + ty.label + '</span>';
   });
   return out;
 }
