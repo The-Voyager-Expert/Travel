@@ -223,6 +223,10 @@
 .addr-copy-done { font-size: 12px; color: #4a7a25; padding: 4px 11px 5px; display: none; }
 /* ── Hotel → venue distance ── */
 .venue-distance { font-size: 13px; color: var(--muted) !important; padding: 4px 0 0; margin: 0; }
+/* ── Stay detail — room type and booking ref, the info wanted at the desk.
+   Owner rule 2026-08-20. Never the booking PIN: this repo is public and
+   ref + PIN together open the reservation. ── */
+.hotel-detail { font-size: 13px; color: var(--muted); padding: 3px 0 0; margin: 0; }
 .hotel p { font-size: 14px; padding: 2px 0 0; margin: 0; color: var(--muted); }
 .hotel p a { color: var(--accent); border-bottom: none; }
 .hotel p a:visited { color: #8a6c1a; border-bottom: none; }
@@ -301,6 +305,7 @@ a:hover, a:active { border-bottom: none; }
   .airport-addrs .copy { display: none; }
   .st-name, .st-addr, .st-from { font-size: 13px; }
   .st-from { padding-left: 0; }
+  .hotel-detail { font-size: 15px; }
   .venue-distance { font-size: 15px; }
   .venue-distance .vd-line { display: block; }
 }
@@ -657,6 +662,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     <div class="hotel">
       <div class="hotel-meta">Fiumicino <span class="hotel-sep">·</span> Aug 24 → Aug 25</div>
       <div class="hotel-name"><a href="https://www.google.com/maps/search/?api=1&query=Porto+Romano+The+Marina+Resort+Via+Costalunga+31+00054+Fiumicino+Italy">Porto Romano - The Marina Resort</a></div>
+      <div class="hotel-detail"><span class="hd-room">Suite with Spa Access</span></div>
       <p><a href="https://secure.booking.com/mybooking.html" target="_blank" rel="noopener">booking.com</a></p>
       <span class="hotel-addr"><a href="https://www.google.com/maps/search/?api=1&query=Via+Costalunga+21%2F31+00054+Fiumicino+RM+Italy" target="_blank" rel="noopener">Via Costalunga 21/31, 00054 Fiumicino RM, Italy</a></span>
     </div>
@@ -1209,6 +1215,12 @@ document.addEventListener('DOMContentLoaded',()=>{
       :((addrEl&&addrEl.firstChild&&addrEl.firstChild.nodeType===3)?addrEl.firstChild.textContent.trim():'');
     var mapEl=card.querySelector('.hotel-name a');
     var siteEl=card.querySelector('p a');
+    /* Room type and booking ref are separate spans, never one string split on
+       '·' — a hotel name or a room type can carry that character itself. Each
+       missing span drops its own notes line rather than printing an empty one. */
+    var roomEl=card.querySelector('.hd-room'), refEl=card.querySelector('.hd-ref');
+    var room=roomEl?roomEl.textContent.replace(/\s+/g,' ').trim():'';
+    var ref=refEl?refEl.textContent.replace(/\s+/g,' ').trim():'';
     var nights=Math.max(1,Math.round((outD-inD)/864e5));
     return {
       hotel:name, city:city,
@@ -1226,6 +1238,8 @@ document.addEventListener('DOMContentLoaded',()=>{
         'Check-out · '+human(outD),
         'Nights · '+nights,
         '',
+        room?'Room · '+room:null,
+        ref?'Ref · '+ref:null,
         addr?'Address · '+addr:null,
         mapEl?'Map · '+mapEl.href:null,
         siteEl?'Booking · '+siteEl.href:null
