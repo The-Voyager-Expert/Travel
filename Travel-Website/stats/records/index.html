@@ -104,17 +104,12 @@ a.rank-city::after { content: " →"; color: #C04E1A; font-weight: 600; margin-l
 .rank-val { font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; min-width: 55px; text-align: right; }
 
 /* cost tier badge */
-.tier-badge { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; text-transform: uppercase; border: 1px solid; white-space: nowrap; }
-.tier-badge.Budget { background: #e8f5e8; color: #1a5a1a; border-color: rgba(26,90,26,0.4); }
-.tier-badge.Moderate { background: #e8f0fb; color: var(--navy); border-color: rgba(26,58,139,0.4); }
-.tier-badge.Expensive { background: #fff8e0; color: #7a5800; border-color: rgba(122,88,0,0.4); }
-.tier-badge.Premium { background: #fdf0e8; color: #7a3a1a; border-color: rgba(122,58,26,0.4); }
-.tier-badge.Luxury { background: #f3e8ff; color: #7c3aed; border-color: rgba(124,58,237,0.4); }
-
-/* safety badge */
-.safe-badge { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; text-transform: uppercase; border: 1px solid; white-space: nowrap; }
-.safe-badge.very-safe { background: #e8f5e8; color: #1a5a1a; border-color: rgba(26,90,26,0.4); }
-.safe-badge.safe { background: #e8f5e8; color: #1a5a1a; border-color: rgba(26,90,26,0.4); opacity: .75; }
+/* .tier-badge / .safe-badge / .route-badge are hooks only — box, case, colour
+   and dark mode all come from the shared .badge + .fam-* classes (the JS
+   writes badge fam-*). They used to carry a 10px / 1px 5px / radius-3px box
+   with five hardcoded family trios and a hand-written dark copy; never
+   re-add any of it. Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.safe-badge.safe { opacity: .75; }
 
 /* region comparison bars */
 .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -150,7 +145,6 @@ a.rank-city::after { content: " →"; color: #C04E1A; font-weight: 600; margin-l
 .temp-bar-val { font-size: 11px; color: var(--muted); min-width: 36px; text-align: right; }
 
 /* flight route badge */
-.route-badge { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 9.5px; font-weight: 700; background: var(--surface2, #f6f2ec); color: var(--muted); }
 
 /* region filter */
 .region-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -170,9 +164,8 @@ a.rank-city::after { content: " →"; color: #C04E1A; font-weight: 600; margin-l
 .cmp-seg-s   { background: #a5d6a7; }
 .cmp-seg-mid { background: #ffcc80; }
 @media (prefers-color-scheme: dark) {
-  .tier-badge.Budget, .safe-badge.very-safe, .safe-badge.safe,
   .cmp-legend-item.green { background: #0a1e0a; color: #4aaa4a; border-color: rgba(74,170,74,.35); }
-  .tier-badge.Moderate, .cmp-legend-item.blue { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
+  .cmp-legend-item.blue { background: #0a1e3a; color: #5a9aee; border-color: rgba(90,154,238,.35); }
   .cmp-legend-item.yellow { background: #2a2000; color: #c8a040; border-color: rgba(200,160,64,.35); }
   .cmp-legend-item.red { background: #2a0e00; color: #e07050; border-color: rgba(224,112,80,.35); }
   .cmp-seg.expensive { background: #5a4800; }
@@ -307,17 +300,18 @@ function regionTag(rg) {
 
 function tierBadge(tier) {
   var key = tier.charAt(0).toUpperCase() + tier.slice(1).toLowerCase();
-  return '<span class="tier-badge ' + key + '">' + tier + '</span>';
+  var fam = { Budget:'fam-green', Moderate:'fam-blue', Expensive:'fam-yellow', Premium:'fam-red', Luxury:'fam-purple' }[key] || 'fam-grey';
+  return '<span class="tier-badge badge ' + fam + ' ' + key + '">' + tier + '</span>';
 }
 
 function safeBadge(level) {
   var cls = level === 'Very Safe' ? 'very-safe' : 'safe';
-  return '<span class="safe-badge ' + cls + '">' + level + '</span>';
+  return '<span class="safe-badge badge fam-green ' + cls + '">' + level + '</span>';
 }
 
 function routeBadge(fr) {
   var map = {'nonstop':'Nonstop','1stop':'1 stop','2stop':'2 stops'};
-  return '<span class="route-badge">' + (map[fr] || fr) + '</span>';
+  return '<span class="route-badge badge fam-grey">' + (map[fr] || fr) + '</span>';
 }
 
 function rankRows(items, valFn) {
