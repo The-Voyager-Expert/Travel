@@ -138,7 +138,11 @@ def check_guide(name: str, path: Path) -> list[str]:
 
 _IMG_EXTS = (".jpg", ".jpeg", ".png", ".webp")
 _WIKI_SUFFIXES = ("wikimedia.org", "wikipedia.org")
-_SRC_RE = re.compile(r'src\s*=\s*"(_build/assets/[^"]+)"')
+# Guide HTML links photos root-absolutely since the 2026-08-16 URL flatten.
+# This required `_build/assets/...` — a path the fleet has not used since the
+# photos moved to photos/ — so it matched nothing and _photo_failures() returned
+# [] for every guide, including the duplicate-hash half that needs no manifest.
+_SRC_RE = re.compile(r'src\s*=\s*"(?:/guides/[^"/]+/)?(photos/[^"]+)"')
 
 
 def _sha256(path: Path) -> str:
@@ -160,7 +164,10 @@ def _is_wiki(url) -> bool:
 
 
 def _photo_failures(guide_html_path: Path, html: str) -> list[str]:
-    guide_dir = guide_html_path.parent
+    # `guides/{slug}.html` sits beside `guides/{slug}/photos/`, so the page's
+    # own parent is `guides/` and is not the root the refs resolve against.
+    own = guide_html_path.parent / guide_html_path.stem
+    guide_dir = own if (own / "photos").is_dir() else guide_html_path.parent
     refs = [r for r in _SRC_RE.findall(html) if r.lower().endswith(_IMG_EXTS)]
     seen = set()
     refs = [r for r in refs if not (r in seen or seen.add(r))]
@@ -186,11 +193,24 @@ def _photo_failures(guide_html_path: Path, html: str) -> list[str]:
                 f"many filenames): {sorted(group)}"
             )
 
-    manifest_fp = guide_dir / "_build" / "assets" / "photo_provenance.json"
-    if manifest_fp.is_file():
+    # both spellings; the legacy underscore file merges on top where it exists
+    manifest = None
+    for _name in ("photo-provenance.json", "photo_provenance.json"):
+        _fp = guide_dir / "photos" / _name
+        if not _fp.is_file():
+            continue
         try:
-            manifest = json.loads(manifest_fp.read_text(encoding="utf-8"))
+            _d = json.loads(_fp.read_text(encoding="utf-8"))
         except Exception:
+            manifest = False        # present but unreadable
+            break
+        if isinstance(_d, dict):
+            manifest = {**(manifest or {}), **_d}
+        else:
+            manifest = False
+            break
+    if manifest is not None:
+        if manifest is False:
             manifest = None
         if not isinstance(manifest, dict):
             fails.append("photo_provenance.json is present but unreadable/invalid")
