@@ -1673,7 +1673,8 @@
 /* 2026-08-21: azores hotel price tiers toolbar.js -> v819. CACHE to v1184. */
 /* 2026-08-21: bahamas hotel price tiers toolbar.js -> v820. CACHE to v1185. */
 /* 2026-08-21: aruba-azores hotel price tiers toolbar.js -> v821. CACHE to v1186. */
-var CACHE = 'travel-cache-v1186';
+/* 2026-08-21: index.html + assets/landing/steps/* — ONE IMAGE PER FEATURE on the landing carousels, 13 screens down to 7 (owner: "you have plug 3 times! on top and bottom choose the best one and remove the rest. climate too, no more than one image per feature"). The plug shipped twice in the tools carousel and a third time inside the Before You Go screen at the foot of the other one; a climate chart appeared four ways. A feature is a PAGE, so the rule is one step per destination, and brain_check now fails a carousel whose steps share one. byg-answers is a new crop taking the card columns beside the plug and climate cards. Seven of the old step files are DELETED and one name is new, so a returning browser holding the cached index would 404 an image without this bump. No shared asset changed, so no MIN_VERSIONS floor moves. CACHE to v1187. */
+var CACHE = 'travel-cache-v1187';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
