@@ -317,24 +317,39 @@
    or the bar gets twice as much room below it as above), and permission to
    shrink under 440px — max-width, never width, so the measured property is
    untouched. */
-/* The button and the picker are both set in from the headline, and they share
-   ONE indent so they line up (owner 2026-08-18: "go more to the right way more
-   to be more interesting and give more space" · "also move the button way more
-   to right"). Two different indents read as an accident; one reads as a
-   deliberate stagger against the h1 and paragraph, which stay flush left.
+/* NOTHING IN THIS COLUMN LINES UP WITH ANYTHING ELSE, AND THAT IS THE RULE
+   (owner 2026-08-21: "more this button more to the left i do not want anything
+   aligned in this page").
 
-   --lp-indent is why it is a token and not two numbers: the moment they differ
-   by a pixel the stagger looks like a mistake, and the next person to nudge one
-   will not think to nudge the other.
+   THIS REVERSES THE ONE-SHARED-INDENT RULE OF 2026-08-18, which is written out
+   here rather than deleted because it argued its case well and a crib meeting
+   two near-but-unequal indents will otherwise "repair" them back into one. It
+   said: the button and the picker are both set in from the headline and share
+   ONE indent so they line up, because "two different indents read as an
+   accident". The owner has now looked at that and decided the opposite — the
+   accident IS the effect they want. Four left edges, all different:
 
-   DESKTOP ONLY. The phone column is 329px wide and every pixel spent on a left
-   margin comes straight off the search bar, which is already shrinking below
-   its 440px standard down there. */
-.lp-hero-copy { --lp-indent: 0px; }
-.lp-actions { margin-left: var(--lp-indent); }
+     h1 + paragraph   0        flush to the rail
+     Browse button    ~44px    --lp-indent-btn
+     picker + search  ~104px   --lp-indent
+
+   So they are two tokens, not one, and they must never be folded back together
+   — not to "fix" the ragged edge, not to tidy the duplication. If they ever
+   resolve to the same value the page is wrong.
+
+   DESKTOP ONLY, both of them. The phone column is 329px wide and every pixel
+   spent on a left margin comes straight off the search bar, which is already
+   shrinking below its 440px standard down there. */
+.lp-hero-copy { --lp-indent: 0px; --lp-indent-btn: 0px; }
+.lp-actions { margin-left: var(--lp-indent-btn); }
 .lp-pick { margin-top: clamp(1.9rem, 4vw, 3rem); margin-left: var(--lp-indent); }
 @media (min-width: 62.0625rem) {
-  .lp-hero-copy { --lp-indent: clamp(3rem, 7vw, 6.5rem); }
+  .lp-hero-copy {
+    --lp-indent: clamp(3rem, 7vw, 6.5rem);
+    /* Deliberately NOT half of --lp-indent, and not a round fraction of it: an
+       exact ratio reads as a ladder, which is its own kind of alignment. */
+    --lp-indent-btn: clamp(1.25rem, 3vw, 2.75rem);
+  }
 }
 .lp-hero .lp-pick-lead {
   font-size: clamp(1.1rem, 1.65vw, 1.3rem);
@@ -350,14 +365,24 @@
      The terracotta em follows .lp-hero h1 em: ink plus a terracotta accent is
      that headline's own grammar. */
   color: var(--text, #3d3a32);
-  /* The gap BELOW this sentence equals the gap ABOVE it (Fifty-fourth
-     non-negotiable): above is .lp-pick's own margin-top, the same clamp
-     written here. It was 0.7rem, so the search sat hard under the line
-     while the line itself had 3rem of air over it. Owner 2026-08-20:
-     "push search down from it". #lp-guide-wrap has no margin-top and the
-     input's own margin-bottom is zeroed below, so this margin IS the
-     rendered gap — nothing collapses over it. */
-  margin: 0 0 clamp(1.9rem, 4vw, 3rem);
+  /* THE SEARCH BAR'S OWN GAP, from the site's own token (owner 2026-08-21:
+     "move seach bar up a bit").
+
+     History, because this number has now moved twice and the next nudge should
+     land on the token rather than on a third hand-picked value. It was 0.7rem
+     and the bar sat hard under the line; on 2026-08-20 the owner said "push
+     search down from it" and it went to the same clamp as .lp-pick's own
+     margin-top — 48px at 1440 — on the Fifty-fourth non-negotiable's reading
+     that a block's gap above equals its gap below. That treated the sentence as
+     a block of its own. It is not: it is the field's LABEL, and the distance
+     between a search bar and the thing next to it is exactly what § 43's
+     --search-gap is, 32px, the one value every other search on the site is set
+     at, at every viewport, above and below alike.
+
+     #lp-guide-wrap has no margin-top and the input's own margin-bottom is
+     zeroed below, so this margin IS the rendered gap — nothing collapses over
+     it. */
+  margin: 0 0 var(--search-gap, 32px);
   max-width: 46ch; }
 .lp-pick-lead strong { font-weight: 700; }
 .lp-pick-lead em { font-style: normal; color: var(--rust, #C04E1A); font-weight: 700; }
