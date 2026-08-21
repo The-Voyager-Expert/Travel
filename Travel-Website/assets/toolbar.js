@@ -5299,10 +5299,12 @@ window.TVE.home = (function () {
       { name: 'Mercure Ponta Delgada Azores', note: 'Accor brand — central Ponta Delgada, modern amenities, highly rated WiFi and location · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pt/mercure-ponta-delgada-azores.html' }
     ] },
     'bahamas': { h: [
-      { name: 'Courtyard by Marriott Nassau Downtown/Junkanoo Beach', note: 'Marriott family — Junkanoo Beach access, outdoor pool, downtown Nassau · 7.2 Booking.com', url: 'https://www.booking.com/hotel/bs/sunset-resort-bahamas-nassau.html' },
-      { name: 'Atlantis Paradise Island', note: 'Independent mega-resort — Aquaventure water park, 11 pools, casino, over 40 restaurants on Paradise Island', url: 'https://www.booking.com/hotel/bs/atlantis-paradise-island.html' },
-      { name: 'SLS Baha Mar', note: 'SLS brand — Cable Beach, swim-up suites, Hyde Beach club, Sora rooftop restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/bs/sls-baha-mar.html' },
-      { name: 'Rosewood Baha Mar', note: 'Rosewood brand — Cable Beach, private beach, Sense spa, five pools, butlered bungalows · 9.1 Booking.com', url: 'https://www.booking.com/hotel/bs/rosewood-baha-mar.html' }
+      { name: 'Courtyard by Marriott Nassau Downtown/Junkanoo Beach', note: 'Marriott family — Junkanoo Beach access, outdoor pool, downtown Nassau · 7.2 Booking.com', url: 'https://www.booking.com/hotel/bs/sunset-resort-bahamas-nassau.html', tier: 'budget' },
+      { name: 'Ocean West Boutique Hotel', note: 'Independent boutique — Cable Beach west of Baha Mar, private beach area, year-round pool, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/bs/ocean-west-boutique.html', tier: 'budget' },
+      { name: 'Margaritaville Beach Resort Nassau', note: 'Independent — The Pointe on Bay Street by the cruise port, private beach, rooftop and infinity pools, water park · 7.6 Booking.com', url: 'https://www.booking.com/hotel/bs/margaritaville-beach-resort-nassau.html', tier: 'mid' },
+      { name: 'Atlantis Paradise Island', note: 'Independent mega-resort — Aquaventure water park, 11 pools, casino, over 40 restaurants on Paradise Island', url: 'https://www.booking.com/hotel/bs/atlantis-paradise-island.html', tier: 'mid' },
+      { name: 'SLS Baha Mar', note: 'SLS brand — Cable Beach, swim-up suites, Hyde Beach club, Sora rooftop restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/bs/sls-baha-mar.html', tier: 'expensive' },
+      { name: 'Rosewood Baha Mar', note: 'Rosewood brand — Cable Beach, private beach, Sense spa, five pools, butlered bungalows · 9.1 Booking.com', url: 'https://www.booking.com/hotel/bs/rosewood-baha-mar.html', tier: 'luxury' }
     ] },
     'bali': { h: [
       { name: 'Kastara Resort', note: 'Independent — Jalan Bangkiang Sidem in Keliki north of Ubud, 5-star, 24h reception, infinity pool over the rice terraces · 9.5 Booking.com', url: 'https://www.booking.com/hotel/id/kastara-resort.html', tier: 'luxury' },
