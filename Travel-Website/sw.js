@@ -1,3 +1,5 @@
+/* 2026-08-21: amsterdam hotel price tiers — Hotel Casa added toolbar.js -> v830. CACHE to v1197. */
+/* 2026-08-21: POSITION-2c NOTES — the two walking figures the owner approved on 2026-08-18 reach GM_SPRITE. #169 uphill (pine, key 'uphill') and #153 long stride (navy, key 'long-walk') were treated at catalogue quality that day and left out of the sprite table, so nine guides shipped 'Steep uphill' as bare words for three days. Both carry data-norm=h19.5: untransformed they stood 22.45 and 21.85 tall against walk's 19.75, and in a stop row it is height that reads as size. Labels settled in the same pass: 'Exposed heights' -> 'Heights', 'Tight squeeze' -> 'Enclosed space'. toolbar.js -> v830. CACHE to v1197. */
 /* 2026-08-20: RIGA + VILNIUS were shipped but invisible to every builder — both lacked the shipped stamp that 237 of 239 guides carry, so climate, the world map, the By-Climate links and the theme filter all skipped them. climate.json rebuilt to 239 cities and weather.js's baked CLIMATE block re-baked with it; both cities pinned on the world map and added to GUIDE_LINKS. validate_climate_coverage and validate_planning_pages_coverage both pass. weather.js to 11. CACHE to v1123. */
 /* 2026-08-20: three new Best Of categories — Birdwatching (61 entries), Fishing (46) and Paragliding (42). best-of-cross-data.js is regenerated from the pages, so the Compare Categories finder on /best-of/ needs the new copy or it goes on intersecting 34 categories for every returning reader. best-of-cross-data.js -> v24. CACHE to v1122. */
 /* 2026-08-20: THE COMPARISON TABLE SITS UNDER THE CONTROL THAT PRODUCED IT (owner: "when we compare cities the results need to be just below the comparing feature not below the stats"). On the landing page each tool panel is now a child of its own card's row and spans it, so opening Compare puts the table directly beneath the Compare card and pushes Stats below — it used to sit under the pair, reading as the answer to whichever card you clicked last. Same rule applied to Help Me Choose / Trip Escape. On the guides index #compare-view moved out of the foot of .wrap (below #guides-intro and the 237-card mosaic, ~2,300px under the button that asked for it) to directly under the selection bar; its 100px bottom cushion — written for a table that was the last thing on the page — drops to 24px. guides-index-style.css to 20. CACHE to v1118. */
@@ -1683,8 +1685,7 @@
 /* 2026-08-21: annecy hotel price tiers toolbar.js -> v827. CACHE to v1194. */
 /* 2026-08-21: annecy hotel price tiers toolbar.js -> v828. CACHE to v1195. */
 /* 2026-08-21: amsterdam hotel price tiers toolbar.js -> v829. CACHE to v1196. */
-/* 2026-08-21: amsterdam hotel price tiers — Hotel Casa added toolbar.js -> v830. CACHE to v1197. */
-var CACHE = 'travel-cache-v1197';
+var CACHE = 'travel-cache-v1198';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1697,7 +1698,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 830, 'mobile.css': 87, 'web-travel-style.css': 88, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 9, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
+var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 831, 'mobile.css': 87, 'web-travel-style.css': 88, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 9, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
