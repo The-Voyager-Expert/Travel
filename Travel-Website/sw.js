@@ -1639,7 +1639,8 @@
    Formatting.html § 14 has carried since 2026-08-17; a badge-anchored pill takes
    var(--fam-radius, 4px) and a plain filter pill 6px, per Badge-Pill-System § 4.
    web-travel-style.css -> v88, trains.css -> v9. CACHE to v1152. */
-var CACHE = 'travel-cache-v1152';
+/* 2026-08-21: index.html — the two landing carousels now render on DESKTOP as well as phone (the heading-plus-link-row that stood in for them there is deleted), all 22 step screenshots recaptured as whole sections, and the gap between the two carousels moved off a flat 34px. index.html changed several times across this pass with no bump, so every returning browser and installed PWA was being served the stale cached index — verified live: the rendered page carried none of the new CSS while a no-store fetch of the same URL did, and navigator.serviceWorker.controller was set. Same failure shape as the 2026-08-05 and 2026-08-13 entries above. No shared asset changed, so no MIN_VERSIONS floor moves. CACHE to v1153. */
+var CACHE = 'travel-cache-v1153';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
