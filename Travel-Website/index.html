@@ -1457,7 +1457,40 @@ a.land-cta:hover:visited {
 /* The gap between the two carousels is the same clamp the other landing
    sections use, not a flat 34px -- at desktop the tiles are ~800px tall and
    34px between them reads as one run-on block. */
-.lp-tools, .lp-plan { display: block; max-width: var(--lp-max, 1180px); margin: clamp(2.6rem, 5vw, 4rem) auto 0; }
+/* ── THE TWO CAROUSELS SIT SIDE BY SIDE ON DESKTOP (owner rule 2026-08-21:
+   "put them desktop side by side"). This SUPERSEDES "2 of them one below the
+   other" of the same day — that instruction was given when they were the only
+   shape on offer, and stacked they cost ~1,000px of page for two cards that
+   say the same kind of thing. Side by side the pair is ~495px, which is the
+   height of one of them, and the reader sees both without scrolling.
+
+   ONE COLUMN BELOW 1000px, and that number is not the phone switch: at 1000px
+   the rail is 936px, so two columns are 455px each and a screenshot still
+   reads. Narrower than that a column stops being a picture and starts being a
+   thumbnail, so the pair stacks. 1000 is an INTERMEDIATE reflow breakpoint —
+   it turns a two-column grid into one and leaves the page recognisably
+   desktop — so it takes no `pointer: coarse` term and must not be moved onto
+   600/601/1260, which are the three real mobile/desktop switch points that
+   check_mobile_breakpoints_gated_on_pointer guards.
+
+   The gap the owner asked for ("with a space between them") is the grid's,
+   horizontal when side by side and vertical when stacked — one value, so the
+   two can never drift apart. */
+.lp-carousels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2.2vw, 1.6rem);
+  align-items: start;
+  max-width: var(--lp-max, 1180px);
+  margin: clamp(2.6rem, 5vw, 4rem) auto 0;
+}
+@media (max-width: 1000px) {
+  .lp-carousels { grid-template-columns: 1fr; gap: clamp(2.6rem, 5vw, 4rem); }
+}
+/* `min-width: 0` or a grid column refuses to shrink below its content and the
+   pair overflows the rail. The sections carry no margin of their own any more —
+   the gap belongs to the grid above, in one place. */
+.lp-tools, .lp-plan { display: block; min-width: 0; }
 .lp-tools-tile, .lp-plan-tile {
   display: block;
   text-decoration: none;
@@ -2411,7 +2444,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       ['bali','Bali','Bali\'s Gunung Agung seen at sunset from Gunung Rinjani',2.0],
       ['banff','Banff','Lake Agnes im Banff National Park',1.51],
       ['bangkok','Bangkok','Bangkok Wat Arun Ratchawararam 1',1.5],
-      ['barbados','Barbados','Public Steps at Crane Beach North, Barbados',1.33],
+      ['barbados','Barbados','Atlantic surf on the palm-backed beach at Bathsheba, Barbados',1.49],
       ['barcelona','Barcelona','Evening light over Barcelona',2.14],
       ['beijing','Beijing','Skyline of Beijing CBD with B',1.5],
       ['bend','Bend','The Deschutes River running through pine forest on the river trail at Bend, Oregon',1.5],
@@ -2423,7 +2456,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       ['bologna','Bologna','Torri di Bologna, Bologna',1.5],
       ['bora-bora','Bora Bora','Borabora-2, Bora Bora',1.5],
       ['bordeaux','Bordeaux','Bordeaux Place de la Bourse de nuit',1.56],
-      ['boston','Boston','ISH WC Boston4',1.53],
+      ['boston','Boston','Back Bay and the Boston towers reflected in the Charles River',1.78],
       ['boulder','Boulder','Flatirons Winter Sunrise edit 3, Boulder',3.01],
       ['bruges','Bruges','Brügge Blick vom Belfried 4, Bruges',1.56],
       ['brussels','Brussels','Grand Place Bruselas 2, Brussels',1.67],
@@ -2437,10 +2470,10 @@ window.lpGuideCard = function (href, flag, name, extra) {
       ['cape-cod','Cape Cod','White Crest Beach Wellfleet, Cape Cod',2.01],
       ['cape-town','Cape Town','Camps bay, Cape Town',1.73],
       ['capri','Capri','Capri in Cartolina - Vista da Termini',1.33],
-      ['carmel-by-the-sea','Carmel-by-the-Sea','Carmel Mission Church, Carmel-by-the-Sea',1.0],
+      ['carmel-by-the-sea','Carmel-by-the-Sea','Cypress above the rocky cove at Point Lobos on the Carmel coast, Carmel-by-the-Sea',1.5],
       ['cascais','Cascais','Cascais - Santa Marta',1.67],
       ['cayman-islands','Cayman Islands','SEVEN MILE BEACH, Cayman Islands',1.5],
-      ['charlotte','Charlotte','Skyline of Charlotte, North Carolina, seen from the Carolina Panthers\' practice field.',1.68],
+      ['charlotte','Charlotte','The uptown Charlotte skyline at dusk beyond open green',1.68],
       ['chiang-mai','Chiang Mai','Chiang Mai',1.5],
       ['chicago','Chicago','Chicago River ferry b',1.41],
       ['chongqing','Chongqing','Chongqing Nightscape',1.55],
@@ -2449,13 +2482,13 @@ window.lpGuideCard = function (href, flag, name, extra) {
       ['colmar','Colmar','View of Église Saint-Martin, Colmar',1.39],
       ['cologne','Cologne','Kranhäuser Cologne, April',1.81],
       ['colombo','Colombo','Colombo city skyline at night',1.33],
-      ['columbia','Columbia','Columbia, South Carolina Skyline, Night',1.51],
+      ['columbia','Columbia','The Congaree River running past wooded banks at Columbia, South Carolina',1.33],
       ['copenhagen','Copenhagen','Copenhagen',1.52],
       ['corfu','Corfu','Pontikonisi, Corfu',1.33],
       ['crete','Crete','Panoramic view of Balos Lagoon on Crete, Greece',2.85],
       ['curacao','Curacao','The painted waterfront houses of the Handelskade across the water at Willemstad, Curacao',1.93],
       ['curitiba','Curitiba','Tanguá Curitiba',1.5],
-      ['cusco','Cusco','Vista Calle Suecia, Cusco',1.5],
+      ['cusco','Cusco','Cusco filling its valley below the Andes',2.89],
       ['dallas','Dallas','Dallas Texas skyline from Reunion Tower September',1.96],
       ['denver','Denver','Denver, Colorado skyline',1.67],
       ['doha','Doha','The Pearl Marina in Nov, Doha',1.5],
@@ -2474,14 +2507,14 @@ window.lpGuideCard = function (href, flag, name, extra) {
       ['glacier-national-park','Glacier National Park','Looking west inside Glacier National Park across St. Mary Lake to Red Eagle Mountain, Mahtotopa Mountain, Little Chief Mountain, and finally Citadel Mountain',2.33],
       ['glasgow','Glasgow','Glasgow - aerial',1.78],
       ['gothenburg','Gothenburg','Göteborg, Gothenburg',2.04],
-      ['granada','Granada','Granada',1.33],
+      ['granada','Granada','The Alhambra on its wooded ridge below the snows of the Sierra Nevada, Granada',1.5],
       ['hamburg','Hamburg','Hamburg, Landungsbrücken',1.5],
       ['hanoi','Hanoi','Hanoi skyline with Ba Vi Mountain',1.87],
       ['helsinki','Helsinki','Suomenlinna, Helsinki',1.78],
       ['hilton-head-island','Hilton Head Island','Hilton Head Island Lighthouse June',1.33],
       ['hiroshima','Hiroshima','Atomic Bomb Dome and Motoyaso River, Hiroshima, Northwest view',1.56],
       ['hoi-an','Hoi An','Hoi An',1.5],
-      ['hong-kong','Hong Kong','Kowloon Waterfront, Hong Kong',1.43],
+      ['hong-kong','Hong Kong','The towers of Hong Kong Island and the harbour lit at night from the Peak',2.12],
       ['istanbul','Istanbul','Historical peninsula and modern skyline of Istanbul',2.07],
       ['joao-pessoa','Joao Pessoa','Centro Histórico de João Pessoa, Joao Pessoa',1.5],
       ['kauai','Kauai','Na Pali Coast, Kauai',1.33],
@@ -2520,7 +2553,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       ['marseille','Marseille','Notre-Dame de la Garde aerial view, Marseille',1.04],
       ['maui','Maui','Green cliffs dropping to the blue Pacific on the Road to Hana, Maui',1.5],
       ['melbourne','Melbourne','Melbourne skyline sor',1.41],
-      ['miami','Miami','Villa Vizcaya, Miami',1.8],
+      ['miami','Miami','The Miami skyline across the turquoise water of Biscayne Bay',1.5],
       ['milan','Milan','Milan Cathedral from Piazza del Duomo',1.33],
       ['monaco','Monaco','Vista de Mónaco, Monaco',1.62],
       ['montevideo','Montevideo','PALACIO LEGISLATIVO 01, Montevideo',1.5],
@@ -2528,7 +2561,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       ['munich','Munich','Stadtbild München, Munich',1.48],
       ['muscat','Muscat','Mutrah, Muscat',1.49],
       ['mykonos','Mykonos','Windmills in the old town in Mykonos, Greece',1.5],
-      ['napa','Napa','City of Napa by the Napa River',1.72],
+      ['napa','Napa','Vineyard rows turning colour below the hills of the Napa Valley',2.93],
       ['naples','Naples','Napoli - Maschio Angioino, Naples',1.78],
       ['naples-florida','Naples, Florida','Bayside www.florida-infos.com - panoramio, Naples, Florida',1.33],
       ['nashville','Nashville','Nashville, TN skyline',1.6],
@@ -2540,23 +2573,23 @@ window.lpGuideCard = function (href, flag, name, extra) {
       ['oaxaca','Oaxaca','Vista panorámica de la ciudad de Oaxaca de Juárez desde el Cerro del Fortín',5.34],
       ['olinda','Olinda','Convento de São Francisco - Olinda - Pernambuco - Brasil',1.5],
       ['orcas-island','Orcas Island','Forested islands and rocky islets in the Salish Sea, San Juan Islands, Orcas Island',3.13],
-      ['orlando','Orlando','Orlando, Florida',1.67],
+      ['orlando','Orlando','Lake Eola and the downtown skyline, Orlando',1.33],
       ['osaka','Osaka','Osaka Castle 03bs',1.5],
       ['oslo','Oslo','Nationaltheatret evening, Oslo',1.6],
       ['oxford','Oxford','The spires and towers of the Oxford skyline above the trees',1.5],
       ['palawan','Palawan','Kayangan Lake, Coron - Palawan',1.5],
-      ['palm-desert','Palm Desert','El Paseo 01, Palm Desert',1.5],
-      ['palo-alto','Palo Alto','Ramona Street Architectural District, 261 Hamilton St., Palo Alto, CA 5-27',1.45],
+      ['palm-desert','Palm Desert','The desert floor below the Little San Bernardino Mountains, Coachella Valley, Palm Desert',1.33],
+      ['palo-alto','Palo Alto','The sandstone arcades and arch of the Stanford campus, Palo Alto',1.33],
       ['paris','Paris','La Tour Eiffel vue de la Tour Saint-Jacques, Paris août',1.6],
       ['pasadena','Pasadena','The arches of the Colorado Street Bridge against the sky in Pasadena, California',1.5],
       ['pensacola','Pensacola','Pensacola Beach Sunset',1.33],
       ['petra','Petra','Al Deir Petra',1.5],
       ['philadelphia','Philadelphia','Philadelphia skyline',2.0],
       ['phoenix','Phoenix','Downtown Phoenix Aerial Looking Northeast',1.29],
-      ['phuket','Phuket','Phuket Aerial',1.5],
+      ['phuket','Phuket','Limestone karst rising from the sea in Phang Nga Bay near Phuket',1.5],
       ['pisa','Pisa','Italy - Pisa',1.55],
       ['pokhara','Pokhara','Pokhara Valley',1.5],
-      ['portland','Portland','Portland Oregon Aerial, June',1.78],
+      ['portland','Portland','Mount Hood standing over the Portland skyline',1.5],
       ['porto','Porto','Puente Don Luis I, Oporto, Portugal',1.62],
       ['porto-alegre','Porto Alegre','IBPA, Porto Alegre',1.88],
       ['prague','Prague','Prague',1.68],
@@ -2574,7 +2607,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       ['salzburg','Salzburg','Salzburg',1.5],
       ['san-diego','San Diego','San Diego Skyline at Dawn',1.5],
       ['san-francisco','San Francisco','The Golden Gate Bridge lit at blue hour with the city behind, San Francisco',1.96],
-      ['san-jose','San Jose','The downtown skyline at dusk over spring wildflowers, San Jose',1.47],
+      ['san-jose','San Jose','Downtown San Jose beyond the trees from Oak Hill',1.63],
       ['san-jose-costa-rica','San Jose, Costa Rica','Sunset over the city lights and the Central Valley, San Jose, Costa Rica',1.5],
       ['san-juan-island','San Juan Island','Sunset over the islands and the Salish Sea, San Juan Island',1.5],
       ['san-sebastian','San Sebastian','La Concha bay seen from Monte Igueldo, San Sebastian',3.01],
@@ -2587,22 +2620,22 @@ window.lpGuideCard = function (href, flag, name, extra) {
       ['sao-luis','Sao Luis','Tiled colonial facades and wet cobbles at dusk in the historic centre, Sao Luis',1.5],
       ['sao-paulo','Sao Paulo','The lake in Parque Ibirapuera with the São Paulo skyline behind it',1.33],
       ['sarasota','Sarasota','Sunset over the tide flats at Siesta Key, Sarasota',1.51],
-      ['sardinia','Sardinia','Baja Sardinia Costa Smeralda@',1.33],
-      ['scottsdale','Scottsdale','A saguaro at sunrise in the McDowell Sonoran Preserve, Scottsdale',1.46],
+      ['sardinia','Sardinia','Green headlands and islands off the Costa Smeralda, Sardinia',1.33],
+      ['scottsdale','Scottsdale','Saguaro desert below the McDowell Mountains at dusk, Scottsdale',1.78],
       ['seattle','Seattle','The Space Needle and downtown at golden hour from Kerry Park, Seattle',1.5],
       ['sedona','Sedona','Cathedral Rock glowing at sunset, reflected at Red Rock Crossing, Sedona',1.49],
       ['seoul','Seoul','중화전의 낮, Seoul',1.33],
       ['seville','Seville','Sevilla Cathedral - Southeast, Seville',1.34],
       ['seychelles','Seychelles','198 Granite rock in La Digue Island at sunset Photo by Giles Laurent, Seychelles',1.5],
       ['shanghai','Shanghai','The Lujiazui skyline lit at night across the Huangpu, Shanghai',1.5],
-      ['sicily','Sicily','Castelmola and Taormina in Sicily',1.92],
+      ['sicily','Sicily','The white marl terraces of the Scala dei Turchi above the sea, Sicily',1.5],
       ['siena','Siena','The Duomo above the rooftops in the first light of sunset, Siena',1.5],
       ['singapore','Singapore','1 singapore skyline night panorama',2.12],
       ['sint-maarten','Sint Maarten','Palms and moored boats along Great Bay Beach at Philipsburg, Sint Maarten',1.78],
       ['sintra','Sintra','Sintra - Palacio da Pena',2.09],
       ['sorrento','Sorrento','View of Sorrento',1.93],
       ['split','Split','Split',1.5],
-      ['stockholm','Stockholm','Royal Dramatic Theatre Stockholm',1.51],
+      ['stockholm','Stockholm','The Gamla Stan waterfront lit at dusk across the water, Stockholm',1.5],
       ['strasbourg','Strasbourg','Strasbourg Cathedral',1.32],
       ['stuttgart','Stuttgart','Neues Schloss Schlossplatzspringbrunnen Schlossplatz Stuttgart',1.98],
       ['sydney','Sydney','Sydney Opera House and Harbour Bridge Dusk',2.0],
@@ -3527,6 +3560,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
      up link bakes in a localhost URL, frame Europe with map.fitBounds([[35.5,
      -1.0],[57.9,18.0]], {animate:false}). Weather: the 12-month bar chart for
      a city whose curve reads clearly — search on /weather/, crop #wx-panel. -->
+<div class="lp-carousels">
 <section class="lp-tools">
   <a class="lp-tools-tile" href="/plugs/">
     <span class="lp-tools-shot">
@@ -3565,6 +3599,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
     </span>
   </a>
 </section>
+</div>
 
 <script>
 /* ── The step carousels on the four tool tiles ───────────────────────────────
