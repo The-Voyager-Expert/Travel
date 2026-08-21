@@ -5421,10 +5421,14 @@ window.TVE.home = (function () {
       { name: 'Radisson Collection Bilbao', note: 'Radisson Collection brand — Gran Vía at Plaza Circular, 5-star, 24h reception, AC, spa with sauna and fitness centre · 8.4 Booking.com', url: 'https://www.booking.com/hotel/es/radisson-collection-bilbao.html', tier: 'luxury' }
     ] },
     'bologna': { h: [
-      { name: 'I Portici Hotel Bologna', note: 'Preferred Hotels & Resorts — historic palazzo beneath the famous porticoes, Michelin-starred I Portici restaurant, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/i-portici.html' },
-      { name: 'Hotel Corona d\'Oro', note: 'Independent — 14th-century palazzo steps from Piazza Maggiore, frescoed ceilings, courtyard garden, tasteful historic interiors · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/hotel-corona-d-oro.html' },
-      { name: 'Hotel Art Giovanni', note: 'Independent — Via Indipendenza near Piazza Maggiore, 16th-century palace, vaulted ceilings · 8.8 Booking.com', url: 'https://www.booking.com/hotel/it/art-hotel-commercianti.html' },
-      { name: 'Grand Hotel Majestic già Baglioni', note: 'Independent — 18th-century palazzo, I Carracci restaurant with frescoed ceilings, full-service spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/grand-majestic-gia-baglioni.html' }
+      { name: 'I Portici Hotel Bologna', note: 'Preferred Hotels & Resorts — historic palazzo beneath the famous porticoes, Michelin-starred I Portici restaurant, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/i-portici.html', tier: 'luxury' },
+      { name: 'Hotel Corona d\'Oro', note: 'Independent — 14th-century palazzo steps from Piazza Maggiore, frescoed ceilings, courtyard garden, tasteful historic interiors · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/hotel-corona-d-oro.html', tier: 'expensive' },
+      { name: 'Hotel Art Giovanni', note: 'Independent — Via Indipendenza near Piazza Maggiore, 16th-century palace, vaulted ceilings · 8.8 Booking.com', url: 'https://www.booking.com/hotel/it/art-hotel-commercianti.html', tier: 'mid' },
+      { name: 'Grand Hotel Majestic già Baglioni', note: 'Independent — 18th-century palazzo, I Carracci restaurant with frescoed ceilings, full-service spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/grand-majestic-gia-baglioni.html', tier: 'luxury' },
+      { name: 'Almarossa', note: 'Independent — Via Irnerio on the north edge of the centro storico, 24h reception, AC, garden and sun terrace, lift · 8.9 Booking.com', url: 'https://www.booking.com/hotel/it/almarossa.html', tier: 'budget' },
+      { name: 'Hotel Internazionale', note: 'Independent — Via dell\'Indipendenza between the station and Piazza Maggiore, 24h reception, AC, on-site restaurant and garden · 8.5 Booking.com', url: 'https://www.booking.com/hotel/it/internazionale.html', tier: 'budget' },
+      { name: 'Royal Hotel Carlton', note: 'Independent — Via Montebello a few minutes from Piazza Maggiore, 24h reception, AC, spa with sauna and hammam, fitness centre · 8.9 Booking.com', url: 'https://www.booking.com/hotel/it/royalcarlton.html', tier: 'mid' },
+      { name: 'Hotel Touring', note: 'Independent — Via de\' Mattuiani south of Piazza Maggiore, 24h reception, AC, roof terrace with hot tub over the old-town rooftops · 8.9 Booking.com', url: 'https://www.booking.com/hotel/it/hoteltouringbologna.html', tier: 'expensive' }
     ] },
     'bora-bora': { h: [
       { name: 'Four Seasons Resort Bora Bora', note: 'Four Seasons brand — overwater bungalows on private Motu Tehotu islet, lagoon snorkel beach, coral-garden reef access · 9.5 Booking.com', url: 'https://www.booking.com/hotel/pf/four-seasons-resort-bora-bora.html' },
