@@ -1614,7 +1614,8 @@
    picker bar stops being a second sticky z-index:10 .legend that painted straight through
    the open dropdown. Bumped passport.js min to 2, web-travel-style.css min to 84,
    CACHE to v1144. */
-var CACHE = 'travel-cache-v1144';
+/* 2026-08-21: link-out and route-ab resynced with their catalogue specimens toolbar.js -> v786. CACHE to v1145. */
+var CACHE = 'travel-cache-v1145';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1627,7 +1628,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 785, 'mobile.css': 87, 'web-travel-style.css': 84, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1, 'airlines.js': 2, 'passport.js': 2 };
+var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 786, 'mobile.css': 87, 'web-travel-style.css': 84, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1, 'airlines.js': 2, 'passport.js': 2 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
