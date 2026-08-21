@@ -7036,35 +7036,29 @@ window.TVE.home = (function () {
      route. Enforced, hard-fail: brain_check.check_getting_around_entry_cards
      bans `_injectGAGrid` and a `.ga-grid` reaching either section id.
 
-     _injectWCGrid below is a different section and is untouched. ── */
+     _injectWCGrid — the same grid on #weekly-closures — is retired too, on
+     2026-08-21, in the owner's own words: "i want this back as used to be match
+     the other sections. one entry below the other." That section was the last
+     consumer of .ga-grid, so the class is gone from guide-style.css as well. ── */
 
-  /* ── Weekly Closures — auto-fill card grid ─────────────────────────────────
-     Wraps each .stop-row in a .neigh-card inside a .ga-grid.ga-auto (auto-fill
-     columns that adapt from 2 to 4 entries). Only fires for 2+ stop-rows. */
-  function _injectWCGrid() {
-    var section = document.getElementById('weekly-closures');
-    if (!section) return;
-    var rows = [], i, el;
-    for (i = 0; i < section.children.length; i++) {
-      el = section.children[i];
-      if (el.classList.contains('stop-row')) rows.push(el);
-    }
-    if (rows.length < 2) return;
-    var grid = document.createElement('div');
-    grid.className = 'ga-grid ga-auto';
-    rows.forEach(function (row) {
-      var card = document.createElement('div');
-      card.className = 'neigh-card';
-      card.appendChild(row);
-      grid.appendChild(card);
-    });
-    section.appendChild(grid);
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _injectWCGrid);
-  } else {
-    _injectWCGrid();
-  }
+  /* ── Weekly Closures — RETIRED 2026-08-21 ──────────────────────────────────
+     _injectWCGrid() wrapped each .stop-row of #weekly-closures in a .neigh-card
+     inside a .ga-grid.ga-auto, running 2–4 entries ACROSS the section. It was
+     the last user of that grid, and it goes for exactly the reason Getting
+     Around and Food Delivery lost theirs two days earlier — the owner wants
+     every Extras section to read the same way: "i want this back as used to be
+     match the other sections. one entry below the other."
+
+     Nothing replaced it. The base rules in guide-style.css § "#55 Weekly
+     Closures" have always drawn the stacked column — white rows one below the
+     other, first rounded at the top, last at the bottom — and the injection was
+     simply painting over them, which is why removing it restores the previous
+     rendering byte for byte and touches no guide markup at all.
+
+     Never re-add it, and never give this section a card grid by any other route.
+     Enforced, hard-fail: brain_check.check_weekly_closures_stacked bans
+     `_injectWCGrid`, `ga-auto` and any `.ga-grid` rule. ── */
+
 
   /* ── Best-Of cross-links — injected before #also-on-this-site on guide pages
      that appear in one or more Best-Of collections. CITY_BEST_OF_MAP is generated
