@@ -5283,10 +5283,14 @@ window.TVE.home = (function () {
       { name: 'The St. Regis Atlanta', note: 'Marriott St. Regis brand — Buckhead on West Paces Ferry Road, heated outdoor pool with pool bar, spa, garden terrace · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/st-regis-buckhead-atlanta.html', tier: 'luxury' }
     ] },
     'austin': { h: [
-      { name: 'JW Marriott Austin', note: 'Marriott family — rooftop pool and spa, 2nd Street dining district, downtown luxury · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/jw-marriott-austin.html' },
-      { name: 'Hilton Austin', note: 'Hilton family — convention center adjacency, city-view rooms, downtown · 8.1 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-austin.html' },
-      { name: 'Hotel Van Zandt', note: "Hyatt Destination brand — Rainey Street Historic District, heated rooftop pool, live music, Geraldine's restaurant · 8.8 Booking.com", url: 'https://www.booking.com/hotel/us/van-zandt.html' },
-      { name: 'W Austin', note: 'Marriott W brand — Downtown on Lavaca Street above ACL Live, rooftop pool with city views, AWAY spa · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/w-austin.html' }
+      { name: 'Hyatt Place Austin Downtown', note: 'Hyatt Place brand — East 3rd Street a block from the Convention Center, fitness centre, valet parking, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-place-downtown.html', tier: 'budget' },
+      { name: 'Aloft by Marriott Austin Downtown', note: 'Marriott Aloft brand — East 7th Street off Congress Avenue, adults-only, fitness centre, valet parking · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/aloft-austin-downtown.html', tier: 'budget' },
+      { name: 'Hyatt Regency Austin', note: 'Hyatt Regency brand — Barton Springs Road on the south shore facing the skyline, year-round outdoor pool, hot tub · 7.7 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-regency-austin.html', tier: 'mid' },
+      { name: 'Hilton Austin', note: 'Hilton family — convention center adjacency, city-view rooms, downtown · 8.1 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-austin.html', tier: 'mid' },
+      { name: 'Hotel Van Zandt', note: "Hyatt Destination brand — Rainey Street Historic District, heated rooftop pool, live music, Geraldine's restaurant · 8.8 Booking.com", url: 'https://www.booking.com/hotel/us/van-zandt.html', tier: 'expensive' },
+      { name: 'W Austin', note: 'Marriott W brand — Downtown on Lavaca Street above ACL Live, rooftop pool with city views, AWAY spa · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/w-austin.html', tier: 'expensive' },
+      { name: 'JW Marriott Austin', note: 'Marriott family — rooftop pool and spa, 2nd Street dining district, downtown luxury · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/jw-marriott-austin.html', tier: 'luxury' },
+      { name: 'Four Seasons Hotel Austin', note: 'Four Seasons brand — San Jacinto Boulevard on the Lady Bird Lake shore, saltwater pool, full-service spa, lakefront lawn · 8.2 Booking.com', url: 'https://www.booking.com/hotel/us/ninty-eight-downtown-austin.html', tier: 'luxury' }
     ] },
     'azores': { h: [
       { name: 'Octant Ponta Delgada', note: 'Independent — Av. João Bosco Mota Amaral by the marina, 5-star, 24h reception, rooftop pool, spa with steam room · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/octant-ponta-delgada.html' },
