@@ -1,3 +1,4 @@
+/* 2026-08-21: Best-Of place pages — #bo-no-results moved out of 33 identical inline <style> blocks into web-travel-style.css (SHARED CSS ONLY; check_best_of_css_standard retargeted from the retired essentials/Best-*.html glob onto best-of/<slug>/ and saw them at once). web-travel-style.css -> 90. CACHE to v1208. */
 /* 2026-08-21: amsterdam hotel price tiers — Hotel Casa added toolbar.js -> v830. CACHE to v1197. */
 /* 2026-08-21: POSITION-2c NOTES — the two walking figures the owner approved on 2026-08-18 reach GM_SPRITE. #169 uphill (pine, key 'uphill') and #153 long stride (navy, key 'long-walk') were treated at catalogue quality that day and left out of the sprite table, so nine guides shipped 'Steep uphill' as bare words for three days. Both carry data-norm=h19.5: untransformed they stood 22.45 and 21.85 tall against walk's 19.75, and in a stop row it is height that reads as size. Labels settled in the same pass: 'Exposed heights' -> 'Heights', 'Tight squeeze' -> 'Enclosed space'. toolbar.js -> v830. CACHE to v1197. */
 /* 2026-08-20: RIGA + VILNIUS were shipped but invisible to every builder — both lacked the shipped stamp that 237 of 239 guides carry, so climate, the world map, the By-Climate links and the theme filter all skipped them. climate.json rebuilt to 239 cities and weather.js's baked CLIMATE block re-baked with it; both cities pinned on the world map and added to GUIDE_LINKS. validate_climate_coverage and validate_planning_pages_coverage both pass. weather.js to 11. CACHE to v1123. */
@@ -1716,7 +1717,7 @@
    .stat-dot on tipping, and the dead .cmp-legend-dot / .stat-pill .dot / .pill .dot rules,
    are retired. guides-index-style.css -> v23. CACHE to v1206. */
 /* 2026-08-21: Before You Go deep link from a guide: the hash is the guide's own weather key (was '#athens.html') and the anchor is found by /before-you-go/ (was the retired Before-You-Go.html); the European Train pill shortener now finds /european-trains/. toolbar.js -> v835. CACHE to v1207. */
-var CACHE = 'travel-cache-v1207';
+var CACHE = 'travel-cache-v1208';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1729,7 +1730,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 835, 'mobile.css': 87, 'web-travel-style.css': 89, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
+var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 835, 'mobile.css': 87, 'web-travel-style.css': 90, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
