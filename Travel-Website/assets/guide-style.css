@@ -4018,15 +4018,30 @@ a.also-in-country-pill:active {
   padding: 12px 14px 14px;
   min-width: 0;
 }
-/* ── 🏨 Hotel Recommendations — the hotel name IS the link ──────────────────
-   It always was an anchor to the hotel's Booking.com page: _injectHotelAlternatives
-   builds an <a class="neigh-name ext-arrow"> whenever the entry carries a url.
-   It just never LOOKED like one, because this rule painted it in the body ink and
-   .ext-arrow — the shared chevron — is declared in web-travel-style.css, which a
-   guide does not load. So on all 237 guides every hotel read as plain bold text
-   and the owner reported them as unlinked (2026-08-19). Both halves are fixed
-   here: terracotta, and a chevron this stylesheet draws itself.
-   Never re-point this at .ext-arrow and never restore the body ink. */
+/* ── 🏨 Hotel Recommendations — two links per card, and NEITHER is terracotta ──
+   RECOLOURED 2026-08-21 (owner): the hotel NAME takes the site's title ink and
+   the Booking.com score takes the site's regular link blue. Owner: "change the
+   link to booking.com to the regular blue we use in the site and hotel names to
+   use the black we use for titles make sure stays like that."
+
+   Read the history before you "restore" anything here, because the two halves of
+   the 2026-08-19 bug are separate and only ONE of them was ever the colour:
+
+     The hotels were NEVER unlinked. _injectHotelAlternatives has built an
+     <a class="neigh-name ext-arrow"> for every entry carrying a url since the url
+     field landed. What made them read as plain text was that this stylesheet
+     painted them in the body ink AND nothing drew a chevron — .ext-arrow is
+     declared only in web-travel-style.css, WHICH A GUIDE DOES NOT LOAD. A whole
+     TripAdvisor migration was scoped on the belief that the data was linkless and
+     cancelled the moment the paint bug was found.
+
+   So the CHEVRON is what makes the name read as a link, and it is the half that
+   must never go. The body ink was never the bug on its own — it was the bug in
+   combination with a missing chevron, and the owner has now asked for that ink
+   back with the chevron kept. Terracotta was one day's answer, not the fix.
+
+   Never re-point either of these at .ext-arrow (that class cannot reach a guide),
+   never restore the terracotta, and never drop the ::after. */
 .neigh-name {
   font-size: 14px;
   font-weight: bold;
@@ -4034,7 +4049,7 @@ a.also-in-country-pill:active {
   margin-bottom: 5px;
 }
 a.neigh-name {
-  color: #C04E1A;
+  color: var(--c-text-primary);
   text-decoration: none;
 }
 a.neigh-name::after {
@@ -4047,15 +4062,18 @@ a.neigh-name:hover { text-decoration: underline; }
 /* Literal hex, not var() — browsers refuse var() inside :visited (privacy
    restriction), so a token here silently does nothing and the link goes
    browser-purple after the first click. Owner rule 2026-07-28: no font-colour
-   change after visit — visited equals rest. */
-a.neigh-name:visited { color: #C04E1A; }
+   change after visit — visited equals rest. #3d3a32 IS --c-text-primary's light
+   value; the dark block below carries its dark partner for the same reason. */
+a.neigh-name:visited { color: #3d3a32; }
 
 /* The score at the end of the note links to the page the score was read from —
    click the number you are reading, land where it came from. Rendered only when
    the note actually ends in the `· N.N Booking.com` fragment AND the entry has a
-   url; never invented (brain_check rule 810 pairs the two). */
+   url; never invented (brain_check rule 810 pairs the two).
+   --c-link is the site's ONE link blue (#2867c4 light / #5a9aee dark) — the same
+   token every body link on a guide reads. Never a local hex, never terracotta. */
 .neigh-why a.hr-src {
-  color: #C04E1A;
+  color: var(--c-link);
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
@@ -4099,14 +4117,14 @@ a.neigh-name:visited { color: #C04E1A; }
 .hr-coins svg { width: 1.15em; height: 1.15em; margin-left: -4px; }
 .hr-coins svg:first-child { margin-left: 0; }
 
-/* Dark partners. The light terracotta #C04E1A measures 3.5:1 on the dark card, so
-   the links take #D4663A — the site's one approved dark terracotta (CLAUDE.md
-   Thirty-fifth non-negotiable). The four tier hues lighten for the same reason;
-   they are the same families, not new colours. */
+/* Dark partners. The name and the score link both read tokens that already flip
+   in dark mode (--c-text-primary → #e8e5e0, --c-link → #5a9aee), so neither needs
+   an override here — only :visited does, because a var() inside :visited is
+   refused by the browser and would silently leave the name browser-purple.
+   The four tier hues lighten because the light values sit near 3:1 on the dark
+   card; they are the same families, not new colours. */
 @media (prefers-color-scheme: dark) {
-  a.neigh-name       { color: #D4663A; }
-  a.neigh-name:visited { color: #D4663A; }
-  .neigh-why a.hr-src { color: #D4663A; }
+  a.neigh-name:visited { color: #e8e5e0; }
   .hr-tier.hr-budget { color: #7fc684; }
   .hr-tier.hr-mid    { color: #79b9d8; }
   .hr-tier.hr-exp    { color: #e0a862; }
