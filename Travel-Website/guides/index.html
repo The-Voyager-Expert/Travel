@@ -3283,29 +3283,18 @@
     return new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }).format(date);
   }
 
-  /* ── Needs-visa data, US citizen (sourced from essentials/visa/) ──
-     Keyed by country label text as it appears in this page's .country-label
-     blocks, matching the c.country field captured on card selection. */
-  var VISA_DOMESTIC = { 'United States': 1, 'Puerto Rico': 1, 'Virgin Islands': 1 }; /* US soil — no visa, not even the Caribbean bucket they're grouped under */
-  var VISA_DATA = {
-    /* Schengen — visa-free, 90 days in any 180 */
-    'Austria':{needed:'no',label:'Visa-free · 90 days'},'Belgium':{needed:'no',label:'Visa-free · 90 days'},'Croatia':{needed:'no',label:'Visa-free · 90 days'},'Czechia':{needed:'no',label:'Visa-free · 90 days'},'Denmark':{needed:'no',label:'Visa-free · 90 days'},'Estonia':{needed:'no',label:'Visa-free · 90 days'},'Finland':{needed:'no',label:'Visa-free · 90 days'},'France':{needed:'no',label:'Visa-free · 90 days'},'Germany':{needed:'no',label:'Visa-free · 90 days'},'Greece':{needed:'no',label:'Visa-free · 90 days'},'Hungary':{needed:'no',label:'Visa-free · 90 days'},'Iceland':{needed:'no',label:'Visa-free · 90 days'},'Italy':{needed:'no',label:'Visa-free · 90 days'},'Luxembourg':{needed:'no',label:'Visa-free · 90 days'},'Monaco':{needed:'no',label:'Visa-free · 90 days'},'Netherlands':{needed:'no',label:'Visa-free · 90 days'},'Norway':{needed:'no',label:'Visa-free · 90 days'},'Poland':{needed:'no',label:'Visa-free · 90 days'},'Portugal':{needed:'no',label:'Visa-free · 90 days'},'Slovenia':{needed:'no',label:'Visa-free · 90 days'},'Spain':{needed:'no',label:'Visa-free · 90 days'},'Sweden':{needed:'no',label:'Visa-free · 90 days'},'Switzerland':{needed:'no',label:'Visa-free · 90 days'},
-    /* Rest of world — visa-free, own limits */
-    'Ireland':{needed:'no',label:'Visa-free · 90 days'},'Canada':{needed:'no',label:'Visa-free · 180 days'},'Japan':{needed:'no',label:'Visa-free · 90 days'},'Philippines':{needed:'no',label:'Visa-free · 30 days'},'Taiwan':{needed:'no',label:'Visa-free · 90 days'},'French Polynesia':{needed:'no',label:'Visa-free · 90 days'},'Morocco':{needed:'no',label:'Visa-free · 90 days'},'Argentina':{needed:'no',label:'Visa-free · 90 days'},'Chile':{needed:'no',label:'Visa-free · 90 days'},'Ecuador':{needed:'no',label:'Visa-free · 90 days'},'Peru':{needed:'no',label:'Visa-free · 183 days'},'Uruguay':{needed:'no',label:'Visa-free · 90 days'},'Costa Rica':{needed:'no',label:'Visa-free · 90 days'},
-    'Malta':{needed:'no',label:'Visa-free · 90 days'},'Montenegro':{needed:'no',label:'Visa-free · 90 days'},'Georgia':{needed:'no',label:'Visa-free · 365 days'},'Mexico':{needed:'no',label:'Visa-free · 180 days'},
-    'Aruba':{needed:'no',label:'Visa-free · 30 days'},'Barbados':{needed:'no',label:'Visa-free · 6 months'},'Curaçao':{needed:'no',label:'Visa-free · 90 days'},'Sint Maarten':{needed:'no',label:'Visa-free · 90 days'},'Cayman Islands':{needed:'no',label:'Visa-free · 30 days'},'Turks and Caicos':{needed:'no',label:'Visa-free · 90 days'},'The Bahamas':{needed:'no',label:'Visa-free · 90 days'},
-    'South Africa':{needed:'no',label:'Visa-free · 90 days'},'Seychelles':{needed:'no',label:'Visa-free · 30 days'},
-    /* Free arrival card — file online, not a visa */
-    'Thailand':{needed:'no',label:'Free arrival card · 60 days'},'Singapore':{needed:'no',label:'Free arrival card · 90 days'},'Sri Lanka':{needed:'no',label:'Free arrival card · 30 days'},'South Korea':{needed:'no',label:'Free arrival card · 90 days'},
-    /* Travel authorization (ETA) — apply online, not a traditional visa */
-    'United Kingdom':{needed:'no',label:'UK ETA required'},'Australia':{needed:'no',label:'ETA (601) required'},'New Zealand':{needed:'no',label:'NZeTA required'},
-    /* eVisa required */
-    'Brazil':{needed:'yes',label:'eVisa required'},'Turkey':{needed:'yes',label:'eVisa required'},'Vietnam':{needed:'yes',label:'eVisa required'},'Laos':{needed:'yes',label:'eVisa required · ~USD 50'},
-    /* Visa on arrival */
-    'United Arab Emirates':{needed:'yes',label:'Visa on arrival (free)'},'Qatar':{needed:'yes',label:'Visa on arrival (free)'},'Indonesia':{needed:'yes',label:'Visa on arrival'},'Maldives':{needed:'yes',label:'Visa on arrival · 30 days free'},'Jordan':{needed:'yes',label:'Visa on arrival'},'Nepal':{needed:'yes',label:'Visa on arrival · USD 30–50'},'Oman':{needed:'yes',label:'Free e-visa or visa on arrival'},
-    /* Visa required, arrange in advance */
-    'China':{needed:'yes',label:'Visa required'},'Egypt':{needed:'yes',label:'Visa required'},'Bhutan':{needed:'yes',label:'Visa required + daily fee'}
-  };
+  /* ── Needs-visa data: RETIRED, and it does not come back ──────────────────
+     This was VISA_DATA — one hand-kept table of what a US passport needed, and
+     VISA_DOMESTIC beside it marking US soil. Owner rule 2026-08-20: "Nothing
+     can be in relation to US anymore. This is an international site."
+
+     The answer now comes from TVE.passport, which reads assets/visa-matrix.json:
+     199 passports x 207 destinations, every one at the same quality, rebuilt by
+     Brain/scripts/build/build_visa_matrix.py and stamped with its source's date.
+     There is no default passport and no fallback to one — see passport.js.
+
+     Never re-add a nationality-specific table here. A second copy of a visa
+     answer is how one page goes on saying "visa-free" after the rule changed. */
 
   /* ── Cost & Safety data (static, approximate — good for trip planning) ── */
   // tier: Budget = USD goes far, Moderate = average, Expensive = pricey, Premium = very expensive
@@ -3352,7 +3341,17 @@
     var fltColors = { nonstop:'#2a7a2a', seasonal:'#2a7a2a', '1stop':'#8a6c1a', '2stop':'#c06000' };
     var fltLabels = { nonstop:'Nonstop', seasonal:'Nonstop (seasonal)', '1stop':'1 connection', '2stop':'2 connections' };
 
-    var out = '<div class="cmp-table-wrap"><table class="cmp-table"><tbody>';
+    /* The passport strip — the control that names what the Entry row answers for.
+       It sits ABOVE the table and is always rendered, set or unset, because a row
+       that can be absent cannot also be the way to turn itself on. Same shape as
+       the Time Zones sort pill: the label IS the control (Thirty-first
+       non-negotiable), so a default could never be silent here — and there is no
+       default to be silent about. */
+    var out = '<div class="cmp-passport-strip">'
+      + '<span class="cmp-passport-lead">Entry rules for</span>'
+      + '<span class="cmp-passport-mount"></span>'
+      + '</div>';
+    out += '<div class="cmp-table-wrap"><table class="cmp-table"><tbody>';
 
     /* City header row */
     out += '<tr><td class="cmp-row-label"></td>';
@@ -3451,26 +3450,42 @@
     out += '</tr>';
     }
 
-    /* Needs-visa row (US citizen) */
-    out += '<tr><td class="cmp-row-label">Needs Visa<br><span style="font-weight:400;letter-spacing:0;text-transform:none">US citizen</span></td>';
-    sel.forEach(function(c) {
-      if (VISA_DOMESTIC[c.name] || c.country === 'United States') {
-        out += '<td class="cmp-col"><span class="cmp-v cmp-good">No</span>'
-          + '<span class="cmp-sub">U.S. — domestic travel</span></td>';
-        return;
-      }
-      var vi = c.country ? VISA_DATA[c.country] : null;
-      if (vi) {
-        var vcls = vi.needed === 'no' ? 'cmp-good' : 'cmp-warn';
+    /* Entry row — for the reader's OWN passport, and for no passport until they
+       have named one (owner rule 2026-08-20). Three cases, and the first is the
+       one that keeps this row honest:
+
+         no passport set -> THE ROW IS NOT RENDERED AT ALL. Not a dash, not a
+                            "set your passport" cell. A row of placeholders in a
+                            comparison table reads as missing data about the
+                            cities, and this is a question nobody has asked yet.
+                            The strip above the table carries the control and is
+                            always visible, so the row is never unreachable.
+         passport set     -> that passport's own requirement, in the site's one
+                            vocabulary (TVE.passport.describe), with the day
+                            allowance where the source publishes one.
+         destination is a territory -> the answer plus the note saying whose visa
+                            list it follows. Never the answer alone: an
+                            approximation presented as a rule is the failure the
+                            matrix builder's proxy narrowing exists to avoid.
+
+       The label names the passport because the number is meaningless without it —
+       the same reason the Flight row names its airport. */
+    if (VISA_ON) {
+      var pp = window.TVE.passport.get();
+      out += '<tr><td class="cmp-row-label">Entry<br><span style="font-weight:400;letter-spacing:0;text-transform:none">' + esc(pp.name) + ' passport</span></td>';
+      sel.forEach(function(c) {
+        var vi = window.TVE.passport.cell(c.country || c.name);
+        if (!vi) { out += '<td class="cmp-col"><span class="cmp-sub">&mdash;</span></td>'; return; }
+        var vcls = vi.tone === 'good' ? 'cmp-good' : (vi.tone === 'bad' ? 'cmp-bad' : 'cmp-warn');
+        var sub  = vi.label;
+        if (vi.territory && vi.territory.kind === 'proxy') sub += ' &middot; follows ' + esc(vi.territory.follows);
         out += '<td class="cmp-col">'
-          + '<span class="cmp-v ' + vcls + '">' + (vi.needed === 'no' ? 'No' : 'Yes') + '</span>'
-          + '<span class="cmp-sub">' + esc(vi.label) + '</span>'
+          + '<span class="cmp-v ' + vcls + '">' + esc(vi.answer) + '</span>'
+          + '<span class="cmp-sub">' + sub + '</span>'
           + '</td>';
-      } else {
-        out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
-      }
-    });
-    out += '</tr>';
+      });
+      out += '</tr>';
+    }
 
     /* Climate bars row */
     out += '<tr class="cmp-group-start"><td class="cmp-row-label">Climate<br><span style="font-weight:400;letter-spacing:0;text-transform:none">tap a month</span></td>';
@@ -3641,13 +3656,33 @@
       .catch(function () { window._lpAirports = {}; then(); });
   }
 
+  /* VISA_ON is the one question the Entry row asks: can this reader be answered
+     at all? It is false with no passport chosen, false if the matrix could not be
+     fetched, and false for a passport the matrix does not carry — three different
+     reasons, all of which mean the same thing to the table, which is "do not draw
+     a row you cannot fill". TVE.passport.ready() resolves it without fetching the
+     97 KB matrix when nothing is set, so the commonest case costs nothing. */
+  var VISA_ON = false;
+  function loadVisa(then) {
+    if (!(window.TVE && window.TVE.passport)) { VISA_ON = false; then(); return; }
+    window.TVE.passport.ready(function (ok) { VISA_ON = ok; then(); });
+  }
+
   /* ── Show compare panel ───────────────────────────────────────────── */
   function showPanel() {
     if (!compareView || sel.length < 2) return;
+    loadVisa(function () {
     loadAirports(function () {
     loadClimate(function() {
       compareView.hidden = false;
       compareView.innerHTML = buildTable();
+      /* The picker is mounted after innerHTML, never emitted as markup: TVE.passport
+         owns the control so every visa surface on the site shows the same one, and
+         picking re-renders the table through the same path that drew it. */
+      var _ppm = compareView.querySelector('.cmp-passport-mount');
+      if (_ppm && window.TVE && window.TVE.passport) {
+        window.TVE.passport.mount(_ppm, { onPick: function () { showPanel(); } });
+      }
       document.querySelector('.mosaic-wrap').style.display = 'none';
       var fv = document.getElementById('flight-view');
       if (fv) fv.style.display = 'none';
@@ -3657,6 +3692,7 @@
       });
       /* scroll table into view */
       compareView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
     });
     });
   }
