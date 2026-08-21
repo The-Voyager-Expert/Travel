@@ -1625,7 +1625,14 @@
 /* 2026-08-21: accessibility marks sized to the stop row — steps/viaduct/squeeze all
    19.5 tall (walk's height); steps and viaduct redrawn narrower to reach it.
    toolbar.js -> v788. CACHE to v1148. */
-var CACHE = 'travel-cache-v1148';
+/* 2026-08-21: badge families take over the last two page-local palettes — the 9
+   airline tags and the 7 train types now write `badge fam-*` and airlines.css /
+   trains.css carry no colour of their own; the dead :root[data-theme="dark"]
+   mirrors in both go with them. web-travel-style.css gains --search-radius.
+   airlines.css JOINS MIN_VERSIONS (it was versioned in the pages and floored
+   nowhere, so a stale copy had nothing to push it out).
+   web-travel-style.css -> v86, trains.css -> v8, airlines.css -> v2. CACHE to v1149. */
+var CACHE = 'travel-cache-v1149';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1638,7 +1645,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 788, 'mobile.css': 87, 'web-travel-style.css': 85, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1, 'airlines.js': 2, 'passport.js': 3 };
+var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 788, 'mobile.css': 87, 'web-travel-style.css': 86, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 8, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
