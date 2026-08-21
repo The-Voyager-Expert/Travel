@@ -5256,6 +5256,7 @@ window.TVE.home = (function () {
     ] },
     'amsterdam': { h: [
       { name: 'Hampton by Hilton Amsterdam Centre East', note: 'Hilton Hampton brand — Panamalaan in Zeeburg, tram to the centre, fitness centre, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/nl/hampton-by-hilton-amsterdam-centre-east.html', tier: 'budget' },
+      { name: 'Hotel Casa Amsterdam', note: 'Independent — Eerste Ringdijkstraat in Oost by the Amstel, metro to the centre, terrace bar, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/nl/casa-400.html', tier: 'budget' },
       { name: 'Hotel V Nesplein', note: 'Hotel V collection — trendy Nieuwmarkt-area design hotel, rooftop terrace bar, steps from Waterlooplein market and Rembrandtplein · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/nl/v-nesplein.html', tier: 'mid' },
       { name: 'NH Collection Amsterdam Flower Market', note: 'NH Collection first-tier brand — Vijzelstraat beside the Bloemenmarkt, fitness centre, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/nl/nhcollection-amsterdam-flower-market.html', tier: 'mid' },
       { name: 'Renaissance Amsterdam Hotel', note: 'Marriott Renaissance brand — Kattengat off Haarlemmerstraat, 17th-century Koepelkerk event dome, fitness centre · 8.4 Booking.com', url: 'https://www.booking.com/hotel/nl/renaissance.html', tier: 'mid' },
