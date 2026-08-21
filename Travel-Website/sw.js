@@ -1662,7 +1662,8 @@
 /* 2026-08-21: bilbao hotel price tiers toolbar.js -> v808. CACHE to v1173. */
 /* 2026-08-21: aracaju hotel price tiers toolbar.js -> v809. CACHE to v1174. */
 /* 2026-08-21: bologna hotel price tiers toolbar.js -> v810. CACHE to v1175. */
-var CACHE = 'travel-cache-v1175';
+/* 2026-08-21: arenal hotel price tiers toolbar.js -> v811. CACHE to v1176. */
+var CACHE = 'travel-cache-v1176';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1675,7 +1676,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 810, 'mobile.css': 87, 'web-travel-style.css': 88, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 9, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
+var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 811, 'mobile.css': 87, 'web-travel-style.css': 88, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 9, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
