@@ -5211,10 +5211,13 @@ window.TVE.home = (function () {
       { name: 'Hotel 1904', note: 'Independent — Løvenvoldgata in the Art Nouveau quarter, garden terrace, restaurant and bar, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/no/hotel-1904.html', tier: 'luxury' }
     ] },
     'amalfi': { h: [
-      { name: 'Hotel Santa Caterina', note: 'Independent family estate — 1880s cliffside villa, saltwater pool, sea-view terraces, Michelin-starred dining · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/santa-caterina-amalfi.html' },
-      { name: 'Anantara Convento di Amalfi Grand Hotel', note: 'Anantara brand — converted 13th-century convent above town, infinity pool, dramatic coastal views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/anantara-convento-di-amalfi-grand-hotel.html' },
-      { name: 'Hotel Luna Convento', note: 'Independent — 13th-century clifftop convent on Via Pantaleone Comite, saltwater pool with sea views, cloister, Saracen tower bar · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/luna-convento-torre-saracena-sas.html' },
-      { name: 'Hotel Antica Repubblica', note: 'Independent — historic centre off Salita Truglio, 170 m from the beach, soundproofed rooms, terrace · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/anticarepubblica.html' }
+      { name: 'Hotel Antica Repubblica', note: 'Independent — historic centre off Salita Truglio, 170 m from the beach, soundproofed rooms, terrace · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/anticarepubblica.html', tier: 'budget' },
+      { name: 'Amalfi Suite Boutique Hotel', note: 'Independent boutique — Salita Truglio in the historic centre, solarium terrace, valet parking, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/amalfi-suite-boutique.html', tier: 'mid' },
+      { name: 'Hotel Il Nido', note: 'Independent — above the coast road on Via Quasimodo west of town, solarium, beach shuttle, private parking · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/il-nido.html', tier: 'mid' },
+      { name: 'Hotel Bellevue Suite', note: 'Independent — Via Mauro Comite on the Vettica headland, sea-view suites, valet parking, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/bellevue.html', tier: 'expensive' },
+      { name: 'Hotel Luna Convento', note: 'Independent — 13th-century clifftop convent on Via Pantaleone Comite, saltwater pool with sea views, cloister, Saracen tower bar · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/luna-convento-torre-saracena-sas.html', tier: 'expensive' },
+      { name: 'Anantara Convento di Amalfi Grand Hotel', note: 'Anantara brand — converted 13th-century convent above town, infinity pool, dramatic coastal views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/anantara-convento-di-amalfi-grand-hotel.html', tier: 'luxury' },
+      { name: 'Hotel Santa Caterina', note: 'Independent family estate — 1880s cliffside villa, saltwater pool, sea-view terraces, Michelin-starred dining · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/santa-caterina-amalfi.html', tier: 'luxury' }
     ] },
     'amsterdam': { h: [
       { name: 'Waldorf Astoria Amsterdam', note: 'Waldorf Astoria brand — six 17th-century canal palaces on Herengracht, Guerlain Spa with pool, Michelin-recognized dining · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/nl/waldorf-astoria-amsterdam.html' },
