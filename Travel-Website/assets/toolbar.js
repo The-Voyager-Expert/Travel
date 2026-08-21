@@ -5203,10 +5203,12 @@ window.TVE.home = (function () {
       { name: 'Marriott Anchorage Downtown', note: 'Marriott brand — indoor pool, largest downtown full-service hotel, West 7th Avenue · 7.9 Booking.com' , url: 'https://www.booking.com/hotel/us/anchorage-marriott-downtown.html', tier: 'luxury' }
     ] },
     'alesund': { h: [
-      { name: 'Hotel 1904', note: '', url: 'https://www.booking.com/hotel/no/hotel-1904.html' },
-      { name: 'Thon Hotel Ålesund', note: 'Thon Hotels — central location, harbor-facing rooms · 8.7 Booking.com', url: 'https://www.booking.com/hotel/no/thon-alesund-alesund.html' },
-      { name: 'Hotel Noreg', note: 'Independent — Kongensgate in the Art Nouveau centre, sauna, fitness centre, hot spring bath · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/hotel-noreg.html' },
-      { name: 'Scandic Parken', note: 'Scandic brand — Storgata below Aksla hill, sauna, fitness centre, on-site restaurant · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/scandic-parken.html' }
+      { name: 'Hotel Noreg', note: 'Independent — Kongensgate in the Art Nouveau centre, sauna, fitness centre, hot spring bath · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/hotel-noreg.html', tier: 'budget' },
+      { name: 'Scandic Parken', note: 'Scandic brand — Storgata below Aksla hill, sauna, fitness centre, on-site restaurant · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/scandic-parken.html', tier: 'budget' },
+      { name: 'Thon Hotel Ålesund', note: 'Thon Hotels — central location, harbor-facing rooms · 8.7 Booking.com', url: 'https://www.booking.com/hotel/no/thon-alesund-alesund.html', tier: 'mid' },
+      { name: 'Quality Hotel Waterfront', note: 'Nordic Choice — Nedre Strandgate on the harbour front, fitness centre, 24h reception · 8.0 Booking.com', url: 'https://www.booking.com/hotel/no/quality-waterfront.html', tier: 'mid' },
+      { name: 'Quality Hotel Ålesund', note: 'Nordic Choice — Sorenskriver Bullsgate in the centre, fitness centre, room service, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/no/quality-hotel-alesund.html', tier: 'expensive' },
+      { name: 'Hotel 1904', note: 'Independent — Løvenvoldgata in the Art Nouveau quarter, garden terrace, restaurant and bar, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/no/hotel-1904.html', tier: 'luxury' }
     ] },
     'amalfi': { h: [
       { name: 'Hotel Santa Caterina', note: 'Independent family estate — 1880s cliffside villa, saltwater pool, sea-view terraces, Michelin-starred dining · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/santa-caterina-amalfi.html' },
