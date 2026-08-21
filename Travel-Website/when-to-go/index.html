@@ -259,7 +259,14 @@ a.cf-card:hover { border-color: var(--rust); box-shadow: 0 3px 10px rgba(192,78,
 @media (max-width: 600px) and (pointer: coarse) { .cf-city-search { width: 100%; } }
 /* Compare */
 .cf-card { position: relative; }
-.cf-compare-btn { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--surface); cursor: pointer; font-size: 11px; line-height: 20px; text-align: center; color: var(--muted); z-index: 1; transition: border-color .15s, background .15s; }
+/* mobile.css rule 7 gives every <button> min-height:40px — a floor that beats
+   a smaller `height` regardless of selector specificity (CSS computes the box
+   as max(height, min-height), it is not a cascade fight), so a 22px circle
+   button silently renders as a 22×40 oval. Same failure and same fix as
+   .cf-tray-x below: knock the floor back down, then hand the 40px tap target
+   to a transparent ::after that overflows the circle instead of growing it. */
+.cf-compare-btn { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; min-height: auto; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--surface); cursor: pointer; font-size: 11px; line-height: 20px; text-align: center; color: var(--muted); z-index: 1; transition: border-color .15s, background .15s; }
+.cf-compare-btn::after { content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; }
 .cf-compare-btn:hover { border-color: var(--accent, #c8a44e); }
 .cf-compare-btn.selected { border-color: var(--accent, #c8a44e); background: var(--accent, #c8a44e); color: #fff; }
 /* ─── Compare tray — docked to the foot of the VIEWPORT, never a panel at the
