@@ -189,40 +189,62 @@
   font-weight: 700; color: var(--text, #17150f); margin: 0 0 .6rem; text-wrap: balance; }
 .gi-lead p { margin: 0; font-size: 1.02rem; line-height: 1.65; color: var(--muted, #6a6660); }
 
-/* FEATURE CARDS — TWO PER ROW, FOUR TOTAL (owner rule 2026-08-18: "we have 8
-   we should do 4 with 2 in each row looks way too much until the guides show
-   up"). The block sits ABOVE the 237-card mosaic, so its whole job is to be
-   read in one glance and got past — eight full-width rows pushed the guides
-   themselves below the fold on every screen.
+/* FEATURE CARDS — TWO PER ROW, SIX TOTAL (owner rule 2026-08-18: "we have 8 we
+   should do 4 with 2 in each row looks way too much until the guides show up";
+   extended 2026-08-21 with the trip-overview/extras card and the world map).
+   The block sits ABOVE the 237-card mosaic, so its whole job is to be read in
+   one glance and got past — eight full-width rows pushed the guides themselves
+   below the fold on every screen.
 
    Screenshot ON TOP, caption under it — not the old screenshot-left/text-right.
    In a half-width cell a 340px shot column leaves the caption ~120px, which
-   wraps a four-word heading onto three lines. Stacking also fixes the "maps
-   screenshot too big" complaint for free: the map is now half the width it was.
+   wraps a four-word heading onto three lines. That now applies to the WORLD MAP
+   card too, which used to be a side-by-side .gi-mark panel sitting under the
+   whole block (owner 2026-08-21: "add the map up one side only ... dont put
+   side by side with the pins but they should be all fiting in two colluns").
 
-   EVERY SCREENSHOT CARRIES ITS OWN REAL WIDTH AND HEIGHT, AND THOSE ARE ITS
-   ASPECT RATIO. There is deliberately NO aspect-ratio and NO object-fit:cover
-   here. The four sources are genuinely different shapes — 1544x1276 (1.21),
-   1456x1048 (1.39), 1400x809 (1.73), 1544x284 (5.44) — because a stop card, a
-   map and a one-row currency panel are not the same picture. Forced into one
-   16/9 box, cover CROPS rather than scales: the 1.21 shot loses a third of its
-   height and the 5.44 panel two thirds of its width, and what gets cut is the
-   part the shot exists to show (owner 2026-08-18: "we cropped and not resized,
-   the look awful"). Each image is width:100% / height:auto — scaled down whole,
-   never trimmed. The cards in a row therefore end at different heights, which is
-   the honest result and is why .gi-cards uses align-items:start.
-   This is the same call the landing page's showcase tiles already document
-   (Thirty-ninth non-negotiable) — do not re-add a shared ratio to line the
-   captions up. */
+   EVERY CARD IS THE SAME HEIGHT, AND NOTHING IS CROPPED TO GET THERE. Owner
+   2026-08-21: "reduce the size of screen shots and make sure they all finish
+   the same height at the end not one shorter."
+     · The shot box is ONE fixed aspect-ratio and `grid-auto-rows: 1fr` makes
+       every ROW as tall as the tallest, so the six cards read as a block rather
+       than as three ragged pairs.
+     · The image is object-fit: CONTAIN, never cover. Contain scales the whole
+       picture down and letterboxes what is left; cover would TRIM — and what it
+       trims is the part the shot exists to show, which is the complaint that
+       produced the old ragged-height layout ("we cropped and not resized, the
+       look awful", 2026-08-18). Equal heights and no cropping are only in
+       tension while the fit is cover. So do NOT "restore" align-items:start to
+       un-crop something — nothing here is cropped.
+     · The letterbox ground is #f5f4f0, the guides' own page cream, so a
+       wide-short shot (the currency panel, 2.12) reads as page margin rather
+       than as dead space.
+   The sources are re-clipped to sit near the box ratio for that reason — 1.62 /
+   1.66 / 1.70 / 2.12 / 1.69 / 1.70 — and are 1200px wide, which is 2x the
+   widest the box is ever painted. A new card should be clipped to ~1.7 too. */
 .gi-cards { display: grid; grid-template-columns: 1fr 1fr;
-  gap: clamp(10px, 1.6vw, 16px); align-items: start; }
+  gap: clamp(10px, 1.6vw, 16px); align-items: stretch; grid-auto-rows: 1fr; }
 .gi-card { background: var(--surface, #fff); border: 1px solid var(--border2, #e6e2da);
-  border-radius: 14px; overflow: hidden; }
-.gi-shot { display: block; background: #f5f4f0;
+  border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+/* THE IMAGE IS TAKEN OUT OF FLOW, and that is not tidiness — it is the only way
+   the aspect-ratio actually holds. An in-flow `height: 100%` against a height
+   that comes FROM aspect-ratio is a cyclic dependency, so the browser resolves
+   the height as auto, the img lays out at its own intrinsic ratio, and the
+   block grows to whatever that is. Measured: the boxes came out 325 / 318 / 309
+   / 308 / 309 / 310 — a 17px spread in the exact thing the owner asked to be
+   equal, with aspect-ratio present and computing 17/10 the whole time. Absolute
+   positioning breaks the cycle: the box is sized by the ratio alone and the img
+   fills it. Do not "simplify" this back to an in-flow image. */
+.gi-shot { display: block; position: relative; overflow: hidden;
+  background: #f5f4f0; aspect-ratio: 17 / 10;
   border-bottom: 1px solid var(--border2, #e6e2da); }
-.gi-shot img { display: block; width: 100%; height: auto; }
-/* A caption is ONE line of label and ONE short line under it. */
-.gi-body { padding: 16px 20px; display: flex; flex-direction: column; justify-content: center; }
+.gi-shot img { position: absolute; inset: 0; display: block;
+  width: 100%; height: 100%; object-fit: contain; object-position: center; }
+/* A caption is ONE line of label and ONE short line under it. flex:1 is what
+   lets a two-line caption stretch its own card without the row going ragged. */
+.gi-body { padding: 16px 20px; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; }
+/* The CTA rides inside the map card's caption now that the card is in the grid. */
+.gi-body .gx-btn { align-self: flex-start; margin-top: .85rem; }
 .gi-body h3 { margin: 0 0 .35rem; font-size: 1.02rem; font-weight: 700; letter-spacing: -.015em;
   color: var(--text, #17150f); }
 .gi-body p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--muted, #6a6660); }
@@ -265,21 +287,21 @@
   .gi-key-row { gap: 10px 16px; }
 }
 
-/* The map half carries the weight — it is the part the owner asked for by
-   name, and it is the only thing here with somewhere to go. */
-.gi-mark { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(18px, 3vw, 32px);
-  align-items: center; margin-top: clamp(14px, 2vw, 22px);
-  padding: clamp(18px, 2.6vw, 28px); background: var(--surface, #fff);
-  border: 1px solid var(--border2, #e6e2da); border-radius: 14px; }
-.gi-mark h3 { margin: 0 0 .5rem; font-size: clamp(1.1rem, 2vw, 1.35rem); font-weight: 700;
-  letter-spacing: -.02em; color: var(--text, #17150f); text-wrap: balance; }
-/* WEIGHT-ONLY emphasis, never colour: --rust is #D4663A in dark mode and that
-   is 4.03:1 on the --surface card, under AA at this size. Measured — a
-   terracotta <em> here is what validate_dark_mode.py catches. */
-.gi-mark p strong { font-weight: 700; color: var(--text, #17150f); }
-.gi-mark p { margin: 0 0 1.05rem; font-size: .97rem; line-height: 1.62; color: var(--muted, #6a6660); }
-.gi-mark .gi-shot { border: 1px solid var(--border2, #e6e2da); border-radius: 12px; overflow: hidden; }
-.gi-pill { display: inline-block; font-weight: 700; color: var(--rust, #C04E1A); }
+/* RETIRED 2026-08-21 — `.gi-mark`, the side-by-side map panel that used to sit
+   under the whole block: text in one column, the pins in the other, full width.
+   Owner: "add the map up one side only ... dont put side by side with the pins
+   but they should be all fiting in two colluns". The world map is a plain
+   .gi-card in the grid now, picture on top and caption under it like every
+   other card, with its CTA in the caption. Re-adding a wide panel below the
+   cards puts the map back at the bottom, which is what "add the map up" moved
+   it out of. The rules are deleted rather than left orphaned — CSS that still
+   describes a retired component is how the next crib talks itself into
+   rebuilding it.
+   WEIGHT-ONLY emphasis survives the move and is not decoration: --rust is
+   #D4663A in dark mode, which is 4.03:1 on the --surface card and under AA at
+   this size, so the map caption's <strong> stays a weight and never a colour.
+   Measured — a terracotta emphasis here is what validate_dark_mode.py catches. */
+.gi-body p strong { font-weight: 700; color: var(--text, #17150f); }
 
 @media (prefers-color-scheme: dark) {
   .gi-shot { background: #201e1c; }
@@ -311,10 +333,6 @@
      They are labels, so they fit. */
   .gi-list { columns: 2; column-gap: 16px; }
   .gi-list li { font-size: .84rem; padding-left: 13px; }
-  .gi-mark { grid-template-columns: 1fr; }
-  /* Text first on a phone: the picture means nothing until the sentence that
-     explains the gold pins has been read. */
-  .gi-mark .gi-shot { order: 2; }
 }
 </style>
 <!-- seo:start — generated by Brain/scripts/build/build_seo.py · do not hand-edit -->
@@ -745,12 +763,14 @@
   <div class="gi-cards">
     <div class="gi-card">
       <!-- Screenshot: the top of a live guide. Regenerate rather than edit —
-           load /guides/athens.html at 820px / 2x, clip x 24, y 256, 772 x 638.
-           The weather strip is the weather of the day it was shot; that is
+           serve the site over HTTP (root-absolute /assets paths 404 under
+           file://), load /guides/rome.html at 820px / 2x, and clip x 16 from
+           16px above .title-page down to the bottom of the second .overview-day
+           row. The weather strip is the weather of the day it was shot; that is
            expected and is not a reason to retouch the file. -->
       <span class="gi-shot"><img src="/assets/guides-intro/guide-overview.png"
-        alt="The top of the Athens guide: the hotel it is built around, a week of weather, a row of buttons including I&rsquo;ve Been, and the trip overview listing five days and their stops"
-        loading="lazy" width="1544" height="1276"></span>
+        alt="The top of the Rome guide: the hotel it is built around, a week of weather, a row of buttons including I&rsquo;ve Been, and the first days of the trip overview with their stops"
+        loading="lazy" width="1200" height="742"></span>
       <div class="gi-body">
         <h3>The whole trip, one screen</h3>
         <p>Hotel, weather, every day, every stop.</p>
@@ -759,11 +779,15 @@
 
     <div class="gi-card">
       <!-- Screenshot: one stop of a live guide, ending on the motion row that
-           leads to the next one. /guides/athens.html at 820px / 2x, clip
-           x 46, y 1496, 728 x 524. -->
+           leads to the next one. /guides/rome.html at 1100px / 2x — 1100 rather
+           than 820 because at 820 the card is 1.17 wide and letterboxes hard in
+           a 1.7 box. Clip the Galleria Borghese .stop-block plus the .next row
+           after it. FLIP EVERY img[loading=lazy] TO EAGER AND SCROLL THE STOP
+           INTO VIEW FIRST: the stop is ~12,000px down, so a clip taken without
+           that captures an empty photo well and nothing about it looks wrong. -->
       <span class="gi-shot"><img src="/assets/guides-intro/guide-stop.png"
-        alt="A single stop in the Athens guide: Syntagma Square with a thirty-minute estimate, opening hours, a copyable address, a photo, and a row reading twelve minutes on foot or four by ride app to the next stop"
-        loading="lazy" width="1456" height="1048"></span>
+        alt="A single stop in the Rome guide: Galleria Borghese with a two-hour estimate, a ticket link, opening hours, the day it closes, a copyable address, a photo of Bernini&rsquo;s Apollo and Daphne, and a row reading thirty-two minutes on foot or fourteen by ride app back to the hotel"
+        loading="lazy" width="1200" height="725"></span>
       <div class="gi-body">
         <h3>Every stop, spelled out</h3>
         <p>How long, when it&rsquo;s open, where it is &mdash; and the walk or ride to the next one.</p>
@@ -772,15 +796,15 @@
 
     <div class="gi-card">
       <!-- Screenshot: the all-stops map with one day selected. Load
-           /guides/athens-stops-map.html at 900px / 2x, click the Day 1 chip,
-           let it fit its own bounds (do NOT force a zoom — at 14 the pins
-           re-cluster into a bare "2" and the point of the picture is gone),
-           hide the zoom and attribution controls, and clip from the chip row
-           down 520px. JPEG, not PNG: raster map tiles quantise badly and the
-           PNG was 559 KB against 185. -->
+           /guides/rome-stops-map.html at 900x820 / 2x, click the Day 1 chip,
+           then zoom OUT one step (at the fitted bounds the outer pins sit on
+           the edge and one falls off the clip) — but no further, or the pins
+           re-cluster into bare counts and the point of the picture is gone.
+           Hide the zoom and attribution controls and clip from the chip row
+           down at 1.7. JPEG, not PNG: raster map tiles quantise badly. -->
       <span class="gi-shot"><img src="/assets/guides-intro/day-map.jpg"
-        alt="The Athens all-stops map with Day 1 selected: five pins within a few streets of each other in the centre, and chips above for All days and Days 1 to 5"
-        loading="lazy" width="1400" height="809"></span>
+        alt="The Rome all-stops map with Day 1 selected: five pins within a few streets of each other in the centre, and chips above for All days and Days 1 to 6"
+        loading="lazy" width="1200" height="705"></span>
       <div class="gi-body">
         <h3>A day is one pocket of the city</h3>
         <p>Stops grouped by where they are. No zig-zagging.</p>
@@ -789,15 +813,85 @@
 
     <div class="gi-card">
       <!-- Screenshot: the Currency pill expanded on a live guide.
-           /guides/athens.html at 820px / 2x — click #tve-cur-pill, put a number
-           in the first field, clip the pill row plus #tve-cur-panel. The rate
-           date moves with update_currency_rates.py; re-shoot, never retouch. -->
+           /guides/rome.html at 820px / 2x — click #tve-cur-pill, PICK A
+           CURRENCY in the panel's select, then put a number in the amount
+           field, and clip from the title card down past #tve-cur-panel. The
+           pick is not optional: left on "Your currency" the panel shows the
+           word "Amount" and no conversion, which is a picture of the feature
+           not working. The rate date moves with update_currency_rates.py;
+           re-shoot, never retouch. -->
       <span class="gi-shot"><img src="/assets/guides-intro/currency.png"
-        alt="The guide&rsquo;s action row with Currency open: sixty US dollars converting to fifty-one euros eighty-five, with the rate and its date underneath"
-        loading="lazy" width="1544" height="284"></span>
+        alt="The Rome guide&rsquo;s action row with Currency open: sixty US dollars converting to fifty-one euros eighty-three, with the rate and its date underneath"
+        loading="lazy" width="1200" height="565"></span>
       <div class="gi-body">
         <h3>Currency, calendar, offline &mdash; one row</h3>
         <p>Convert in either direction, export a day to Apple Calendar, or save the guide to read with no signal.</p>
+      </div>
+    </div>
+
+    <div class="gi-card">
+      <!-- THE WORLD MAP. Was a full-width side-by-side panel under the whole
+           block until 2026-08-21; it is a card in the grid now, and the CTA
+           moved into the caption with it. See the .gi-mark retirement note in
+           the stylesheet above before putting a wide panel back.
+           Screenshot recipe, and every step matters:
+             · Serve over HTTP and load /maps/world/#mine=<slugs> at 1020x880 /
+               2x, then let it settle.
+             · CLICK the "Europe" pill in #left-panel — and click it BEFORE the
+               panel is hidden. Do NOT call map.setView: the Leaflet instance is
+               a `const map` in module scope and is not on window, so a setView
+               call silently does nothing and you ship the world view.
+             · CLICK #visited-pill-mobile, then ASSERT data-on === "1" and click
+               again until it is. The hash restores the list but does NOT turn
+               the Visited display on, and an off pill ships a map of
+               all-terracotta pins — the gold-against-terracotta contrast IS the
+               feature, and without it the picture is only an index.
+             · Zoom in TWO steps via .leaflet-control-zoom-in. At the Europe
+               default the pins cluster into count bubbles and no city is
+               legible; two steps takes it to zero clusters.
+             · HIDE #left-panel. The region browser is navigation for the map
+               page and says nothing here (owner 2026-08-21: "not needs of the
+               browse etc"). Hide #mine-hint too — it is a transient toast — and
+               the zoom and attribution controls.
+             · Then keep nudging the map UP until NO pin sits under the Visited
+               pill (owner 2026-08-18). The pill is fixed over the map, so it
+               lands on whatever is beneath it and buries a city. Check it in
+               code, not by eye — compare each .leaflet-marker-icon rect against
+               the #visited-pill-mobile rect plus ~14px, and drag up until the
+               count is 0.
+             · Clip the bottom 1/1.7 of #map and save QUANTIZED (192 colours):
+               flat map fills plus text give 66 KB, where a JPEG of the same
+               thing fringes every city label. -->
+      <span class="gi-shot"><img src="/assets/guides-intro/visited-map.png"
+        alt="The world map over Europe: gold pins on the cities marked as visited, terracotta pins on the ones still ahead, and a pill at the bottom reading Visited 27"
+        loading="lazy" width="1200" height="706"></span>
+      <div class="gi-body">
+        <h3>Watch your own map fill in</h3>
+        <p>Tap <strong>I&rsquo;ve Been</strong> on any guide and that city turns gold. Your map, in your own browser.</p>
+        <a class="gx-btn" href="/maps/world/">Open the world map</a>
+      </div>
+    </div>
+
+    <div class="gi-card">
+      <!-- Screenshot: the whole Trip Overview card — every day, its stops and
+           its stop count, ending on the ALSO row — with the section pills under
+           it. Added 2026-08-21 (owner: "add another screenshot below the
+           currency one ... do one with the extra"), and it sits SIXTH so it
+           lands directly beneath the currency card in the two-column grid.
+           /guides/rome.html at 1100px / 2x, clip x 16 from 16px above
+           .overview-section to 16px below the second .overview-extras (the
+           first .overview-extras is #ics-pill-row, the action row — pick by id,
+           not by order). Rome because the ALSO row only renders on a guide that
+           is somebody else's train day, and ALSO is half of what this shot is
+           for: it must read at the same size as DAY 1 and DAY 2 (owner
+           2026-08-21). If it does not, the fix is in toolbar.js's
+           #tve-adtf-css block, not in the crop. -->
+      <span class="gi-shot"><img src="/assets/guides-intro/trip-extras.png"
+        alt="The Rome trip overview: six days each listing their stops and a stop count, an ALSO row for the train day that arrives from Naples, and fourteen section buttons beneath for cafes, restaurants, Michelin stars, getting around, day trips, hiking and more"
+        loading="lazy" width="1200" height="708"></span>
+      <div class="gi-body">
+        <h3>Every extra, one tap away</h3>
+        <p>Coffee, Michelin, day trips, getting around &mdash; every section under the plan.</p>
       </div>
     </div>
 
@@ -868,45 +962,6 @@
     </div>
   </div>
 
-  <div class="gi-mark">
-    <div>
-      <h3>Watch your own map fill in</h3>
-      <p>Every guide has an <strong>I&rsquo;ve Been</strong> button. Tap it and that city turns gold &mdash; gold for where you have been, terracotta for what is still ahead. Your map, in your own browser.</p>
-      <a class="gx-btn" href="/maps/world/">Open the world map</a>
-    </div>
-    <!-- Screenshot: the live world map with a reader's own list on it. Reshot
-         2026-08-18 — the previous one was stale (its bar predated the "Restored
-         N places to this browser." confirmation) and its pins were clustered.
-         Recipe, and every step matters:
-           · Load /maps/world/#mine=<slugs> at 880x940 / 2x and let it settle.
-           · CLICK the "Europe" pill in #left-panel. Do NOT call map.setView —
-             the Leaflet instance is a `const map` in module scope and is not on
-             window, so a setView call silently does nothing and you ship the
-             world view.
-           · CLICK #visited-pill-mobile. The hash restores the list but does NOT
-             turn the Visited display on, so without this every pin renders
-             terracotta and the one thing the card is selling is absent.
-           · Zoom in TWO steps via .leaflet-control-zoom-in, then drag to centre
-             the pin mass. At the Europe default the pins cluster into count
-             bubbles (41 of them) and no individual city is legible; two steps
-             takes it to zero clusters.
-           · Then keep nudging the map UP until NO pin sits under the Visited
-             pill (owner 2026-08-18). The pill is fixed over the map, so it
-             lands on whatever is beneath it and buries a city. Check it in
-             code, not by eye — compare each .leaflet-marker-icon rect against
-             the #visited-pill-mobile rect plus ~14px, and drag up until the
-             count is 0. In this shot the pill ended over open Mediterranean.
-           · Hide #mine-hint (a transient toast) and the zoom/attribution
-             controls, then capture the #map element.
-           · Save as a QUANTIZED png (192 colours): flat map fills plus text
-             give 232 KB against 748 KB full-colour, where a JPEG of the same
-             thing fringes every city label.
-         The gold-against-terracotta contrast IS the feature: a map of
-         all-terracotta pins is only an index. -->
-    <span class="gi-shot"><img src="/assets/guides-intro/visited-map.png"
-      alt="The world map over Europe: gold pins on the cities marked as visited, terracotta pins on the ones still ahead, and a pill at the bottom reading Visited 27"
-      loading="lazy" width="1640" height="1293"></span>
-  </div>
 </section>
 
 <!-- Bookmarked guides. BELOW the intro block, not above it (owner 2026-08-18:
