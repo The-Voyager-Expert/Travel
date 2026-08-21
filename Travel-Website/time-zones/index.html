@@ -111,8 +111,10 @@ a.pill:visited { color: #6a6660; }
 .vs-sea.same   { color: var(--muted); background: transparent; }
 /* base .empty-state lives in web-travel-style.css — page keeps only the grid span */
 .empty-state { grid-column: 1 / -1; }
-/* ── Sleep indicator — local hour 22:00–06:59 ── */
-.sleeping { opacity: 0.60; }
+/* ── Night mark — local hour 22:00–06:59 draws catalogue #306 (crescent moon, sprite
+   `wx-moon`) beside the time. The card itself is NEVER dimmed: the old `.sleeping`
+   opacity drop read as "filtered out" with All selected (owner 2026-08-21). ── */
+.card-night { width: 13px; height: 13px; align-self: center; flex-shrink: 0; }
 /* ── Mobile overrides ── */
 @media (max-width: 600px) and (pointer: coarse) {
   /* Controls: search full-width on top, pills below */
@@ -638,8 +640,9 @@ function render() {
     var utc  = formatUTCOffset(c.tz, now);
     var vs   = vsHome(c.tz, now);   /* null until a home base is set */
     var hour = parseInt(time.split(':')[0], 10);
-    var sleeping = hour >= 22 || hour < 7;
-    var cardCls = 'card' + (sleeping ? ' sleeping' : '');
+    var night = hour >= 22 || hour < 7;   /* 22:00–06:59 local → moon beside the time, never a dim */
+    var nightMark = night ? '<svg class="gm-icon card-night" data-icon="wx-moon" data-role="night" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-wx-moon"/></svg>' : '';
+    var cardCls = 'card';
     var inner =
       '<div class="card-top">' +
         '<div class="card-top-left">' +
@@ -651,6 +654,7 @@ function render() {
       '<div class="card-clock">' +
         '<span class="card-time" title="Tap to copy">' + time + '</span>' +
         '<span class="card-day">'  + day  + '</span>' +
+        nightMark +
       '</div>' +
       '<div class="card-meta">' +
         '<span class="utc-offset">' + utc + '</span>' +
