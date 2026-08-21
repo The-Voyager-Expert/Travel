@@ -856,8 +856,8 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
       var isCanada = country === 'Canada';
       var OCEANIA_COUNTRIES = {'Australia':1,'New Zealand':1,'French Polynesia':1};
       var isOceania = !!OCEANIA_COUNTRIES[country];
-      var statsLink = isUS ? 'Stats-Across-US.html' : isEurope ? 'Europe-Stats.html' : isAsia ? 'Asia-Stats.html' : isCaribbean ? 'Caribbean-Stats.html' : isSouthAmerica ? 'South-America-Stats.html' : isCanada ? 'Stats-Across-Canada.html' : isOceania ? 'Oceania-Stats.html' : null;
-      var loungeLink = isUS ? 'Lounges-US.html' : isEurope ? 'Lounges-Europe.html' : null;
+      var statsLink = isUS ? '/stats/us/' : isEurope ? '/stats/europe/' : isAsia ? '/stats/asia/' : isCaribbean ? '/stats/caribbean/' : isSouthAmerica ? '/stats/south-america/' : isCanada ? '/stats/canada/' : isOceania ? '/stats/oceania/' : null;
+      var loungeLink = isUS ? '/essentials/lounges-us/' : isEurope ? '/essentials/lounges-europe/' : null;
       var climateKey = k.replace(/ /g, '-');
 
       var safetyData = SAFETY_FULL[climateKey] || SAFETY_FULL[k] || null;
@@ -888,7 +888,7 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
       }
       html += '<div class="byg-chart-wrap">' + strip(rec, m) + '</div>';
       html += '<div class="byg-links-row">' +
-        '<a href="Weather.html#' + encodeURIComponent(k) + '" class="byg-link">Full forecast →</a>' +
+        '<a href="/weather/#' + encodeURIComponent(k) + '" class="byg-link">Full forecast →</a>' +
       '</div></div>';
 
       var tz = CITY_TZ[k] || null;
@@ -1074,7 +1074,7 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
         geHtml += '<div class="byg-row"><span class="byg-row-label">Airport</span><span class="byg-row-value" style="font-size:12px;font-weight:500;">' + airInfo.name + ' (' + airInfo.iata + ')</span></div>' +
           '<div class="byg-row"><span class="byg-row-label">Status</span><span class="byg-safety-badge ' + (airInfo.ge ? 'byg-water-safe' : 'byg-water-unsafe') + '">' + (airInfo.ge ? 'Available' : 'Not available') + '</span></div>';
       }
-      geHtml += '<div class="byg-links-row"><a href="Trusted-Traveler.html?q=' + cityParam + '" class="byg-link">Find airports →</a></div></div>';
+      geHtml += '<div class="byg-links-row"><a href="/essentials/trusted-traveler/?q=' + cityParam + '" class="byg-link">Find airports →</a></div></div>';
       html += geHtml;
 
       html += '</div>'; // end col 3 stack
@@ -1119,23 +1119,22 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
         loungeCardHtml += '<div class="byg-links-row"><a href="' + loungeLink + '?q=' + cityParam + '" class="byg-link">All lounges →</a></div></div>';
         html += loungeCardHtml;
       }
-      html += essCard('', 'Packing', 'Packing list', 'Travel-Packing.html');
+      html += essCard('', 'Packing', 'Packing list', '/essentials/packing/');
       if (DAY_TRIP_CITIES[climateKey]) {
         var tripCount = DAY_TRIP_CITIES[climateKey];
-        html += essCard('', 'Day Trips', tripCount + ' day trip' + (tripCount !== 1 ? 's' : ''), 'Day-Trips.html?city=' + cityParam);
+        html += essCard('', 'Day Trips', tripCount + ' day trip' + (tripCount !== 1 ? 's' : ''), '/essentials/day-trips/#' + cityParam);
       }
-      if (isEurope) { html += essCard('', 'EU Trains', 'Find trains', 'European-Train-Guide.html'); }
+      if (isEurope) { html += essCard('', 'EU Trains', 'Find trains', '/essentials/european-trains/'); }
 
       /* Where to Stay (col 4, bottom) — every lodging page on the site in one
          card, so the reader doesn't have to know which one is called what.
-         AN_COVERED mirrors AN_NEIGHBORHOOD_CITIES in toolbar.js: the cities
-         Neighborhoods.html carries district detail for. When the
-         picked city is one of them the link deep-links to #City and the page
-         opens pre-filtered on it; otherwise it opens on the full list. */
-      var AN_COVERED = ['Amsterdam', 'Bangkok', 'Barcelona', 'Lisbon', 'New York', 'Paris', 'Rome', 'Tokyo'];
+         The Neighborhoods link always carries #City: that page's own hash
+         handler opens pre-filtered when it has district detail for the city
+         and falls through to the full list when it does not, so no copy of
+         its coverage list has to be kept here (the old AN_COVERED list had
+         eight cities against the page's forty-plus). */
       var stayCity = CLIM[k].city || k;
-      var anHref = 'Neighborhoods.html' +
-        (AN_COVERED.indexOf(stayCity) !== -1 ? '#' + encodeURIComponent(stayCity) : '');
+      var anHref = '/essentials/neighborhoods/#' + encodeURIComponent(stayCity);
       html += '<div class="byg-card">' +
         '<div class="byg-card-head"><span class="byg-card-title">Where to Stay</span></div>' +
         '<div class="byg-links-row">' +
@@ -1182,7 +1181,18 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
 
     paintUnit();
 
-    var hash = decodeURIComponent(location.hash.slice(1));
+    /* #City from a guide's toolbar or another page. Exact key first; then a
+       folded match (case and accents), because the climate keys are plain ASCII
+       ('Malaga', 'Tromso') while a link may carry the display spelling. */
+    var hash = '';
+    try { hash = decodeURIComponent(location.hash.slice(1)); } catch (e) { hash = location.hash.slice(1); }
+    if (hash && keys.indexOf(hash) < 0) {
+      var fold = function (t) { t = String(t || ''); t = t.normalize ? t.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : t; return t.toLowerCase().replace(/[^a-z0-9]+/g, ''); };
+      var want = fold(hash);
+      for (var hi = 0; hi < keys.length && want; hi++) {
+        if (fold(keys[hi]) === want || fold(CLIM[keys[hi]].city) === want) { hash = keys[hi]; break; }
+      }
+    }
     if (hash && keys.indexOf(hash) >= 0) { selectedCity = hash; searchEl.value = CLIM[hash].city || hash; }
     render();
   }
