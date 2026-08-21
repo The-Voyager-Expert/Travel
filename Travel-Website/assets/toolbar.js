@@ -5272,6 +5272,7 @@ window.TVE.home = (function () {
       { name: 'Hébé Hotel', note: 'Independent — Avenue d\'Aléry between the station and the canals, sun terrace, 24h reception, air conditioning · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/alery.html', tier: 'mid' },
       { name: 'Rivage Hôtel & Spa Annecy', note: 'Independent — Avenue du Petit Port by the lake, year-round indoor pool, spa with steam room, sauna · 8.9 Booking.com', url: 'https://www.booking.com/hotel/fr/rivage-amp-spa-annecy.html', tier: 'mid' },
       { name: 'Les Trésoms Lake and Spa Resort', note: 'Independent — hillside on Boulevard de la Corniche with lake views, seasonal outdoor pool, spa, tennis court · 8.1 Booking.com', url: 'https://www.booking.com/hotel/fr/lestresomsannecy.html', tier: 'expensive' },
+      { name: 'Le Pélican', note: 'Independent — Rue des Marquisats on the lakeshore below the old town, heated outdoor pool, restaurant, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/le-pelican-annecy1.html', tier: 'expensive' },
       { name: 'Impérial Palace Annecy', note: 'Independent — lakefront property in central Annecy, La Voile gastronomic restaurant with terrace, spa with pool and hammam · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/imperial-palace.html', tier: 'luxury' }
     ] },
     'aracaju': { h: [
