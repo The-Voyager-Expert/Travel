@@ -19,23 +19,13 @@
 }
 #ls-search::placeholder { color: var(--c-search-placeholder); }
 #ls-search:focus { border-color: var(--c-search-focus-border); box-shadow: none; }
-.pills { display: flex; gap: 8px; flex-wrap: nowrap; justify-content: center; margin-top: var(--search-gap,32px); }
-.pill {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 9px 20px !important; border-width: 1px; border-style: solid;
-  border-radius: var(--fam-radius, 4px) !important; font-family: inherit; font-size: 13px; font-weight: 600;
-  line-height: 1; cursor: pointer; white-space: nowrap; text-decoration: none;
-}
+.pills { display: flex; gap: var(--fam-gap,10px); flex-wrap: nowrap; justify-content: center; margin-top: var(--search-gap,32px); }
+/* .pill is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes pill pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.pill { font-family: inherit; }
 /* fam-* filter pills — no hover, fam-* handles dark mode */
-.pill[data-filter="all"]      { background: var(--fam-yellow-bg);  border-color: var(--fam-yellow-bd);  color: var(--fam-yellow-ink); }
-.pill[data-filter="europe"]   { background: var(--fam-blue-bg);    border-color: var(--fam-blue-bd);    color: var(--fam-blue-ink); }
-.pill[data-filter="asia"]     { background: var(--fam-red-bg);     border-color: var(--fam-red-bd);     color: var(--fam-red-ink); }
-.pill[data-filter="americas"] { background: var(--fam-green-bg);   border-color: var(--fam-green-bd);   color: var(--fam-green-ink); }
-.pill[data-filter="oceania"]  { background: var(--fam-purple-bg);  border-color: var(--fam-purple-bd);  color: var(--fam-purple-ink); }
-.pill[data-filter="africame"] { background: var(--fam-orange-bg);  border-color: var(--fam-orange-bd);  color: var(--fam-orange-ink); }
-.pill[data-filter="lockers"]  { background: var(--fam-grey-bg);    border-color: var(--fam-grey-bd);    color: var(--fam-grey-ink); }
-.pill[data-filter="open247"]  { background: var(--fam-pink-bg);    border-color: var(--fam-pink-bd);    color: var(--fam-pink-ink); }
-.pill.active { background: var(--surface,#fff) !important; border-width: 1.5px !important; border-color: rgba(192,78,26,.85) !important; color: var(--rust,#C04E1A) !important; box-shadow: 0 0 0 2px rgba(192,78,26,.20); }
 /* ── No results ── */
 #no-results { display: none; }
 /* ── Section header ── */
@@ -128,8 +118,7 @@ a.ls-guide:visited { color: #8a6c1a; }
   .ls-station { margin-left: 0; text-align: left; }
   .ls-top { gap: 7px; }
   .ls-primer { grid-template-columns: 1fr; }
-  .pills { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; justify-content: center !important; width: 100% !important; }
-  .pill { flex: 0 0 auto !important; white-space: nowrap !important; padding: 10px 18px !important; border-radius: var(--fam-radius, 4px) !important; }
+  .pills { display: flex !important; flex-wrap: wrap !important; gap: var(--fam-gap,10px) !important; justify-content: center !important; width: 100% !important; }
 }
 @media (prefers-color-scheme: dark) {
   .ls-prim-model { color: var(--text); }
@@ -205,14 +194,14 @@ a.ls-guide:visited { color: #8a6c1a; }
 
   <div class="controls">
     <div class="pills">
-      <button class="pill active" data-filter="all">All</button>
-      <button class="pill" data-filter="europe">🇪🇺 Europe</button>
-      <button class="pill" data-filter="asia">Asia</button>
-      <button class="pill" data-filter="americas">Americas</button>
-      <button class="pill" data-filter="oceania">🇦🇺 Oceania</button>
-      <button class="pill" data-filter="africame">Africa &amp; Middle East</button>
-      <button class="pill" data-filter="lockers">Station lockers</button>
-      <button class="pill" data-filter="open247">Open 24/7</button>
+      <button class="pill is-on pill-badge fam-yellow" data-filter="all">All</button>
+      <button class="pill pill-badge fam-blue" data-filter="europe">🇪🇺 Europe</button>
+      <button class="pill pill-badge fam-red" data-filter="asia">Asia</button>
+      <button class="pill pill-badge fam-green" data-filter="americas">Americas</button>
+      <button class="pill pill-badge fam-purple" data-filter="oceania">🇦🇺 Oceania</button>
+      <button class="pill pill-badge fam-orange" data-filter="africame">Africa &amp; Middle East</button>
+      <button class="pill pill-badge fam-grey" data-filter="lockers">Station lockers</button>
+      <button class="pill pill-badge fam-pink" data-filter="open247">Open 24/7</button>
     </div>
 
   <div class="ls-legend" id="ls-legend">
@@ -2109,9 +2098,9 @@ a.ls-guide:visited { color: #8a6c1a; }
   if (clearBtn) {
     clearBtn.addEventListener('click', function () {
       search.value = '';
-      pills.forEach(function (p) { p.classList.remove('active'); });
+      pills.forEach(function (p) { p.classList.remove('is-on'); });
       var allPill = document.querySelector('.pill[data-filter="all"]');
-      if (allPill) allPill.classList.add('active');
+      if (allPill) allPill.classList.add('is-on');
       activeFilter = 'all';
       clearBtn.style.display = 'none';
       applyFilter();
@@ -2120,8 +2109,8 @@ a.ls-guide:visited { color: #8a6c1a; }
 
   pills.forEach(function (pill) {
     pill.addEventListener('click', function () {
-      pills.forEach(function (p) { p.classList.remove('active'); });
-      pill.classList.add('active');
+      pills.forEach(function (p) { p.classList.remove('is-on'); });
+      pill.classList.add('is-on');
       activeFilter = pill.getAttribute('data-filter');
       applyFilter();
     });

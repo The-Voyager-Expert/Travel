@@ -21,13 +21,16 @@
 }
 .search-wrap { display: flex; justify-content: center; align-self: stretch; }
 .search-wrap input { margin-bottom: 0; }
-.pills { display: flex; flex-wrap: nowrap; justify-content: center; gap: 8px; margin-top: var(--search-gap,32px); }
+.pills { display: flex; flex-wrap: nowrap; justify-content: center; gap: var(--fam-gap,10px); margin-top: var(--search-gap,32px); }
 /* Filter pills */
-.pill { font-family: inherit; cursor: pointer; white-space: nowrap; text-decoration: none; gap: 5px; padding: 9px 20px !important; border-radius: var(--fam-radius, 4px) !important; font-size: 13px; font-weight: 600; }
-.pill.active { background: var(--surface,#fff) !important; border-width: 1.5px !important; border-color: rgba(192,78,26,.85) !important; color: var(--rust,#C04E1A) !important; box-shadow: 0 0 0 2px rgba(192,78,26,.20); }
+/* .pill is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes pill pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.pill { font-family: inherit; }
 .pill-count { display: none; }
 @media (min-width: 601px), (pointer: fine) {
-  .pills { gap: 8px; }
+  .pills { gap: var(--fam-gap,10px); }
 }
 
 /* ── Rows ── */
@@ -61,8 +64,7 @@
   .search-wrap input { width: 100%; max-width: 100%; }
   /* Form B glued grid — 3 across, two even rows of 3. 1.5px neutral border with
      negative margins so adjacent borders overlap into one hairline. */
-  .pills { flex-wrap: wrap !important; gap: 8px !important; }
-  .pill { padding: 10px 18px !important; border-radius: var(--fam-radius, 4px) !important; }
+  .pills { flex-wrap: wrap !important; gap: var(--fam-gap,10px) !important; }
   .fm-mistake { flex-direction: column; gap: 5px; }
 }
 /* pill + fm-tag dark mode handled by .fam-* tokens */
@@ -465,12 +467,12 @@ function filterCat(btn, cat) {
   document.getElementById('fm-search').value = '';
   if (activeFilter === cat) {
     activeFilter = null;
-    pills.forEach(function (p) { p.classList.remove('active'); });
+    pills.forEach(function (p) { p.classList.remove('is-on'); });
     rows.forEach(function (r) { r.classList.remove('hidden'); });
   } else {
     activeFilter = cat;
-    pills.forEach(function (p) { p.classList.remove('active'); });
-    btn.classList.add('active');
+    pills.forEach(function (p) { p.classList.remove('is-on'); });
+    btn.classList.add('is-on');
     rows.forEach(function (r) {
       var cats = (r.dataset.cats || '').split(/\s+/);
       r.classList.toggle('hidden', cats.indexOf(cat) === -1);
@@ -486,7 +488,7 @@ function filterCat(btn, cat) {
   var noRes  = document.getElementById('no-results');
   search.addEventListener('input', function () {
     activeFilter = null;
-    document.querySelectorAll('.pill[data-filter]').forEach(function (p) { p.classList.remove('active'); });
+    document.querySelectorAll('.pill[data-filter]').forEach(function (p) { p.classList.remove('is-on'); });
     var q = search.value.trim().toLowerCase();
     var visible = 0;
     rows.forEach(function (r) {

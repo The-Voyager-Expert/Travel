@@ -21,14 +21,16 @@
 }
 .search-wrap { display: flex; justify-content: center; align-self: stretch; }
 .search-wrap input { margin-bottom: 0; }
-.pills { display: flex; flex-wrap: nowrap; justify-content: center; gap: 8px; margin-top: var(--search-gap,32px); }
+.pills { display: flex; flex-wrap: nowrap; justify-content: center; gap: var(--fam-gap,10px); margin-top: var(--search-gap,32px); }
 /* Filter pills — size + colour from .pill-badge / .fam-*. No hover. */
-.pill { font-family: inherit; cursor: pointer; white-space: nowrap; text-decoration: none; gap: 5px; padding: 9px 20px !important; border-radius: var(--fam-radius, 4px) !important; font-size: 13px; font-weight: 600; }
-.pill.active { background: var(--surface,#fff) !important; border-width: 1.5px !important; border-color: rgba(192,78,26,.85) !important; color: var(--rust,#C04E1A) !important; box-shadow: 0 0 0 2px rgba(192,78,26,.20); }
+/* .pill is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes pill pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.pill { font-family: inherit; }
 .pill-count { display: none; }
 @media (max-width: 600px) and (pointer: coarse) {
-  .pills { gap: 8px; }
-  .pill { padding: 10px 18px !important; border-radius: var(--fam-radius, 4px) !important; }
+  .pills { gap: var(--fam-gap,10px); }
 }
 
 /* ── Rows ── */
@@ -336,12 +338,12 @@ function filterCat(btn, cat) {
   document.getElementById('dp-search').value = '';
   if (activeFilter === cat) {
     activeFilter = null;
-    pills.forEach(function (p) { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
+    pills.forEach(function (p) { p.classList.remove('is-on'); p.setAttribute('aria-pressed', 'false'); });
     rows.forEach(function (r) { r.classList.remove('hidden'); });
   } else {
     activeFilter = cat;
-    pills.forEach(function (p) { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
-    btn.classList.add('active');
+    pills.forEach(function (p) { p.classList.remove('is-on'); p.setAttribute('aria-pressed', 'false'); });
+    btn.classList.add('is-on');
     btn.setAttribute('aria-pressed', 'true');
     rows.forEach(function (r) {
       var cats = (r.dataset.cats || '').split(/\s+/);
@@ -358,7 +360,7 @@ function filterCat(btn, cat) {
   var noRes  = document.getElementById('no-results');
   search.addEventListener('input', function () {
     activeFilter = null;
-    document.querySelectorAll('.pill[data-filter]').forEach(function (p) { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
+    document.querySelectorAll('.pill[data-filter]').forEach(function (p) { p.classList.remove('is-on'); p.setAttribute('aria-pressed', 'false'); });
     var q = search.value.trim().toLowerCase();
     var visible = 0;
     rows.forEach(function (r) {

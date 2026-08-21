@@ -23,17 +23,12 @@
   position: sticky; top: 0; z-index: 10;
   background: var(--bg);
 }
-.pills { display: flex; flex-wrap: nowrap; justify-content: center; gap: 8px; }
-.pill {
-  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
-  padding: 9px 20px !important; border-width: 1px; border-style: solid;
-  border-radius: var(--fam-radius, 4px) !important; font-family: inherit; font-size: 13px; font-weight: 600;
-  line-height: 1; cursor: pointer; white-space: nowrap; text-decoration: none;
-}
-.pill[data-filter="safe"]   { background: var(--fam-green-bg);  border-color: var(--fam-green-bd);  color: var(--fam-green-ink); }
-.pill[data-filter="varies"] { background: var(--fam-yellow-bg); border-color: var(--fam-yellow-bd); color: var(--fam-yellow-ink); }
-.pill[data-filter="unsafe"] { background: var(--fam-red-bg);    border-color: var(--fam-red-bd);    color: var(--fam-red-ink); }
-.pill.active { background: var(--surface,#fff) !important; border-width: 1.5px !important; border-color: rgba(192,78,26,.85) !important; color: var(--rust,#C04E1A) !important; box-shadow: 0 0 0 2px rgba(192,78,26,.20); }
+.pills { display: flex; flex-wrap: nowrap; justify-content: center; gap: var(--fam-gap,10px); }
+/* .pill is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes pill pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.pill { font-family: inherit; }
 .pill .dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; display:inline-block; }
 .pill-count { display: none; }
 /* Search */
@@ -65,8 +60,7 @@
      Matches Guides-Index disc-btn border technique: 1.5px neutral border +
      margin-left:-1.5px on non-first tiles so adjacent borders overlap into
      one visible hairline. Family bg/text colors kept. */
-  .pills { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; width: 100% !important; justify-content: center !important; }
-  .pill { flex: 0 0 auto !important; padding: 10px 18px !important; border-radius: var(--fam-radius, 4px) !important; font-size: 13px !important; }
+  .pills { display: flex !important; flex-wrap: wrap !important; gap: var(--fam-gap,10px) !important; width: 100% !important; justify-content: center !important; }
 }
 @media (prefers-color-scheme: dark) {
   /* water-status dark mode handled by .fam-* tokens */
@@ -116,9 +110,9 @@
 
   <div class="controls">
     <div class="pills tve-glue-m">
-      <button class="pill" data-filter="safe"   onclick="filterStatus(this,'safe')"><svg class="gm-icon" data-icon="dot-green" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-green"/></svg> Safe <span class="pill-count" id="cnt-safe"></span></button>
-      <button class="pill" data-filter="varies" onclick="filterStatus(this,'varies')"><svg class="gm-icon" data-icon="dot-yellow" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-yellow"/></svg> Varies <span class="pill-count" id="cnt-varies"></span></button>
-      <button class="pill" data-filter="unsafe" onclick="filterStatus(this,'unsafe')"><svg class="gm-icon" data-icon="dot-red" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-red"/></svg> Avoid <span class="pill-count" id="cnt-avoid"></span></button>
+      <button class="pill pill-badge fam-green" data-filter="safe"   onclick="filterStatus(this,'safe')"><svg class="gm-icon" data-icon="dot-green" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-green"/></svg> Safe <span class="pill-count" id="cnt-safe"></span></button>
+      <button class="pill pill-badge fam-yellow" data-filter="varies" onclick="filterStatus(this,'varies')"><svg class="gm-icon" data-icon="dot-yellow" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-yellow"/></svg> Varies <span class="pill-count" id="cnt-varies"></span></button>
+      <button class="pill pill-badge fam-red" data-filter="unsafe" onclick="filterStatus(this,'unsafe')"><svg class="gm-icon" data-icon="dot-red" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-red"/></svg> Avoid <span class="pill-count" id="cnt-avoid"></span></button>
     </div>
 
   <div class="tips-strip">
@@ -332,12 +326,12 @@ function filterStatus(btn, status) {
   var pills = document.querySelectorAll('.pill[data-filter]');
   if (activeFilter === status) {
     activeFilter = null;
-    pills.forEach(function(p) { p.classList.remove('active'); });
+    pills.forEach(function(p) { p.classList.remove('is-on'); });
     rows.forEach(function(r)  { r.classList.remove('hidden'); });
   } else {
     activeFilter = status;
-    pills.forEach(function(p) { p.classList.remove('active'); });
-    btn.classList.add('active');
+    pills.forEach(function(p) { p.classList.remove('is-on'); });
+    btn.classList.add('is-on');
     rows.forEach(function(r) {
       var show = r.classList.contains('ws-' + status);
       r.classList.toggle('hidden', !show);
@@ -354,7 +348,7 @@ function filterStatus(btn, status) {
   var noRes  = document.getElementById('no-results');
   search.addEventListener('input', function () {
     activeFilter = null;
-    document.querySelectorAll('.pill[data-filter]').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.pill[data-filter]').forEach(function(p) { p.classList.remove('is-on'); });
     var q = search.value.trim().toLowerCase();
     var visible = 0;
     rows.forEach(function(r) {
