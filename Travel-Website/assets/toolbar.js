@@ -5193,10 +5193,14 @@ window.TVE.home = (function () {
       { name: 'Villa Gallici Hôtel & Spa', note: 'Relais & Châteaux — 18th-century villa on Avenue de la Violette, year-round heated pool, Michelin-listed dining, cypress gardens · 9.4 Booking.com', url: 'https://www.booking.com/hotel/fr/villagallici.html', tier: 'luxury' }
     ] },
     'alaska': { h: [
-      { name: 'Hotel Captain Cook', note: 'Independent — Anchorage landmark since 1965, three-tower downtown complex with on-site dining · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/us/hotel-captain-cook.html' },
-      { name: 'Marriott Anchorage Downtown', note: 'Marriott brand — indoor pool, largest downtown full-service hotel, West 7th Avenue · 7.9 Booking.com' , url: 'https://www.booking.com/hotel/us/anchorage-marriott-downtown.html' },
-      { name: 'Hilton Anchorage', note: 'Hilton brand — renovated downtown tower, rooftop bar, on-site fitness centre · 8.1 Booking.com' , url: 'https://www.booking.com/hotel/us/hilton-anchorage.html' },
-      { name: 'Sheraton Anchorage Hotel & Spa', note: 'Marriott Sheraton brand — full-service spa and indoor pool, central Anchorage location · 8.0 Booking.com' , url: 'https://www.booking.com/hotel/us/sheraton-anchorage.html' }
+      { name: 'Hampton Inn Anchorage', note: 'Hilton Hampton brand — Credit Union Drive in midtown, indoor pool, free airport shuttle and free parking · 8.1 Booking.com', url: 'https://www.booking.com/hotel/us/hampton-inn-anchorage.html', tier: 'budget' },
+      { name: 'SpringHill Suites Anchorage Midtown', note: 'Marriott SpringHill brand — all-suite on A Street, indoor pool and hot tub, free parking · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/springhill-suites-anchorage-midtown.html', tier: 'budget' },
+      { name: 'Aloft by Marriott Anchorage', note: 'Marriott Aloft brand — West 36th Avenue in midtown, year-round indoor pool, hot tub, free parking · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/aloft-anchorage.html', tier: 'mid' },
+      { name: 'Sheraton Anchorage Hotel & Spa', note: 'Marriott Sheraton brand — full-service spa and indoor pool, central Anchorage location · 8.0 Booking.com' , url: 'https://www.booking.com/hotel/us/sheraton-anchorage.html', tier: 'mid' },
+      { name: 'Hilton Anchorage', note: 'Hilton brand — renovated downtown tower, rooftop bar, on-site fitness centre · 8.1 Booking.com' , url: 'https://www.booking.com/hotel/us/hilton-anchorage.html', tier: 'expensive' },
+      { name: 'Embassy Suites by Hilton Anchorage', note: 'Hilton Embassy Suites brand — two-room suites on East Benson Boulevard, indoor pool, evening reception · 7.9 Booking.com', url: 'https://www.booking.com/hotel/us/embassy-suites-anchorage.html', tier: 'expensive' },
+      { name: 'Hotel Captain Cook', note: 'Independent — Anchorage landmark since 1965, three-tower downtown complex with on-site dining · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/us/hotel-captain-cook.html', tier: 'luxury' },
+      { name: 'Marriott Anchorage Downtown', note: 'Marriott brand — indoor pool, largest downtown full-service hotel, West 7th Avenue · 7.9 Booking.com' , url: 'https://www.booking.com/hotel/us/anchorage-marriott-downtown.html', tier: 'luxury' }
     ] },
     'alesund': { h: [
       { name: 'Hotel 1904', note: '', url: 'https://www.booking.com/hotel/no/hotel-1904.html' },
