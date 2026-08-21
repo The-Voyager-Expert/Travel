@@ -1099,6 +1099,12 @@ window.TVE.home = (function () {
     /* Site-Icons.html #1423 — the viaduct, for exposed heights. Straight
        from the catalogue, never redrawn. data-icon names the DRAWING, so a
        stop writes data-icon="viaduct" data-role="heights". */
+    /* Catalogue #16 'route A to B' — the map link at the end of every motion row
+       (owner rule 2026-08-19). Registered here because a guide draws from GM_SPRITE:
+       add_motion_map_links.py emitted #gm-i-16, a catalogue id with no sprite behind
+       it, which would have painted 4,855 BLANK icons across the fleet. The key is
+       semantic like every other one — never the bare number. */
+    'route-ab': ['0 0 24 24', '<rect x="1.8" y="3.2" width="20.4" height="17.6" rx="2" fill="url(#gm-cream)" stroke="var(--c-rim-cool)" stroke-width="0.6" stroke-linejoin="round" /><rect x="1.8" y="3.2" width="20.4" height="17.6" rx="2" fill="url(#gm-gloss)"/><path d="M5.6 18.2c2.6 0 2.6-3.4 5.2-3.4s2.6 3 5.2 3 3.4-3.6 3.4-7" fill="none" stroke="var(--c-rust)" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2.6 2.2"/><circle cx="5.6" cy="18.2" r="2.4" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/><text x="5.6" y="19.4" font-family="ui-sans-serif, system-ui, sans-serif" font-size="3.6" font-weight="700" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6" text-anchor="middle">A</text><path d="M19.4 3.6a3.2 3.2 0 0 0-3.2 3.2c0 2.4 3.2 5.8 3.2 5.8s3.2-3.4 3.2-5.8a3.2 3.2 0 0 0-3.2-3.2z" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><circle cx="19.4" cy="6.8" r="1.25" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/>'],
     'viaduct': ['0 0 24 24', '<path d="M0.5 7.0 L23.5 7.0 L23.5 9.4 L0.5 9.4 Z" fill="url(#gm-stone)" stroke="var(--c-stone-rim)" stroke-width="0.5" stroke-linejoin="round"/><path d="M0.5 7.0 L23.5 7.0 L23.5 9.4 L0.5 9.4 Z" fill="url(#gm-gloss)"/><path d="M2.0 9.4 L4.6 9.4 L4.6 19.6 L2.0 19.6 Z M10.7 9.4 L13.3 9.4 L13.3 19.6 L10.7 19.6 Z M19.4 9.4 L22.0 9.4 L22.0 19.6 L19.4 19.6 Z" fill="url(#gm-slate)" stroke="var(--c-slate-rim)" stroke-width="0.5" stroke-linejoin="round"/><path d="M2.0 9.4 L4.6 9.4 L4.6 19.6 L2.0 19.6 Z M10.7 9.4 L13.3 9.4 L13.3 19.6 L10.7 19.6 Z M19.4 9.4 L22.0 9.4 L22.0 19.6 L19.4 19.6 Z" fill="url(#gm-gloss)"/><g fill="none" stroke="var(--c-slate)" stroke-width="1.5"><path d="M4.6 15.2 A3.05 3.05 0 0 1 10.7 15.2"/><path d="M13.3 15.2 A3.05 3.05 0 0 1 19.4 15.2"/></g><path d="M0.5 19.6 L23.5 19.6 L23.5 22.0 L0.5 22.0 Z" fill="url(#gm-slate)" stroke="var(--c-slate-rim)" stroke-width="0.5" stroke-linejoin="round"/><path d="M0.5 19.6 L23.5 19.6 L23.5 22.0 L0.5 22.0 Z" fill="url(#gm-gloss)"/>'],
     'walk': ['0 0 24 24', '<circle cx="13.2" cy="3.7" r="2.3" fill="url(#gm-tan)" stroke="var(--c-tan-rim)" stroke-width="0.5"/> <g fill="none" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"> <path d="M13.2 7.6 11.6 12.8" stroke="var(--c-red)"/><path d="M12.4 9.2 15.8 11.4" stroke="var(--c-red)"/><path d="M12.6 8.9 9.4 11.2" stroke="var(--c-red)"/> <path d="M11.6 12.8 13.9 16.2 13.4 20.9" stroke="var(--c-navy)"/><path d="M11.6 12.8 9.4 16.4 7.9 20.4" stroke="var(--c-navy)"/></g>'],
     'warn': ['0 0 24 24', '<path d="M12 2.2c-.66 0-1.27.35-1.6.92L.7 20.3A1.85 1.85 0 0 0 2.3 23h19.4a1.85 1.85 0 0 0 1.6-2.7L13.6 3.12A1.85 1.85 0 0 0 12 2.2z" fill="url(#gm-amber)" stroke="var(--c-amber-rim)" stroke-width="0.5"/> <path d="M12 5.9 3.4 20.9h17.2z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/> <rect x="10.9" y="9.6" width="2.2" height="6.1" rx="1.1" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/> <rect x="10.9" y="17" width="2.2" height="2.2" rx="1.1" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/>'],
@@ -1132,6 +1138,11 @@ window.TVE.home = (function () {
        different stylesheets. */
     '.gm-icon{display:inline-block;width:1.2em;height:1.2em;vertical-align:-0.22em;flex-shrink:0}' +
     '.gm-icon svg,.gm-icon use{width:100%;height:100%}' +
+    /* The A-to-B map link at the END of a motion row (owner rule 2026-08-19).
+       Its svg carries .gm-icon like every other icon in the row, so it takes the
+       1.2em sizing above — without that class the <svg> has no intrinsic size and
+       renders enormous. line-height:0 keeps the anchor from adding row height. */
+    'a.motion-route{margin-left:6px;display:inline-block;line-height:0;text-decoration:none}' +
     '';
 
   /* One sprite and one style tag per page, inserted before anything asks for a
