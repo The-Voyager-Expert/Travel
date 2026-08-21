@@ -98,6 +98,11 @@ a.chip-link:hover {
   position: sticky; top: 0; z-index: 10;
   background: var(--bg); border-bottom: 1px solid var(--border2, #e6e2da); }
 .legend-toggle { display: none; }
+/* The passport bar — same centred column and rhythm as .legend, but NOT
+   sticky and carrying no z-index. See the note on the markup: two sticky
+   z-index:10 bars is what painted through the open dropdown. */
+.pp-bar { display: flex; flex-direction: column; align-items: center;
+  gap: var(--search-gap, 32px); padding: var(--search-gap, 32px) 0 0; margin: 0; }
 .legend-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
 .legend .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
   background: #fff; border: 1px solid var(--border); border-radius: 999px; font-size: 13px; line-height: 1; }
@@ -384,7 +389,17 @@ a.apply-link:hover { background: #C04E1A; color: #fff; border-color: var(--rust)
        TVE.passport (localStorage), same as TVE.home's own city — reused
        across every visa surface on the site rather than asked for again. -->
   <div class="view active" id="view-visa">
-    <div class="legend">
+    <!-- The picker bar is deliberately NOT .legend. It used to be, and that
+         made TWO position:sticky bars both at top:0 with z-index:10 — the
+         filter legend below, being later in the DOM at the SAME z-index, won
+         and painted straight through the open dropdown: the reader saw the
+         panel's search at the top, the page's own search and pills stamped
+         across its middle, and the country list resuming below. Choosing a
+         passport is a set-once act, not a control you need while scrolling
+         238 country rows, so this bar simply scrolls away and only the filter
+         legend sticks. With no z-index here, .pp-pop's z-index:60 lands in the
+         ROOT stacking context and clears the sticky legend's 10 on its own. -->
+    <div class="pp-bar">
       <span class="cmp-passport-lead">Entry rules for</span>
       <span class="cmp-passport-mount" id="visa-pp-mount"></span>
     </div>

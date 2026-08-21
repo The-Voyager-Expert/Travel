@@ -2393,14 +2393,20 @@ body > .hero-ground {
    answer to a visa question depends on who is asking, so every surface that
    asks one carries this control and none of them carries a nationality.
 
-   The button IS the label. Unset it is gold and reads as a question; set it is
-   terracotta and reads as a chosen value — the site's own chip grammar, where
-   gold is a placeholder and terracotta is a pick (Formatting.html #sec-pills,
-   and the finder's .fnd-ctl / .fnd-chip pair states it in two lines).
+   THE BUTTON IS GOLD, SET OR UNSET — it is never terracotta (owner rule
+   2026-08-21: "dont use terracota here no where we do this in the site").
+   This is a PICKER, and the site's picker convention is gold: every <select>
+   in a controls row reads var(--accent), and brain_check
+   § picker-select-gold-color enforces it. An earlier version of this block
+   painted the set state terracotta on the chip-grammar argument (gold =
+   placeholder, terracotta = chosen value) — that grammar governs FILTER CHIPS,
+   which sit in rows of many and need set/unset to differ at a glance. This is
+   one control naming one thing, and the flag plus the country name already
+   say it is set; the colour was carrying no information and read as a filled
+   CTA the page does not have.
 
-   Hover is Option B on both states: the ground goes to --bg, the rim goes
-   terracotta, THE FONT DOES NOT MOVE. Repainting the ink on hover would erase
-   exactly the distinction the rest state carries. */
+   Hover is Option B: the ground goes to --bg, the rim darkens, THE FONT DOES
+   NOT MOVE. */
 .pp-mount { position: relative; display: inline-block; }
 
 .pp-btn {
@@ -2412,16 +2418,15 @@ body > .hero-ground {
   align-items: center;
   padding: 9px 16px;
   min-height: 40px;              /* a tap target, not a word */
-  border: 1px solid rgba(192,78,26,.30);
+  border: 1px solid rgba(138,108,26,.30);
   border-radius: 999px;
   background: var(--surface, #fff);
-  color: #C04E1A;
+  color: var(--accent, #8a6c1a);
   cursor: pointer;
   transition: background .12s ease, border-color .12s ease;
 }
-.pp-btn.pp-unset { color: var(--accent, #8a6c1a); }
 .pp-btn:hover,
-.pp-btn:focus-visible { background: var(--bg, #f5f4f0); border-color: #C04E1A; }
+.pp-btn:focus-visible { background: var(--bg, #f5f4f0); border-color: var(--accent, #8a6c1a); }
 .pp-chev { margin-left: 8px; opacity: .55; font-weight: 400; }
 
 .pp-pop {
@@ -2442,19 +2447,32 @@ body > .hero-ground {
    as #guides-intro and #plug-result. */
 .pp-pop[hidden] { display: none !important; }
 
-.pp-search {
+/* SCOPED UNDER .pp-pop ON PURPOSE — do not "simplify" to a bare .pp-search.
+   The § 14 site standard styles `input[type="search"]` at (0,1,1), which beats
+   a lone .pp-search at (0,1,0): this field rendered 440px wide and 56px tall
+   INSIDE a 280px panel, spilling out of its own dropdown. `.pp-pop .pp-search`
+   is (0,2,0) and wins. It is deliberately NOT written as
+   `.pp-pop input[type="search"]` — that spelling would make
+   check_search_bar_standard treat this as a page search bar and demand the
+   full 440px standard, which is the very thing that broke it.
+   This is a field inside a picker panel, the documented Sunrise & Sunset
+   shape, not the bar that opens a page. */
+.pp-pop .pp-search {
   width: 100%;
   height: 40px;
-  padding: 0 12px;
+  /* Left padding clears the shared magnifier the § 14 rule paints at 16px
+     centre; that background is inherited on purpose and is the one thing from
+     the standard worth keeping here. */
+  padding: 0 12px 0 40px;
+  margin: 0;
   font: inherit;
   font-size: 15px;
   color: var(--text, #3d3a32);
-  background: var(--surface, #fff);
   border: 1px solid var(--border, #d8d4cc);
   border-radius: 6px;
 }
-.pp-search::placeholder { color: #A8895A; }
-.pp-search:focus {
+.pp-pop .pp-search::placeholder { color: #A8895A; }
+.pp-pop .pp-search:focus {
   outline: none;
   border-color: #C8B99A;
   box-shadow: 0 0 0 3px rgba(184,134,11,.12);
@@ -2476,7 +2494,7 @@ body > .hero-ground {
 }
 .pp-opt:hover,
 .pp-opt:focus-visible { background: var(--bg, #f5f4f0); outline: none; }
-.pp-opt.pp-on { color: #C04E1A; font-weight: 700; }
+.pp-opt.pp-on { color: var(--accent, #8a6c1a); font-weight: 700; }
 .pp-empty { padding: 10px; font-size: 13px; color: var(--muted, #6a6660); }
 
 /* The line under an answer that says where it came from and when. Never
@@ -2486,10 +2504,13 @@ body > .hero-ground {
 .pp-src { font-size: 11px; line-height: 1.5; color: var(--muted, #6a6660); }
 .pp-src a { color: inherit; text-decoration: underline; }
 
+/* No .pp-btn / .pp-opt colour overrides here on purpose: both read
+   var(--accent), which is already #c8a040 in dark mode, so they flip on their
+   own. The overrides that used to sit here forced terracotta and are exactly
+   what the owner's "no terracotta here" rule removed — re-adding one puts it
+   back in dark mode only, where a light-mode screenshot will never show it. */
 @media (prefers-color-scheme: dark) {
-  .pp-btn { color: #D4663A; border-color: rgba(212,102,58,.34); }
-  .pp-btn:hover, .pp-btn:focus-visible { border-color: #D4663A; }
-  .pp-opt.pp-on { color: #D4663A; }
+  .pp-btn { border-color: rgba(200,160,64,.34); }
   .pp-pop { box-shadow: 0 8px 28px rgba(0,0,0,.5); }
 }
 

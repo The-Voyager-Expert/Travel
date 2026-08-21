@@ -43,32 +43,44 @@
   var KEY = 'tve_passport';
   var subs = [];
 
-  function read() {
-    try {
-      var raw = localStorage.getItem(KEY);
-      if (!raw) return null;
-      var p = JSON.parse(raw);
-      /* A stored passport with no ISO code cannot index the matrix, and
-         half-answering a visa question is worse than asking again. */
-      if (!p || !p.code || p.code.length !== 2) return null;
-      return p;
-    } catch (e) { return null; }
-  }
+  /* A pick lives here for the current page load and NOWHERE ELSE — no
+     localStorage, no sessionStorage, no cookie. Reset to null on every fresh
+     load, which is the whole point: nothing a reader picks on one visit is
+     still there on the next. Exactly TVE.home's rule ("No filter saves
+     anything, ever", commit 416458ab), and for the identical reason — a
+     passport saved from a pick made days ago comes back as a preselected
+     country by another name, which is the Melbourne bug on Time Zones
+     (Thirty-first non-negotiable). Owner, 2026-08-21: "should not start with
+     any country."
 
-  function get() { return read(); }
-  function isSet() { return !!read(); }
+     The sessionStorage keys this module still uses ('tvepp', 'tvevm') cache
+     the FETCHED DATA — the passport list and the visa matrix — and are not a
+     pick. Caching a 97 KB asset is not remembering a choice. */
+  var picked = null;
+
+  /* An earlier version of this file DID persist the pick to localStorage;
+     this purges whatever it left behind rather than ever reading it back. A
+     stray value from before this change must not quietly resurrect itself as
+     a passport the current visit never chose. */
+  try { localStorage.removeItem(KEY); } catch (e) {}
+
+  /* NULL until the reader picks THIS PAGE LOAD. Every caller checks; none
+     substitutes a passport of its own, which is what a default here was. */
+  function read() { return picked; }
+  function get() { return picked; }
+  function isSet() { return !!picked; }
 
   function set(p) {
     if (!p || !p.code) return null;
     var next = { code: String(p.code).toUpperCase(),
                  name: p.name || p.code, flag: p.flag || '' };
-    try { localStorage.setItem(KEY, JSON.stringify(next)); } catch (e) {}
+    picked = next;
     subs.forEach(function (fn) { try { fn(next); } catch (e) {} });
     return next;
   }
 
   function clear() {
-    try { localStorage.removeItem(KEY); } catch (e) {}
+    picked = null;
     subs.forEach(function (fn) { try { fn(null); } catch (e) {} });
     return null;
   }
