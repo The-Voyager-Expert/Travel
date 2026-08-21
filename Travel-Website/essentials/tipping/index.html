@@ -29,25 +29,12 @@
 .stat-count { font-weight: 700; }
 /* ── Filter pills ── */
 .controls { margin: var(--search-gap,32px) 0 20px; }
-.pills { display: flex; gap: 8px; flex-wrap: nowrap; justify-content: center; }
-.pill {
-  display: inline-flex; align-items: center; justify-content: center;
-  flex: 0 0 auto; height: 34px; padding: 0 14px; border-width: 1px; border-style: solid;
-  border-radius: var(--fam-radius,4px); font-family: inherit; font-size: 13px; font-weight: 600;
-  line-height: 1; cursor: pointer; white-space: nowrap;
-}
-.pill[data-region="all"]         { background:var(--fam-yellow-bg); border-color:var(--fam-yellow-bd); color:var(--fam-yellow-ink); }
-.pill[data-region="americas"]  { background:var(--fam-red-bg); border-color:var(--fam-red-bd); color:var(--fam-red-ink); }
-.pill[data-region="caribbean"] { background:var(--fam-pink-bg); border-color:var(--fam-pink-bd); color:var(--fam-pink-ink); }
-.pill[data-region="europe"]    { background:var(--fam-purple-bg); border-color:var(--fam-purple-bd); color:var(--fam-purple-ink); }
-.pill[data-region="asiapac"]   { background:var(--fam-orange-bg); border-color:var(--fam-orange-bd); color:var(--fam-orange-ink); }
-.pill[data-region="other"]     { background:var(--fam-blue-bg); border-color:var(--fam-blue-bd); color:var(--fam-blue-ink); }
-.pill[data-region="all"].active       { border-color: rgba(var(--fam-yellow-rgb),.85); }
-.pill[data-region="americas"].active  { border-color: rgba(var(--fam-red-rgb),.85); }
-.pill[data-region="caribbean"].active { border-color: rgba(var(--fam-pink-rgb),.85); }
-.pill[data-region="europe"].active    { border-color: rgba(var(--fam-purple-rgb),.85); }
-.pill[data-region="asiapac"].active   { border-color: rgba(var(--fam-orange-rgb),.85); }
-.pill[data-region="other"].active     { border-color: rgba(var(--fam-blue-rgb),.85); }
+.pills { display: flex; gap: var(--fam-gap,10px); flex-wrap: nowrap; justify-content: center; }
+/* .pill is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes pill pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.pill { font-family: inherit; }
 /* ── Region headers (B — hairline rule) ── */
 .region-header {
   display: flex; align-items: center; gap: 12px;
@@ -121,8 +108,7 @@
   .hero-title { font-size: 32px; }
   /* No phone override: the gap above and below the search is one token
      (--search-gap) at every viewport — owner rule 2026-08-17. */
-  .pills { flex-wrap: wrap !important; gap: 8px !important; }
-  .pill { flex: 0 0 auto !important; height: 34px !important; padding: 0 14px !important; border-radius: var(--fam-radius,4px) !important; font-size: 13px !important; }
+  .pills { flex-wrap: wrap !important; gap: var(--fam-gap,10px) !important; }
   .stat-bar { display: grid; grid-template-columns: repeat(2, 1fr); }
   .country-row { grid-template-columns: 1fr; gap: 12px; padding: 13px 14px 13px 18px; }
   .tip-label { width: 120px; }
@@ -179,12 +165,12 @@
 
   <div class="controls">
     <div class="pills" id="region-pills">
-      <button class="pill fam-yellow active" data-region="all" aria-pressed="true">All</button>
-      <button class="pill fam-red" data-region="americas" aria-pressed="false">Americas</button>
-      <button class="pill fam-pink" data-region="caribbean" aria-pressed="false">Caribbean</button>
-      <button class="pill fam-purple" data-region="europe" aria-pressed="false">Europe</button>
-      <button class="pill fam-orange" data-region="asiapac" aria-pressed="false">Asia · Pacific</button>
-      <button class="pill fam-blue" data-region="other" aria-pressed="false">M.E. &amp; Africa</button>
+      <button class="pill fam-yellow is-on pill-badge" data-region="all" aria-pressed="true">All</button>
+      <button class="pill fam-red pill-badge" data-region="americas" aria-pressed="false">Americas</button>
+      <button class="pill fam-pink pill-badge" data-region="caribbean" aria-pressed="false">Caribbean</button>
+      <button class="pill fam-purple pill-badge" data-region="europe" aria-pressed="false">Europe</button>
+      <button class="pill fam-orange pill-badge" data-region="asiapac" aria-pressed="false">Asia · Pacific</button>
+      <button class="pill fam-blue pill-badge" data-region="other" aria-pressed="false">M.E. &amp; Africa</button>
     </div>
   </div>
 
@@ -1144,8 +1130,8 @@ document.getElementById('region-pills').addEventListener('click', function(e) {
   var btn = e.target.closest('.pill');
   if (!btn) return;
   activeRegion = btn.dataset.region;
-  document.querySelectorAll('.pill').forEach(function(p) { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
-  btn.classList.add('active');
+  document.querySelectorAll('.pill').forEach(function(p) { p.classList.remove('is-on'); p.setAttribute('aria-pressed', 'false'); });
+  btn.classList.add('is-on');
   btn.setAttribute('aria-pressed', 'true');
   render();
 });

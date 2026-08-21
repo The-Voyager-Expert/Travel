@@ -18,12 +18,15 @@
 #no-results { display: none; color: var(--muted); font-size: 13px; margin-bottom: 12px; text-align: center; }
 /* Airline pills */
 .pill-wrap {
-  display: flex; flex-wrap: nowrap; gap: 8px;
+  display: flex; flex-wrap: nowrap; gap: var(--fam-gap,10px);
   justify-content: center; margin-top: 16px; margin-bottom: 20px;
 }
 /* Airline filter pills */
-.apill { font-family: inherit; cursor: pointer; white-space: nowrap; padding: 9px 20px !important; border-radius: var(--fam-radius, 4px) !important; font-size: 13px; font-weight: 600; }
-.apill.active { background: var(--surface,#fff) !important; border-width: 1.5px !important; border-color: rgba(192,78,26,.85) !important; color: var(--rust,#C04E1A) !important; box-shadow: 0 0 0 2px rgba(192,78,26,.20); }
+/* .apill is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes apill pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.apill { font-family: inherit; }
 /* Cards */
 .row-list { display: flex; flex-direction: column; gap: 12px; }
 .bag-row { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; overflow: hidden; }
@@ -91,8 +94,7 @@
   #bg-search { width: 100%; max-width: 100%; }
   /* Airline filter — uniform 3-across glued grid (matches the guides index
      filter panels): equal-width, 46px-tall pills, glued edge-to-edge. */
-  .pill-wrap { flex-wrap: wrap !important; gap: 8px !important; }
-  .apill { padding: 10px 18px !important; border-radius: var(--fam-radius, 4px) !important; }
+  .pill-wrap { flex-wrap: wrap !important; gap: var(--fam-gap,10px) !important; }
   .bag-cols { grid-template-columns: 1fr; }
   .bag-col { border-right: none; border-bottom: 1px solid var(--border2); }
   .bag-col:last-child { border-bottom: none; }
@@ -146,7 +148,7 @@
   </div>
 
   <div class="pill-wrap">
-    <button class="apill pill-badge fam-yellow active" data-filter="all">All</button>
+    <button class="apill pill-badge fam-yellow is-on" data-filter="all">All</button>
     <button class="apill pill-badge fam-red" data-filter="delta">Delta</button>
     <button class="apill pill-badge fam-blue" data-filter="american">American</button>
     <button class="apill pill-badge fam-purple" data-filter="united">United</button>
@@ -1107,8 +1109,8 @@
 
   pills.forEach(function (p) {
     p.addEventListener('click', function () {
-      pills.forEach(function (x) { x.classList.remove('active'); });
-      p.classList.add('active');
+      pills.forEach(function (x) { x.classList.remove('is-on'); });
+      p.classList.add('is-on');
       active = p.dataset.filter;
       applyFilters();
     });
