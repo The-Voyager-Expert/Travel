@@ -2303,22 +2303,50 @@ window.TVE.home = (function () {
   }
 
   /* ── City hash for Before-You-Go deep-links ────────────────────────────── */
+  /* Before You Go selects a city by `keys.indexOf(hash)` against the climate
+     keys — the display names weather.js carries ('Abu Dhabi', 'Coeur dAlene',
+     'San José CR'). Every guide already authors its own weather deep link with
+     exactly that key (/weather/#Key), so the hash is lifted from that anchor.
+     `document.title` is the fallback: a guide's <title> is its display name
+     (validator-pinned to the index entry). The path segment is the last resort
+     and is the guide SLUG, so it is only a weak hint: since the 2026-08-16
+     flatten that segment is 'athens.html', and before this fix it was used raw,
+     so the hash read '#athens.html' on every guide — and the anchor it was
+     patched onto was looked up by the retired 'Before-You-Go.html' filename,
+     which matched nothing once the href became /before-you-go/. Both halves
+     were silently dead (fixed 2026-08-21). */
   var cityHash = '';
   if (isRealGuide) {
     var _dc = mount && mount.dataset.city;
-    if (_dc) {
-      cityHash = '#' + encodeURIComponent(_dc);
-    } else {
+    if (!_dc) _dc = (document.title || '').trim();
+    if (!_dc) {
       var _pathParts = location.pathname.split('/');
       var _gi = _pathParts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
       if (_gi >= 0 && _pathParts[_gi + 1]) {
-        cityHash = '#' + encodeURIComponent(_pathParts[_gi + 1].replace(/-/g, ' '));
+        _dc = _pathParts[_gi + 1].replace(/\.html$/i, '').replace(/-/g, ' ');
       }
     }
+    if (_dc) cityHash = '#' + encodeURIComponent(_dc);
     if (cityHash) {
-      var _navBYG = inner.querySelector('a[href*="Before-You-Go.html"]');
+      var _navBYG = inner.querySelector('a[href*="before-you-go"]');
       if (_navBYG) _navBYG.href += cityHash;
     }
+    /* This script runs at the top of <body>, before the guide's own pill row
+       is parsed, so the weather anchor is not in the DOM yet. Once it is,
+       re-stamp both Before You Go links (tab + hamburger) with the exact key
+       it carries — the title is only a near-miss for the accent and alias
+       cities ('San José' is not 'San Jose'). */
+    document.addEventListener('DOMContentLoaded', function () {
+      var _wxA = document.querySelector('a[href*="/weather/#"]');
+      var _wxHash = _wxA ? ((_wxA.getAttribute('href') || '').split('#')[1] || '') : '';
+      if (!_wxHash) return;
+      try { _wxHash = decodeURIComponent(_wxHash); } catch (e) { /* use raw */ }
+      [].slice.call(document.querySelectorAll('a[href*="before-you-go"]')).forEach(function (l) {
+        var _h = l.getAttribute('href') || '';
+        if (_h.indexOf('before-you-go') < 0) return;
+        l.setAttribute('href', _h.split('#')[0] + '#' + encodeURIComponent(_wxHash));
+      });
+    });
 
   }
 
@@ -2600,7 +2628,7 @@ window.TVE.home = (function () {
 
   /* Patch hamburger BYG link with city hash so it deep-links like the others. */
   if (cityHash) {
-    var _hamBYG = hamMenu.querySelector('a[href*="Before-You-Go.html"]');
+    var _hamBYG = hamMenu.querySelector('a[href*="before-you-go"]');
     if (_hamBYG) _hamBYG.href += cityHash;
   }
 
@@ -2860,7 +2888,7 @@ window.TVE.home = (function () {
        still pass); this only shortens what the reader sees, so the pill fits a
        50% grid cell without wrapping. Runs on all viewports. */
     function shortenTrainPill() {
-      [].slice.call(document.querySelectorAll('.also-on-this-site-pill[href*="European-Train-Guide"]')).forEach(function (a) {
+      [].slice.call(document.querySelectorAll('.also-on-this-site-pill[href*="european-trains"]')).forEach(function (a) {
         if (/European Train Guide/.test(a.textContent || '')) a.textContent = (a.textContent || '').replace(/European Train Guide/, 'European Train');
       });
     }

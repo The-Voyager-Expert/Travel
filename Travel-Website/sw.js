@@ -1715,7 +1715,8 @@
    from an inline background; it authors <svg data-icon="dot-*"> from SAFE_DOT now.
    .stat-dot on tipping, and the dead .cmp-legend-dot / .stat-pill .dot / .pill .dot rules,
    are retired. guides-index-style.css -> v23. CACHE to v1206. */
-var CACHE = 'travel-cache-v1206';
+/* 2026-08-21: Before You Go deep link from a guide: the hash is the guide's own weather key (was '#athens.html') and the anchor is found by /before-you-go/ (was the retired Before-You-Go.html); the European Train pill shortener now finds /european-trains/. toolbar.js -> v835. CACHE to v1207. */
+var CACHE = 'travel-cache-v1207';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1728,7 +1729,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 834, 'mobile.css': 87, 'web-travel-style.css': 89, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
+var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 835, 'mobile.css': 87, 'web-travel-style.css': 89, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
