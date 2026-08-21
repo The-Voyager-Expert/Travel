@@ -1618,7 +1618,11 @@
 /* 2026-08-21: accessibility marks — steps/viaduct/squeeze registered as one grey
    family; step-free and wheelchair deleted as sprites (their drawings stay in the
    catalogue). toolbar.js -> v787. CACHE to v1146. */
-var CACHE = 'travel-cache-v1146';
+/* 2026-08-21: Passport picker — Japan restored to the renewal table, and flags get a
+   margin instead of a space character so they stop rendering flush against their labels
+   (picker button, picker list, visa rows, compare chips). Bumped passport.js and
+   web-travel-style.css floors, CACHE to v1147. */
+var CACHE = 'travel-cache-v1147';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1631,7 +1635,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 787, 'mobile.css': 87, 'web-travel-style.css': 84, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1, 'airlines.js': 2, 'passport.js': 2 };
+var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 787, 'mobile.css': 87, 'web-travel-style.css': 85, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1, 'airlines.js': 2, 'passport.js': 3 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
