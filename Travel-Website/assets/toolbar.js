@@ -5232,10 +5232,12 @@ window.TVE.home = (function () {
       { name: 'Waldorf Astoria Amsterdam', note: 'Waldorf Astoria brand — six 17th-century canal palaces on Herengracht, Guerlain Spa with pool, Michelin-recognized dining · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/nl/waldorf-astoria-amsterdam.html', tier: 'luxury' }
     ] },
     'annecy': { h: [
-      { name: 'Impérial Palace Annecy', note: 'Independent — lakefront property in central Annecy, La Voile gastronomic restaurant with terrace, spa with pool and hammam · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/imperial-palace.html' },
-      { name: 'Hôtel La Cour du 6', note: 'Independent — 6 bis Rue Royale in the Annecy city centre, 24h reception, air conditioning, on-site restaurant and coffee house · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/la-cour-du-6.html' },
-      { name: 'Rivage Hôtel & Spa Annecy', note: 'Independent — Avenue du Petit Port by the lake, year-round indoor pool, spa with steam room, sauna · 8.9 Booking.com', url: 'https://www.booking.com/hotel/fr/rivage-amp-spa-annecy.html' },
-      { name: 'Les Trésoms Lake and Spa Resort', note: 'Independent — hillside on Boulevard de la Corniche with lake views, seasonal outdoor pool, spa, tennis court · 8.1 Booking.com', url: 'https://www.booking.com/hotel/fr/lestresomsannecy.html' }
+      { name: 'Moxy Annecy', note: 'Marriott Moxy brand — Avenue du Rhône a short walk from the old town, fitness centre, bar, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/fr/moxy-annecy.html', tier: 'budget' },
+      { name: 'Hôtel La Cour du 6', note: 'Independent — 6 bis Rue Royale in the Annecy city centre, 24h reception, air conditioning, on-site restaurant and coffee house · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/la-cour-du-6.html', tier: 'budget' },
+      { name: 'Hébé Hotel', note: 'Independent — Avenue d\'Aléry between the station and the canals, sun terrace, 24h reception, air conditioning · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/alery.html', tier: 'mid' },
+      { name: 'Rivage Hôtel & Spa Annecy', note: 'Independent — Avenue du Petit Port by the lake, year-round indoor pool, spa with steam room, sauna · 8.9 Booking.com', url: 'https://www.booking.com/hotel/fr/rivage-amp-spa-annecy.html', tier: 'mid' },
+      { name: 'Les Trésoms Lake and Spa Resort', note: 'Independent — hillside on Boulevard de la Corniche with lake views, seasonal outdoor pool, spa, tennis court · 8.1 Booking.com', url: 'https://www.booking.com/hotel/fr/lestresomsannecy.html', tier: 'expensive' },
+      { name: 'Impérial Palace Annecy', note: 'Independent — lakefront property in central Annecy, La Voile gastronomic restaurant with terrace, spa with pool and hammam · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/imperial-palace.html', tier: 'luxury' }
     ] },
     'aracaju': { h: [
       { name: 'Del Mar Hotel', note: 'Independent — beachfront on Av. Santos Dumont in Atalaia, year-round outdoor pool, 24h reception, fitness centre · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/mercure-aracaju-del-mar.html' },
