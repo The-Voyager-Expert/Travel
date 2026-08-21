@@ -201,9 +201,10 @@
   margin-top: clamp(0.4rem, 0.8vw, 0.6rem);
   /* .lp-hero is a two-column grid and the script inserts this as a third child,
      so without an explicit column it auto-places into row 2 column 1 — under the
-     headline, nowhere near the photographs it drives. Column 2 puts it directly
-     beneath the mosaic. The phone override sits in the max-width block below,
-     where the hero collapses to one column and column 2 no longer exists. */
+     headline, nowhere near the photographs it drives. Column 2 puts it on the
+     mosaic's side; the row block below is what puts it directly UNDER the
+     mosaic. The phone override sits in the max-width block below, where the
+     hero collapses to one column and column 2 no longer exists. */
   grid-column: 2;
 }
 .lp-hero-arrow {
@@ -227,6 +228,43 @@
    base rule silently wins and the phone keeps the invented column. */
 @media (max-width: 62rem) {
   .lp-hero-nav { grid-column: 1; }
+}
+/* THE ARROWS SIT DIRECTLY UNDER THE PHOTOGRAPHS, AND THIS IS WHAT PUTS THEM
+   THERE (owner rule 2026-08-21: "the arrows are supposed to be under the
+   pictures and push down").
+
+   `grid-column: 2` alone was never enough, and the way it failed is the part
+   worth knowing. .lp-hero is `align-items: center` with ONE auto row, so the
+   row's height is set by the TEXT column — 706px against the mosaic's 424px at
+   1440 — and the mosaic floats in the middle of it. The nav, having no row of
+   its own, auto-placed into row 2, which begins where that tall row ENDS: the
+   arrows rendered 207px below the last photograph, level with the search box,
+   reading as a control for nothing.
+
+   The fix is two flexible spacer rows. The copy spans all four and centres over
+   the whole grid exactly as before; the mosaic and the nav take the two middle
+   auto rows, so the nav is always the mosaic's next line; and rows 1 and 4 —
+   `1fr` each, holding nothing — split whatever height is left over, which keeps
+   the mosaic+arrows PAIR centred against the copy rather than dropping it to
+   the bottom of the row (which is what `align-self: end` on the mosaic gives,
+   and it reads as the photographs having slipped).
+
+   DESKTOP ONLY, deliberately: below 62rem the hero is one column and the three
+   children already stack copy → mosaic → nav in source order, which is correct
+   with no placement at all. Fixed rows here would put the mosaic and the nav on
+   TOP of the copy on a phone. Scoped as a min-width block rather than by adding
+   `grid-row: auto` resets to the phone block above, so the whole mechanism is
+   one place to read and one place to delete. */
+@media (min-width: 62.0625rem) {
+  /* `row-gap: 0` is not tidying — it is half the fix. .lp-hero's `gap` was
+     written for the COLUMN gutter and never had a second row to apply to; the
+     moment there are four rows it also opens 56px between every one of them,
+     which lands 56px between the last photograph and the arrows on top of the
+     9.6px this rule already asks for. The columns keep their gutter. */
+  .lp-hero { grid-template-rows: 1fr auto auto 1fr; row-gap: 0; }
+  .lp-hero-copy { grid-column: 1; grid-row: 1 / -1; align-self: center; }
+  .lp-hero-art  { grid-column: 2; grid-row: 2; }
+  .lp-hero-nav  { grid-column: 2; grid-row: 3; }
 }
 /* A finger needs a bigger target than a cursor: 40px, matching the stop controls
    inside a guide (Thirty-third non-negotiable) rather than the 32px desktop dot. */
@@ -3502,30 +3540,30 @@ window.lpGuideCard = function (href, flag, name, extra) {
      [file, width, height, endsMidContent, title, description, href]. */
   var STEPS = {
     'lp-tools': [
-      ['plug-2', 1101, 687, 1, 'Search a country. Get its real answer.', 'Belgium takes a Type C or E adapter, 230V &mdash; and whether your own device needs a converter too.', '/plugs/'],
-      ['plug-3', 1101, 687, 1, 'Two voltages in one country', 'Brazil runs both 127V and 220V depending on the outlet, so the page tells you to check the socket before you plug in.', '/plugs/'],
-      ['plug-4', 1101, 687, 1, 'Three types, one country', 'South Africa takes Type C, M or N &mdash; the page names every one that works there, not just the most common.', '/plugs/'],
-      ['pack-3', 1101, 687, 0, '212 items, and it counts them', '18 categories, a running total of what is still to pack, and reset, print and hide-packed buttons.', '/essentials/packing/'],
-      ['pack-2', 1101, 687, 1, 'Counts that follow the trip', 'Seven days in, socks and underwear read <em>pack = 7</em>. Change the number and every quantity moves with it.', '/essentials/packing/'],
-      ['pack-4', 1101, 687, 1, 'Hide what is done', 'Ticked items strike through and the category badge fills in, so what is left is the only thing on screen.', '/essentials/packing/'],
-      ['map-3', 1101, 687, 0, 'Gold for the ones you have done', 'Over 230 destinations on one map, terracotta until you have been &mdash; London, Amsterdam and Bruges already turned gold here.', '/maps/world/'],
-      ['map-2', 1101, 687, 0, 'One tap on any guide', 'The <em>I&rsquo;ve Been</em> pill sits right on the guide, next to the trip you are reading &mdash; tap it the moment you decide you have been there.', '/maps/world/'],
-      ['map-4', 1101, 687, 0, 'And it survives the browser', 'Back up turns the whole list into a link. Open it on any phone or laptop and the places come back.', '/maps/world/'],
-      ['wx-2', 1101, 687, 1, 'The shape of the whole year', "Bali in August: 24° high, 19° low, 152mm of rain over 22 rainy days &mdash; and all twelve months on the same chart.", '/weather/'],
-      ['wx-3', 1101, 687, 1, 'Not every city looks the same', 'Reykjavik peaks at 13° in August where Bali holds 24° &mdash; the curve itself is the answer, not just one number.', '/weather/'],
-      ['wx-4', 1101, 687, 1, '&deg;C or &deg;F, your call', 'One tap switches every number on the page &mdash; Bali&rsquo;s August high reads 24° or 75°, same chart either way.', '/weather/']
+      ['plug-2', 1101, 687, 1, 'Search a country. Get its real answer.', 'Which socket a country uses, its voltage and frequency, and whether your own charger copes on the adapter alone or needs a converter as well.', '/plugs/'],
+      ['plug-3', 1101, 687, 1, 'The voltage, not just the shape', 'Some countries run two voltages at once, and the page says so &mdash; the part that decides whether your hair dryer survives the trip.', '/plugs/'],
+      ['plug-4', 1101, 687, 1, 'Every type that fits', 'Where more than one plug works, all of them are named, each with a photo of the wall socket and the plug face so you can tell them apart.', '/plugs/'],
+      ['pack-3', 1101, 687, 0, '212 items, and it counts them', 'Eighteen categories, a running total of what is still to pack, and buttons to reset it, print it, or hide what is already done.', '/essentials/packing/'],
+      ['pack-2', 1101, 687, 1, 'Counts that follow the trip', 'Set how many days you are going and every quantity moves with it, so socks and shirts scale to the trip instead of a guess.', '/essentials/packing/'],
+      ['pack-4', 1101, 687, 1, 'Hide what is done', 'Ticked items strike through and the category fills in, so what is still to do is the only thing left on screen.', '/essentials/packing/'],
+      ['map-3', 1101, 687, 0, 'Gold for the ones you have done', 'Over 230 destinations on one map: terracotta for the ones still ahead, gold for the ones you have marked, counted as the list grows.', '/maps/world/'],
+      ['map-2', 1101, 687, 0, 'One tap on any guide', 'The <em>I&rsquo;ve Been</em> pill sits on the guide itself, so you mark a place in the one spot you are already reading about it.', '/maps/world/'],
+      ['map-4', 1101, 687, 0, 'And it survives the browser', 'Back up turns the whole list into a link. Open that link on any phone or laptop and the places come back.', '/maps/world/'],
+      ['wx-2', 1101, 687, 1, 'The shape of the whole year', 'Search a city and the whole year is there at once &mdash; the high, the low, the rain and the rainy days, every month on one chart.', '/weather/'],
+      ['wx-3', 1101, 687, 1, 'Not every city looks the same', 'Two places can share a month and read nothing alike. The shape of the curve is the answer, not a single number.', '/weather/'],
+      ['wx-4', 1101, 687, 1, '&deg;C or &deg;F, your call', 'One tap switches every number on the page, the chart included.', '/weather/']
     ],
     'lp-plan': [
-      ['tz-2', 1101, 687, 1, 'Search a city. See the whole world from there.', 'Every destination re-measured from New York: local time, UTC offset, and how many hours ahead or behind.', '/time-zones/'],
-      ['tz-4', 1101, 687, 1, 'The badge changes with every search', 'From London, most of Western Europe reads &ldquo;Same&rdquo; &mdash; the same cities that read &plus;1 hr the moment France or Norway comes into view.', '/time-zones/'],
-      ['tz-3', 1101, 687, 1, 'Narrow it, or sort by distance', 'Region pills cut it down by continent, and the sort pill turns on the moment you search &mdash; closest to your city, first.', '/time-zones/'],
-      ['wtg-3', 1101, 687, 0, 'Every city that matches', '97 places, this time &mdash; sorted, with the temperatures and the rainy days, each one straight into its guide.', '/when-to-go/'],
+      ['tz-2', 1101, 687, 1, 'Search a city. See the whole world from there.', 'Every destination on the site re-measured against the place you searched &mdash; local time, UTC offset, and how far ahead or behind it runs.', '/time-zones/'],
+      ['tz-4', 1101, 687, 1, 'The badge changes with every search', 'Ahead reads green and behind reads red, both relative to whatever city you named &mdash; search another and every card on the page moves with it.', '/time-zones/'],
+      ['tz-3', 1101, 687, 1, 'Narrow it, or sort by distance', 'Region pills cut it down by continent, and the sort pill wakes up the moment you search &mdash; closest to your city, first.', '/time-zones/'],
+      ['wtg-3', 1101, 687, 0, 'Every city that matches', 'Set the month and the weather you want, and every city that fits comes back sorted &mdash; each one a tap from its own guide.', '/when-to-go/'],
       ['wtg-4', 1101, 687, 1, 'Or start from a mood', 'Beach weather. Mild spring. Winter escape. Cool autumn. One tap sets the month and the temperature band for you.', '/when-to-go/'],
       ['wtg-2', 1101, 687, 0, 'Down to the degree', 'A daytime high band you drag yourself, how much rain you will put up with, and &deg;C or &deg;F.', '/when-to-go/'],
       ['byg-1', 1101, 687, 1, 'Search a place. It pulls everything for it.', 'One city, one month, and the whole page rewrites itself to that trip.', '/before-you-go/'],
-      ['byg-3', 1101, 687, 1, 'Visa, cost and currency', 'Whether you need a visa and for how long, what a day costs there, and what your dollar is worth today.', '/before-you-go/'],
-      ['byg-2', 1101, 687, 1, 'The weather you will actually get', 'The month\'s real high and low, the rain, the rainy days &mdash; and the local time right now.', '/before-you-go/'],
-      ['byg-4', 1101, 687, 1, 'The things you forget to check', 'How safe it is and where to watch your pockets, and whether the tap water is fine.', '/before-you-go/']
+      ['byg-3', 1101, 687, 1, 'Visa, cost and currency', 'Whether you need a visa and for how long, what a day costs there, and the local currency you will be paying in.', '/before-you-go/'],
+      ['byg-2', 1101, 687, 1, 'The weather you will actually get', 'That city&rsquo;s real high and low for the month you picked, the rain, the rainy days &mdash; and the local time right now.', '/before-you-go/'],
+      ['byg-4', 1101, 687, 1, 'The things you forget to check', 'How safe it is and where to watch your pockets, whether the tap water is fine, and which plug to pack.', '/before-you-go/']
     ]
   };
 
