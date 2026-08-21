@@ -1642,7 +1642,8 @@
 /* 2026-08-21: index.html — the two landing carousels now render on DESKTOP as well as phone (the heading-plus-link-row that stood in for them there is deleted), all 22 step screenshots recaptured as whole sections, and the gap between the two carousels moved off a flat 34px. index.html changed several times across this pass with no bump, so every returning browser and installed PWA was being served the stale cached index — verified live: the rendered page carried none of the new CSS while a no-store fetch of the same URL did, and navigator.serviceWorker.controller was set. Same failure shape as the 2026-08-05 and 2026-08-13 entries above. No shared asset changed, so no MIN_VERSIONS floor moves. CACHE to v1153. */
 /* 2026-08-21: index.html — the two landing carousels stop filling the rail on desktop. Ungated to desktop they took the whole 1116px rail, which at 16:10 is a 696px photograph inside a 770px card (811px with the arrow row), so the two of them were 1,622px of screenshots under a Best Of block that measures 404px and a hero mosaic that measures 426 (owner: "the same size the desktop best of if too small a bit bigger not this insanity"). .lp-tools-tile, .lp-plan-tile and .lp-steps-nav now share one max-width:600px with auto side margins — photograph 374px, section 509px. A plain default-scope rule, NOT a media query: a phone viewport is narrower than the cap, so the phone card stays full-bleed and identical to .lp-best-tile beside it. This ships in the same file as the photo-hero row swaps of aeed219f, which had no bump of their own. No shared asset changed, so no MIN_VERSIONS floor moves. CACHE to v1154. */
 /* 2026-08-21: hotel price tiers reach readers on the guides that have them toolbar.js -> v790. CACHE to v1155. */
-var CACHE = 'travel-cache-v1155';
+/* 2026-08-21: banff hotel price tiers toolbar.js -> v791. CACHE to v1156. */
+var CACHE = 'travel-cache-v1156';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1655,7 +1656,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 790, 'mobile.css': 87, 'web-travel-style.css': 88, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 9, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
+var MIN_VERSIONS = { 'guide-style.css': 255,'toolbar.js': 791, 'mobile.css': 87, 'web-travel-style.css': 88, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 9, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
