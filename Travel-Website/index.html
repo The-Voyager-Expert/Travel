@@ -1444,40 +1444,103 @@ a.land-cta:hover:visited {
   }
 }
 
-/* ── DESKTOP — the text-link equivalent of the two phone carousels ──────────
-   Same split as Best Of: a plain heading + `.lp-links` grid on desktop, a
-   photo carousel on phone. `.lp-tools-desk` / `.lp-plan-desk` are visible by
-   DEFAULT (this is desktop's resting state) and hidden only inside the same
-   phone gate that reveals the carousels below — the two must never show
-   together, and neither may go stale relative to the other's page list. */
-.lp-tools-desk, .lp-plan-desk { max-width: var(--lp-max, 1180px); margin: clamp(2.2rem, 5vw, 3.4rem) auto 0; }
-.lp-tools-desk h2, .lp-plan-desk h2 {
-  display: flex; align-items: center; gap: 0.55rem;
-  font-size: clamp(1.2rem, 2.4vw, 1.5rem); font-weight: 700;
-  color: var(--ink,#3d3a32); margin: 0 0 0.4rem;
+/* ── THE TWO STEP CAROUSELS — mobile AND desktop ─────────────────────────────
+   Same shell as `.lp-best-tile` (14px radius, same shadow, same terracotta
+   band), stacked one below the other. Shown at every width: the owner asked
+   for the carousel itself on desktop rather than the text-link list that used
+   to stand in for it there. */
+/* THE TWO CAROUSELS SHARE EVERY RULE BELOW — one selector list, never a
+   second copy of the block (check_css_duplication). Only two things differ
+   per step and they are stated separately at the end: the image's aspect
+   ratio, which is the crop it was captured at, and whether the crop ends
+   mid-content and therefore needs the fade. */
+/* The gap between the two carousels is the same clamp the other landing
+   sections use, not a flat 34px -- at desktop the tiles are ~800px tall and
+   34px between them reads as one run-on block. */
+.lp-tools, .lp-plan { display: block; max-width: var(--lp-max, 1180px); margin: clamp(2.6rem, 5vw, 4rem) auto 0; }
+.lp-tools-tile, .lp-plan-tile {
+  display: block;
+  text-decoration: none;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(23,21,15,.08), 0 8px 24px rgba(23,21,15,.10);
+  -webkit-tap-highlight-color: transparent;
 }
-.lp-tools-desk-ic, .lp-plan-desk-ic { width: 26px; height: 26px; flex: 0 0 auto; }
-.lp-tools-desk-ic svg, .lp-plan-desk-ic svg { width: 100%; height: 100%; display: block; }
-.lp-tools-desk-sub, .lp-plan-desk-sub {
-  font-size: 0.92rem; line-height: 1.6; color: var(--muted,#6a6660);
-  margin: 0 0 0.7rem; max-width: 68ch;
+.lp-tools-tile:active, .lp-plan-tile:active { transform: scale(.992); }
+.lp-tools-tile, .lp-tools-tile:active,
+.lp-plan-tile, .lp-plan-tile:active { transition: transform .12s ease; }
+
+.lp-tools-shot, .lp-plan-shot { position: relative; display: block; background: var(--surface2,#f5f2ec); }
+.lp-tools-shot img, .lp-plan-shot img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  object-position: top center;
 }
-.lp-tools-desk .lp-links, .lp-plan-desk .lp-links {
-  display: flex; flex-wrap: wrap; gap: 0.3rem 1.6rem; border: 0; padding: 0;
+/* ── The step carousels ───────────────────────────────────────────────────
+   TWO CAROUSELS, consolidated 2026-08-21 from seven separate single-feature
+   tiles (owner: "i want two carousel in the index with all that same place
+   it was before"). Carousel 1 (.lp-tools) walks Plug -> Packing -> Map ->
+   Weather, 12 steps. Carousel 2 (.lp-plan) walks Time Zones -> When to Go ->
+   Before You Go, 10 steps. Every step still names its OWN destination via
+   the 7th field in its STEPS row — see paint()'s `tile.href = r[6]` below —
+   because a carousel now spans several origin pages, not one.
+
+   IT IS A SHOWCASE, NOT A TUTORIAL (owner rule 2026-08-17: "we dont need step
+   by step we just need to show case how cool it is"). Each screen is a
+   FEATURE, and the strongest one leads — the map opens on the gold pins, When
+   to Go on its 97 results, packing on the counter. A first screen that only
+   sets up the second is cut: Before You Go used to open on its empty search,
+   which was the same hero as the screen after it with nothing filled in.
+   The captions name what the thing does; none of them says "step".
+
+   EVERY STEP ON EVERY CAROUSEL SHARES ONE CROP (owner rule 2026-08-21: "they
+   should all have the same size screenshots"). Before this pass each step set
+   its own aspect ratio from JS because the crops were captured at genuinely
+   different heights — a month grid is not a page of results — so a fixed
+   ratio with object-fit:cover would have silently cropped whichever step was
+   tallest, always from the bottom, which is where the payoff sits (the result
+   count, the gold pins). That is no longer a live concern: every screenshot
+   is now CAPTURED at the same 367 × 430 crop in the first place, so the width
+   and height in STEPS below are the same on every row and the JS still sets
+   them explicitly per step rather than relying on a shared CSS ratio — one
+   crop size is a capture-time decision, not a layout constraint, and a
+   future step captured at a different size should not silently stretch to
+   fit.
+
+   The map's OWN three steps span TWO pages — map, then a guide, then the map
+   again — because the middle step is the thing the owner kept having to
+   explain: you mark a place on its guide, not here. */
+.lp-steps-nav {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 0.55rem; margin-top: 0.55rem;
+}
+.lp-steps-count {
+  margin-right: auto;
+  font-size: 12px; font-weight: 600; letter-spacing: .04em;
+  color: var(--muted,#6a6660); font-variant-numeric: tabular-nums;
+}
+/* Only a step whose crop stops mid-content fades. Set per step by the script,
+   never blanket — a fade over a finished edge greys out the payoff, which on
+   the map step is the gold count and on When to Go is the result line. */
+.lp-tools-shot.is-cut::after, .lp-plan-shot.is-cut::after {
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: 0; height: 56px;
+  background: linear-gradient(to bottom, rgba(245,242,236,0), var(--surface2,#f5f2ec));
+  pointer-events: none;
 }
 
-/* ── PHONE ONLY — the plug tile, directly under the Best Of one ───────────────
-   Same shell as `.lp-best-tile` (14px radius, same shadow, same terracotta
-   band). IT WAS THREE STATIC SOCKET PHOTOS SIDE BY SIDE UNTIL 2026-08-21 —
-   converted to a step carousel like Packing/Map/When to Go/Before You Go so
-   it could show a REAL SEARCH RESULT (a country's own answer: which type,
-   which voltage, whether it needs a converter) rather than three fixed
-   examples nobody searched for. Same shell, same STEPS mechanism below.
-   Same gate as the Best Of tile — width AND pointer, never width alone. */
-.lp-tools, .lp-plan { display: none; }
+.lp-tools-band, .lp-plan-band { display: block; padding: 13px 15px 15px; background: var(--rust, #C04E1A); }
+.lp-tools-band-t, .lp-plan-band-t { display: block; font-size: 16.5px; font-weight: 700; line-height: 1.25; color: #fff; }
+.lp-tools-band-t::after, .lp-plan-band-t::after { content: ' \203A'; opacity: .75; }
+.lp-tools-band-d, .lp-plan-band-d {
+  display: block; margin-top: 5px;
+  font-size: 13.5px; line-height: 1.5;
+  color: rgba(255,255,255,.88);
+}
+
 
 @media (max-width: 600px) and (pointer: coarse) {
-  .lp-tools-desk, .lp-plan-desk { display: none; }
   /* ── The packing tile ──────────────────────────────────────────────────────
      Same shell again, but what it shows is a PICTURE OF THE PAGE ITSELF rather
      than a photograph of a thing: the trip-length stepper, the progress ring
@@ -1491,92 +1554,6 @@ a.land-cta:hover:visited {
      never the ring. The fade over the last stretch is what says "and it keeps
      going": the crop ends just under a category header, and without it the cut
      reads as a rendering fault rather than as more list below. */
-  /* THE TWO CAROUSELS SHARE EVERY RULE BELOW — one selector list, never a
-     second copy of the block (check_css_duplication). Only two things differ
-     per step and they are stated separately at the end: the image's aspect
-     ratio, which is the crop it was captured at, and whether the crop ends
-     mid-content and therefore needs the fade. */
-  .lp-tools, .lp-plan { display: block; max-width: var(--lp-max, 1180px); margin: 34px auto 0; }
-  .lp-tools-tile, .lp-plan-tile {
-    display: block;
-    text-decoration: none;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 1px 2px rgba(23,21,15,.08), 0 8px 24px rgba(23,21,15,.10);
-    -webkit-tap-highlight-color: transparent;
-  }
-  .lp-tools-tile:active, .lp-plan-tile:active { transform: scale(.992); }
-  .lp-tools-tile, .lp-tools-tile:active,
-  .lp-plan-tile, .lp-plan-tile:active { transition: transform .12s ease; }
-
-  .lp-tools-shot, .lp-plan-shot { position: relative; display: block; background: var(--surface2,#f5f2ec); }
-  .lp-tools-shot img, .lp-plan-shot img {
-    display: block;
-    width: 100%;
-    object-fit: cover;
-    object-position: top center;
-  }
-  /* ── The step carousels ───────────────────────────────────────────────────
-     TWO CAROUSELS, consolidated 2026-08-21 from seven separate single-feature
-     tiles (owner: "i want two carousel in the index with all that same place
-     it was before"). Carousel 1 (.lp-tools) walks Plug -> Packing -> Map ->
-     Weather, 12 steps. Carousel 2 (.lp-plan) walks Time Zones -> When to Go ->
-     Before You Go, 10 steps. Every step still names its OWN destination via
-     the 7th field in its STEPS row — see paint()'s `tile.href = r[6]` below —
-     because a carousel now spans several origin pages, not one.
-
-     IT IS A SHOWCASE, NOT A TUTORIAL (owner rule 2026-08-17: "we dont need step
-     by step we just need to show case how cool it is"). Each screen is a
-     FEATURE, and the strongest one leads — the map opens on the gold pins, When
-     to Go on its 97 results, packing on the counter. A first screen that only
-     sets up the second is cut: Before You Go used to open on its empty search,
-     which was the same hero as the screen after it with nothing filled in.
-     The captions name what the thing does; none of them says "step".
-
-     EVERY STEP ON EVERY CAROUSEL SHARES ONE CROP (owner rule 2026-08-21: "they
-     should all have the same size screenshots"). Before this pass each step set
-     its own aspect ratio from JS because the crops were captured at genuinely
-     different heights — a month grid is not a page of results — so a fixed
-     ratio with object-fit:cover would have silently cropped whichever step was
-     tallest, always from the bottom, which is where the payoff sits (the result
-     count, the gold pins). That is no longer a live concern: every screenshot
-     is now CAPTURED at the same 367 × 430 crop in the first place, so the width
-     and height in STEPS below are the same on every row and the JS still sets
-     them explicitly per step rather than relying on a shared CSS ratio — one
-     crop size is a capture-time decision, not a layout constraint, and a
-     future step captured at a different size should not silently stretch to
-     fit.
-
-     The map's OWN three steps span TWO pages — map, then a guide, then the map
-     again — because the middle step is the thing the owner kept having to
-     explain: you mark a place on its guide, not here. */
-  .lp-steps-nav {
-    display: flex; align-items: center; justify-content: flex-end;
-    gap: 0.55rem; margin-top: 0.55rem;
-  }
-  .lp-steps-count {
-    margin-right: auto;
-    font-size: 12px; font-weight: 600; letter-spacing: .04em;
-    color: var(--muted,#6a6660); font-variant-numeric: tabular-nums;
-  }
-  /* Only a step whose crop stops mid-content fades. Set per step by the script,
-     never blanket — a fade over a finished edge greys out the payoff, which on
-     the map step is the gold count and on When to Go is the result line. */
-  .lp-tools-shot.is-cut::after, .lp-plan-shot.is-cut::after {
-    content: '';
-    position: absolute; left: 0; right: 0; bottom: 0; height: 56px;
-    background: linear-gradient(to bottom, rgba(245,242,236,0), var(--surface2,#f5f2ec));
-    pointer-events: none;
-  }
-
-  .lp-tools-band, .lp-plan-band { display: block; padding: 13px 15px 15px; background: var(--rust, #C04E1A); }
-  .lp-tools-band-t, .lp-plan-band-t { display: block; font-size: 16.5px; font-weight: 700; line-height: 1.25; color: #fff; }
-  .lp-tools-band-t::after, .lp-plan-band-t::after { content: ' \203A'; opacity: .75; }
-  .lp-tools-band-d, .lp-plan-band-d {
-    display: block; margin-top: 5px;
-    font-size: 13.5px; line-height: 1.5;
-    color: rgba(255,255,255,.88);
-  }
 }
 
 /* ── Compare: the city picker ─────────────────────────────────────────────────
@@ -3455,36 +3432,12 @@ window.lpGuideCard = function (href, flag, name, extra) {
      city" field hidden. The picture has to be something the reader will
      actually see.
 
-     A DESKTOP EQUIVALENT SITS DIRECTLY ABOVE, right before this comment's
-     <section> (owner rule 2026-08-21: "make sure the desktop have something
-     equivalent in mobile"). It is the mirror image of Best Of's own two-way
-     split (Best Of: `.lp-links` text grid on desktop, `.lp-best-tile` photo
-     carousel on phone) — here the CAROUSELS are the phone version and
-     `.lp-tools-desk` / `.lp-plan-desk` are the desktop one: a heading plus a
-     plain link row, shown only where the carousel is hidden. Never let the
-     text list and the phone carousel show at the same time on the same
-     viewport, and never let a page in one list go missing from the other. -->
-<section class="lp-tools-desk">
-  <h2><span class="lp-tools-desk-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-plug"/></svg></span>Trip-Prep Tools</h2>
-  <p class="lp-tools-desk-sub">Socket type by country, the packing checklist, the world map of where you have been, and the weather by month &mdash; four tools, each one page.</p>
-  <nav class="lp-links">
-    <a href="/plugs/">Plug &amp; Voltage by Country</a>
-    <a href="/essentials/packing/">Packing Checklist</a>
-    <a href="/maps/world/">World Map</a>
-    <a href="/weather/">Weather by City</a>
-  </nav>
-</section>
-
-<section class="lp-plan-desk">
-  <h2><span class="lp-plan-desk-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-globe"/></svg></span>Planning Tools</h2>
-  <p class="lp-plan-desk-sub">Time zones from anywhere, weather-first destination search, and everything pulled together for one city and one month.</p>
-  <nav class="lp-links">
-    <a href="/time-zones/">Time Zones</a>
-    <a href="/when-to-go/">When to Go</a>
-    <a href="/before-you-go/">Before You Go</a>
-  </nav>
-</section>
-
+     BOTH CAROUSELS RENDER ON DESKTOP TOO (owner rule 2026-08-21: two of them,
+     one below the other, "both mobile and desktop"). They were phone-only at
+     first, with a heading-plus-link-row standing in for them on desktop; the
+     owner's answer to that was "CARROUSELL" -- the desktop reader gets the
+     carousel, not a list. That text block and its CSS are deleted, not hidden,
+     so nothing can quietly bring it back. -->
 <!-- CAROUSEL 1 — Plug, Packing, Map, Weather (practical trip-prep tools).
      Plug: a REAL SEARCH RESULT off /plugs/ — country name, voltage, the
      "Bring a Type X adapter" line, the actual socket photo. Regenerate by
