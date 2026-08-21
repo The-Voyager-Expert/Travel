@@ -10,7 +10,11 @@
    overrode the shared rail-aware one. Do not paste it back. */
 .index-section { max-width: var(--rail); margin: 0 auto; padding: 0 var(--gutter); }
 .sort-controls { margin: var(--search-gap,32px) 0 16px; display: flex; gap: 8px; flex-wrap: wrap; }
-.sort-btn { font-family: inherit; cursor: pointer; height: 34px; padding: 0 14px; border-radius: var(--fam-radius,4px); font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap; }
+/* .sort-btn is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes sort-btn pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.sort-btn { font-family: inherit; }
 .sort-controls { gap: 10px; }
 #sort-asc.active   { border-color: rgba(var(--fam-green-rgb),.85); }
 #sort-desc.active  { border-color: rgba(var(--fam-red-rgb),.85); }
@@ -54,7 +58,6 @@ html { scroll-behavior: smooth; }
   .index-table td, .index-table th { font-size: var(--fs-sub,12px) !important; padding: 4px 8px !important; }
   /* Flex wrap on mobile — top margin stays the shared search-gap token. */
   .sort-controls { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; width: 100% !important; justify-content: center !important; margin: var(--search-gap,32px) 0 16px !important; }
-  .sort-btn { height: 34px !important; padding: 0 14px !important; border-radius: var(--fam-radius,4px) !important; font-size: 13px; }
 }
 @media (prefers-color-scheme: dark) {
   /* sort-btn dark mode handled by .fam-grey tokens — no overrides needed */
@@ -398,12 +401,12 @@ function initSorting() {
   const sortReset = document.getElementById('sort-reset');
 
   function updateButtons() {
-    sortAsc.classList.remove('active'); sortAsc.setAttribute('aria-pressed', 'false');
-    sortDesc.classList.remove('active'); sortDesc.setAttribute('aria-pressed', 'false');
-    sortReset.classList.remove('active'); sortReset.setAttribute('aria-pressed', 'false');
-    if (currentSort === 'asc') { sortAsc.classList.add('active'); sortAsc.setAttribute('aria-pressed', 'true'); }
-    else if (currentSort === 'desc') { sortDesc.classList.add('active'); sortDesc.setAttribute('aria-pressed', 'true'); }
-    else { sortReset.classList.add('active'); sortReset.setAttribute('aria-pressed', 'true'); }
+    sortAsc.classList.remove('is-on'); sortAsc.setAttribute('aria-pressed', 'false');
+    sortDesc.classList.remove('is-on'); sortDesc.setAttribute('aria-pressed', 'false');
+    sortReset.classList.remove('is-on'); sortReset.setAttribute('aria-pressed', 'false');
+    if (currentSort === 'asc') { sortAsc.classList.add('is-on'); sortAsc.setAttribute('aria-pressed', 'true'); }
+    else if (currentSort === 'desc') { sortDesc.classList.add('is-on'); sortDesc.setAttribute('aria-pressed', 'true'); }
+    else { sortReset.classList.add('is-on'); sortReset.setAttribute('aria-pressed', 'true'); }
   }
 
   sortAsc.addEventListener('click', () => {
