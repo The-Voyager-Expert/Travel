@@ -178,6 +178,40 @@
     grid-template-rows: 1fr 1.0139fr 1.5453fr;
   }
 }
+/* ON A PHONE THE MOSAIC IS TWO PICTURES, TOP AND BOTTOM (owner rule 2026-08-21).
+
+   Four tiles inside 393px gives a "big" cell about 175px wide and a small one
+   about 110px — thumbnails, not photographs, and the whole reason the tiles
+   exist is that somebody looks at them. Two stacked full-width tiles are each
+   the width of the screen.
+
+   WHICH TWO, AND WHY IT IS THESE TWO. The carousel paints in cell order
+   a · b · c · d, and its own sort puts the BEST photograph in a and the WIDEST
+   in d (the small cell b and the tall cell c take what is left). Those are
+   exactly the two that survive here: a is the one chosen for quality, and d is
+   the one whose shape already suits a wide tile. Hiding b and c therefore drops
+   the two cells that were only ever there to fill a desktop grid.
+
+   The ratio is 16/10 — the same crop as `.lp-best-tile` further down this page,
+   so the front door reads as one system on a phone rather than two.
+
+   `aspect-ratio: auto` is not tidy-up: the block's own 1/0.82 was measured for a
+   three-row grid, and left in place it squashes two stacked tiles into it. And
+   the tiles are hidden by :nth-child rather than by their inline grid-area,
+   because an inline style cannot be overridden from a stylesheet — the carousel
+   never rebuilds these four anchors, only swaps their contents, so their DOM
+   order is fixed and is the stable handle. */
+@media (max-width: 600px) and (pointer: coarse) {
+  .lp-hero-art {
+    grid-template-areas: "a" "d";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    aspect-ratio: auto;
+  }
+  .lp-hero-art > a:nth-child(2),
+  .lp-hero-art > a:nth-child(3) { display: none; }
+  .lp-hero-art > a { aspect-ratio: 16 / 10; }
+}
 .lp-hero-art a {
   position: relative;
   overflow: hidden;
