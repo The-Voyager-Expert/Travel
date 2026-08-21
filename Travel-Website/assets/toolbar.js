@@ -5256,10 +5256,13 @@ window.TVE.home = (function () {
       { name: 'Nayara Springs', note: 'Small Luxury Hotels — adults-only, 35 private villas each with volcanic hot-spring plunge pool, Arenal Volcano views, 24-hour butler', url: 'https://www.booking.com/hotel/cr/nayara-springs.html', tier: 'luxury' }
     ] },
     'aruba': { h: [
-      { name: 'Bucuti & Tara Beach Resort', note: '', url: 'https://www.bucuti.com/' },
-      { name: 'Hyatt Regency Aruba Resort Spa & Casino', note: 'Hyatt brand — Palm Beach frontage, 8,000 sq ft pool complex with waterslide, adults-only pool, ZoiA Spa, casino on-site', url: 'https://www.booking.com/hotel/aw/hyatt-regency-aruba-resort-casino.html' },
-      { name: 'Renaissance Wind Creek Aruba Resort', note: 'Marriott Renaissance brand — Oranjestad harbourfront, private beach area, rooftop and infinity pools, casino · 8.9 Booking.com', url: 'https://www.booking.com/hotel/aw/renaissance-aruba-resort-and-casino.html' },
-      { name: 'Aruba Marriott Resort & Stellaris Casino', note: 'Marriott brand — beachfront on Palm Beach, heated pool with swim-up bar, spa, tennis court · 8.8 Booking.com', url: 'https://www.booking.com/hotel/aw/aruba-marriott-resort-stellaris-casino.html' }
+      { name: 'Hyatt Place Aruba Airport', note: 'Hyatt Place brand — Oranjestad by the airport, rooftop pool and bar, fitness centre, 24h reception · 8.2 Booking.com', url: 'https://www.booking.com/hotel/aw/hyatt-place-aruba-airport.html', tier: 'budget' },
+      { name: 'Courtyard by Marriott Aruba Resort', note: 'Marriott Courtyard brand — J.E. Irausquin Blvd on Eagle Beach, saltwater pool, private beach area, kids club · 8.6 Booking.com', url: 'https://www.booking.com/hotel/aw/the-mill-resort-and-suites.html', tier: 'mid' },
+      { name: 'Renaissance Wind Creek Aruba Resort', note: 'Marriott Renaissance brand — Oranjestad harbourfront, private beach area, rooftop and infinity pools, casino · 8.9 Booking.com', url: 'https://www.booking.com/hotel/aw/renaissance-aruba-resort-and-casino.html', tier: 'mid' },
+      { name: 'Embassy Suites by Hilton Aruba Beach Resort', note: 'Hilton Embassy Suites brand — two-room suites on Eagle Beach, year-round outdoor pool, kids club, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/aw/embassy-suites-by-hilton-aruba-resort.html', tier: 'expensive' },
+      { name: 'Aruba Marriott Resort & Stellaris Casino', note: 'Marriott brand — beachfront on Palm Beach, heated pool with swim-up bar, spa, tennis court · 8.8 Booking.com', url: 'https://www.booking.com/hotel/aw/aruba-marriott-resort-stellaris-casino.html', tier: 'expensive' },
+      { name: 'Hyatt Regency Aruba Resort Spa & Casino', note: 'Hyatt brand — Palm Beach frontage, 8,000 sq ft pool complex with waterslide, adults-only pool, ZoiA Spa, casino on-site', url: 'https://www.booking.com/hotel/aw/hyatt-regency-aruba-resort-casino.html', tier: 'luxury' },
+      { name: 'Bucuti & Tara Beach Resort', note: 'Independent — adults-only on Eagle Beach, low-rise beachfront wing, Elements oceanfront restaurant, spa and fitness pavilion', url: 'https://www.bucuti.com/', tier: 'luxury' }
     ] },
     'athens': { h: [
       { name: 'Novotel Athens', note: 'Novotel first-tier brand — Michail Voda north of Omonoia, rooftop pool and bar with Acropolis view, free parking · 7.5 Booking.com', url: 'https://www.booking.com/hotel/gr/novotel-athens.html', tier: 'budget' },
@@ -5293,10 +5296,12 @@ window.TVE.home = (function () {
       { name: 'Four Seasons Hotel Austin', note: 'Four Seasons brand — San Jacinto Boulevard on the Lady Bird Lake shore, saltwater pool, full-service spa, lakefront lawn · 8.2 Booking.com', url: 'https://www.booking.com/hotel/us/ninty-eight-downtown-austin.html', tier: 'luxury' }
     ] },
     'azores': { h: [
-      { name: 'Octant Ponta Delgada', note: 'Independent — Av. João Bosco Mota Amaral by the marina, 5-star, 24h reception, rooftop pool, spa with steam room · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/octant-ponta-delgada.html' },
-      { name: 'Grand Hotel Açores Atlântico', note: 'Independent — 5-star marina-facing landmark, heated indoor pool, 8 conference rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/acores-atlantico.html' },
-      { name: 'Hotel Talisman', note: 'Independent boutique — historic center Ponta Delgada, rooftop pool, park views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/pt/talisman.html' },
-      { name: 'Mercure Ponta Delgada Azores', note: 'Accor brand — central Ponta Delgada, modern amenities, highly rated WiFi and location · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pt/mercure-ponta-delgada-azores.html' }
+      { name: 'NINE DOTS Azorean Art Boutique Hotel', note: 'Independent boutique — Rua dos Mercadores in the old town, heated indoor pool, spa with steam room, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/nine-dots-azorean-art-boutique.html', tier: 'budget' },
+      { name: 'Hotel Talisman', note: 'Independent boutique — historic center Ponta Delgada, rooftop pool, park views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/pt/talisman.html', tier: 'budget' },
+      { name: 'Hotel Gaivota Azores', note: 'Independent — Avenida Infante Dom Henrique on the seafront, heated indoor pool, sauna and hammam, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/pt/apartamentos-gaivota.html', tier: 'mid' },
+      { name: 'Mercure Ponta Delgada Azores', note: 'Accor brand — central Ponta Delgada, modern amenities, highly rated WiFi and location · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pt/mercure-ponta-delgada-azores.html', tier: 'mid' },
+      { name: 'Grand Hotel Açores Atlântico', note: 'Independent — 5-star marina-facing landmark, heated indoor pool, 8 conference rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/acores-atlantico.html', tier: 'expensive' },
+      { name: 'Octant Ponta Delgada', note: 'Independent — Av. João Bosco Mota Amaral by the marina, 5-star, 24h reception, rooftop pool, spa with steam room · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/octant-ponta-delgada.html', tier: 'luxury' }
     ] },
     'bahamas': { h: [
       { name: 'Courtyard by Marriott Nassau Downtown/Junkanoo Beach', note: 'Marriott family — Junkanoo Beach access, outdoor pool, downtown Nassau · 7.2 Booking.com', url: 'https://www.booking.com/hotel/bs/sunset-resort-bahamas-nassau.html', tier: 'budget' },
