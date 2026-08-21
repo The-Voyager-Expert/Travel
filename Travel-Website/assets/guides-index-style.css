@@ -589,12 +589,22 @@ body.mode-flights #guide-noresult { display: none !important; }
 /* Pin the airport code to a fixed top-right spot so it doesn't drift with card content */
 .flt-grid .fiata { position: absolute; top: 9px; right: 12px; margin-left: 0; }
 .flt { flex-basis: 100%; display: flex; align-items: center; gap: 6px; margin-top: 5px; font-size: 12px; color: var(--muted); }
-.fdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.fdot.r-nonstop { background: #AF52DE; }
-.fdot.r-1stop { background: #46C24E; }
-.fdot.r-2stop { background: #2E90FA; }
-.fdot.r-seasonal { background: #fff; border: 2px solid #AF52DE; width: 6px; height: 6px; }
-.fdot.r-home { background: var(--accent); }
+/* .fdot — the routing tier dot. The flat CSS circle and its five colour rules were
+   retired 2026-08-21: Site-Icons.html § Dots (856-867) already holds twelve glossy
+   spheres, the .flt row authors <svg class="gm-icon fdot" data-icon="dot-*">, and a
+   flat circle is neither an emoji (so no check saw it) nor the catalogue drawing.
+   Size is pinned here rather than left at .gm-icon's 1.2em: a .flt row is 12px, and
+   1.2em of that is 14.4px — nearly double the 8px it replaces, which crowds a dense
+   guide card. 10px keeps the row's rhythm and still reads as a sphere. */
+/* SPECIFICITY IS LOAD-BEARING HERE. toolbar.js appends its own <style> to <head> at
+   runtime, so `.gm-icon{width:1.2em}` lands AFTER this stylesheet in document order and
+   a bare `.fdot` (0,1,0) loses the tie — measured 13.8px against the 10 asked for.
+   `svg.gm-icon.fdot` is (0,2,1) and wins. Never simplify this selector. */
+svg.gm-icon.fdot { width: 10px; height: 10px; flex-shrink: 0; }
+/* seasonal = the nonstop colour worn lightly — a white sphere inside the nonstop
+   purple ring. Same design as the retired .r-seasonal rule, drawn instead of painted;
+   the offset keeps the ring on the dot's own edge so it matches its neighbours' size. */
+svg.gm-icon.fdot-seasonal { border-radius: 50%; outline: 2px solid #AF52DE; outline-offset: -1px; }
 .ftime { font-size: 12px; font-weight: 600; color: var(--text, #1a1917); }
 .fdl { font-size: 9.5px; font-weight: 700; color: #fff; background: #b01028; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.03em; }
 .fiata { margin-left: auto; font-size: 12px; color: #8a857c; letter-spacing: 0.04em; }

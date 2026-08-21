@@ -2379,10 +2379,10 @@
        built from. #flight-view.flt-est hides it, because an estimate knows the
        distance and nothing whatever about how many planes it takes. -->
   <div class="flegend">
-    <span><span class="fdot r-nonstop"></span> Nonstop</span>
-    <span><span class="fdot r-seasonal"></span> Nonstop (seasonal)</span>
-    <span><span class="fdot r-1stop"></span> 1 connection</span>
-    <span><span class="fdot r-2stop"></span> 2 connections</span>
+    <span><svg class="gm-icon fdot" data-icon="dot-purple" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-purple"/></svg> Nonstop</span>
+    <span><svg class="gm-icon fdot fdot-seasonal" data-icon="dot-white" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-white"/></svg> Nonstop (seasonal)</span>
+    <span><svg class="gm-icon fdot" data-icon="dot-green" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-green"/></svg> 1 connection</span>
+    <span><svg class="gm-icon fdot" data-icon="dot-blue" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-blue"/></svg> 2 connections</span>
   </div>
   <!-- .fnote had CSS and NO ELEMENT: the origin disclosure was deleted from the
        markup while the filters that needed it stayed, which is exactly how this
@@ -2782,6 +2782,19 @@
     if (fv) fv.classList.toggle('flt-est', !deflt);
     var AIRXY = (window._lpAirports && window._lpAirports.xy) || null;
     var h = HOMEf && HOMEf.get();
+    /* One drawing per routing tier — Site-Icons.html § Dots (856-867), the same glossy
+       spheres every other family dot on the site uses. `seasonal` keeps its purple ring
+       (.fdot-seasonal): it is the nonstop colour worn lightly, and that distinction is
+       the whole point of the tier. Hoisted out of the loop deliberately — it was built
+       once per card. Never inline a flat CSS circle here. */
+    var _FDOT = { nonstop:'dot-purple', '1stop':'dot-green', '2stop':'dot-blue',
+                  seasonal:'dot-white', home:'dot-yellow' };
+    function _fdotSvg(r) {
+      var k = _FDOT[r] || 'dot-grey';
+      return '<svg class="gm-icon fdot' + (r === 'seasonal' ? ' fdot-seasonal' : '') +
+             '" data-icon="' + k + '" data-role="dot" viewBox="0 0 24 24" aria-hidden="true">' +
+             '<use href="#gm-i-' + k + '"/></svg>';
+    }
     items.forEach(function (a) {
       var d = a._fm;
       var line = a.querySelector('.flt'), brk = a.querySelector('.fbreak');
@@ -2795,7 +2808,7 @@
         a.style.borderLeftColor = 'var(--border2, #e6e2da)';
       } else if (deflt) {
         mins = fmapMins(d);
-        line.innerHTML = '<span class="fdot r-' + d.r + '"></span><span class="ftime">' + fmtMins(mins) + '</span> ' + RL[d.r]
+        line.innerHTML = _fdotSvg(d.r) + '<span class="ftime">' + fmtMins(mins) + '</span> ' + RL[d.r]
           + '<span class="fiata">' + d.i + '</span>';
         if (d.lg && d.lg.length) {
           var air = 0, legtxt = d.lg.map(function (L) { air += L[2]; return L[0] + '→' + L[1] + ' ' + fmtLeg(L[2]); }).join(' · ');
