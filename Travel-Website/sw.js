@@ -1668,7 +1668,8 @@
 /* 2026-08-21: bordeaux hotel price tiers toolbar.js -> v814. CACHE to v1179. */
 /* 2026-08-21: aruba hotel price tiers toolbar.js -> v815. CACHE to v1180. */
 /* 2026-08-21: athens hotel price tiers toolbar.js -> v816. CACHE to v1181. */
-var CACHE = 'travel-cache-v1181';
+/* 2026-08-21: index.html + assets/landing/steps/* — the two landing carousels sit SIDE BY SIDE on desktop (owner: "put them desktop side by side"), in a new .lp-carousels two-column grid that owns the gap and drops to one column below 1000px; the 600px card cap stays and governs that single-column range. And all 22 step screenshots are replaced by 13 recaptured ones: the old set was 20 of 22 frames at 84-96% near-white with three pairs that were the same picture (Belgium/Brazil/South Africa is one plug page with the country name changed; Bali/Reykjavik/Bali-in-F is one weather card shown twice and again in F). Owner: "the choices of screenshots are terible a boring! tons f white pages one after another." Old files are DELETED and the new names are different, so a returning browser holding the old index would 404 every image without this bump. No shared asset changed, so no MIN_VERSIONS floor moves. CACHE to v%d. */
+var CACHE = 'travel-cache-v1182';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
