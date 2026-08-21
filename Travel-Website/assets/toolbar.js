@@ -5344,7 +5344,8 @@ window.TVE.home = (function () {
       { name: 'Margaritaville Beach Resort Nassau', note: 'Independent — The Pointe on Bay Street by the cruise port, private beach, rooftop and infinity pools, water park · 7.6 Booking.com', url: 'https://www.booking.com/hotel/bs/margaritaville-beach-resort-nassau.html', tier: 'mid' },
       { name: 'Atlantis Paradise Island', note: 'Independent mega-resort — Aquaventure water park, 11 pools, casino, over 40 restaurants on Paradise Island', url: 'https://www.booking.com/hotel/bs/atlantis-paradise-island.html', tier: 'mid' },
       { name: 'SLS Baha Mar', note: 'SLS brand — Cable Beach, swim-up suites, Hyde Beach club, Sora rooftop restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/bs/sls-baha-mar.html', tier: 'expensive' },
-      { name: 'Rosewood Baha Mar', note: 'Rosewood brand — Cable Beach, private beach, Sense spa, five pools, butlered bungalows · 9.1 Booking.com', url: 'https://www.booking.com/hotel/bs/rosewood-baha-mar.html', tier: 'luxury' }
+      { name: 'Rosewood Baha Mar', note: 'Rosewood brand — Cable Beach, private beach, Sense spa, five pools, butlered bungalows · 9.1 Booking.com', url: 'https://www.booking.com/hotel/bs/rosewood-baha-mar.html', tier: 'luxury' },
+      { name: 'The Ocean Club, A Four Seasons Resort', note: 'Four Seasons brand — Paradise Island at the east end, Versailles terrace gardens, private beach, Dune by Jean-Georges', url: 'https://www.fourseasons.com/oceanclub/', tier: 'luxury' }
     ] },
     'bali': { h: [
       { name: 'Kastara Resort', note: 'Independent — Jalan Bangkiang Sidem in Keliki north of Ubud, 5-star, 24h reception, infinity pool over the rice terraces · 9.5 Booking.com', url: 'https://www.booking.com/hotel/id/kastara-resort.html', tier: 'luxury' },
