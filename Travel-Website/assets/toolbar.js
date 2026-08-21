@@ -1185,7 +1185,15 @@ window.TVE.home = (function () {
        purpose — a display:none subtree has no layout, so getBBox would return
        zeros and this would silently do nothing. */
     var TARGET = 0.96;
-    var syms = wrap.querySelectorAll('symbol');
+    /* Both passes measure the same way, so they share one body: the sprite
+       sheet's <symbol>s, then any INLINE specimen on the page. An inline icon
+       is marked by data-fill — the packing checklist's 19 category drawings
+       are the only ones on the site, and no sprite carries it. Its value is
+       deliberately unused: that is the catalogue's picking-board ratio, and
+       honouring it would rebuild the 1.41x spread this removes. */
+    var syms = [];
+    Array.prototype.push.apply(syms, wrap.querySelectorAll('symbol'));
+    Array.prototype.push.apply(syms, document.querySelectorAll('svg[data-fill]'));
     for (var i = 0; i < syms.length; i++) {
       var sy = syms[i], vb = sy.viewBox.baseVal;
       if (!vb || !vb.width) continue;
