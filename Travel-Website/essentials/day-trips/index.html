@@ -457,7 +457,30 @@ search.addEventListener('input', function () {
     : '<div class="empty-state"><div class="empty-state-text">No departure city matches that.</div></div>';
 });
 
-render();
+/* #City deep link — Before You Go's "N day trips" card and any page that
+   names a departure city arrive here as /essentials/day-trips/#Aix-en-Provence.
+   Matched folded (case, accents, punctuation): the hash carries the climate
+   key or the display name ('Aix-en-Provence'), the DATA rows the guide's
+   own spelling ('Aix en Provence'). No match = the ordinary browse grid. */
+function cityFromHash() {
+  var raw = (location.hash || '').replace(/^#/, '');
+  if (!raw) return null;
+  try { raw = decodeURIComponent(raw); } catch (e) { /* malformed escape — use raw */ }
+  var fold = function (t) { t = String(t || ''); t = t.normalize ? t.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : t; return t.toLowerCase().replace(/[^a-z0-9]+/g, ''); };
+  var want = fold(raw);
+  if (!want) return null;
+  var hit = DATA.filter(function (c) { return fold(c.city) === want; })[0];
+  return hit ? hit.city : null;
+}
+function applyHash() {
+  var c = cityFromHash();
+  if (!c) return false;
+  city = c; band = 'all'; search.value = c;
+  render();
+  return true;
+}
+if (!applyHash()) render();
+window.addEventListener('hashchange', applyHash);
 </script>
 <script src="/assets/search-autocomplete.js?v=8"></script>
 <script>(function(){
