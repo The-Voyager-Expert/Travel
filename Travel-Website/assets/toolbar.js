@@ -5185,10 +5185,12 @@ window.TVE.home = (function () {
       { name: 'Park Hyatt Abu Dhabi Hotel and Villas', note: 'Hyatt brand — beachfront on Saadiyat Island, outdoor pool, tennis courts, full-service spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ae/park-hyatt-abu-dhabi-and-villas.html', tier: 'luxury' }
     ] },
     'aix-en-provence': { h: [
-      { name: 'Le Pigonnet', note: 'Esprit de France — landscaped garden, outdoor pool, views of Mont Sainte-Victoire · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/le-pigonnet.html' },
-      { name: 'Villa Saint-Ange', note: 'Independent boutique — 18th-century bastide estate, heated pool, Provençal garden · 9.3 Booking.com', url: 'https://www.booking.com/hotel/fr/villa-saint-ange.html' },
-      { name: 'Les Suites du Cours & Spa', note: 'Independent boutique — 5-star on Cours Mirabeau in the historic centre, spa with hot tub, soundproofed suites · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/les-suites-du-cours.html' },
-      { name: 'Château de la Gaude', note: 'Independent — 18th-century château estate north of the centre, heated infinity pool, spa with steam room, gardens · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/chateau-de-la-gaude.html' }
+      { name: 'Novotel Aix-en-Provence Pont de L\'Arc', note: 'Novotel first-tier brand — Avenue Arc de Meyran south of the centre, seasonal outdoor pool, free parking, 24h reception · 8.0 Booking.com', url: 'https://www.booking.com/hotel/fr/aix-en-provence-pont-de-l-arc-fenouilleres.html', tier: 'budget' },
+      { name: 'Les Suites du Cours & Spa', note: 'Independent boutique — 5-star on Cours Mirabeau in the historic centre, spa with hot tub, soundproofed suites · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/les-suites-du-cours.html', tier: 'mid' },
+      { name: 'Le Pigonnet', note: 'Esprit de France — landscaped garden, outdoor pool, views of Mont Sainte-Victoire · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/le-pigonnet.html', tier: 'expensive' },
+      { name: 'Château de la Gaude', note: 'Independent — 18th-century château estate north of the centre, heated infinity pool, spa with steam room, gardens · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/chateau-de-la-gaude.html', tier: 'expensive' },
+      { name: 'Villa Saint-Ange', note: 'Independent boutique — 18th-century bastide estate, heated pool, Provençal garden · 9.3 Booking.com', url: 'https://www.booking.com/hotel/fr/villa-saint-ange.html', tier: 'luxury' },
+      { name: 'Villa Gallici Hôtel & Spa', note: 'Relais & Châteaux — 18th-century villa on Avenue de la Violette, year-round heated pool, Michelin-listed dining, cypress gardens · 9.4 Booking.com', url: 'https://www.booking.com/hotel/fr/villagallici.html', tier: 'luxury' }
     ] },
     'alaska': { h: [
       { name: 'Hotel Captain Cook', note: 'Independent — Anchorage landmark since 1965, three-tower downtown complex with on-site dining · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/us/hotel-captain-cook.html' },
@@ -5347,10 +5349,14 @@ window.TVE.home = (function () {
       { name: 'Sunriver Resort', note: 'Independent resort — Sunriver 25 min south of Bend, 24h reception, AC, indoor and outdoor pools, Sage Springs spa, golf and stables · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/sun-river-resort.html', tier: 'luxury' }
     ] },
     'bergen': { h: [
-      { name: 'Hotel Norge by Scandic', note: 'Scandic brand — grand property on Ole Bulls plass, central Bergen, indoor pool and spa, celebrated Matbørsen restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/no/scandic-hotel-norge.html' },
-      { name: 'Clarion Hotel Admiral', note: 'Nordic Choice Hotels — harbourfront position opposite Bryggen, Wharf-view rooms, rooftop bar with Puddefjorden panorama · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/clarion-admiral.html' },
-      { name: 'Opus XVI', note: 'Small Luxury Hotels — Vågsallmenningen in Bergenhus, former bank building steps from Bryggen, fitness centre · 9.0 Booking.com', url: 'https://www.booking.com/hotel/no/opus-xvi.html' },
-      { name: 'Bergen Børs Hotel', note: 'Independent — 5-star in the 1862 stock exchange on Vågsallmenningen, Bare restaurant, harbour-side location · 8.6 Booking.com', url: 'https://www.booking.com/hotel/no/bergen-bors.html' }
+      { name: 'Hotel Norge by Scandic', note: 'Scandic brand — grand property on Ole Bulls plass, central Bergen, indoor pool and spa, celebrated Matbørsen restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/no/scandic-hotel-norge.html', tier: 'expensive' },
+      { name: 'Clarion Hotel Admiral', note: 'Nordic Choice Hotels — harbourfront position opposite Bryggen, Wharf-view rooms, rooftop bar with Puddefjorden panorama · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/clarion-admiral.html', tier: 'mid' },
+      { name: 'Opus XVI', note: 'Small Luxury Hotels — Vågsallmenningen in Bergenhus, former bank building steps from Bryggen, fitness centre · 9.0 Booking.com', url: 'https://www.booking.com/hotel/no/opus-xvi.html', tier: 'luxury' },
+      { name: 'Bergen Børs Hotel', note: 'Independent — 5-star in the 1862 stock exchange on Vågsallmenningen, Bare restaurant, harbour-side location · 8.6 Booking.com', url: 'https://www.booking.com/hotel/no/bergen-bors.html', tier: 'luxury' },
+      { name: 'Comfort Hotel Bergen', note: 'Independent — Strandgaten in Bergenhus a few minutes west of Bryggen, 24h reception, fitness centre and roof terrace, no AC as is standard in Bergen · 8.1 Booking.com', url: 'https://www.booking.com/hotel/no/comfort-holberg.html', tier: 'budget' },
+      { name: 'Scandic Ørnen', note: 'Scandic brand — Lars Hillesgate between the station and the centre, 24h reception, fitness centre, top-floor breakfast room over the city, no AC · 8.3 Booking.com', url: 'https://www.booking.com/hotel/no/scandic-arnen.html', tier: 'budget' },
+      { name: 'Det Hanseatiske Hotel', note: 'Independent — Finnegaardsgaten inside the Bryggen wharf itself, 18th-century Hanseatic trading houses, 24h reception, no AC · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/det-hanseatiske.html', tier: 'mid' },
+      { name: 'Grand Hotel Terminus', note: 'Independent — Zander Kaaes Gate beside the railway station, 1928 interiors and a celebrated whisky bar, 24h reception, fitness centre, no AC · 8.3 Booking.com', url: 'https://www.booking.com/hotel/no/grand-terminus.html', tier: 'expensive' }
     ] },
     'berlin': { h: [
       { name: 'Regent Berlin', note: 'IHG Regent brand — Gendarmenmarkt address, neoclassical interiors, Fischers Fritz Michelin-starred dining, spa with pool · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/de/regent.html' },
