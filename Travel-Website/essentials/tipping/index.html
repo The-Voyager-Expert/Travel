@@ -20,11 +20,12 @@
      rim; never re-add a box. flex lets the four fill the row evenly. */
   flex: 1 1 auto; justify-content: center;
 }
-.stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.stat-dot.expected    { background: var(--c-expected); }
-.stat-dot.appreciated { background: var(--c-appreciated); }
-.stat-dot.check       { background: var(--c-check); }
-.stat-dot.skip        { background: var(--c-skip); }
+/* .stat-dot — drawn since 2026-08-21. The flat 8px circle and its four colour rules are
+   retired: Site-Icons.html § Dots (856-867) holds the sphere, and a flat circle is neither
+   an emoji (so no check saw it) nor the catalogue drawing. Sized svg.gm-icon.stat-dot,
+   (0,2,1), because toolbar.js appends .gm-icon{width:1.2em} at RUNTIME and so outranks a
+   bare class here. Never simplify that selector. */
+svg.gm-icon.stat-dot { width: 11px; height: 11px; flex-shrink: 0; }
 .stat-label { color: var(--sub,#7A7368); }
 .stat-count { font-weight: 700; }
 /* ── Filter pills ── */
@@ -1063,10 +1064,13 @@ function buildStatBar() {
   var counts = {expected:0, appreciated:0, check:0, skip:0};
   COUNTRIES.forEach(function(c) { if (counts[c.norm] !== undefined) counts[c.norm]++; });
   var labels = {expected:'Expected', appreciated:'Appreciated', check:'Check Bill', skip:'Not Customary'};
+  /* One drawing per tier — Site-Icons.html § Dots (856-867). The keys line up with the
+     pill's own fam-* class directly below, so the dot and its box can never disagree. */
+  var STAT_DOT = {expected:'dot-green', appreciated:'dot-blue', check:'dot-yellow', skip:'dot-grey'};
   var html = '';
   ['expected','appreciated','check','skip'].forEach(function(k) {
     html += '<div class="stat-pill badge fam-' + ({expected:'green',appreciated:'blue',check:'yellow',skip:'grey'}[k]||'grey') + ' stat-pill-' + k + '">' +
-      '<span class="stat-dot ' + k + '"></span>' +
+      '<svg class="gm-icon stat-dot" data-icon="' + STAT_DOT[k] + '" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-' + STAT_DOT[k] + '"/></svg>' +
       '<span class="stat-label">' + labels[k] + '</span>' +
       '<span class="stat-count">' + counts[k] + '</span>' +
     '</div>';
