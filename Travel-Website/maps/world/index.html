@@ -333,13 +333,28 @@ function restoreMine() {
 }
 
 /* Transient only — the slot is empty at rest, so the bar returns to hugging
-   its two buttons rather than holding a sentence nobody needs twice. */
+   its two buttons rather than holding a sentence nobody needs twice. This
+   governs BOTH the confirmation text AND the link field backupMine() opens
+   below it — a reader who tapped Back up once should not carry an open URL
+   box on every future visit to the map. Unconditional on a flat 5s window,
+   deliberately not gated on focus: a focus-based deferral sounds safer but in
+   practice box.select() below leaves the field focused with nothing to blur
+   it, so the box never closed at all — a regression that shipped looking like
+   a feature. Five seconds is the same window every other toast on this page
+   uses, and tapping Back up again reopens it instantly if more time is needed. */
 function mineSay(msg) {
   var el = document.getElementById('mine-hint-text');
   if (!el) return;
   el.textContent = msg;
   clearTimeout(mineSay._t);
-  mineSay._t = setTimeout(function () { el.textContent = ''; }, 5000);
+  mineSay._t = setTimeout(mineHideLink, 5000);
+}
+
+function mineHideLink() {
+  var el = document.getElementById('mine-hint-text');
+  var box = document.getElementById('mine-link');
+  if (el) el.textContent = '';
+  if (box) box.style.display = 'none';
 }
 
 function backupMine() {
