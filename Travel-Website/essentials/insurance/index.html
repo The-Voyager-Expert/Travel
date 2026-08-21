@@ -141,21 +141,11 @@ a.jump-pill[href="#ti-tips"]      { background:var(--fam-orange-bg); border-colo
 a.jump-pill:visited { color: inherit; }
 
 /* Provider category filter pills */
-.ti-pf {
-  display: inline-flex; align-items: center; justify-content: center;
-  height: 34px; padding: 0 14px; border: 1px solid; border-radius: var(--fam-radius,4px);
-  font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
-}
-.ti-pf[data-pf="all"]       { background:var(--fam-yellow-bg); border-color:var(--fam-yellow-bd); color:var(--fam-yellow-ink); }
-.ti-pf[data-pf="medical"]   { background:var(--fam-green-bg);  border-color:var(--fam-green-bd);  color:var(--fam-green-ink); }
-.ti-pf[data-pf="adventure"] { background:var(--fam-orange-bg); border-color:var(--fam-orange-bd); color:var(--fam-orange-ink); }
-.ti-pf[data-pf="families"]  { background:var(--fam-blue-bg);   border-color:var(--fam-blue-bd);   color:var(--fam-blue-ink); }
-.ti-pf[data-pf="annual"]    { background:var(--fam-purple-bg); border-color:var(--fam-purple-bd); color:var(--fam-purple-ink); }
-.ti-pf[data-pf="all"].active       { border-color: rgba(var(--fam-yellow-rgb),.85); }
-.ti-pf[data-pf="medical"].active   { border-color: rgba(var(--fam-green-rgb),.85); }
-.ti-pf[data-pf="adventure"].active { border-color: rgba(var(--fam-orange-rgb),.85); }
-.ti-pf[data-pf="families"].active  { border-color: rgba(var(--fam-blue-rgb),.85); }
-.ti-pf[data-pf="annual"].active    { border-color: rgba(var(--fam-purple-rgb),.85); }
+/* .ti-pf is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes ti-pf pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.ti-pf { font-family: inherit; }
 
 /* Compare-tools block */
 .compare-intro { font-size: 12.5px; color: var(--muted); line-height: 1.55; margin: -4px 0 12px; }
@@ -191,8 +181,7 @@ a.jump-pill:visited { color: inherit; }
   .tips-grid { grid-template-columns: 1fr; }
   .decision-table th:nth-child(3), .decision-table td:nth-child(3) { display: none; }
   .qc-wrap { grid-template-columns: 1fr; }
-  #ti-prov-filters { flex-wrap: wrap; gap: 8px; }
-  .ti-pf { height: 34px !important; padding: 0 14px !important; border-radius: var(--fam-radius,4px) !important; }
+  #ti-prov-filters { flex-wrap: wrap; gap: var(--fam-gap,10px); }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -463,12 +452,12 @@ a.jump-pill:visited { color: inherit; }
   <!-- ── Standalone Providers ────────────────────────────── -->
   <div class="section-head" id="ti-providers" style="scroll-margin-top:64px;">Standalone Providers</div>
 
-  <div id="ti-prov-filters" class="filter-chip-row" style="display:flex;flex-wrap:nowrap;gap:8px;justify-content:center;margin:0 0 16px;">
-    <button type="button" class="ti-pf active" data-pf="all">All</button>
-    <button type="button" class="ti-pf" data-pf="medical">Medical</button>
-    <button type="button" class="ti-pf" data-pf="adventure">Adventure</button>
-    <button type="button" class="ti-pf" data-pf="families">Families</button>
-    <button type="button" class="ti-pf" data-pf="annual">Annual</button>
+  <div id="ti-prov-filters" class="filter-chip-row" style="display:flex;flex-wrap:nowrap;gap:var(--fam-gap,10px);justify-content:center;margin:0 0 16px;">
+    <button type="button" class="ti-pf is-on pill-badge fam-yellow" data-pf="all">All</button>
+    <button type="button" class="ti-pf pill-badge fam-green" data-pf="medical">Medical</button>
+    <button type="button" class="ti-pf pill-badge fam-orange" data-pf="adventure">Adventure</button>
+    <button type="button" class="ti-pf pill-badge fam-blue" data-pf="families">Families</button>
+    <button type="button" class="ti-pf pill-badge fam-purple" data-pf="annual">Annual</button>
   </div>
 
   <div class="provider-list">
@@ -623,8 +612,8 @@ a.jump-pill:visited { color: inherit; }
   }
   pfBtns.forEach(function (b) {
     b.addEventListener('click', function () {
-      pfBtns.forEach(function (x) { x.classList.remove('active'); });
-      b.classList.add('active');
+      pfBtns.forEach(function (x) { x.classList.remove('is-on'); });
+      b.classList.add('is-on');
       applyProvFilter(b.getAttribute('data-pf'));
     });
   });

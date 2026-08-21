@@ -14,24 +14,15 @@
 
 /* ── Region filter strip ── */
 .filter-strip {
-  display: flex; flex-wrap: nowrap; gap: 8px;
+  display: flex; flex-wrap: nowrap; gap: var(--fam-gap,10px);
   justify-content: center; margin: var(--search-gap,32px) 0 14px;
 }
 /* fam-* region pills — no hover, fam-* handles dark mode */
-.rgn-pill {
-  display: inline-flex; align-items: center; justify-content: center;
-  height: 34px; padding: 0 14px; border-width: 1px; border-style: solid;
-  border-radius: var(--fam-radius,4px); font-family: inherit; font-size: 13px; font-weight: 600;
-  line-height: 1; cursor: pointer; white-space: nowrap; text-decoration: none;
-}
-.rgn-pill[data-rgn="all"]    { background: var(--fam-yellow-bg); border-color: var(--fam-yellow-bd); color: var(--fam-yellow-ink); }
-.rgn-pill[data-rgn="europe"] { background: var(--fam-blue-bg);   border-color: var(--fam-blue-bd);   color: var(--fam-blue-ink); }
-.rgn-pill[data-rgn="japan"]  { background: var(--fam-red-bg);    border-color: var(--fam-red-bd);    color: var(--fam-red-ink); }
-.rgn-pill[data-rgn="uk"]     { background: var(--fam-green-bg);  border-color: var(--fam-green-bd);  color: var(--fam-green-ink); }
-.rgn-pill[data-rgn="all"].active    { border-color: rgba(var(--fam-yellow-rgb),.85); }
-.rgn-pill[data-rgn="europe"].active { border-color: rgba(var(--fam-blue-rgb),.85); }
-.rgn-pill[data-rgn="japan"].active  { border-color: rgba(var(--fam-red-rgb),.85); }
-.rgn-pill[data-rgn="uk"].active     { border-color: rgba(var(--fam-green-rgb),.85); }
+/* .rgn-pill is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes rgn-pill pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.rgn-pill { font-family: inherit; }
 
 /* ── Eligibility legend (interactive filter badges) ── */
 .elig-legend {
@@ -94,8 +85,7 @@
 /* ── Mobile ── */
 @media (max-width: 600px) and (pointer: coarse) {
   .passes-grid { grid-template-columns: 1fr; }
-  .filter-strip { flex-wrap: wrap; gap: 8px; width: 100%; justify-content: center; }
-  .rgn-pill { flex: 0 0 auto; height: 34px !important; padding: 0 14px !important; border-radius: var(--fam-radius,4px) !important; }
+  .filter-strip { flex-wrap: wrap; gap: var(--fam-gap,10px); width: 100%; justify-content: center; }
   .elig-legend { flex-wrap: wrap; gap: 8px; }
 }
 /* badge + elig-badge dark mode handled by .fam-* tokens */
@@ -139,10 +129,10 @@
 
   <!-- Region filter -->
   <div class="filter-strip" role="group" aria-label="Filter by region" id="rgn-filter">
-    <button class="rgn-pill active" data-rgn="all">All passes</button>
-    <button class="rgn-pill" data-rgn="europe">Europe</button>
-    <button class="rgn-pill" data-rgn="japan">Japan</button>
-    <button class="rgn-pill" data-rgn="uk">United Kingdom</button>
+    <button class="rgn-pill is-on pill-badge fam-yellow" data-rgn="all">All passes</button>
+    <button class="rgn-pill pill-badge fam-blue" data-rgn="europe">Europe</button>
+    <button class="rgn-pill pill-badge fam-red" data-rgn="japan">Japan</button>
+    <button class="rgn-pill pill-badge fam-green" data-rgn="uk">United Kingdom</button>
   </div>
 
   <!-- Eligibility legend — interactive: click to filter by eligibility -->
@@ -452,8 +442,8 @@
   rgnPills.forEach(function (pill) {
     pill.addEventListener('click', function () {
       activeRgn = pill.dataset.rgn;
-      rgnPills.forEach(function (p) { p.classList.remove('active'); });
-      pill.classList.add('active');
+      rgnPills.forEach(function (p) { p.classList.remove('is-on'); });
+      pill.classList.add('is-on');
       applyFilters();
     });
   });

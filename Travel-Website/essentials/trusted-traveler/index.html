@@ -51,23 +51,12 @@ a.program-link:visited { color: #6a6660; }
 }
 #tt-search::placeholder { color: var(--c-search-placeholder); }
 #tt-search:focus { border-color: var(--c-search-focus-border); box-shadow: none; }
-.pill-row { display: flex; flex-wrap: nowrap; gap: 8px; justify-content: center; margin-top: var(--search-gap,32px); }
-.fpill {
-  display: inline-flex; align-items: center; justify-content: center;
-  height: 34px; padding: 0 14px; border-width: 1px; border-style: solid;
-  border-radius: var(--fam-radius,4px); font-family: inherit; font-size: 13px; font-weight: 600;
-  line-height: 1; cursor: pointer; white-space: nowrap;
-}
-.fpill[data-filter="all"]          { background:var(--fam-yellow-bg); border-color:var(--fam-yellow-bd); color:var(--fam-yellow-ink); }
-.fpill[data-filter="both"]  { background:var(--fam-purple-bg); border-color:var(--fam-purple-bd); color:var(--fam-purple-ink); }
-.fpill[data-filter="ge"]    { background:var(--fam-blue-bg); border-color:var(--fam-blue-bd); color:var(--fam-blue-ink); }
-.fpill[data-filter="clear"] { background:var(--fam-orange-bg); border-color:var(--fam-orange-bd); color:var(--fam-orange-ink); }
-.fpill[data-filter="eoa"]   { background:var(--fam-green-bg); border-color:var(--fam-green-bd); color:var(--fam-green-ink); }
-.fpill[data-filter="all"].active   { border-color: rgba(var(--fam-yellow-rgb),.85); }
-.fpill[data-filter="both"].active  { border-color: rgba(var(--fam-purple-rgb),.85); }
-.fpill[data-filter="ge"].active    { border-color: rgba(var(--fam-blue-rgb),.85); }
-.fpill[data-filter="clear"].active { border-color: rgba(var(--fam-orange-rgb),.85); }
-.fpill[data-filter="eoa"].active   { border-color: rgba(var(--fam-green-rgb),.85); }
+.pill-row { display: flex; flex-wrap: nowrap; gap: var(--fam-gap,10px); justify-content: center; margin-top: var(--search-gap,32px); }
+/* .fpill is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes fpill pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.fpill { font-family: inherit; }
 
 /* ── Airport list ── */
 .state-block {
@@ -130,8 +119,7 @@ a.program-link:visited { color: #6a6660; }
      and the badges drop to their own line below. */
   .apt-row { padding: 10px 14px; gap: 6px 10px; flex-wrap: wrap; align-items: flex-start; }
   .badge-wrap { flex-basis: 100%; justify-content: flex-start; }
-  .pill-row { flex-wrap: wrap !important; gap: 8px !important; }
-  .fpill { flex: 0 0 auto !important; height: 34px !important; padding: 0 14px !important; border-radius: var(--fam-radius,4px) !important; font-size: 13px !important; }
+  .pill-row { flex-wrap: wrap !important; gap: var(--fam-gap,10px) !important; }
   .state-header, .country-header { padding: 11px 14px 9px; }
 }
 
@@ -180,11 +168,11 @@ a.program-link:visited { color: #6a6660; }
   <div class="controls" style="margin-top:35px;">
     
     <div class="pill-row">
-      <button class="fpill active" data-filter="all">All airports</button>
-      <button class="fpill" data-filter="both">GE + CLEAR</button>
-      <button class="fpill" data-filter="ge">Global Entry</button>
-      <button class="fpill" data-filter="clear">CLEAR</button>
-      <button class="fpill" data-filter="eoa">Enrollment on arrival</button>
+      <button class="fpill is-on pill-badge fam-yellow" data-filter="all">All airports</button>
+      <button class="fpill pill-badge fam-purple" data-filter="both">GE + CLEAR</button>
+      <button class="fpill pill-badge fam-blue" data-filter="ge">Global Entry</button>
+      <button class="fpill pill-badge fam-orange" data-filter="clear">CLEAR</button>
+      <button class="fpill pill-badge fam-green" data-filter="eoa">Enrollment on arrival</button>
     </div>
 
   <div id="airport-list">
@@ -1124,8 +1112,8 @@ a.program-link:visited { color: #6a6660; }
 
   pills.forEach(function (p) {
     p.addEventListener('click', function () {
-      pills.forEach(function (x) { x.classList.remove('active'); });
-      p.classList.add('active');
+      pills.forEach(function (x) { x.classList.remove('is-on'); });
+      p.classList.add('is-on');
       active = p.dataset.filter;
       applyFilters();
     });

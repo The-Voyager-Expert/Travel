@@ -18,13 +18,12 @@
 }
 #sim-search::placeholder { color: var(--c-search-placeholder); }
 #sim-search:focus { border-color: var(--c-search-focus-border); box-shadow: none; }
-.pills { font-family: inherit; display: flex; gap: 8px; flex-wrap: nowrap; justify-content: center; margin-top: var(--search-gap,32px); }
-.pill {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 9px 20px !important; border-width: 1px; border-style: solid;
-  border-radius: 6px !important; font-family: inherit; font-size: 13px; font-weight: 600;
-  line-height: 1; cursor: pointer; white-space: nowrap; text-decoration: none;
-}
+.pills { font-family: inherit; display: flex; gap: var(--fam-gap,10px); flex-wrap: nowrap; justify-content: center; margin-top: var(--search-gap,32px); }
+/* .pill is a layout hook — box, colour, case and the selected state come from
+   the shared .pill-badge + .fam-* classes (markup writes pill pill-badge fam-*;
+   selection is .is-on). Never re-add a box or a colour here.
+   Spec: Brain/Reference/Formatting/Badge-Pill-System/. */
+.pill { font-family: inherit; }
 /* ── No results ── */
 #no-results { display: none; }
 /* ── Section header ── */
@@ -103,21 +102,13 @@
   .controls { flex-direction: column; align-items: center; gap: 8px; }
   .search-wrap { min-width: 0; }
   #sim-search { width: 100%; max-width: 100%; box-sizing: border-box; }
-  .pills { font-family: inherit; display: flex !important; flex-wrap: wrap !important; gap: 8px !important; justify-content: center !important; }
-  .pill { font-family: inherit; flex: 0 0 auto !important; white-space: nowrap !important; padding: 10px 18px !important; border-radius: 6px !important; }
+  .pills { font-family: inherit; display: flex !important; flex-wrap: wrap !important; gap: var(--fam-gap,10px) !important; justify-content: center !important; }
   .sim-country-grid { grid-template-columns: 1fr; }
   .info-row { grid-template-columns: 1fr; gap: 4px 0; }
   .decision-table th:last-child, .decision-table td:last-child { display: none; }
   .dt-cost-mobile { display: block; font-size: 11px; color: var(--muted); margin-top: 4px; }
 }
 /* Colored filter pills — fam-* token families. No hover. fam-* handles dark mode. */
-.pill[data-filter="all"]     { background: var(--fam-yellow-bg); border-color: var(--fam-yellow-bd); color: var(--fam-yellow-ink); }
-.pill[data-filter="esim"]    { background: var(--fam-blue-bg);   border-color: var(--fam-blue-bd);   color: var(--fam-blue-ink); }
-.pill[data-filter="local"]   { background: var(--fam-green-bg);  border-color: var(--fam-green-bd);  color: var(--fam-green-ink); }
-.pill[data-filter="carrier"] { background: var(--fam-purple-bg); border-color: var(--fam-purple-bd); color: var(--fam-purple-ink); }
-.pill[data-filter="tips"]    { background: var(--fam-orange-bg); border-color: var(--fam-orange-bd); color: var(--fam-orange-ink); }
-.pill[data-filter="region"]  { background: var(--fam-grey-bg);   border-color: var(--fam-grey-bd);   color: var(--fam-grey-ink); }
-.pill.active { background: var(--surface,#fff) !important; border-width: 1.5px !important; border-color: rgba(192,78,26,.85) !important; color: var(--rust,#C04E1A) !important; box-shadow: 0 0 0 2px rgba(192,78,26,.20); }
 @media (prefers-color-scheme: dark) {
   .section-head { color: var(--accent); border-bottom-color: var(--accent); }
   .sim-badge-esim    { background: #0a1e3a; border-color: rgba(90,154,238,.35); color: #5a9aee; }
@@ -168,12 +159,12 @@
 
   <div class="controls">
     <div class="pills">
-      <button class="pill active" data-filter="all" aria-pressed="true">All</button>
-      <button class="pill" data-filter="esim" aria-pressed="false">eSIM</button>
-      <button class="pill" data-filter="local" aria-pressed="false">Local SIM</button>
-      <button class="pill" data-filter="carrier" aria-pressed="false">Carrier plan</button>
-      <button class="pill" data-filter="tips" aria-pressed="false">Tips</button>
-      <button class="pill" data-filter="region" aria-pressed="false">By region</button>
+      <button class="pill is-on pill-badge fam-yellow" data-filter="all" aria-pressed="true">All</button>
+      <button class="pill pill-badge fam-blue" data-filter="esim" aria-pressed="false">eSIM</button>
+      <button class="pill pill-badge fam-green" data-filter="local" aria-pressed="false">Local SIM</button>
+      <button class="pill pill-badge fam-purple" data-filter="carrier" aria-pressed="false">Carrier plan</button>
+      <button class="pill pill-badge fam-orange" data-filter="tips" aria-pressed="false">Tips</button>
+      <button class="pill pill-badge fam-grey" data-filter="region" aria-pressed="false">By region</button>
     </div>
   </div>
 
@@ -537,8 +528,8 @@
 
   pills.forEach(function (pill) {
     pill.addEventListener('click', function () {
-      pills.forEach(function (p) { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
-      pill.classList.add('active');
+      pills.forEach(function (p) { p.classList.remove('is-on'); p.setAttribute('aria-pressed', 'false'); });
+      pill.classList.add('is-on');
       pill.setAttribute('aria-pressed', 'true');
       activeFilter = pill.getAttribute('data-filter');
       applyFilter();
