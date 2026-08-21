@@ -2325,9 +2325,12 @@ window.lpGuideCard = function (href, flag, name, extra) {
      image, not the Best Of cover. Full spec, and the one script that writes one:
      Brain/Reference/Page-Specs/Photo-Heroes.md · Brain/scripts/hero_photo.py.
 
-     One row per guide: [slug, photo filename, city, alt, aspect-ratio]. 237 of
-     them, four on screen at a time, so the mosaic walks the whole fleet in 60
-     turns. The markup above holds the first four as a no-JavaScript fallback and
+     One row per guide: [slug, city, alt, aspect-ratio] and an optional 5th
+     field of 3 marking a photograph flagged for replacement, which keeps it out
+     of the biggest tile until it is replaced. 237 of them, four on screen at a
+     time. The table is authored A-Z and SHUFFLED at load under a fixed seed, so
+     no turn is a run of one region, and the walk advances four at a time over
+     237 turns without ever repeating a city on consecutive days. The markup above holds the first four as a no-JavaScript fallback and
      as the shape the carousel paints into — the tiles, their links and their
      captions are never rebuilt, only their contents swapped, so the grid and the
      hover behaviour stay exactly what they were before the carousel existed.
@@ -2607,7 +2610,34 @@ window.lpGuideCard = function (href, flag, name, extra) {
     var tiles = art.querySelectorAll(':scope > a');
     if (tiles.length !== 4) return;
 
-    var PER = 4, TURNS = Math.ceil(G.length / PER), turn = 0;
+    /* NOT ALPHABETICAL — the table is authored A-Z because that is how it is
+       maintained, and shown SHUFFLED, because A-Z put Aix beside Amalfi beside
+       Amsterdam and every turn read as one region. The seed is a constant, so
+       the shuffle is identical for every reader on every load: the front door
+       still shows one set all day and changes at midnight, which is the whole
+       point of the day index below. Never reseed from Date/Math.random — a
+       mosaic that reshuffles on refresh reads as flicker, not as freshness. */
+    (function (seed) {
+      function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x80000000; }
+      for (var i = G.length - 1; i > 0; i--) {
+        var j = Math.floor(rnd() * (i + 1)), t = G[i]; G[i] = G[j]; G[j] = t;
+      }
+    })(20260821);
+
+    /* TURNS IS G.length, NOT ceil(G.length / PER), AND THAT IS THE BUG FIX.
+
+       With 237 guides and 4 tiles, ceil() gives 60 turns and the last one runs
+       off the end: turn 59 reads indices 236, 0, 1, 2 — so the three cities that
+       open the table showed on the last turn AND again on the very next one, on
+       consecutive days, which is exactly what a reader sees as "it shows twice
+       in a row" (owner, 2026-08-21).
+
+       Cycling over G.length instead advances the window by PER every turn with
+       no seam: turn t holds {4t..4t+3} mod 237 and turn t+1 holds {4t+4..4t+7},
+       eight consecutive residues, so adjacent turns can never share a city. And
+       because gcd(4, 237) = 1 the walk still reaches every guide — each one four
+       times per full cycle, i.e. the same once-every-59-days it always had. */
+    var PER = 4, TURNS = G.length, turn = 0;
 
     /* The reader's local calendar day. Date.UTC on the local Y/M/D gives a whole
        number of days with no DST drift, which Date.now()/86400000 does not. */
@@ -2622,6 +2652,26 @@ window.lpGuideCard = function (href, flag, name, extra) {
       var by = out.slice().sort(function (a, b) { return a[3] - b[3]; });
       var tall = by[0], wide = by[by.length - 1];
       var rest = out.filter(function (x) { return x !== tall && x !== wide; });
+      /* WHICH OF THE TWO GETS THE BIG TILE. Cell "a" spans two columns and two
+         rows and is by far the largest thing on the front door (about 38% of the
+         mosaic, against 9% for the small cell "b" beside it), so the better of
+         the two remaining photographs belongs in it — it used to be whichever
+         happened to come first in the table, which is no choice at all.
+
+         "Better" is two things, in order. A 5th field of 3 marks a photograph
+         already flagged for replacement, and one of those never takes the
+         biggest tile whatever else is in the turn. Then the tie breaks on FIT:
+         cell "a" resolves to about 1.42 and object-fit:cover crops away
+         everything else, so the photo nearer that ratio keeps more of its own
+         subject at the size where the reader can actually see it. Fit is
+         measured, not scored, so it needs nothing hand-maintained and cannot go
+         stale — as the flagged photographs are replaced their 3s come off and
+         the rule keeps working on its own. */
+      rest.sort(function (a, b) {
+        var qa = a[4] || 2, qb = b[4] || 2;
+        if (qa !== qb) return qa - qb;
+        return Math.abs(Math.log(a[3] / 1.42)) - Math.abs(Math.log(b[3] / 1.42));
+      });
       return [rest[0], rest[1], tall, wide];
     }
 
