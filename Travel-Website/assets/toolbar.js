@@ -5377,10 +5377,14 @@ window.TVE.home = (function () {
       { name: 'Hilton Berlin', note: 'Hilton brand — facing Gendarmenmarkt in Mitte, 24h reception, AC, year-round indoor pool, spa with steam room and sauna · 8.2 Booking.com', url: 'https://www.booking.com/hotel/de/hilton-berlin.html', tier: 'expensive' }
     ] },
     'bhutan': { h: [
-      { name: 'Zhiwaling Heritage', note: 'Independent Bhutanese-owned heritage hotel — Paro-Thimphu highway, hand-carved timber interiors, indoor heated pool, spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/bt/zhiwaling-heritage.html' },
-      { name: 'Rema Resort', note: 'Independent Paro valley resort — garden setting, spa and wellness centre, airport shuttle, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/bt/rema-resort-paro1.html' },
-      { name: 'Uma by COMO Paro', note: 'COMO brand — 200 acres at 7,400ft, heated pool, COMO Shambhala spa, tailored trek packages', url: 'https://www.booking.com/hotel/bt/uma-paro.html' },
-      { name: 'Le Méridien Thimphu', note: 'Marriott Le Méridien brand — Thimphu valley, spa with altitude-adapted treatments, mountain views', url: 'https://www.booking.com/hotel/bt/le-meridien-thimphu.html' }
+      { name: 'Zhiwaling Heritage', note: 'Independent Bhutanese-owned heritage hotel — Paro-Thimphu highway, hand-carved timber interiors, indoor heated pool, spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/bt/zhiwaling-heritage.html', tier: 'expensive' },
+      { name: 'Rema Resort', note: 'Independent Paro valley resort — garden setting, spa and wellness centre, airport shuttle, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/bt/rema-resort-paro1.html', tier: 'mid' },
+      { name: 'Uma by COMO Paro', note: 'COMO brand — 200 acres at 7,400ft, heated pool, COMO Shambhala spa, tailored trek packages', url: 'https://www.booking.com/hotel/bt/uma-paro.html', tier: 'luxury' },
+      { name: 'Le Méridien Thimphu', note: 'Marriott Le Méridien brand — Thimphu valley, spa with altitude-adapted treatments, mountain views', url: 'https://www.booking.com/hotel/bt/le-meridien-thimphu.html', tier: 'expensive' },
+      { name: 'Hotel Khamsum', note: 'Independent — central Paro town, 24h reception, lift, on-site restaurant and room service, free parking · 8.5 Booking.com', url: 'https://www.booking.com/hotel/bt/khamsum.html', tier: 'budget' },
+      { name: 'Green valley boutique', note: 'Independent — Paro-Thimphu highway, 24h reception, AC, fitness centre, airport shuttle and on-site restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/bt/greenvalleyboutique.html', tier: 'budget' },
+      { name: 'Silver Cloud Hotel', note: 'Independent — Satsam Chorten in Lamgong on the road to Taktsang, 24h reception, sauna and hot-spring bath, garden and fire pit · 8.4 Booking.com', url: 'https://www.booking.com/hotel/bt/silver-cloud-paro1.html', tier: 'mid' },
+      { name: 'Pemako', note: 'Independent — Samten Lam in Chubachu, central Thimphu, 5-star, 24h reception, AC, year-round heated indoor pool, spa and sauna · 9.7 Booking.com', url: 'https://www.booking.com/hotel/bt/pemako.html', tier: 'luxury' }
     ] },
     'big-island': { h: [
       { name: 'Mauna Kea Beach Hotel, Autograph Collection', note: 'Marriott Autograph Collection — iconic 1965 Kohala Coast resort by Laurance Rockefeller, private beach, 2 championship golf courses · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/mauna-kea-beach.html' },
