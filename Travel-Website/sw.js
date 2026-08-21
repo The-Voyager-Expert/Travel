@@ -1597,7 +1597,8 @@
    index.html + guides/index.html; the Entry row now reads TVE.passport, a new shared module
    over assets/visa-matrix.json (199 passports x 207 destinations). New asset passport.js joins
    MIN_VERSIONS at 1. web-travel-style.css -> v83 (passport picker + compare strip CSS). CACHE to v1137. */
-var CACHE = 'travel-cache-v1137';
+/* 2026-08-21: Trip Overview ALSO row matches the DAY rows (17px, 64px rail) toolbar.js -> v781. CACHE to v1138. */
+var CACHE = 'travel-cache-v1138';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1610,7 +1611,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 254,'toolbar.js': 780, 'mobile.css': 87, 'web-travel-style.css': 83, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1, 'airlines.js': 2, 'passport.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 254,'toolbar.js': 781, 'mobile.css': 87, 'web-travel-style.css': 83, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 7, 'trains.js': 1, 'airlines.js': 2, 'passport.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

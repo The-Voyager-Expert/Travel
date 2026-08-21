@@ -7193,14 +7193,28 @@ window.TVE.home = (function () {
            size. The row is a <div>, so it never disturbs the <a>-based
            :nth-of-type zebra on the day rows above it. */
         '.tve-adtf{display:flex;align-items:baseline;gap:14px;padding:10px 16px;' +
-        'font-size:var(--fs-overview-day-title,15px);line-height:1.5;}' +
+        /* --fs-overview-title, NOT --fs-overview-day-title. The Trip Overview
+           moved onto its own token on 2026-08-20 (Sixtieth non-negotiable) and
+           this row was left behind on the old one, so ALSO rendered at 15px in
+           a table of 17px day rows — owner 2026-08-21: "the also on trip
+           overview should be same size day 1, 2". --fs-overview-day-title now
+           drives the guides-index cards and .guide-nav and has nothing to do
+           with this table; pointing this back at it re-shrinks the row. */
+        'font-size:var(--fs-overview-title,17px);line-height:1.5;}' +
         /* …which is also why the row cannot INHERIT that zebra: the CSS tints
            every even <a>, and this is a <div>, so the stripe always stopped at
            the last day row and the ALSO row came out white however the table
            above it had landed. Stamped in JS instead — see _dtfZebra. */
         '.tve-adtf-zebra{background:var(--c-ovd-zebra,#fbf8f2);}' +
-        '.tve-adtf-label{flex:0 0 58px;font-size:11px;font-weight:700;letter-spacing:.08em;' +
+        /* The rail matches .ovd-num FIELD FOR FIELD — 64px basis and the same
+           font-size ladder — because the two labels share one left edge and
+           one body column. At 58px/11px "ALSO" sat a hair left of "DAY 6" and
+           its stop list started 6px inside theirs, which is the whole reason
+           the rail exists. .ovd-num is --fs-small at base and 14px in BOTH
+           media blocks, so both are mirrored here rather than hardcoding 14. */
+        '.tve-adtf-label{flex:0 0 64px;font-size:var(--fs-small,12px);font-weight:700;letter-spacing:.08em;' +
         'text-transform:uppercase;white-space:nowrap;color:var(--c-brand,#8a6c1a);}' +
+        '@media (min-width: 601px), (pointer: fine) {.tve-adtf-label{font-size:14px;}}' +
         /* Same token as .ovd-stops, not merely a similar grey — the row sits in
            the day table and must move with it in both themes. */
         '.tve-adtf-cities{flex:1 1 auto;min-width:0;color:var(--c-ovd-stops,#6f695d);}' +
@@ -7216,7 +7230,7 @@ window.TVE.home = (function () {
         '.tve-adtf a:hover{color:#C04E1A;border-bottom-color:#C04E1A;text-decoration:none;}' +
         /* Mobile mirrors the day row's stacked form: label on its own line, body full width. */
         '@media (max-width: 600px) and (pointer: coarse) {.tve-adtf{display:grid;grid-template-columns:1fr;' +
-        'gap:3px 8px;padding:9px 14px;}.tve-adtf-label{flex:none;}}';
+        'gap:3px 8px;padding:9px 14px;}.tve-adtf-label{flex:none;font-size:14px;}}';
       document.head.appendChild(s);
     }
 
