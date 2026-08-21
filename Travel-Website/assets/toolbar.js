@@ -5246,6 +5246,7 @@ window.TVE.home = (function () {
     ] },
     'amalfi': { h: [
       { name: 'Hotel Antica Repubblica', note: 'Independent — historic centre off Salita Truglio, 170 m from the beach, soundproofed rooms, terrace · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/anticarepubblica.html', tier: 'budget' },
+      { name: 'Hotel Floridiana', note: 'Independent — Via Brancia beside the Duomo steps, hot tub on the solarium terrace, free parking, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/hotelfloridiana.html', tier: 'budget' },
       { name: 'Amalfi Suite Boutique Hotel', note: 'Independent boutique — Salita Truglio in the historic centre, solarium terrace, valet parking, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/amalfi-suite-boutique.html', tier: 'mid' },
       { name: 'Hotel Il Nido', note: 'Independent — above the coast road on Via Quasimodo west of town, solarium, beach shuttle, private parking · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/il-nido.html', tier: 'mid' },
       { name: 'Hotel Bellevue Suite', note: 'Independent — Via Mauro Comite on the Vettica headland, sea-view suites, valet parking, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/bellevue.html', tier: 'expensive' },
