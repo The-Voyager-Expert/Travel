@@ -337,8 +337,19 @@
       btn.innerHTML = '';
       var t = document.createElement('span');
       t.className = 'pp-btn-text';
-      t.textContent = me ? (me.flag ? me.flag + ' ' : '') + me.name + ' passport'
-                         : (opts.prompt || 'Choose your passport');
+      /* The flag goes in its own element rather than being glued to the name
+         with a space character. A regional-indicator flag is a wide glyph and
+         a plain space beside it renders visually flush — "🇧🇷Brazil passport"
+         — so the gap is a margin on .gm-flag, not whitespace in a string. */
+      t.textContent = '';
+      if (me && me.flag) {
+        var fl = document.createElement('span');
+        fl.className = 'gm-flag';
+        fl.textContent = me.flag;
+        t.appendChild(fl);
+      }
+      t.appendChild(document.createTextNode(
+        me ? me.name + ' passport' : (opts.prompt || 'Choose your passport')));
       btn.appendChild(t);
       var c = document.createElement('span');
       c.className = 'pp-chev';
@@ -359,7 +370,14 @@
           li.className = 'pp-opt';
           li.setAttribute('role', 'option');
           li.tabIndex = 0;
-          li.textContent = (r[2] ? r[2] + '  ' : '') + r[1];
+          li.textContent = '';
+          if (r[2]) {
+            var lf = document.createElement('span');
+            lf.className = 'gm-flag';
+            lf.textContent = r[2];
+            li.appendChild(lf);
+          }
+          li.appendChild(document.createTextNode(r[1]));
           if (picked && picked.code === r[0]) li.classList.add('pp-on');
           function choose() {
             set({ code: r[0], name: r[1], flag: r[2] });

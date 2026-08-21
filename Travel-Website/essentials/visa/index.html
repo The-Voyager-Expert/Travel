@@ -180,7 +180,7 @@ html { scroll-behavior: smooth; }
 .row .rnote { flex: 1 1 100%; font-size: 13px; color: var(--muted); line-height: 1.5; }
 /* Search (inside .legend row) */
 #visa-search { width: var(--search-w, 440px); height: var(--search-h, 56px); box-sizing: border-box; padding: 0 20px 0 44px; margin: 0; font-size: 17px;
-  line-height: 1; border: 1.5px solid var(--border2, #e6e2da); border-radius: 999px;  color: var(--text, #1a1917);
+  line-height: 1; border: 1.5px solid var(--border2, #e6e2da); border-radius: var(--search-radius, 999px);  color: var(--text, #1a1917);
   outline: none; transition: border-color .15s, box-shadow .15s; flex-shrink: 0; }
 #visa-search::placeholder { color: var(--c-search-placeholder); }
 #visa-search:focus { border-color: var(--c-search-focus-border); box-shadow: none; }
@@ -572,7 +572,16 @@ a.apply-link:hover { background: #C04E1A; color: #fff; border-color: var(--rust)
               div.className = 'row';
               var cty = document.createElement('span');
               cty.className = 'cty';
-              cty.textContent = (it.flag ? it.flag + ' ' : '') + it.name;
+              /* Flag in its own element — a space character beside a wide
+                 regional-indicator glyph renders flush ("🇦🇱Albania"). */
+              cty.textContent = '';
+              if (it.flag) {
+                var ctyFlag = document.createElement('span');
+                ctyFlag.className = 'gm-flag';
+                ctyFlag.textContent = it.flag;
+                cty.appendChild(ctyFlag);
+              }
+              cty.appendChild(document.createTextNode(it.name));
               div.appendChild(cty);
 
               if (/^\d+$/.test(it.token)) {
