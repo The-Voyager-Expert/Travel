@@ -1693,7 +1693,11 @@
    other again, from the base rules alone, like every other Extras section (owner: "i want this back
    as used to be match the other sections. one entry below the other"). No guide markup changed.
    guide-style.css -> v256, toolbar.js -> v834. CACHE to v1201. */
-var CACHE = 'travel-cache-v1201';
+/* 2026-08-21 — the flag emoji a stylesheet was painting. .stop-name.guided::before injected
+   \U0001F6A9 through CSS content:, unseen by every validator (none read a stylesheet) and shown by no
+   guide (zero carry .guided against 3,650 .self). Both it and the :has() rule restating it are
+   retired. No guide markup changed. guide-style.css -> v257. CACHE to v1202. */
+var CACHE = 'travel-cache-v1202';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1706,7 +1710,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 256,'toolbar.js': 834, 'mobile.css': 87, 'web-travel-style.css': 88, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 9, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
+var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 834, 'mobile.css': 87, 'web-travel-style.css': 88, 'guides-index-style.css': 21, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 9, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 3 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
