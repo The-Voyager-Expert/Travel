@@ -2244,7 +2244,28 @@ window.TVE.home = (function () {
      weather strip, the language/cost/plug/season pills, the Trip Overview
      carousel header and the SHOW ONLY chips. Matching either case means a
      future rename cannot reintroduce this. */
-  var isRealGuide = /\/guides\//i.test(location.pathname) && location.pathname.indexOf('guides_index') < 0;
+  /* 2026-08-21: the INDEX is not a guide. The exclusion here was
+     indexOf('guides_index') — an underscore filename retired by the 2026-08-03
+     single-index migration, so it has matched nothing since. /guides/ and
+     /guides/index.html therefore both read as a guide, and all 33 isRealGuide
+     blocks ran on the 237-card index: the photo lightbox built its overlay
+     there (including an <img> with no src, which is what an image audit
+     reports as broken), and copy-day, map-day, notes + its print stylesheet,
+     share-stop and the wishlist FAB all injected their CSS. Sixteen elements
+     and six stylesheets on a page that can never use one of them. Nothing was
+     VISIBLE — every injected node is display:none until a .day-block exists —
+     which is exactly why it survived: the gate was wrong and the symptom was
+     silent. Measured after this fix: 16 injected elements -> 0, 11 <style>
+     blocks -> 5, and the index renders pixel-identical, all 278 cards and the
+     intro block untouched.
+     The stale guides_index test is kept: it costs nothing and a folder rename
+     could bring that name back. Matching either case is deliberate too — see
+     the note above; the Guides/ -> guides/ rename once made this false on
+     EVERY guide. */
+  var _tvAfterGuides = location.pathname.split(/\/guides\//i)[1] || '';
+  var isRealGuide = /\/guides\//i.test(location.pathname)
+    && location.pathname.indexOf('guides_index') < 0
+    && _tvAfterGuides !== '' && _tvAfterGuides !== 'index' && _tvAfterGuides !== 'index.html';
   var isReadAbout = /\-read-about\.html$/.test(location.pathname);
   var isStopsMap = /\-stops-map\.html$/.test(location.pathname);
   var _raCityName = '';
