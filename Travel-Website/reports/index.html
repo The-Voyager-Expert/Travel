@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reports — Guide My Days Hub</title>
-<!-- built: 2026-08-21 10:52 UTC | backlog: 148 | scouting-open: 46 -->
+<!-- built: 2026-08-22 03:35 UTC | backlog: 148 | scouting-open: 46 -->
 <style>
   :root{ --bg:#f6f2ec; --surface:#fffdf9; --surface2:#f1ece3; --ink:#2f2a22; --muted:#736c60; --faint:#a49b8c; --line:#e4ddd0;
     --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368; --pending:#1a4d8c;
@@ -262,14 +262,14 @@
     <div class="stat s-open"><b>144</b><span>Open</span></div>
     <div class="stat s-partial"><b>4</b><span>Partial</span></div>
     <div class="stat s-unsure"><b>0</b><span>Unsure</span></div>
-    <div class="stat s-pending"><b>12</b><span>Pending approval</span></div>
+    <div class="stat s-pending"><b>13</b><span>Pending approval</span></div>
   </div>
   <div class="controls">
     <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=true)">Expand all tiles</button>
     <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=false)">Collapse all tiles</button>
   </div>
 </header>
-<nav class="nav"><a href="#mobile-ux" class="navchip">📱 Mobile UX <span class="navcount">13</span></a><a href="#ux-desktop" class="navchip">🖥️ UX/Desktop <span class="navcount">3</span></a><a href="#layout" class="navchip">📐 Layout <span class="navcount">8</span></a><a href="#new-features" class="navchip">🆕 New Features <span class="navcount">56</span></a><a href="#new-pages" class="navchip">📄 New Pages <span class="navcount">68</span></a><a href="#rules-change-approval" class="navchip">⚖️ Rules Change Approval <span class="navcount">12</span></a><a href="#new-guides" class="navchip">🗺️ New Guides <span class="navcount">46</span></a><a href="#guide-drift-log" class="navchip">🔍 Guide Drift Log</a><a href="#photo-audit-log" class="navchip">📸 Photo Audit Log</a><a href="#ux-research-log" class="navchip">🎨 UX Research Log</a><a href="#validator-audit" class="navchip">✅ Validator Audit</a><a href="#section-coverage" class="navchip">📊 Section Coverage</a></nav>
+<nav class="nav"><a href="#mobile-ux" class="navchip">📱 Mobile UX <span class="navcount">13</span></a><a href="#ux-desktop" class="navchip">🖥️ UX/Desktop <span class="navcount">3</span></a><a href="#layout" class="navchip">📐 Layout <span class="navcount">8</span></a><a href="#new-features" class="navchip">🆕 New Features <span class="navcount">56</span></a><a href="#new-pages" class="navchip">📄 New Pages <span class="navcount">68</span></a><a href="#rules-change-approval" class="navchip">⚖️ Rules Change Approval <span class="navcount">13</span></a><a href="#new-guides" class="navchip">🗺️ New Guides <span class="navcount">46</span></a><a href="#guide-drift-log" class="navchip">🔍 Guide Drift Log</a><a href="#photo-audit-log" class="navchip">📸 Photo Audit Log</a><a href="#ux-research-log" class="navchip">🎨 UX Research Log</a><a href="#validator-audit" class="navchip">✅ Validator Audit</a><a href="#section-coverage" class="navchip">📊 Section Coverage</a></nav>
 
   <section class="cat" id="mobile-ux">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
@@ -2238,7 +2238,7 @@
   <section class="cat" id="rules-change-approval">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
       <span class="catname">⚖️ Rules Change Approval</span>
-      <span class="catcount">12</span>
+      <span class="catcount">13</span>
       <span class="catchev">&rsaquo;</span>
     </button>
     <div class="catbody">
@@ -2433,6 +2433,23 @@ THE DECISION IS YOURS BECAUSE IT IS A RULE, NOT A BUG. A crib can go two ways he
 
 Until you rule, the three guides hard-fail their ship gate and the To Do List says to replace the photos. Nothing is blocked fleet-wide — it is three guides.</p>
           <div class="tmeta"><span class="badge tgt">Brain/CORE RULES/Photos Rules.html § 2 (the allow-list) + Brain/scripts/photo_provenance.py verify_guide_photos() ok_licenses + 3 shipped guides: seychelles, sicily, tallinn</span><span class="badge src">photo-provenance gate repair, 2026-08-21</span></div>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-pending">PENDING</span>
+          <span class="ttitle">The two index pages are the busiest files on the site and the stale-baseline guard does not cover them — this reverted a finished pass once already</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">check_stale_baseline stops a path-limited commit from shipping a worktree copy that is behind HEAD, and _is_shared_asset scopes it to Travel-Website/assets/*.js, *.css, sw.js and Brain/scripts/*.py. Travel-Website/index.html and Travel-Website/guides/index.html are in neither set, and they are the two files cribs edit concurrently most often.
+
+This is not hypothetical. On 2026-08-20 commit b6848a06 made &#x27;en&#x27; mean &#x27;official language&#x27; rather than &#x27;widely spoken&#x27; and retagged 152 cards. Eight minutes later 15477f89 — a station-icon batch across 30 guides, nothing to do with language — swept guides/index.html in from a stale worktree copy and put &#x27; en&#x27; back on 145 cards. Nothing failed, nothing warned, and the commit message describes train icons. The Language filter went back to returning all 239 guides and stayed that way for two days until this audit found it. Both pages carried another crib&#x27;s in-flight work again today, so the same window is open now.
+
+Proposal: add both pages to _is_shared_asset. The cost is that every crib touching them must go through shared_asset.py commit rather than git commit, which is the same cost already paid for toolbar.js. The alternative is that any pass over either page can be erased by an unrelated commit minutes later, with no signal to either crib.
+
+Not done on this crib&#x27;s own initiative because it changes the commit path for every crib on the two busiest files on the site.</p>
+          <div class="tmeta"><span class="badge tgt">Brain/scripts/pre_commit_guard.py (_is_shared_asset) + Travel-Website/index.html + Travel-Website/guides/index.html</span><span class="badge src">language-tag audit, 2026-08-22</span></div>
         </div>
       </details><p class="rules-hint">Scope: CORE RULES edits &middot; toolbar structural changes &middot; new design decisions &middot; stray-file delete approvals. Everything else goes to the To&nbsp;Do&nbsp;List for cribs to resolve. To propose: add an entry to <code>Brain/scripts/open_recs/rules_changes.json</code> and rebuild.</p></div>
   </section>
