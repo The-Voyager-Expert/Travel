@@ -1186,11 +1186,18 @@ a.land-cta:hover:visited {
 /* OWNER-DIRECTED 2026-08-22: "change this button to terracota move to the
    middle of the filter above and move up a bit."
 
-   TERRACOTTA, OUTLINED — never filled. It is the card's own outlined-pill
-   grammar, byte-identical to .fnd-chip above it: white/transparent ground,
-   rgba(192,78,26,.30) rim, terracotta ink. Filled is reserved for the true CTA
-   (Thirty-fifth non-negotiable), and .fnd-go is already filled two rows up — a
-   second filled terracotta button would read as a second Find.
+   FILLED, AND IT IS .fnd-go's BUTTON — owner, seeing the outlined first cut:
+   "this button is not matching the finding my destinations." So it takes that
+   rule field for field: filled var(--rust), 1px same-colour rim, #fff ink,
+   700 weight, clamp(0.95rem,1.2vw,1.05rem), 999px radius, 0.8em 1.7em padding,
+   and the same hover INVERSION rather than the card's Option-B tint. That is
+   why .fnd-more is no longer in the shared hover list below, and why it is now
+   in the dark-mode filled-CTA rule beside #fnd-go (cream on --rust measures
+   3.45:1 in dark; on #C04E1A it is 4.57:1).
+
+   This is still the filled-is-a-button grammar, not a breach of it: opening
+   more filters is an ACTION, not a selected value (Thirty-fifth non-negotiable).
+   The outlined first cut read as a chip precisely because it was one.
 
    CENTRED on the rail, not on its own text. .lp-more and .lp-finder share
    --lp-max, so `margin-left/right: auto` puts the button on the finder card's
@@ -1207,10 +1214,13 @@ a.land-cta:hover:visited {
    owns the gap now — .lp-more's. */
 .fnd-more {
   display: block; width: fit-content; margin: 0 auto;
-  border: 1px solid rgba(192, 78, 26, .30);
-  background: transparent; color: var(--rust, #C04E1A); font: inherit; font-weight: 600;
-  border-radius: 999px; padding: 0.5em 1.1em; cursor: pointer;
+  background: var(--rust, #C04E1A); border: 1px solid var(--rust, #C04E1A);
+  color: #fff; font: inherit; font-weight: 700; font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  border-radius: 999px; padding: 0.8em 1.7em; cursor: pointer;
+  transition: background .15s, color .15s;
 }
+/* Same inversion as .fnd-go — a filled CTA empties on hover, it does not tint. */
+.fnd-more:hover, .fnd-more:focus-visible { background: transparent; color: var(--rust, #C04E1A); }
 .fnd-more::after { content: ' \25be'; }
 .fnd-more[aria-expanded="true"]::after { content: ' \25b4'; }
 #fnd-more-panel { margin-top: clamp(0.7rem, 1.6vw, 1rem); }
@@ -1279,22 +1289,23 @@ a.land-cta:hover:visited {
 
    .fnd-go is deliberately NOT in this list. It is the filled true-CTA
    (Thirty-fifth non-negotiable: filled is a button, outlined is selected) and
-   inverts on hover by its own grammar. ── */
+   inverts on hover by its own grammar. .fnd-more joined it on 2026-08-22, when
+   the owner asked for that button to match Find My Destinations — a filled
+   button that tinted to var(--bg) on hover would be a third behaviour again. ── */
 .fnd-ctl:hover:not(:has(select:disabled)),
 .fnd-chip:hover,
-.fnd-more:hover,
 .fnd-reset:hover {
   background: var(--bg, #f5f4f0);
   border-color: var(--rust, #C04E1A);
 }
 
-/* A filter set behind a shut panel has to stay visible somehow. The INK can no
-   longer carry that signal — the rest state is terracotta since 2026-08-22 — so
-   the rim does, and the ladder is ordered .30 rest < .85 set < full on hover,
-   the same shape as the toolbar's own rim ladder. Never restore the `color:`
-   here: it now says nothing, and repainting ink is the Option-B breach the
-   hover note above records. */
-.fnd-more.on { border-color: rgba(192, 78, 26, .85); }
+/* A filter set behind a shut panel has to stay visible somehow. Neither the ink
+   nor the rim can carry that any more — the button is filled terracotta at rest
+   and inverts on hover, so both are already spoken for. A soft terracotta halo
+   is the one signal left that survives BOTH states and both themes. Never go
+   back to `color:` or `border-color:` here: against a filled rest state the
+   first says nothing and the second is invisible. */
+.fnd-more.on { box-shadow: 0 0 0 3px rgba(192, 78, 26, .25); }
 .fnd-res-empty { font-size: 0.92rem; color: var(--muted,#6a6660); margin: 0; }
 
 /* Result cards are the site's guide card (.dest-card in .flt-grid, from
@@ -1305,7 +1316,17 @@ a.land-cta:hover:visited {
 /* ── The two that ask instead of filter ───────────────────────────────────────
    Bigger than a filter row on purpose: this is the path for a visitor who
    cannot answer the four questions above, which is most first-time visitors. */
-.lp-ask { max-width: var(--lp-max, 1180px); margin: clamp(1.2rem, 2.6vw, 1.8rem) auto 0; }
+/* OWNER-DIRECTED 2026-08-22: "move these down a bit." The gap ABOVE this row was
+   29px against 64px BELOW it (measured at 1440; 23/45 at 900, 19/38 at 393) —
+   the asymmetry the Fifty-fourth non-negotiable is about, and the fix is to
+   MEASURE THE OTHER SIDE rather than pick a number. The gap below is .lp-best's
+   own margin-top, clamp(2.4rem, 5vw, 4rem), which is already the site's
+   section rhythm here (.lp-best and .lp-quiet both carry it). Taking that same
+   value makes above equal below at every viewport BY CONSTRUCTION, so the two
+   cannot drift apart the way a copied literal would. Raise the smaller gap,
+   never cut the larger — .lp-best's 64px is the section rhythm and shrinking it
+   would be a second, unasked change. */
+.lp-ask { max-width: var(--lp-max, 1180px); margin: clamp(2.4rem, 5vw, 4rem) auto 0; }
 .ask-row { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.6rem, 1.4vw, 1rem); }
 @media (max-width: 700px) { .ask-row { grid-template-columns: 1fr; } }
 .ask-card {
@@ -2248,11 +2269,12 @@ summary.res-head:focus-visible { outline: 2px solid var(--rust, #C04E1A); outlin
   /* A filled CTA takes #C04E1A in dark, not --rust. Cream on #D4663A measures
      3.45:1 — under AA — and on #C04E1A it is 4.57:1. Same call, same reason, as
      the guides-index intro CTA (Forty-sixth non-negotiable). */
-  .lp-btn, #cf-submit.lp-btn, #fnd-go.fnd-go {
+  .lp-btn, #cf-submit.lp-btn, #fnd-go.fnd-go, #fnd-more.fnd-more {
     background: #C04E1A; border-color: #C04E1A; color: #fdf8f0;
   }
   .lp-btn:hover, .lp-btn:focus-visible { background: transparent; color: #D4663A; }
-  #fnd-go.fnd-go:hover { background: #8A3F18; border-color: #8A3F18; }
+  #fnd-go.fnd-go:hover,
+  #fnd-more.fnd-more:hover, #fnd-more.fnd-more:focus-visible { background: #8A3F18; border-color: #8A3F18; }
 
   /* The three rules that were html[data-theme="dark"] until the toggle went. */
   .res-sub > summary,
