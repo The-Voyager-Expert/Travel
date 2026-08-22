@@ -1247,16 +1247,36 @@ a.land-cta:hover:visited {
 .fnd-go {
   display: inline-flex; align-items: center; gap: 0.55rem;
   background: var(--rust, #C04E1A); border: 1px solid var(--rust, #C04E1A);
-  color: #fff; font: inherit; font-weight: 700; font-size: clamp(0.95rem, 1.2vw, 1.05rem);
-  border-radius: 999px; padding: 0.8em 1.7em; cursor: pointer;
+  color: #fff; font: inherit; font-weight: 700; cursor: pointer;
   transition: background .15s, color .15s;
 }
 .fnd-go:hover, .fnd-go:focus-visible { background: transparent; color: var(--rust, #C04E1A); }
 .fnd-go-ic { width: 18px; height: 18px; display: block; flex: 0 0 auto; }
 .fnd-reset {
   border: 1px solid var(--border,#e3ddd2); background: transparent;
-  color: var(--muted,#6a6660); font: inherit; border-radius: 999px;
-  padding: 0.7em 1.2em; cursor: pointer;
+  color: var(--muted,#6a6660); font: inherit; cursor: pointer;
+}
+/* OWNER 2026-08-22: "make sure both buttons are the same size". They sat at
+   51.13px and 47px, and the gap MOVED with the viewport — .fnd-go sizes its
+   type on a clamp() while .fnd-reset took the inherited 15px — so no fixed
+   height would have held them together at every width. ONE rule owns the box
+   for both instead: same type size, same em padding, same radius, therefore
+   the same height everywhere, and neither can drift again.
+
+   IT HAS TO SIT BELOW BOTH RULES, and that is not a tidiness choice. Each of
+   them declares `font: inherit`, and the shorthand RESETS font-size — put this
+   block above them and the clamp is wiped out by the very rules it is sizing.
+   Same specificity, so source order is the whole mechanism. Never move it up,
+   and never move either number back into the individual rules.
+
+   What still separates the two is the only thing that should: fill and ink.
+   .fnd-go is the filled CTA at 700, .fnd-reset the outlined way out at the
+   inherited weight and muted ink (Thirty-fifth non-negotiable — filled is a
+   button; and see the hover comment below on why that muted ink must not
+   repaint on hover). Size was never carrying that difference. */
+.fnd-go, .fnd-reset {
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  border-radius: 999px; padding: 0.8em 1.7em;
 }
 .fnd-reset[hidden] { display: none !important; }
 /* ── ONE hover for every control in this card ────────────────────────────────
