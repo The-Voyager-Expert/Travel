@@ -1538,8 +1538,20 @@ a.land-cta:hover:visited {
      and outside its <a>: a button nested in an anchor is invalid and, worse,
      makes every tap ambiguous between paging and opening the page. */
   .lp-best-nav {
-    display: flex; justify-content: flex-end; gap: 0.55rem;
+    display: flex; align-items: center; justify-content: flex-end; gap: 0.55rem;
     margin-top: 0.55rem;
+  }
+  /* Sits where .lp-steps-count sits on the two carousels below — the same
+     margin-right:auto, the same 12px/600, so the three arrow rows read as
+     one row repeated. A LINK, not a count, so it takes the chevron the
+     Best Of list beside it uses rather than a colour of its own. */
+  .lp-best-all {
+    margin-right: auto;
+    font-size: 12px; font-weight: 600; letter-spacing: .04em;
+    color: var(--text,#3d3a32); text-decoration: none;
+  }
+  .lp-best-all::after {
+    content: '\203A'; margin-left: .3em; opacity: .45;
   }
   .lp-best-band-d {
     display: block; margin-top: 5px;
@@ -3476,7 +3488,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
        nav above and never renders this tile; the phone does the reverse. Both
        swaps live together in the `.lp-best-tile` block in this page's CSS.
        The tile is a single <a>, so the whole picture is the tap target. -->
-  <a class="lp-best-tile" href="/best-of/">
+  <a class="lp-best-tile" href="/best-of/wonders-of-the-world/">
     <span class="lp-best-shot">
       <!-- photo: iguazu-falls.jpg — Wikimedia Commons CC BY 3.0 · "Iguazu National Park Falls.jpg" · https://commons.wikimedia.org/wiki/File:Iguazu_National_Park_Falls.jpg -->
       <img src="/assets/best-of/wonders-of-the-world/iguazu-falls.jpg"
@@ -3486,13 +3498,25 @@ window.lpGuideCard = function (href, flag, name, extra) {
       <span class="lp-best-name">Wonders of the World</span>
     </span>
     <span class="lp-best-band">
-      <span class="lp-best-band-t">Browse all 37 categories</span>
-      <span class="lp-best-band-d">Beaches, castles, caves, hot springs, observation decks and 32 more &mdash; each one ranked across the whole world, not country by country. Pick the category, and see the best of it anywhere.</span>
+      <span class="lp-best-band-t">The best Wonders of the World</span>
+      <span class="lp-best-band-d">Ranked across the whole world, not country by country &mdash; and every entry names the city it sits in and links into that city&rsquo;s guide. Page through with the arrows, or open the full list below.</span>
     </span>
   </a>
   <script>
   /* THE BEST OF PICTURE CHANGES EVERY DAY — one row per category:
-     [image, alt, category name]. PHONE ONLY, and one picture, because that is
+     [image, alt, category name, category page]. THE 4th FIELD IS THE PAGE
+     THIS PICTURE OPENS, and it is the whole point of the tile: it showed a
+     category and linked to the /best-of/ INDEX, so a reader who tapped the
+     Louvre under the words "Art Museums" landed on a list and had to find
+     Art Museums again. Owner 2026-08-22: "they should all link to their
+     pages" — every other carousel on this page already did (the hero tiles
+     carry their guide, each step its own feature page), and this was the one
+     that did not. The index is NOT lost: the "All N categories" link in the
+     arrow row below still opens it, so the in-between page the owner asked
+     for on phones is one tap away — it is simply no longer what the picture
+     does. Never leave the 4th field out and never leave `tile.href` unset in
+     paint(): the tap silently keeps whatever the PREVIOUS category set,
+     which is the same trap the step carousels' 7th field records. PHONE ONLY, and one picture, because that is
      what this tile is: `.lp-best-tile` is display:none until the phone
      breakpoint, where it replaces the 37-name list that reads as "too long for
      mobile, boring and ugly". Desktop has no Best Of picture at all and must not
@@ -3514,48 +3538,49 @@ window.lpGuideCard = function (href, flag, name, extra) {
      distant field, for Unique Hotels a dusk horizon. LOOK before you swap one. */
   (function () {
     var B = [
-      ['/assets/best-of/amusement-parks/liseberg-park-night.jpg','Liseberg amusement park lit up at night, with Helix coaster and Ferris wheel, Gothenburg','Amusement Parks'],
-      ['/assets/best-of/animal-encounters/ningaloo-reef-whale-shark.jpg','Whale shark swimming in the waters off Ningaloo Reef','Animal Encounters'],
-      ['/assets/best-of-hero/aquariums.jpg','Shoal of Pacific sardines circling in the Monterey Bay Aquarium kelp tank','Aquariums'],
-      ['/assets/best-of/architecture/sydney-opera-house.jpg','Sydney Opera House\'s white shell roofs on Sydney Harbour','Architecture'],
-      ['/assets/best-of/art-museums/louvre-pyramid.jpg','Louvre Pyramid entrance in the Cour Napoléon, Paris','Art Museums'],
-      ['/assets/best-of/beaches/half-moon-bay-antigua.jpg','Aerial view of the crescent-shaped Half Moon Bay on Antigua\'s southeastern coast','Beaches'],
-      ['/assets/best-of/birdwatching/latrabjarg.jpg','Puffin on the clifftop at Látrabjarg in the Icelandic Westfjords','Birdwatching'],
-      ['/assets/best-of/castles/trakai-island-castle.jpg','Trakai Island Castle on Lake Galvė, Lithuania','Castles'],
-      ['/assets/best-of/cathedrals/florence-cathedral.jpg','Florence Cathedral\'s dome and campanile seen from Piazzale Michelangelo','Cathedrals'],
-      ['/assets/best-of/caves/antelope-canyon.jpg','Antelope Canyon\'s wave-like sandstone slot canyon walls','Caves'],
-      ['/assets/best-of/fishing/florida-keys-flats.jpg','Flats fishing in the backcountry near Islamorada in the Florida Keys','Fishing'],
-      ['/assets/best-of/gardens/royal-botanic-garden-sydney.jpg','Garden path and lawns in the Royal Botanic Garden, Sydney','Gardens'],
-      ['/assets/best-of/hard-to-reach-places/easter-island-moai.jpg','Fifteen restored moai standing in a row at Ahu Tongariki on Easter Island','Hard-to-Reach Places'],
-      ['/assets/best-of/hot-springs/grand-prismatic-spring-aerial.jpg','Aerial view of Grand Prismatic Spring\'s rainbow rings in Yellowstone\'s Midway Geyser Basin','Hot Springs'],
-      ['/assets/best-of-hero/islands.jpg','Aerial view of a coral atoll and its turquoise lagoon in the Maldives','Islands'],
-      ['/assets/best-of/kids-friendly-places/sydney-harbour-panorama.jpg','Sydney Harbour panorama at dusk showing the Opera House and Harbour Bridge','Kid-Friendly'],
-      ['/assets/best-of/kids-museums/childrens-museum-of-indianapolis-dinosphere.jpg','Dinosaur sculptures bursting through the Dinosphere dome at The Children\'s Museum of Indianapolis','Kids Museums'],
-      ['/assets/best-of/lakes/moraine-lake-banff.jpg','Moraine Lake in the Valley of the Ten Peaks','Lakes'],
-      ['/assets/best-of/luxury-hotels/lake-como-aerial.jpg','Aerial view of Lake Como, Italy','Luxurious Hotels'],
-      ['/assets/best-of/mountains-and-rock-formations/fitz-roy.jpg','Fitz Roy granite spire at sunrise, seen from El Chaltén','Mountains & Rock'],
-      ['/assets/best-of/museums/smithsonian-national-museum-of-natural-history.jpg','The Smithsonian National Museum of Natural History on the National Mall','Museums'],
-      ['/assets/best-of/national-parks/yosemite-valley-tunnel-view.jpg','El Capitan, Half Dome, and Bridalveil Fall in Yosemite Valley, seen from Tunnel View','National Parks'],
-      ['/assets/best-of/natural-phenomena/aurora-borealis-iceland.jpg','Aurora borealis over a glacier and mountains in Iceland','Natural Phenomena'],
-      ['/assets/best-of/observation-decks/burj-khalifa.jpg','Burj Khalifa silhouetted against a sunset sky over the Dubai skyline','Observation Decks'],
-      ['/assets/best-of/paragliding/oludeniz-babadag.jpg','Paragliders above the Blue Lagoon at Ölüdeniz after launching from Babadağ','Paragliding'],
-      ['/assets/best-of/resorts/jumby-bay-island.jpg','Antigua','Resorts'],
-      ['/assets/best-of/safari/south-luangwa.jpg','Sunset on the Luangwa River, South Luangwa National Park, Zambia','Safari'],
-      ['/assets/best-of/scuba-diving/beqa-lagoon-bull-shark.jpg','Bull shark swimming over the reef in Beqa Lagoon, Fiji','Scuba Diving'],
-      ['/assets/best-of/ski-resorts/cortina-dampezzo-aerial-view.jpg','Aerial view of Cortina d\'Ampezzo in the Dolomites','Ski Resorts'],
-      ['/assets/best-of/surfing/snapper-rocks.jpg','Surfers at Snapper Rocks, Gold Coast','Surfing'],
-      ['/assets/best-of/luxury-hotels/anguilla-western-aerial.jpg','Aerial view of the western coastline and turquoise Caribbean sea, Anguilla','Ultra Luxurious Resorts'],
-      ['/assets/best-of/unesco-sites/iguazu-national-park.jpg','Aerial view of Iguazu Falls from above the forest canopy','UNESCO Sites'],
-      ['/assets/best-of/unique-hotels/hotel-de-glace.jpg','Main entrance of the Hôtel de Glace built from ice and snow in Quebec','Unique Hotels'],
-      ['/assets/best-of/unique-museums/lego-house.jpg','LEGO House, Billund, Denmark','Unique Museums'],
-      ['/assets/best-of-hero/volcanoes.jpg','Lava Into the Sea at Night, Big Island of Hawaii','Volcanoes'],
-      ['/assets/best-of/wine-regions/napa-valley.jpg','Aerial view of Napa Valley, California, with vineyard-covered valley floor','Wine Regions'],
-      ['/assets/best-of/wonders-of-the-world/iguazu-falls.jpg','Iguazu Falls waterfall panorama viewed from the Argentine side','Wonders of the World']
+      ['/assets/best-of/amusement-parks/liseberg-park-night.jpg','Liseberg amusement park lit up at night, with Helix coaster and Ferris wheel, Gothenburg','Amusement Parks','/best-of/amusement-parks/'],
+      ['/assets/best-of/animal-encounters/ningaloo-reef-whale-shark.jpg','Whale shark swimming in the waters off Ningaloo Reef','Animal Encounters','/best-of/animal-encounters/'],
+      ['/assets/best-of-hero/aquariums.jpg','Shoal of Pacific sardines circling in the Monterey Bay Aquarium kelp tank','Aquariums','/best-of/aquariums/'],
+      ['/assets/best-of/architecture/sydney-opera-house.jpg','Sydney Opera House\'s white shell roofs on Sydney Harbour','Architecture','/best-of/architecture/'],
+      ['/assets/best-of/art-museums/louvre-pyramid.jpg','Louvre Pyramid entrance in the Cour Napoléon, Paris','Art Museums','/best-of/art-museums/'],
+      ['/assets/best-of/beaches/half-moon-bay-antigua.jpg','Aerial view of the crescent-shaped Half Moon Bay on Antigua\'s southeastern coast','Beaches','/best-of/beaches/'],
+      ['/assets/best-of/birdwatching/latrabjarg.jpg','Puffin on the clifftop at Látrabjarg in the Icelandic Westfjords','Birdwatching','/best-of/birdwatching/'],
+      ['/assets/best-of/castles/trakai-island-castle.jpg','Trakai Island Castle on Lake Galvė, Lithuania','Castles','/best-of/castles/'],
+      ['/assets/best-of/cathedrals/florence-cathedral.jpg','Florence Cathedral\'s dome and campanile seen from Piazzale Michelangelo','Cathedrals','/best-of/cathedrals/'],
+      ['/assets/best-of/caves/antelope-canyon.jpg','Antelope Canyon\'s wave-like sandstone slot canyon walls','Caves','/best-of/caves/'],
+      ['/assets/best-of/fishing/florida-keys-flats.jpg','Flats fishing in the backcountry near Islamorada in the Florida Keys','Fishing','/best-of/fishing/'],
+      ['/assets/best-of/gardens/royal-botanic-garden-sydney.jpg','Garden path and lawns in the Royal Botanic Garden, Sydney','Gardens','/best-of/gardens/'],
+      ['/assets/best-of/hard-to-reach-places/easter-island-moai.jpg','Fifteen restored moai standing in a row at Ahu Tongariki on Easter Island','Hard-to-Reach Places','/best-of/hard-to-reach-places/'],
+      ['/assets/best-of/hot-springs/grand-prismatic-spring-aerial.jpg','Aerial view of Grand Prismatic Spring\'s rainbow rings in Yellowstone\'s Midway Geyser Basin','Hot Springs','/best-of/hot-springs/'],
+      ['/assets/best-of-hero/islands.jpg','Aerial view of a coral atoll and its turquoise lagoon in the Maldives','Islands','/best-of/islands/'],
+      ['/assets/best-of/kids-friendly-places/sydney-harbour-panorama.jpg','Sydney Harbour panorama at dusk showing the Opera House and Harbour Bridge','Kid-Friendly','/best-of/kids-friendly-places/'],
+      ['/assets/best-of/kids-museums/childrens-museum-of-indianapolis-dinosphere.jpg','Dinosaur sculptures bursting through the Dinosphere dome at The Children\'s Museum of Indianapolis','Kids Museums','/best-of/kids-museums/'],
+      ['/assets/best-of/lakes/moraine-lake-banff.jpg','Moraine Lake in the Valley of the Ten Peaks','Lakes','/best-of/lakes/'],
+      ['/assets/best-of/luxury-hotels/lake-como-aerial.jpg','Aerial view of Lake Como, Italy','Luxurious Hotels','/best-of/most-luxurious-hotels/'],
+      ['/assets/best-of/mountains-and-rock-formations/fitz-roy.jpg','Fitz Roy granite spire at sunrise, seen from El Chaltén','Mountains & Rock','/best-of/mountains-and-rock-formations/'],
+      ['/assets/best-of/museums/smithsonian-national-museum-of-natural-history.jpg','The Smithsonian National Museum of Natural History on the National Mall','Museums','/best-of/museums/'],
+      ['/assets/best-of/national-parks/yosemite-valley-tunnel-view.jpg','El Capitan, Half Dome, and Bridalveil Fall in Yosemite Valley, seen from Tunnel View','National Parks','/best-of/national-parks-by-country/'],
+      ['/assets/best-of/natural-phenomena/aurora-borealis-iceland.jpg','Aurora borealis over a glacier and mountains in Iceland','Natural Phenomena','/best-of/natural-phenomena/'],
+      ['/assets/best-of/observation-decks/burj-khalifa.jpg','Burj Khalifa silhouetted against a sunset sky over the Dubai skyline','Observation Decks','/best-of/observation-decks/'],
+      ['/assets/best-of/paragliding/oludeniz-babadag.jpg','Paragliders above the Blue Lagoon at Ölüdeniz after launching from Babadağ','Paragliding','/best-of/paragliding/'],
+      ['/assets/best-of/resorts/jumby-bay-island.jpg','Antigua','Resorts','/best-of/resorts/'],
+      ['/assets/best-of/safari/south-luangwa.jpg','Sunset on the Luangwa River, South Luangwa National Park, Zambia','Safari','/best-of/safari/'],
+      ['/assets/best-of/scuba-diving/beqa-lagoon-bull-shark.jpg','Bull shark swimming over the reef in Beqa Lagoon, Fiji','Scuba Diving','/best-of/scuba-diving/'],
+      ['/assets/best-of/ski-resorts/cortina-dampezzo-aerial-view.jpg','Aerial view of Cortina d\'Ampezzo in the Dolomites','Ski Resorts','/best-of/ski-resorts/'],
+      ['/assets/best-of/surfing/snapper-rocks.jpg','Surfers at Snapper Rocks, Gold Coast','Surfing','/best-of/surfing/'],
+      ['/assets/best-of/luxury-hotels/anguilla-western-aerial.jpg','Aerial view of the western coastline and turquoise Caribbean sea, Anguilla','Ultra Luxurious Resorts','/best-of/ultra-luxurious-resorts/'],
+      ['/assets/best-of/unesco-sites/iguazu-national-park.jpg','Aerial view of Iguazu Falls from above the forest canopy','UNESCO Sites','/best-of/unesco-sites/'],
+      ['/assets/best-of/unique-hotels/hotel-de-glace.jpg','Main entrance of the Hôtel de Glace built from ice and snow in Quebec','Unique Hotels','/best-of/unique-hotels/'],
+      ['/assets/best-of/unique-museums/lego-house.jpg','LEGO House, Billund, Denmark','Unique Museums','/best-of/unique-museums/'],
+      ['/assets/best-of-hero/volcanoes.jpg','Lava Into the Sea at Night, Big Island of Hawaii','Volcanoes','/best-of/volcanoes/'],
+      ['/assets/best-of/wine-regions/napa-valley.jpg','Aerial view of Napa Valley, California, with vineyard-covered valley floor','Wine Regions','/best-of/wine-regions/'],
+      ['/assets/best-of/wonders-of-the-world/iguazu-falls.jpg','Iguazu Falls waterfall panorama viewed from the Argentine side','Wonders of the World','/best-of/wonders-of-the-world/']
     ];
     var tile = document.querySelector('.lp-best-tile');
     if (!tile || !B.length) return;
     var img = tile.querySelector('.lp-best-shot img');
     var name = tile.querySelector('.lp-best-name');
+    var bandT = tile.querySelector('.lp-best-band-t');
     if (!img) return;
 
     /* The reader's local calendar day — Date.UTC on the local Y/M/D is a whole
@@ -3570,6 +3595,13 @@ window.lpGuideCard = function (href, flag, name, extra) {
       img.src = row[0];
       img.alt = row[1];
       if (name) name.textContent = row[2];
+      /* The picture opens the category it IS. */
+      if (row[3]) tile.href = row[3];
+      /* And the band names it, or the tile reads "Browse all 37 categories"
+         over a picture that opens exactly one. Composed from the category
+         name rather than written per row: 37 hand-kept sentences is 37
+         chances to drift, and "The best {name}" reads for every one of them. */
+      if (bandT) bandT.textContent = 'The best ' + row[2];
     }
     function warm(i) { var r = B[((i % B.length) + B.length) % B.length];
                        if (r) { var im = new Image(); im.src = r[0]; } }
@@ -3582,6 +3614,15 @@ window.lpGuideCard = function (href, flag, name, extra) {
        between paging and opening the page. */
     var nav = document.createElement('div');
     nav.className = 'lp-best-nav';
+    /* The only route to /best-of/ left on a phone once the picture opens its
+       own category — the 37-name list beside it is display:none here. The
+       count is read off the table, never typed: a hardcoded number goes stale
+       the first time a category ships and nobody would think to check it. */
+    var all = document.createElement('a');
+    all.className = 'lp-best-all';
+    all.href = '/best-of/';
+    all.textContent = 'All ' + B.length + ' categories';
+    nav.appendChild(all);
     function button(label, step) {
       var b = document.createElement('button');
       b.type = 'button';
