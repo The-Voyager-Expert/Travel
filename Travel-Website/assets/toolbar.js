@@ -6336,11 +6336,12 @@ window.TVE.home = (function () {
       { name: 'easyHotel Oxford', note: 'easyHotel brand — 280 Banbury Road in Summertown, compact AC rooms, 24h reception, paid parking, 4.6 on TripAdvisor · 7.8 Booking.com', url: 'https://www.booking.com/hotel/gb/easyhotel-oxford.html', tier: 'budget' }
     ], price: { budget: '£60–120', mid: '£120–200', expensive: '£200–320', luxury: '£320+' } },
     'palawan': { h: [
-      { name: 'The Funny Lion - Puerto Princesa', note: 'Independent — F. Ponce de Leon Road, outdoor pool, 24h reception, airport shuttle · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ph/the-funny-lion-puerto-princesa.html' },
-      { name: 'El Nido Resorts Pangulasian Island', note: 'El Nido Resorts — solar-powered adults-preferred island resort, white sand beach, three pools · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ph/el-nido-resorts-pangulasian-island.html' },
-      { name: "Mongki's Pension House", note: 'Independent — Wescom Road in San Pedro, 24h reception, AC, airport transfers · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ph/mongkis-pensionhouse.html' },
-      { name: 'Carpe Diem Villas & Resort', note: 'Independent — F. Ponce de Leon Road, outdoor pool, spa, dive desk · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ph/carpe-diem-villas-amp-resort-puerto-princesa.html' }
-    ] },
+      { name: 'The Funny Lion - Puerto Princesa', note: 'Independent — F. Ponce de Leon Road, outdoor pool, 24h reception, airport shuttle · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ph/the-funny-lion-puerto-princesa.html', tier: 'expensive' },
+      { name: 'El Nido Resorts Pangulasian Island', note: 'El Nido Resorts — solar-powered adults-preferred island resort, white sand beach, three pools · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ph/el-nido-resorts-pangulasian-island.html', tier: 'luxury' },
+      { name: "Mongki's Pension House", note: 'Independent — Wescom Road in San Pedro, 24h reception, AC, airport transfers · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ph/mongkis-pensionhouse.html', tier: 'budget' },
+      { name: 'Carpe Diem Villas & Resort', note: 'Independent — F. Ponce de Leon Road, outdoor pool, spa, dive desk · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ph/carpe-diem-villas-amp-resort-puerto-princesa.html', tier: 'mid' },
+      { name: 'Casa Belina', note: 'Independent — 20 Pineda Road in San Pedro, AC rooms, 24h reception, free airport shuttle · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ph/casa-belina.html', tier: 'budget' }
+    ], price: { budget: '₱1,000–2,500', mid: '₱2,500–6,000', expensive: '₱6,000–15,000', luxury: '₱15,000+' } },
     'palm-desert': { h: [
       { name: 'The Ritz-Carlton, Rancho Mirage', note: 'Ritz-Carlton brand — Coachella Valley hillside, outdoor pools, spa, panoramic desert valley views · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-ritz-carlton-rancho-mirage.html' },
       { name: 'HOTEL PASEO, Autograph Collection', note: 'Marriott Autograph — on El Paseo in Palm Desert itself, rooftop pool, spa, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/paseo-autograph-collection.html' },
