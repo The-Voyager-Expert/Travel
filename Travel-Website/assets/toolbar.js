@@ -51,34 +51,30 @@ window.TVE.isPhone = function () {
    Owner, 2026-08-15, looking at the landing-page finder: "this is all wired
    from my seattle and can't be."
 
-   It was, and unavoidably so: FMAP is 237 hand-built Delta routings that all
-   start at SEA — real legs, real hubs, real minutes — so every surface that
-   asks "how far is this?" was answering for one person. A reader in Rome got
-   Seattle's flight times with no way to say otherwise.
+   It was. Owner rule 2026-08-22, after the same thing had been asked six
+   times: NOTHING ON THE SITE STARTS FROM ANY PLACE. There is no home, no
+   fallback, and no airport that gets better numbers than any other — the
+   Seattle routings that FMAP once carried were the last special case and
+   they are gone from the data. Every reader, wherever they fly from, gets
+   the same thing:
 
-   The fix is NOT to throw the routings away. They are the best data the site
-   has and they stay exact for the reader they describe. Instead:
-
-     home is SEA  ->  FMAP verbatim. Nothing changes, nothing degrades.
-     home is not  ->  a great-circle ESTIMATE from the reader's own airport,
-                      always rendered with a leading "~" and never presented
-                      as a routing. No hub is invented, no leg is claimed.
+     home picked  ->  a great-circle ESTIMATE of flying time from the reader's
+                      own airport, always rendered with a leading "~" and
+                      never presented as a routing. No hub is invented, no
+                      leg is claimed.
      NO HOME SET  ->  NOTHING. No number, no ranking, no city name. Owner rule
-                      2026-08-20: "should not have any fallback" · "nothing
-                      about seattle ever unless i search seattle."
+                      2026-08-20: "should not have any fallback".
 
    THERE IS NO DEFAULT ORIGIN. get() returns null until the reader picks an
    airport, and every surface that measures from one omits its number, its row
    or its whole block until then — the same rule Time Zones has carried since
    2026-08-16 (rule 867), and for the same reason: a default nobody chose is
-   still one person's city, however carefully it is labelled. SEA survives in
-   ROUTINGS_FROM alone, which is not a home: it is the airport FMAP's 237
-   routings were MEASURED from, so a reader who picks it gets those exact
-   numbers instead of an estimate. It never selects itself.
+   still one person's city, however carefully it is labelled.
 
    WHAT IS ESTIMATED IS FLYING TIME, and that choice is the load-bearing one.
-   Fitted against the 69 nonstop routings FMAP already holds — the ones where
-   the great-circle IS the route — the constants are measured, not guessed:
+   Fitted, when the constants were chosen, against 69 real nonstop routings —
+   the ones where the great-circle IS the route — so they are measured, not
+   guessed:
 
        air minutes = 44 + km / 14        (14 km/min ≈ 840 km/h)
 
@@ -111,13 +107,6 @@ window.TVE.home = (function () {
      load, which is the whole point: nothing a reader picks on one page visit
      is still there on the next. */
   var picked = null;
-  /* NOT a home and never selected as one — the airport FMAP's 237 routings
-     were measured from. A reader who picks it gets those exact journeys; a
-     reader who picks anything else gets an estimate; a reader who has picked
-     nothing gets no number at all. The fallback that used to stand here made
-     this the origin for everyone who had not chosen, which is the one thing
-     the owner has now ruled out outright. */
-  var ROUTINGS_FROM = 'SEA';
   var subs = [];
 
   /* A previous version of this file DID persist the pick; this purges
@@ -266,7 +255,6 @@ window.TVE.home = (function () {
 
   return {
     /* No KEY export: there is nothing stored to key. */
-    ROUTINGS_FROM: ROUTINGS_FROM,
     get: get, set: set, clear: clear,
     /* isDefault() is now literally "nothing is set" — kept under its old
        name because every consumer already branches on it, but the branch it

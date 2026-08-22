@@ -1,3 +1,4 @@
+/* 2026-08-22: NOTHING STARTS FROM ANY PLACE — ROUTINGS_FROM = 'SEA' deleted from TVE.home, and with it every exact-routing branch (landing compare row + finder, guides-index flight view + compare row, Destination Records). FMAP lost its per-origin fields (t, m, r, d, h, lg), the records DATA lost fm/ft/fr, the routing legend is gone. Every reader gets the same ~flying-time estimate from their own airport. toolbar.js -> v841, guides-index-style.css -> 24. CACHE to v1217. */
 /* 2026-08-21: Best-Of place pages — #bo-no-results moved out of 33 identical inline <style> blocks into web-travel-style.css (SHARED CSS ONLY; check_best_of_css_standard retargeted from the retired essentials/Best-*.html glob onto best-of/<slug>/ and saw them at once). web-travel-style.css -> 90. CACHE to v1208. */
 /* 2026-08-21: amsterdam hotel price tiers — Hotel Casa added toolbar.js -> v830. CACHE to v1197. */
 /* 2026-08-21: POSITION-2c NOTES — the two walking figures the owner approved on 2026-08-18 reach GM_SPRITE. #169 uphill (pine, key 'uphill') and #153 long stride (navy, key 'long-walk') were treated at catalogue quality that day and left out of the sprite table, so nine guides shipped 'Steep uphill' as bare words for three days. Both carry data-norm=h19.5: untransformed they stood 22.45 and 21.85 tall against walk's 19.75, and in a stop row it is height that reads as size. Labels settled in the same pass: 'Exposed heights' -> 'Heights', 'Tight squeeze' -> 'Enclosed space'. toolbar.js -> v830. CACHE to v1197. */
@@ -1751,7 +1752,7 @@
    under the band — festival-finder, nomad-visas, pickleball and scams were all
    56px bars in 70px boxes. web-travel-style.css -> 91, mobile.css -> 88.
    CACHE to v1216. */
-var CACHE = 'travel-cache-v1216';
+var CACHE = 'travel-cache-v1217';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1764,7 +1765,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 840, 'mobile.css': 88, 'web-travel-style.css': 91, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 3, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 841, 'mobile.css': 88, 'web-travel-style.css': 91, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 3, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

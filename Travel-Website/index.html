@@ -6096,7 +6096,6 @@ function render() {
     function buildTable() {
       var FMAP = window._FMAP || {};
       var fltColors = { nonstop:'#2a7a2a', seasonal:'#2a7a2a', '1stop':'#8a6c1a', '2stop':'#c06000' };
-      var fltLabels = { nonstop:'Nonstop', seasonal:'Nonstop (seasonal)', '1stop':'1 connection', '2stop':'2 connections' };
 
       /* The passport strip — the control that names what the Entry row answers for.
          It sits ABOVE the table and is always rendered, set or unset, because a row
@@ -6154,48 +6153,26 @@ function render() {
 
       /* Flight row — from the reader's own airport, and from NO airport until
          they have named one (owner rule 2026-08-20: "should not have any
-         fallback" · "nothing about seattle ever unless i search seattle").
-
-         So there are three cases, not two, and the first is the new one:
+         fallback"). Two cases, and nothing starts from any place:
 
            no origin set -> THE ROW IS NOT RENDERED AT ALL. Not a dash, not a
                             "set your airport" cell — a row of placeholders in
                             a comparison table reads as missing data about the
                             cities, which is exactly the wrong thing to say.
-           origin is the airport FMAP was measured from -> its exact routing,
-                            layovers and connection subtitle included.
-           any other origin -> "~10h 8m · flying time, estimated", no routing.
+           origin set    -> "~10h 8m · flying time, estimated", no routing.
 
          Inventing a connection count for a journey nobody has planned would be
          the one genuinely misleading thing this row could do — see the note on
          TVE.home for why flying time is what gets estimated. */
       var HOME = window.TVE && window.TVE.home;
       var home = HOME && HOME.get();
-      /* The one airport the site holds measured routings for is named by
-         TVE.home.ROUTINGS_FROM and nowhere else: a page that spells it out can
-         never be told apart from a page that is anchored to it. */
-      var homeExact = !!(home && HOME.ROUTINGS_FROM && home.code === HOME.ROUTINGS_FROM);
       var AIRXY = (window._lpAirports && window._lpAirports.xy) || null;
       var AIRBY = (window._lpAirports && window._lpAirports._by_slug) || null;
       if (home) {
       var homeCode = home.code;
       out += '<tr><td class="cmp-row-label">Flight<br>from ' + esc(homeCode) + '</td>';
       sel.forEach(function(c) {
-        /* FMAP is keyed by the bare slug ('athens') since the 2026-08-16 URL
-           flatten. The old relative-path key matched nothing against a
-           root-absolute href, so this row showed '—' for every city. */
         var key = c.href.split('/').pop().replace(/\.html$/, '');
-        var f = FMAP[key];
-        if (homeExact) {
-          if (f && f.r !== 'home') {
-            out += '<td class="cmp-col"><span class="cmp-v">' + f.t + '</span>' +
-              '<span class="cmp-sub">' + (fltLabels[f.r]||f.r) + (f.o ? ' · ' + esc(stripIcons(f.o)) : '') + '</span>' +
-              '</td>';
-          } else {
-            out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
-          }
-          return;
-        }
         var code = AIRBY ? (AIRBY[key + '.html'] || '') : '';   /* _by_slug is keyed 'athens.html' */
         var pos = (code && AIRXY) ? AIRXY[code] : null;
         var mins = (pos && code !== homeCode) ? HOME.estimate(pos[0], pos[1]) : null;
@@ -6762,25 +6739,11 @@ function render() {
      8 hours" means the same number in both places. */
   var FAR = { u5: 300, u8: 480, u10: 600, u12: 720, u15: 900 };
 
-  /* FMAP.m is AIR time only; FMAP.t is the journey including layovers, and the
-     two differ by hours on a connection. Filtering on m while showing t put
-     "12h 50m" inside a list headed "under 12 hours" — a result the card itself
-     contradicted. The guides index filters on m plus a layover allowance (90
-     min per connection, guides/index.html § connBuffer) and displays the same
-     total, so this does too: one number, filtered and shown. */
-  function journeyMins(f) {
-    if (!f) return null;
-    var legs = (f.lg && f.lg.length) ? (f.lg.length - 1) * 90
-             : (f.r === '1stop' ? 90 : f.r === '2stop' ? 180 : 0);
-    return f.m + legs;
-  }
 
   /* ── Home city ────────────────────────────────────────────────────────────
      TVE.home holds the reader's airport — or null, until they pick one, in
      which case nothing on this page is measured at all. airports.json holds the
-     destination positions; when the picked airport is the one FMAP was measured
-     from, neither is consulted and every number comes from FMAP as it always
-     did.
+     destination positions.
 
      AIR is fetched once, lazily, and only when a reader who has actually picked
      an airport needs it — nobody pays the 29 KB for a distance they never asked
@@ -6815,31 +6778,20 @@ function render() {
     return (c && AIR && AIR.xy && AIR.xy[c]) || null;
   }
 
-  /* One number for the whole page, from wherever the reader lives. Exact from
-     FMAP for a Seattle reader — the full journey, layovers included — and an
-     estimate of FLYING time for anyone else, because whether a nonstop exists
-     between two arbitrary airports is unknowable from here (TVE.home). The
-     `exact` flag travels with the number so nothing downstream can render an
-     estimate without the "~" and the word "flying" that go with it.
-
-     The two therefore mean slightly different things — but never to the same
-     reader, and each is labelled on the card it appears on. A silent mix would
-     be the bug; two clearly-named answers are not. */
+  /* One number for the whole page, from wherever the reader lives: an
+     estimate of FLYING time from the reader's own airport, for every reader
+     alike — whether a nonstop exists between two arbitrary airports is
+     unknowable from here (TVE.home), so nothing claims one. `exact` is
+     always false; it stays on the object so nothing downstream can render
+     the number without the "~" and the word "flying" that go with it.
+     Owner rule 2026-08-22: nothing on the site starts from any place. */
   function farOf(d, g) {
-    /* FMAP is keyed by bare slug ("athens"), not by g.rel ("/guides/athens.html")
-       — the rel lookup matched nothing for all 237 guides. */
-    var f = d.fmap[slugOf(g)];
     var h = HOME && HOME.get();
     /* No airport picked, no distance. Returning a number here would be
        answering "how far is it?" for a reader who has not said from where —
        owner rule 2026-08-20. The caller drops the guide, exactly as it does
-       for a guide with no FMAP entry. */
+       for a guide with no mapped airport. */
     if (!h) return null;
-    if (HOME.ROUTINGS_FROM && h.code === HOME.ROUTINGS_FROM) {
-      var m = journeyMins(f);
-      return m === null ? null : { mins: m, exact: true, home: h.code,
-                                   text: f.t || '', atHome: f.r === 'home' };
-    }
     var p = destPos(g);
     if (!p) return null;
     if (destCode(g) === h.code) return { mins: 0, exact: false, home: h.code, text: '', atHome: true };
@@ -7279,8 +7231,7 @@ function render() {
       /* The "~" is the whole label an estimate needs here — it is the same
          number the list was narrowed by, and the picker's own footnote says
          what it is measured from and that layovers are not in it. */
-      /* Destination code from FMAP first: it is present for a Seattle reader,
-         who never loads airports.json at all. */
+      /* Destination code from FMAP first, airports.json second. */
       var iata = (d.fmap[slugOf(g)] && d.fmap[slugOf(g)].i) || destCode(g);
       flt = '<span class="flt"><span class="ftime">' + esc(far.text) + '</span>' +
             (iata ? '<span class="fiata">' + esc(iata) + '</span>' : '') + '</span>';
