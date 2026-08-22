@@ -6545,11 +6545,16 @@ window.TVE.home = (function () {
       { name: 'Wellnesshotel Hanusel Hof', note: 'Independent — wellness-focused Allgäu retreat at Hellengerst, indoor and outdoor pools, thermal spa, hiking access into the Ammergauer Alps · 9.2 Booking.com', url: 'https://www.booking.com/hotel/de/hanusel-hof.html', tier: 'luxury' }
     ], price: { budget: '€90–120', mid: '€120–200', expensive: '€200–320', luxury: '€320+' } },
     'marrakech': { h: [
-      { name: 'Mandarin Oriental, Marrakech', note: 'Independent luxury — 20 acres of olive groves and rose gardens off the Route du Golf Royal, private-pool villas, indoor and outdoor pools, spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ma/mandarin-oriental-marrakech.html' },
-      { name: 'Royal Mansour Marrakech', note: 'Independent ultra-luxury — private riads with plunge pools, 2,500 sq m spa, three restaurants · 9.7 Booking.com', url: 'https://www.booking.com/hotel/ma/royal-mansour-marrakech.html' },
-      { name: 'Amanjena', note: 'Aman brand — Route de Ouarzazate rose-pink pavilions, two pools, hammam, golf access · 9.5 Booking.com', url: 'https://www.booking.com/hotel/ma/amanjena.html' },
-      { name: 'Kasbah Tamadot', note: 'Virgin Limited Edition — Atlas Mountain retreat, Berber tents, pool with mountain panorama · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ma/kasbah-tamadot.html' }
-    ] },
+      { name: 'Riad Dar Les Freres', note: 'Independent riad — Derb Boutouil in the Kennaria quarter, roof terrace, 24h front desk, 25 min walk to the Sofitel · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ma/riad-dar-les-freres.html', tier: 'budget' },
+      { name: 'Riad Dar Familya', note: 'Independent riad — Derb El Maada near Ben Youssef, courtyard pool, restaurant, 24h front desk · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ma/riad-dar-familya.html', tier: 'budget' },
+      { name: 'Novotel Marrakech Hivernage', note: 'Accor Novotel — same street as the Sofitel on Rue Haroun Errachid, infinity pool, 24h front desk · 7.1 Booking.com', url: 'https://www.booking.com/hotel/ma/suitehotel-marrakech.html', tier: 'mid' },
+      { name: 'Le Méridien N\'Fis', note: 'Marriott family — Avenue Mohammed VI in Hivernage, garden pool, tennis, 24h front desk, 10 min walk to the Sofitel · 7.1 Booking.com', url: 'https://www.booking.com/hotel/ma/le-meridien-n-fis.html', tier: 'mid' },
+      { name: 'Radisson Blu Marrakech, Carré Eden', note: 'Radisson Blu — Avenue Mohammed V in Gueliz, rooftop pool, spa, 24h front desk, 20 min walk to the Sofitel · 8.3 Booking.com', url: 'https://www.booking.com/hotel/ma/radisson-blu-marrakech-carre-eden.html', tier: 'expensive' },
+      { name: 'Mandarin Oriental, Marrakech', note: 'Independent luxury — 20 acres of olive groves and rose gardens off the Route du Golf Royal, private-pool villas, indoor and outdoor pools, spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ma/mandarin-oriental-marrakech.html', tier: 'luxury' },
+      { name: 'Royal Mansour Marrakech', note: 'Independent ultra-luxury — private riads with plunge pools, 2,500 sq m spa, three restaurants · 9.7 Booking.com', url: 'https://www.booking.com/hotel/ma/royal-mansour-marrakech.html', tier: 'luxury' },
+      { name: 'Amanjena', note: 'Aman brand — Route de Ouarzazate rose-pink pavilions, two pools, hammam, golf access · 9.5 Booking.com', url: 'https://www.booking.com/hotel/ma/amanjena.html', tier: 'luxury' },
+      { name: 'Kasbah Tamadot', note: 'Virgin Limited Edition — Atlas Mountain retreat, Berber tents, pool with mountain panorama · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ma/kasbah-tamadot.html', tier: 'luxury' }
+    ], price: { budget: 'MAD 400–900', mid: 'MAD 900–2,500', expensive: 'MAD 2,500–5,000', luxury: 'MAD 5,000+' } },
     'marseille': { h: [
       { name: 'Les Bords de Mer · Fontenille Collection', note: 'Independent — 52 Corniche Kennedy above the water, rooftop heated pool, spa and hammam, sea-facing rooms · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/les-bords-de-mer.html' },
       { name: 'Sofitel Marseille Vieux-Port', note: 'Sofitel brand — Old Port frontage, terrace views, spa, Les Trois Forts gastronomic restaurant · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/fr/sofitel-marseille-vieux-port.html' },
