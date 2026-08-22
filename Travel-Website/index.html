@@ -1960,13 +1960,8 @@ summary.res-head:focus-visible { outline: 2px solid var(--rust, #C04E1A); outlin
 .hc-activity-grid { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
 .hc-nav { margin-top:18px; display:flex; flex-wrap:wrap; align-items:center; gap:14px; }
 /* The door's steps: one finder field per step, the width the finder gave it. */
-.hc-step > .fnd-field { max-width: 420px; }
+.hc-lede { margin: 0 0 1rem; font-size: .95rem; color: var(--muted,#6a6660); }
 .hc-hint { margin: 0 0 .55rem; font-size: .84rem; font-weight: 400; color: var(--muted,#6a6660); }
-.hc-skip { font: inherit; font-size: .88rem; background: none; border: 0; padding: 0; color: var(--accent,#8a6c1a); text-decoration: underline; cursor: pointer; }
-.hc-skip:hover { color: var(--rust,#C04E1A); }
-.hc-skip[hidden], #hc-next[hidden], #hc-go[hidden] { display: none !important; }
-#hc-s4 .fnd-more { display: inline-block; width: auto; margin: 16px 0 0; }
-#hc-s4 #fnd-more-panel { padding-left: 0; padding-right: 0; }
 #help-choose-panel .fnd-results { margin-top: 20px; }
 .tt-narrow .fnd-row { margin-top: 6px; }
 .fnd-res-tier { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted,#6a6660); margin: 1.1rem 0 .5rem; }
@@ -2957,346 +2952,240 @@ window.lpGuideCard = function (href, flag, name, extra) {
       <!-- Not decoration and not removable. The Help Me Choose script binds every handler to this button and bails out entirely (`if (!btn) return`) when it is absent, so deleting it kills the widget with no error anywhere. The card above clicks it once to build the panel. -->
       <button id="btn-help-choose" hidden aria-hidden="true"></button>
     <div id="help-choose-panel">
-      <div id="hc-inner">
-        <div class="hc-progress">
-          <span class="hc-step-dot on" id="hc-dot-1">1</span>
-          <span class="hc-step-line"></span>
-          <span class="hc-step-dot" id="hc-dot-2">2</span>
-          <span class="hc-step-line"></span>
-          <span class="hc-step-dot" id="hc-dot-3">3</span>
-          <span class="hc-step-line"></span>
-          <span class="hc-step-dot" id="hc-dot-4">4</span>
-        </div>
-
-        <!-- ONE DOOR (owner rule 2026-08-22: "have only one entry point makes
-             less confusing"). The finder's own fields live here as the four
-             steps — same ids, same engine (the IIFE further down), same
-             multi-pick chips — so nothing is filtered twice and nothing is
-             scored that was not also filtered. Every step can be skipped:
-             skipped means "any". -->
-        <div id="hc-s1" class="hc-step">
-          <div class="fnd-field">
-            <label for="fnd-when">When are you going?</label>
-            <p class="hc-hint">Pick a month; pick another to add it. Skip if you don&rsquo;t know yet.</p>
-            <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-wall-calendar"/></svg></span><select id="fnd-when">
-              <option value="">Any month</option>
-              <option value="0">January</option><option value="1">February</option>
-              <option value="2">March</option><option value="3">April</option>
-              <option value="4">May</option><option value="5">June</option>
-              <option value="6">July</option><option value="7">August</option>
-              <option value="8">September</option><option value="9">October</option>
-              <option value="10">November</option><option value="11">December</option>
-            </select></div>
-          </div>
-        </div>
-
-        <div id="hc-s2" class="hc-step" hidden>
-          <div class="fnd-field">
-            <label>How many days do you have?</label>
-            <p class="hc-hint">Orders the list only — a guide's day count is the most we planned, never a requirement.</p>
-            <div class="ttchip-row">
-              <button type="button" class="hcchip" data-v="2">2</button><button type="button" class="hcchip" data-v="3">3</button><button type="button" class="hcchip" data-v="4">4</button><button type="button" class="hcchip" data-v="5">5</button><button type="button" class="hcchip" data-v="6">6</button><button type="button" class="hcchip" data-v="7">7</button><button type="button" class="hcchip" data-v="8">8+</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="hc-s3" class="hc-step" hidden>
-          <div class="fnd-field">
-            <label for="fnd-weather">What weather do you want?</label>
-            <p class="hc-hint">Pick one or more. Skip for any weather.</p>
-            <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-sun-cloud-colour"/></svg></span><select id="fnd-weather">
-              <option value="">Any temperature</option>
-              <option value="hot">Hot &mdash; 28&deg;C and up</option>
-              <option value="warm">Warm &mdash; 22 to 28&deg;C</option>
-              <option value="mild">Mild &mdash; 15 to 22&deg;C</option>
-              <option value="cool">Cool &mdash; 8 to 15&deg;C</option>
-              <option value="cold">Cold &mdash; under 8&deg;C</option>
-            </select></div>
-          </div>
-        </div>
-
-        <div id="hc-s4" class="hc-step" hidden>
+      <!-- EVERY FILTER AT ONCE (owner rule 2026-08-22: "combine all filters and show
+           all at once ... the user can pick and choose and play around with the
+           combinations"). No steps, no "More ways" disclosure, no Continent. Same
+           engine, same ids, same multi-pick chips; the list updates on every pick
+           and Show my matches confirms. -->
+      <p class="hc-lede">Answer what you know. Leave the rest alone &mdash; every filter works with every other.</p>
+      <div class="fnd-row fnd-all">
         <div class="fnd-field">
-          <label for="fnd-type">What do you want to do?</label>
-          <p class="hc-hint">Pick an activity; pick another to add it.</p>
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-tours-tickets"/></svg></span><select id="fnd-type">
-            <option value="">Any activity</option>
-            <option value="beach">Beaches</option>
-            <option value="islands">Islands</option>
-            <option value="nature">Greenery</option>
-            <option value="snow">Snow &amp; ski</option>
-            <option value="history">History</option>
-            <option value="amusement">Theme parks</option>
+                    <label for="fnd-when">When are you going?</label>
+                    <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-wall-calendar"/></svg></span><select id="fnd-when">
+                      <option value="">Any month</option>
+                      <option value="0">January</option><option value="1">February</option>
+                      <option value="2">March</option><option value="3">April</option>
+                      <option value="4">May</option><option value="5">June</option>
+                      <option value="6">July</option><option value="7">August</option>
+                      <option value="8">September</option><option value="9">October</option>
+                      <option value="10">November</option><option value="11">December</option>
+                    </select></div>
+                  </div>
+        <div class="fnd-field">
+                    <label for="fnd-weather">What weather do you want?</label>
+                    <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-sun-cloud-colour"/></svg></span><select id="fnd-weather">
+                      <option value="">Any temperature</option>
+                      <option value="hot">Hot &mdash; 28&deg;C and up</option>
+                      <option value="warm">Warm &mdash; 22 to 28&deg;C</option>
+                      <option value="mild">Mild &mdash; 15 to 22&deg;C</option>
+                      <option value="cool">Cool &mdash; 8 to 15&deg;C</option>
+                      <option value="cold">Cold &mdash; under 8&deg;C</option>
+                    </select></div>
+                  </div>
+        <div class="fnd-field">
+          <label for="fnd-days">How many days do you have?</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-day-dots"/></svg></span><select id="fnd-days">
+            <option value="">Any days</option>
+            <option value="2">2 days</option><option value="3">3 days</option><option value="4">4 days</option>
+            <option value="5">5 days</option><option value="6">6 days</option><option value="7">7 days</option>
+            <option value="8">8 days or more</option>
           </select></div>
         </div>
-        <button type="button" id="fnd-more" class="fnd-more" aria-expanded="false" aria-controls="fnd-more-panel">More ways to filter</button>
-    <div id="fnd-more-panel" hidden>
-      <div class="fnd-row">
         <div class="fnd-field">
-          <label for="fnd-lang">Language</label>
-          <!-- THE OPTIONS ARE BUILT FROM THE DATA (buildLangOpts), never listed
-               here. The hand-written list that stood in this spot had drifted
-               from the tags it filters: Greek was missing with SEVEN guides
-               behind it — as many as Dutch, Chinese and Arabic, all of which
-               were offered — while Danish, Finnish and Turkish were offered
-               with one guide each. Vietnamese, Croatian, Tamil and Papiamento
-               were missing too. A language that exists in the data and not in
-               this list is unreachable, and nothing anywhere said so. Same
-               reasoning as the Day Trips by Train field directly below. -->
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-language-roundel"/></svg></span><select id="fnd-lang">
-            <option value="">Any language</option>
-          </select></div>
-        </div>
-
+                  <label for="fnd-type">Activities</label>
+                  <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-tours-tickets"/></svg></span><select id="fnd-type">
+                    <option value="">Any activity</option>
+                    <option value="beach">Beaches</option>
+                    <option value="islands">Islands</option>
+                    <option value="nature">Greenery</option>
+                    <option value="snow">Snow &amp; ski</option>
+                    <option value="history">History</option>
+                    <option value="amusement">Theme parks</option>
+                  </select></div>
+                </div>
         <div class="fnd-field">
-          <label for="fnd-cont">Continent</label>
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-orbited-globe"/></svg></span><select id="fnd-cont">
-            <option value="">Any continent</option>
-            <option value="Europe">Europe</option>
-            <option value="Asia">Asia</option>
-            <option value="North America">North America</option>
-            <option value="South America">South America</option>
-            <option value="Africa">Africa</option>
-            <option value="Oceania">Oceania</option>
-          </select></div>
-        </div>
-
+                  <label for="fnd-lang">Language</label>
+                  <!-- THE OPTIONS ARE BUILT FROM THE DATA (buildLangOpts), never listed
+                       here. The hand-written list that stood in this spot had drifted
+                       from the tags it filters: Greek was missing with SEVEN guides
+                       behind it — as many as Dutch, Chinese and Arabic, all of which
+                       were offered — while Danish, Finnish and Turkish were offered
+                       with one guide each. Vietnamese, Croatian, Tamil and Papiamento
+                       were missing too. A language that exists in the data and not in
+                       this list is unreachable, and nothing anywhere said so. Same
+                       reasoning as the Day Trips by Train field directly below. -->
+                  <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-language-roundel"/></svg></span><select id="fnd-lang">
+                    <option value="">Any language</option>
+                  </select></div>
+                </div>
         <div class="fnd-field">
-          <label for="fnd-budget">Budget</label>
-          <!-- Real money, from /essentials/budget/ — that page IS the site's
-               budget data (hotel + food, per person per day) and this reads it
-               rather than keeping a second copy. The four-tier COST_DATA scale
-               that stood here (Budget/Moderate/Expensive/Premium) answered a
-               different question — a "tier" is a label, and a visitor with a
-               number in mind could not use it. Bands are the midpoint of the
-               two ranges the page publishes, summed. -->
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-budget"/></svg></span><select id="fnd-budget">
-            <option value="">Any budget</option>
-            <option value="u100">Under $100 a day</option>
-            <option value="100-150">$100 to $150 a day</option>
-            <option value="150-200">$150 to $200 a day</option>
-            <option value="o200">$200 a day or more</option>
-          </select></div>
-        </div>
-
+                  <label for="fnd-budget">Budget</label>
+                  <!-- Real money, from /essentials/budget/ — that page IS the site's
+                       budget data (hotel + food, per person per day) and this reads it
+                       rather than keeping a second copy. The four-tier COST_DATA scale
+                       that stood here (Budget/Moderate/Expensive/Premium) answered a
+                       different question — a "tier" is a label, and a visitor with a
+                       number in mind could not use it. Bands are the midpoint of the
+                       two ranges the page publishes, summed. -->
+                  <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-budget"/></svg></span><select id="fnd-budget">
+                    <option value="">Any budget</option>
+                    <option value="u100">Under $100 a day</option>
+                    <option value="100-150">$100 to $150 a day</option>
+                    <option value="150-200">$150 to $200 a day</option>
+                    <option value="o200">$200 a day or more</option>
+                  </select></div>
+                </div>
         <div class="fnd-field">
-          <label for="fnd-safety">Safety</label>
-          <!-- The State Department levels, from /essentials/safety/ — the page
-               that already sorts all 237 guides into L1/L2/L3/L4 against the
-               advisories. The invented four-word scale that stood here ("Very
-               safe", "Moderate") was a second opinion about the same guides,
-               and the two disagreed: Abu Dhabi read "Very Safe" here and sits
-               in Level 3 there. One source, and it is the published one.
+                  <label for="fnd-safety">Safety</label>
+                  <!-- The State Department levels, from /essentials/safety/ — the page
+                       that already sorts all 237 guides into L1/L2/L3/L4 against the
+                       advisories. The invented four-word scale that stood here ("Very
+                       safe", "Moderate") was a second opinion about the same guides,
+                       and the two disagreed: Abu Dhabi read "Very Safe" here and sits
+                       in Level 3 there. One source, and it is the published one.
 
-               A floor, not an exact match — "Level 1 or 2" means at least as
-               safe as Level 2, which is what an advisory level is for. -->
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-safety-guide"/></svg></span><select id="fnd-safety">
-            <option value="">Any advisory level</option>
-            <option value="1">Level 1 only &mdash; normal precautions</option>
-            <option value="2">Level 1 or 2 &mdash; increased caution</option>
-            <option value="3">Level 1, 2 or 3 &mdash; reconsider travel</option>
-          </select></div>
-        </div>
-
-        <!-- Routing is GONE, owner rule 2026-08-17: "NOTHING should have
-             anything to Seattle or any home base — needs to work for all."
-             Its data was FMAP, a Delta itinerary out of SEA, so the control
-             was disabled with a "Measured from Seattle only." note for every
-             reader who set their own airport — a filter that only ever worked
-             for one city. It also matched ZERO guides even from Seattle: it
-             looked FMAP up by g.rel ("/guides/x.html") while FMAP is keyed by
-             bare slug ("x"). Never restore it as-is; a routing filter is only
-             allowed back if it answers from ANY home airport. -->
-
-        <!-- 73 countries is a select, not a row of pills. -->
+                       A floor, not an exact match — "Level 1 or 2" means at least as
+                       safe as Level 2, which is what an advisory level is for. -->
+                  <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-safety-guide"/></svg></span><select id="fnd-safety">
+                    <option value="">Any advisory level</option>
+                    <option value="1">Level 1 only &mdash; normal precautions</option>
+                    <option value="2">Level 1 or 2 &mdash; increased caution</option>
+                    <option value="3">Level 1, 2 or 3 &mdash; reconsider travel</option>
+                  </select></div>
+                </div>
         <div class="fnd-field">
-          <label for="fnd-country">Country</label>
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-country-map"/></svg></span><select id="fnd-country">
-            <option value="">Any country</option>
-            <option value="argentina">Argentina (1)</option>
-            <option value="aruba">Aruba (1)</option>
-            <option value="australia">Australia (2)</option>
-            <option value="austria">Austria (2)</option>
-            <option value="bahamas">Bahamas (1)</option>
-            <option value="barbados">Barbados (1)</option>
-            <option value="belgium">Belgium (2)</option>
-            <option value="bhutan">Bhutan (1)</option>
-            <option value="brazil">Brazil (15)</option>
-            <option value="canada">Canada (7)</option>
-            <option value="cayman-islands">Cayman Islands (1)</option>
-            <option value="chile">Chile (1)</option>
-            <option value="china">China (5)</option>
-            <option value="costa-rica">Costa Rica (3)</option>
-            <option value="croatia">Croatia (2)</option>
-            <option value="curacao">Curacao (1)</option>
-            <option value="czechia">Czechia (1)</option>
-            <option value="denmark">Denmark (1)</option>
-            <option value="ecuador">Ecuador (1)</option>
-            <option value="egypt">Egypt (1)</option>
-            <option value="estonia">Estonia (1)</option>
-            <option value="finland">Finland (1)</option>
-            <option value="france">France (11)</option>
-            <option value="french-polynesia">French Polynesia (1)</option>
-            <option value="georgia">Georgia (1)</option>
-            <option value="germany">Germany (7)</option>
-            <option value="greece">Greece (7)</option>
-            <option value="hungary">Hungary (1)</option>
-            <option value="iceland">Iceland (1)</option>
-            <option value="indonesia">Indonesia (1)</option>
-            <option value="ireland">Ireland (1)</option>
-            <option value="italy">Italy (18)</option>
-            <option value="japan">Japan (4)</option>
-            <option value="jordan">Jordan (1)</option>
-            <option value="laos">Laos (1)</option>
-            <option value="luxembourg">Luxembourg (1)</option>
-            <option value="maldives">Maldives (1)</option>
-            <option value="malta">Malta (1)</option>
-            <option value="mexico">Mexico (4)</option>
-            <option value="monaco">Monaco (1)</option>
-            <option value="montenegro">Montenegro (1)</option>
-            <option value="morocco">Morocco (1)</option>
-            <option value="nepal">Nepal (1)</option>
-            <option value="netherlands">Netherlands (2)</option>
-            <option value="new-zealand">New Zealand (2)</option>
-            <option value="norway">Norway (4)</option>
-            <option value="oman">Oman (1)</option>
-            <option value="peru">Peru (3)</option>
-            <option value="philippines">Philippines (1)</option>
-            <option value="poland">Poland (1)</option>
-            <option value="portugal">Portugal (7)</option>
-            <option value="puerto-rico">Puerto Rico (1)</option>
-            <option value="qatar">Qatar (1)</option>
-            <option value="seychelles">Seychelles (1)</option>
-            <option value="singapore">Singapore (1)</option>
-            <option value="sint-maarten">Sint Maarten (1)</option>
-            <option value="slovenia">Slovenia (1)</option>
-            <option value="south-africa">South Africa (1)</option>
-            <option value="south-korea">South Korea (2)</option>
-            <option value="spain">Spain (9)</option>
-            <option value="sri-lanka">Sri Lanka (1)</option>
-            <option value="sweden">Sweden (2)</option>
-            <option value="switzerland">Switzerland (3)</option>
-            <option value="taiwan">Taiwan (1)</option>
-            <option value="thailand">Thailand (3)</option>
-            <option value="turkey">Turkey (1)</option>
-            <option value="turks-and-caicos">Turks And Caicos (1)</option>
-            <option value="united-arab-emirates">United Arab Emirates (2)</option>
-            <option value="united-kingdom">United Kingdom (5)</option>
-            <option value="united-states">United States (57)</option>
-            <option value="uruguay">Uruguay (1)</option>
-            <option value="vietnam">Vietnam (2)</option>
-            <option value="virgin-islands">Virgin Islands (1)</option>
-          </select></div>
-        </div>
-
-        <!-- ── Day Trips by Train: it shows itself, and it counts ──────────
-             Owner, 2026-08-17: "under country if the person end up in the
-             filter in a country in europe add train filter." Then, 2026-08-19:
-             "after country if have train trip need to show this filter and the
-             use can decide if they prefer a country that more places to go
-             nearby meaning how many day trips has been planned for them."
-
-             THE REVEAL IS DATA, NOT A CONTINENT. It appears whenever the
-             country/continent scope contains a guide with day trips, and hides
-             when it does not. It was gated on Europe, which was right only
-             while data-train meant the itinerary's own train days — 32 of 96
-             European guides. It now counts DAY TRIPS BY TRAIN entries and 130
-             guides across the fleet carry them, Bangkok to Chiang Mai included,
-             so a Europe gate hides a filter with real answers everywhere else.
-
-             Hiding it CLEARS it. A filter that keeps narrowing the list from
-             behind a hidden control is invisible to the reader, and the (n)
-             counter that used to catch that is gone.
-
-             THE COUNT IS THE #day-trips-by-train SECTION, not the itinerary's
-             train days. Both exist and they are different sets — 130 guides vs
-             56 — and the owner picked this one ("YES day trip by train page has
-             the data"): a train DAY is somewhere already in the plan, a section
-             ENTRY is somewhere the reader could add, which is what "places to go
-             nearby" asks. build_train_days.py writes the count to data-train on
-             the card, reusing build_day_trips.py's parser rather than adding a
-             second reading of the same section.
-
-             THE OPTIONS ARE BUILT FROM THE DATA (buildTrainOpts) and this
-             select ships carrying only "Any". It shipped as `1`, which rendered
-             as the chip "1 ×" and read as a multiplier ("What 1x means?"), then
-             briefly as Yes/No, which the owner reversed. Hardcoding a list here
-             would go stale the first time a guide ships an eighth day trip, and
-             silently: the option would simply never appear and nobody would
-             look. Today the fleet carries 1 · 2 · 3 · 5 · 6 · 7 — note the gap
-             at 4, which is why the list cannot be a range either.
-
-             No trailing colon on the label: no other field in this card has one. -->
+                  <label for="fnd-country">Country</label>
+                  <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-country-map"/></svg></span><select id="fnd-country">
+                    <option value="">Any country</option>
+                    <option value="argentina">Argentina (1)</option>
+                    <option value="aruba">Aruba (1)</option>
+                    <option value="australia">Australia (2)</option>
+                    <option value="austria">Austria (2)</option>
+                    <option value="bahamas">Bahamas (1)</option>
+                    <option value="barbados">Barbados (1)</option>
+                    <option value="belgium">Belgium (2)</option>
+                    <option value="bhutan">Bhutan (1)</option>
+                    <option value="brazil">Brazil (15)</option>
+                    <option value="canada">Canada (7)</option>
+                    <option value="cayman-islands">Cayman Islands (1)</option>
+                    <option value="chile">Chile (1)</option>
+                    <option value="china">China (5)</option>
+                    <option value="costa-rica">Costa Rica (3)</option>
+                    <option value="croatia">Croatia (2)</option>
+                    <option value="curacao">Curacao (1)</option>
+                    <option value="czechia">Czechia (1)</option>
+                    <option value="denmark">Denmark (1)</option>
+                    <option value="ecuador">Ecuador (1)</option>
+                    <option value="egypt">Egypt (1)</option>
+                    <option value="estonia">Estonia (1)</option>
+                    <option value="finland">Finland (1)</option>
+                    <option value="france">France (11)</option>
+                    <option value="french-polynesia">French Polynesia (1)</option>
+                    <option value="georgia">Georgia (1)</option>
+                    <option value="germany">Germany (7)</option>
+                    <option value="greece">Greece (7)</option>
+                    <option value="hungary">Hungary (1)</option>
+                    <option value="iceland">Iceland (1)</option>
+                    <option value="indonesia">Indonesia (1)</option>
+                    <option value="ireland">Ireland (1)</option>
+                    <option value="italy">Italy (18)</option>
+                    <option value="japan">Japan (4)</option>
+                    <option value="jordan">Jordan (1)</option>
+                    <option value="laos">Laos (1)</option>
+                    <option value="luxembourg">Luxembourg (1)</option>
+                    <option value="maldives">Maldives (1)</option>
+                    <option value="malta">Malta (1)</option>
+                    <option value="mexico">Mexico (4)</option>
+                    <option value="monaco">Monaco (1)</option>
+                    <option value="montenegro">Montenegro (1)</option>
+                    <option value="morocco">Morocco (1)</option>
+                    <option value="nepal">Nepal (1)</option>
+                    <option value="netherlands">Netherlands (2)</option>
+                    <option value="new-zealand">New Zealand (2)</option>
+                    <option value="norway">Norway (4)</option>
+                    <option value="oman">Oman (1)</option>
+                    <option value="peru">Peru (3)</option>
+                    <option value="philippines">Philippines (1)</option>
+                    <option value="poland">Poland (1)</option>
+                    <option value="portugal">Portugal (7)</option>
+                    <option value="puerto-rico">Puerto Rico (1)</option>
+                    <option value="qatar">Qatar (1)</option>
+                    <option value="seychelles">Seychelles (1)</option>
+                    <option value="singapore">Singapore (1)</option>
+                    <option value="sint-maarten">Sint Maarten (1)</option>
+                    <option value="slovenia">Slovenia (1)</option>
+                    <option value="south-africa">South Africa (1)</option>
+                    <option value="south-korea">South Korea (2)</option>
+                    <option value="spain">Spain (9)</option>
+                    <option value="sri-lanka">Sri Lanka (1)</option>
+                    <option value="sweden">Sweden (2)</option>
+                    <option value="switzerland">Switzerland (3)</option>
+                    <option value="taiwan">Taiwan (1)</option>
+                    <option value="thailand">Thailand (3)</option>
+                    <option value="turkey">Turkey (1)</option>
+                    <option value="turks-and-caicos">Turks And Caicos (1)</option>
+                    <option value="united-arab-emirates">United Arab Emirates (2)</option>
+                    <option value="united-kingdom">United Kingdom (5)</option>
+                    <option value="united-states">United States (57)</option>
+                    <option value="uruguay">Uruguay (1)</option>
+                    <option value="vietnam">Vietnam (2)</option>
+                    <option value="virgin-islands">Virgin Islands (1)</option>
+                  </select></div>
+                </div>
         <div class="fnd-field" id="fnd-train-field" hidden>
-          <label for="fnd-train">Day Trips by Train planned</label>
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-train"/></svg></span><select id="fnd-train">
-            <option value="">Any</option>
-          </select></div>
-        </div>
-        <!-- THREE MORE WAYS, every one measured against the READER, never a place
-             (owner 2026-08-22: "adding time zone, currency and hours of daylight
-             ... we have all the data"). Time difference is against the reader's
-             own clock; currency is the destination's own; daylight is computed
-             from the guide's latitude for the picked month. -->
+                  <label for="fnd-train">Day Trips by Train planned</label>
+                  <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-train"/></svg></span><select id="fnd-train">
+                    <option value="">Any days</option>
+                  </select></div>
+                </div>
         <div class="fnd-field">
-          <label for="fnd-tz">Time difference</label>
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-wall-clock"/></svg></span><select id="fnd-tz">
-            <option value="">Any time zone</option>
-            <option value="1">Within 1h of your clock</option>
-            <option value="3">Up to 3h from your clock</option>
-            <option value="6">Up to 6h from your clock</option>
-          </select></div>
-        </div>
+                  <label for="fnd-tz">Time difference</label>
+                  <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-wall-clock"/></svg></span><select id="fnd-tz">
+                    <option value="">Any time zone</option>
+                    <option value="1">Within 1h of your clock</option>
+                    <option value="3">Up to 3h from your clock</option>
+                    <option value="6">Up to 6h from your clock</option>
+                  </select></div>
+                </div>
         <div class="fnd-field">
-          <label for="fnd-cur">Currency</label>
-          <!-- Options are BUILT FROM THE DATA (buildCurOpts, currency-rates.json)
-               the first time the rates load: one line per currency a guide
-               actually uses, never a hand list. -->
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-exchange"/></svg></span><select id="fnd-cur">
-            <option value="">Any currency</option>
-          </select></div>
-        </div>
+                  <label for="fnd-cur">Currency</label>
+                  <!-- Options are BUILT FROM THE DATA (buildCurOpts, currency-rates.json)
+                       the first time the rates load: one line per currency a guide
+                       actually uses, never a hand list. -->
+                  <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-exchange"/></svg></span><select id="fnd-cur">
+                    <option value="">Any currency</option>
+                  </select></div>
+                </div>
         <div class="fnd-field">
-          <label for="fnd-day">Daylight</label>
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-horizon-sun"/></svg></span><select id="fnd-day">
-            <option value="">Any daylight</option>
-            <option value="long">Long days (14h or more)</option>
-            <option value="short">Short days (under 10h)</option>
-          </select></div>
-        </div>
+                  <label for="fnd-day">Daylight</label>
+                  <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-horizon-sun"/></svg></span><select id="fnd-day">
+                    <option value="">Any daylight</option>
+                    <option value="long">Long days (14h or more)</option>
+                    <option value="short">Short days (under 10h)</option>
+                  </select></div>
+                </div>
         <div class="fnd-field">
-          <label for="fnd-home-in">Where are you flying from?</label>
-          <p class="hc-hint">Shows a flying-time estimate on every card &mdash; from your airport, never from anywhere else.</p>
-          <div class="fnd-ctl">
-            <span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span>
-            <input type="text" id="fnd-home-in" placeholder="City or airport" autocomplete="off" spellcheck="false">
-          </div>
-          <ul id="fnd-home-list" class="fnd-home-list" role="listbox" hidden></ul>
-          <p id="fnd-home-note" class="fnd-home-note"></p>
-          <!-- kept for filter engine compat; defaults to any distance -->
-          <select id="fnd-far" hidden aria-hidden="true"><option value=""></option></select>
-          <!-- The Connections/Routing control that used to hang here (and later in
-               the advanced panel) is REMOVED, owner rule 2026-08-17: it read FMAP,
-               a Delta itinerary out of Seattle, so it could only ever answer for a
-               Seattle reader — "NOTHING should have anything to Seattle … needs to
-               work for all." Do not bring it back unless it works from any home. -->
-        </div>
+                  <label for="fnd-home-in">Where are you flying from?</label>
+                  <div class="fnd-ctl">
+                    <span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span>
+                    <input type="text" id="fnd-home-in" placeholder="City or airport" autocomplete="off" spellcheck="false">
+                  </div>
+                  <ul id="fnd-home-list" class="fnd-home-list" role="listbox" hidden></ul>
+                  <p id="fnd-home-note" class="fnd-home-note"></p>
+                  <!-- kept for filter engine compat; defaults to any distance -->
+                  <select id="fnd-far" hidden aria-hidden="true"><option value=""></option></select>
+                  <!-- The Connections/Routing control that used to hang here (and later in
+                       the advanced panel) is REMOVED, owner rule 2026-08-17: it read FMAP,
+                       a Delta itinerary out of Seattle, so it could only ever answer for a
+                       Seattle reader — "NOTHING should have anything to Seattle … needs to
+                       work for all." Do not bring it back unless it works from any home. -->
+                </div>
       </div>
-    </div>
-        </div>
-
-        <div class="hc-nav">
-          <button id="hc-back" type="button" hidden>&larr; Back</button>
-          <button id="hc-skip" type="button" class="hc-skip">Skip</button>
-          <button id="hc-next" type="button" class="fnd-go">Next</button>
-          <button id="hc-go" type="button" class="fnd-go" hidden><svg class="fnd-go-ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/></svg>Show my matches</button>
-          <button type="button" id="fnd-reset" class="fnd-reset" hidden>Clear everything</button>
-        </div>
+      <div class="hc-nav">
+        <button id="hc-go" type="button" class="fnd-go"><svg class="fnd-go-ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/></svg>Show my matches</button>
+        <button type="button" id="fnd-reset" class="fnd-reset" hidden>Clear everything</button>
       </div>
-
-      <!-- THE ANSWER SITS UNDER THE CONTROL THAT ASKED FOR IT (Sixty-second
-           non-negotiable). Results render here, inside the door, never
-           elsewhere on the page. -->
+      <!-- THE ANSWER SITS UNDER THE CONTROL THAT ASKED FOR IT (Sixty-second non-negotiable). -->
       <div id="fnd-results" class="fnd-results" hidden></div>
     </div>
   </div>
@@ -7060,45 +6949,28 @@ function render() {
     return lpGuideCard(g.url, g.flag, g.name, flt + facts(d, g, s));
   }
 
-  /* ── Steps, ranking and the facts line (the merge, owner 2026-08-22) ──────
-     Help Me Choose is the one door; these are its four steps. The engine
-     above is untouched — the steps only decide which field is on screen. */
+  /* ── Days (orders only), the go button, and the facts line ────────────── */
   var days = null;
-  var stepNow = 1;
-  var hcBack = document.getElementById('hc-back'), hcSkip = document.getElementById('hc-skip'),
-      hcNext = document.getElementById('hc-next'), hcGo = document.getElementById('hc-go');
-  function showStep(n) {
-    stepNow = Math.max(1, Math.min(4, n));
-    for (var i = 1; i <= 4; i++) {
-      var st = document.getElementById('hc-s' + i); if (st) st.hidden = (i !== stepNow);
-      var dot = document.getElementById('hc-dot-' + i);
-      if (dot) { dot.classList.toggle('on', i === stepNow); dot.classList.toggle('done', i < stepNow); }
-    }
-    if (hcBack) hcBack.hidden = (stepNow === 1);
-    if (hcSkip) hcSkip.hidden = (stepNow === 4);
-    if (hcNext) hcNext.hidden = (stepNow === 4);
-    if (hcGo)   hcGo.hidden   = (stepNow !== 4);
-  }
-  if (hcBack) hcBack.addEventListener('click', function () { showStep(stepNow - 1); });
-  if (hcSkip) hcSkip.addEventListener('click', function () { showStep(stepNow + 1); });
-  if (hcNext) hcNext.addEventListener('click', function () { showStep(stepNow + 1); });
+  var fDays = document.getElementById('fnd-days');
+  if (fDays) fDays.addEventListener('change', function () {
+    days = fDays.value ? parseInt(fDays.value, 10) : null;
+    run();
+  });
+  var hcGo = document.getElementById('hc-go');
   if (hcGo) hcGo.addEventListener('click', function () {
     forced = true;
     run();
     if (!out.hidden) out.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   });
-  /* Days: one chip, tap again to clear. It ORDERS, never filters. */
-  [].slice.call(document.querySelectorAll('#hc-s2 .hcchip')).forEach(function (chip) {
-    chip.addEventListener('click', function () {
-      var v = parseInt(chip.getAttribute('data-v'), 10);
-      var off = (days === v);
-      [].slice.call(document.querySelectorAll('#hc-s2 .hcchip')).forEach(function (c) { c.classList.remove('on'); });
-      days = off ? null : v;
-      if (!off) chip.classList.add('on');
-      run();
-    });
-  });
-  showStep(1);
+  /* Every filter is on screen the moment the door opens, so the datasets the
+     pruning needs (budget, advisory, rates) and the Trains reveal are fetched
+     on that first open — nobody who never opens the door pays for them. */
+  var door = document.querySelector('[data-tool="help-choose"]');
+  if (door) door.addEventListener('click', function () {
+    syncTrain();
+    loadRates();
+    if (!BUDGET || !ADVISORY) Promise.all([loadBudget(), loadAdvisory()]).then(function () { if (anySet(state())) run(); });
+  }, { once: true });
 
   /* daysScore: exact fit 2, one off 1, "8+" matches 8 and more. */
   function daysScore(d, g) {
@@ -7421,9 +7293,8 @@ function render() {
     for (var k in picks) picks[k] = [];
     all.forEach(function (el) { el.value = ''; });
     days = null;
-    [].slice.call(document.querySelectorAll('#hc-s2 .hcchip')).forEach(function (c) { c.classList.remove('on'); });
+    if (fDays) fDays.value = '';
     run();
-    showStep(1);
   });
 
   var moreBtn = document.getElementById('fnd-more');
