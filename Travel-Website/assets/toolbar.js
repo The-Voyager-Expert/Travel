@@ -5708,7 +5708,7 @@ window.TVE.home = (function () {
       { name: 'InterContinental Amstel Amsterdam', note: 'IHG brand — landmark 1867 riverside building on the Amstel River, indoor pool and health club, river-terrace dining · 8.7 Booking.com' , url: 'https://www.booking.com/hotel/nl/amstel-inter-continental.html', tier: 'luxury' },
       { name: 'Conservatorium Hotel Amsterdam', note: 'Design Hotels — converted 1901 music conservatory in the Museumkwartier, indoor pool and spa, brasserie, all rooms with 6m ceilings · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/nl/conservatorium.html', tier: 'luxury' },
       { name: 'Waldorf Astoria Amsterdam', note: 'Waldorf Astoria brand — six 17th-century canal palaces on Herengracht, Guerlain Spa with pool, Michelin-recognized dining · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/nl/waldorf-astoria-amsterdam.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: '€100–455', mid: '€205–505', expensive: '€190–620', luxury: '€380–660' } },
     'annecy': { h: [
       { name: 'Moxy Annecy', note: 'Marriott Moxy brand — Avenue du Rhône a short walk from the old town, fitness centre, bar, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/fr/moxy-annecy.html', tier: 'budget' },
       { name: 'Hôtel La Cour du 6', note: 'Independent — 6 bis Rue Royale in the Annecy city centre, 24h reception, air conditioning, on-site restaurant and coffee house · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/la-cour-du-6.html', tier: 'budget' },
