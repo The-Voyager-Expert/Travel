@@ -1367,6 +1367,29 @@ a.land-cta:hover:visited {
 .qt-row > .tl-panel, .ask-row > .tl-panel { grid-column: 1 / -1; margin-top: 0; }
 .qt-row:has(> .tl-panel:not([hidden])) > .qt-card,
 .ask-row:has(> .tl-panel:not([hidden])) > .ask-card { grid-column: 1 / -1; }
+
+/* The Stats panel holds nine links, and .lp-links auto-fills as many 9rem
+   columns as the rail allows — six of them at desktop width, so the list ran
+   six across and then four, leaving a ragged half-empty second row. The fix is
+   the panel, not the list: capped at 40rem and centred on the row, three
+   columns divide nine into three complete rows at every width above the phone
+   breakpoint, where it drops to one column and is complete again by definition.
+   Owner 2026-08-22: "make sure these are all in rows ... just make the banner
+   smaller instead of doing this and make the banner in the center of the page".
+   Keep the count a divisor of the number of links: adding a tenth link here
+   means moving the column count with it, or the ragged row comes back. */
+/* width, not max-width alone: auto side margins on a GRID ITEM size it to
+   max-content, so on a phone the panel shrank to one 143px column floating
+   in the middle of the row instead of filling it. */
+#tp-stats { width: min(40rem, 100%); margin-left: auto; margin-right: auto; }
+#tp-stats .lp-links { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* Gated on the pointer as well as the width — a narrowed desktop window
+   reports a phone's width, and on a fine pointer three 143px columns are
+   still three complete rows rather than a ragged two-across (Toolbar.html
+   § 42). */
+@media (max-width: 600px) and (pointer: coarse) {
+  #tp-stats .lp-links { grid-template-columns: minmax(0, 1fr); }
+}
 /* The panel fetches /guides/index.html on first open; without this it is an
    empty bordered box for the length of that request. */
 .tl-panel.waking { min-height: 5rem; position: relative; }
@@ -3880,7 +3903,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
     <button type="button" class="qt-card" data-tool="compare" aria-expanded="false" aria-controls="tp-compare">
       <span class="qt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-compare"/></svg></span>
       <span class="qt-name">Compare cities</span>
-      <span class="qt-desc">Up to five shortlisted cities side by side &mdash; days, weather, flight time.</span>
+      <span class="qt-desc">Up to five cities side by side &mdash; days, weather, flight time.</span>
     </button>
   <!-- ═══ COMPARE ══════════════════════════════════════════════════════════════
        The comparison itself, on this page. It used to be a link to
@@ -3918,11 +3941,10 @@ window.lpGuideCard = function (href, flag, name, extra) {
     <button type="button" class="qt-card" data-tool="stats" aria-expanded="false" aria-controls="tp-stats">
       <span class="qt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-bar-chart"/></svg></span>
       <span class="qt-name">Stats</span>
-      <span class="qt-desc">Guide counts and averages by region, the records page, and the world map.</span>
+      <span class="qt-desc">Guide counts and averages by region, plus the records page.</span>
     </button>
   <div class="tl-panel" id="tp-stats" hidden>
     <nav class="lp-links">
-      <a href="/maps/world/">World map</a>
       <a href="/stats/records/">Destination records</a>
       <a href="/stats/europe/">Europe</a>
       <a href="/stats/asia/">Asia</a>
