@@ -7788,7 +7788,13 @@ window.TVE.home = (function () {
       word.appendChild(coinRow(coins));
       word.appendChild(document.createTextNode(label));
       row.appendChild(word);
+      /* The rule runs on BOTH sides of the range — the approved mock-up had the
+         price sitting inside the line, not hanging off the end of the label. The
+         lead segment is short and fixed; the trailing one takes the rest. */
       if (price) {
+        var lead = document.createElement('span');
+        lead.className = 'hr-line hr-line-lead';
+        row.appendChild(lead);
         var f = document.createElement('span');
         f.className = 'hr-price';
         f.textContent = price;
