@@ -5257,8 +5257,10 @@ window.TVE.home = (function () {
      search process used to pick the guide hotel; added during each guide build.
      Every slug carries a MINIMUM of 4 hotels — there is NO maximum; list every
      alternative that clears the quality bar. Each hotel needs name + note + url
-     (Booking.com property page). Enforced by the FINAL GATE in
-     validate_itinerary.py and fleet-wide by check_post_ci_sections.py.          */
+     (Booking.com property page) + tier, and the slug carries, AFTER the h: array,
+     price: { budget, mid, expensive, luxury } — one range per tier head (owner
+     rule 2026-08-22). Enforced by the FINAL GATE in validate_itinerary.py and
+     fleet-wide by check_post_ci_sections.py.                                     */
   var HOTEL_ALT_DATA = {
     /* entries added per guide during build — see Separation Map.md § Hotels & Rentals */
     'granada': { h: [
@@ -6982,7 +6984,12 @@ window.TVE.home = (function () {
        hides an empty tier, which is the one thing this section must reveal.
        Entries with no `tier` render ungrouped, ABOVE the tiers, so the fleet
        keeps rendering while the backfill runs — a reader never sees a broken
-       section because the data is mid-migration. */
+       section because the data is mid-migration.
+       EACH HEAD CARRIES THE TIER'S PRICE RANGE from entry.price[tier] — '€90–140',
+       per night, double room, the destination's own currency — drawn into
+       span.hr-price. REQUIRED, FINAL GATE (owner rule 2026-08-22: the approved
+       design had the range and the retired zero-money rule took it off). The
+       price object sits AFTER the h: array — every parser finds a slug by "{ h:". */
     var TIERS = [
       ['budget',    'Budget',    1, 'hr-budget'],
       ['mid',       'Mid',       2, 'hr-mid'],
@@ -7003,7 +7010,7 @@ window.TVE.home = (function () {
       return s;
     }
 
-    function tierHead(label, coins, cls, from) {
+    function tierHead(label, coins, cls, price) {
       var row = document.createElement('div');
       row.className = 'hr-tier ' + cls;
       var word = document.createElement('span');
@@ -7011,10 +7018,10 @@ window.TVE.home = (function () {
       word.appendChild(coinRow(coins));
       word.appendChild(document.createTextNode(label));
       row.appendChild(word);
-      if (from) {
+      if (price) {
         var f = document.createElement('span');
-        f.className = 'hr-from';
-        f.textContent = 'from ' + from;
+        f.className = 'hr-price';
+        f.textContent = price;
         row.appendChild(f);
       }
       var line = document.createElement('span');
@@ -7079,7 +7086,7 @@ window.TVE.home = (function () {
     TIERS.forEach(function (tr) {
       var list = entry.h.filter(function (x) { return x.tier === tr[0]; });
       if (!list.length) return;
-      wrap.appendChild(tierHead(tr[1], tr[2], tr[3], (entry.from || {})[tr[0]]));
+      wrap.appendChild(tierHead(tr[1], tr[2], tr[3], (entry.price || {})[tr[0]]));
       wrap.appendChild(gridOf(list));
     });
     var anCity = AN_NEIGHBORHOOD_CITIES[slug];

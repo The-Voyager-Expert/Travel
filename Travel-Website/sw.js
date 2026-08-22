@@ -1,3 +1,4 @@
+/* 2026-08-22: HOTEL RECOMMENDATIONS — every tier head draws its PRICE RANGE from entry.price[tier] (span.hr-price; was entry.from, rendered 'from X', carried by no guide). Owner retired the site-wide zero-money rule: the approved design had the range and the rule had stripped it. REQUIRED by a new FINAL GATE; the 8 fix-guides cribs add it per guide, no guide touched here. toolbar.js -> v847, guide-style.css -> 259. CACHE to v1225. */
 /* 2026-08-22: RULES AUDIT — 'high-speed-train' (#171) leaves GM_SPRITE (one train drawing site-wide, #1237); guide-style.css drops the live rules for four retired components (.extras-lead ask line, the #getting-around/#food-delivery .extras-overview row, #skip-list and .skip-list-note) so the next crib cannot rebuild them from CSS that still describes them. toolbar.js -> v845, guide-style.css -> 258. CACHE to v1223. */
 /* 2026-08-22: NOTHING STARTS FROM ANY PLACE — ROUTINGS_FROM = 'SEA' deleted from TVE.home, and with it every exact-routing branch (landing compare row + finder, guides-index flight view + compare row, Destination Records). FMAP lost its per-origin fields (t, m, r, d, h, lg), the records DATA lost fm/ft/fr, the routing legend is gone. Every reader gets the same ~flying-time estimate from their own airport. toolbar.js -> v841, guides-index-style.css -> 24. CACHE to v1217. */
 /* 2026-08-21: Best-Of place pages — #bo-no-results moved out of 33 identical inline <style> blocks into web-travel-style.css (SHARED CSS ONLY; check_best_of_css_standard retargeted from the retired essentials/Best-*.html glob onto best-of/<slug>/ and saw them at once). web-travel-style.css -> 90. CACHE to v1208. */
@@ -1775,7 +1776,7 @@
 /* 2026-08-22: one Lounges page for the whole world — essentials/lounges-us/ and essentials/lounges-europe/ merged into essentials/lounges/ and left the deployed tree (owner: "Lounges needs to be one page with all the lounges in the world" · "nor US or EU should have any priority, all the countries need to look the same and have the same treatment"). 45 countries A-Z, 91 airports, 266 lounges; every airport card keyed on its own IATA. toolbar.js: US_IATAS + EU_ANCHOR (a list and a country-anchor map) replaced by one flat LOUNGE_IATAS, so the Day 1 chip needs no per-region branch — which also fixes LAS, on the page and missing from the US list, so every Las Vegas guide shipped chipless. web-travel-style.css: .section-label.skyteam / .amex retired for the four ACCESS families .airline / .pay / .pp / .card, coloured from the badge family tokens so they flip for dark mode with no second rule — one alliance cannot own a colour on a worldwide page. Both are MIN_VERSIONS assets, so both floors move. toolbar.js -> v843, web-travel-style.css -> v93. CACHE to v1221. */
 /* 2026-08-22: HOTEL_ALT_DATA tiers for Boston, Nashville and Reykjavik (8-11 hotels each, all four price tiers) — research a crib finished and died before landing; pushed by owner instruction. toolbar.js 843→844. */
 /* 2026-08-22: Curaçao: hotel price tiers and CUR lounge card toolbar.js -> v846. CACHE to v1224. */
-var CACHE = 'travel-cache-v1224';
+var CACHE = 'travel-cache-v1225';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1788,7 +1789,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 258,'toolbar.js': 846, 'mobile.css': 88, 'web-travel-style.css': 93, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 259,'toolbar.js': 847, 'mobile.css': 88, 'web-travel-style.css': 93, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
