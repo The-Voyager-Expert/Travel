@@ -6323,11 +6323,16 @@ window.TVE.home = (function () {
       { name: 'BA\'RA Hotel', note: 'Independent — Av. Cabo Branco on the Cabo Branco beachfront, 5-star, year-round outdoor pool, full spa, kids\' club, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/ba-39-ra-joao-pessoa.html', tier: 'luxury' }
     ], price: { budget: 'R$500–600', mid: 'R$700–850', expensive: 'R$1,100–1,300', luxury: 'R$1,450+' } },
     'kauai': { h: [
-      { name: '1 Hotel Hanalei Bay', note: 'SH Hotels — Ka Haku Road on the Princeville cliffs above Hanalei Bay, 5-star, year-round pool, spa, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/1hotel-hanalei-bay.html' },
-      { name: "Koloa Landing Resort at Po'ipu · Autograph Collection", note: 'Marriott Autograph Collection — Poipu Road, 4-star, five pools including a waterslide, spa, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/wyndham-koloa-landing-at-poipu-beach.html' },
-      { name: 'Sheraton Kauai Resort', note: 'Marriott Sheraton brand — Hoonani Road on Poipu Beach, beachfront, year-round pool, spa, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/sheraton-kauai-resort.html' },
-      { name: "Marriott's Kaua'i Beach Club", note: 'Marriott brand — Rice Street on Kalapaki Beach in Lihue, 4-star, beachfront, spa, 24h reception · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/marriott-s-kaua-i-beach-club.html' }
-    ] },
+      { name: '1 Hotel Hanalei Bay', note: 'SH Hotels — Ka Haku Road on the Princeville cliffs above Hanalei Bay, 5-star, year-round pool, spa, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/1hotel-hanalei-bay.html', tier: 'luxury' },
+      { name: "Koloa Landing Resort at Po'ipu · Autograph Collection", note: 'Marriott Autograph Collection — Poipu Road, 4-star, five pools including a waterslide, spa, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/wyndham-koloa-landing-at-poipu-beach.html', tier: 'luxury' },
+      { name: 'Sheraton Kauai Resort', note: 'Marriott Sheraton brand — Hoonani Road on Poipu Beach, beachfront, year-round pool, spa, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/sheraton-kauai-resort.html', tier: 'expensive' },
+      { name: "Marriott's Kaua'i Beach Club", note: 'Marriott brand — Rice Street on Kalapaki Beach in Lihue, 4-star, beachfront, spa, 24h reception · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/marriott-s-kaua-i-beach-club.html', tier: 'expensive' },
+      { name: 'Kauai Inn', note: 'Independent — Rice Street on the edge of Lihue, 3-star, plantation-era inn with an outdoor pool, 24h reception · 9.2 Expedia', url: 'https://www.expedia.com/Lihue-Hotels-Kauai-Inn.h2457742.Hotel-Information', tier: 'budget' },
+      { name: 'Hilton Garden Inn Kauai Wailua Bay', note: 'Hilton Garden Inn brand — Kuhio Highway at Wailua Bay, 3-star, beachfront lawn and outdoor pool, 24h reception · 7.0 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-garden-inn-kauai-wailua-bay.html', tier: 'budget' },
+      { name: 'Kauai Shores Hotel', note: 'Independent — Papaloa Road on the Kapaa coconut coast, 3-star, beachfront, two outdoor pools, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/kauai-sand.html', tier: 'mid' },
+      { name: 'Sheraton Kauai Coconut Beach Resort', note: 'Marriott Sheraton brand — Aleka Loop on Coconut Beach in Kapaa, 4-star, beachfront, heated infinity pool, 24h reception · 7.9 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-kauai-at-coconut-beach.html', tier: 'mid' },
+      { name: 'Koa Kea Resort on Poipu Beach', note: 'Independent — Poipu Road on Poipu Beach, 4-star boutique, beachfront, heated saltwater pool, spa, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/koa-kea-resort.html', tier: 'luxury' }
+    ], price: { budget: '$210–290', mid: '$330–400', expensive: '$500–700', luxury: '$730+' } },
     'keywest': { h: [
       { name: 'Ocean Key Resort & Spa', note: 'Curio Collection by Hilton — Sunset Key views at Zero Duval, rooftop pool, private dock access, steps from Mallory Square sunset · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/ocean-key-resort-spa-key-west-florida.html' },
       { name: 'The Marker Key West Harbor Resort', note: 'Autograph Collection by Marriott — Old Town historic district, three pools including adults-only, marina access, tropical gardens · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/po-the-marker-key-west-harbor-resort.html' },
@@ -10857,12 +10862,13 @@ window.TVE.home = (function () {
        list) while every European guide jumped to its country rather than to
        its airport. */
     var LOUNGE_IATAS = [
-      'AGP','AMS','ARN','ATH','ATL','AUA','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG','CMB',
-      'CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DFW','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT',
-      'GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS',
-      'LAX','LGA','LGW','LHR','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MSP','MUC','MXP',
-      'NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PVG','RAK','SAN','SCL','SEA','SFO','SIN','SJO',
-      'SKG','SLC','SPU','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'AGP','AMS','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG',
+      'CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DFW','DOH','DTW','DUB','DUS','DXB','EDI','FAO',
+      'FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST',
+      'JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL',
+      'MIA','MLE','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS','PVG','RAK',
+      'RSW','SAN','SCL','SEA','SFO','SIN','SJO','SKG','SLC','SPU','SYD','TPE','VCE','VIE','VLC','WLG',
+      'YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
