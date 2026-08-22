@@ -6139,12 +6139,16 @@ window.TVE.home = (function () {
       { name: 'Nomaa Hotel', note: 'Independent boutique — Batel, 5-star, Nomade Restaurant with seasonal Brazilian tasting menu, intimate rooftop deck · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/nomaa.html', tier: 'luxury' }
     ], price: { budget: 'R$350–480', mid: 'R$480–700', expensive: 'R$700–900', luxury: 'R$1,100+' } },
     'cusco': { h: [
-      { name: 'Monasterio, A Belmond Hotel, Cusco', note: 'Belmond brand — 16th-century San Antonio Abad seminary on Plazoleta Nazarenas, baroque chapel, altitude oxygen service · 9.8 Booking.com', url: 'https://www.booking.com/hotel/pe/monasterio-cusco.html' },
-      { name: 'Casa Cartagena Boutique Hotel & Spa', note: 'Independent boutique — Calle Pumacurco in the Centro Histórico, spa with sauna and steam bath, 24h reception · 9.6 Booking.com', url: 'https://www.booking.com/hotel/pe/casa-cartagena-boutique-spa.html' },
-      { name: 'Aranwa Cusco Boutique Hotel', note: 'Aranwa Hotels — Calle San Juan de Dios, colonial mansion, 24h reception, air conditioning · 9.4 Booking.com', url: 'https://www.booking.com/hotel/pe/aranwa-cusco-boutique.html' },
-      { name: 'JW Marriott El Convento Cusco', note: 'Marriott JW brand — 16th-century convent on Calle Ruinas, indoor pool, spa, altitude oxygen enrichment · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pe/jw-marriott-cusco.html' },
-      { name: 'Inkaterra La Casona Relais & Chateaux', note: 'Relais & Châteaux — 16th-century colonial manor on Plaza de las Nazarenas, 11 suites with original Inca stonework · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pe/inkaterra-la-casona.html' }
-    ] },
+      { name: 'Hostal & Apartments El Triunfo', note: 'Independent — Calle Triunfo 379, a block off the Plaza de Armas, heated rooms, 24h reception, airport shuttle · 9.2 Booking.com', url: 'https://www.booking.com/hotel/pe/hostal-el-triunfo.html', tier: 'budget' },
+      { name: 'Maytaq Wasin Boutique Hotel', note: 'Independent boutique — Santa Catalina Ancha 342 in the Centro Histórico, roof terrace, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/pe/maytaq-wasin-boutique.html', tier: 'budget' },
+      { name: 'Casa San Blas Cusco Boutique Hotel', note: 'Independent boutique — Tocuyeros 566 in San Blas, sun terrace over the rooftops, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/pe/sanblas.html', tier: 'mid' },
+      { name: 'Hotel Rumi Punku', note: 'Independent — Calle Choquechaca 339 behind an Inca stone doorway, gardens and terraces, spa lounge, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pe/rumi-punku.html', tier: 'mid' },
+      { name: 'Aranwa Cusco Boutique Hotel', note: 'Aranwa Hotels — Calle San Juan de Dios, colonial mansion, 24h reception, air conditioning · 9.4 Booking.com', url: 'https://www.booking.com/hotel/pe/aranwa-cusco-boutique.html', tier: 'expensive' },
+      { name: 'JW Marriott El Convento Cusco', note: 'Marriott JW brand — 16th-century convent on Calle Ruinas, indoor pool, spa, altitude oxygen enrichment · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pe/jw-marriott-cusco.html', tier: 'expensive' },
+      { name: 'Casa Cartagena Boutique Hotel & Spa', note: 'Independent boutique — Calle Pumacurco in the Centro Histórico, spa with sauna and steam bath, 24h reception · 9.6 Booking.com', url: 'https://www.booking.com/hotel/pe/casa-cartagena-boutique-spa.html', tier: 'expensive' },
+      { name: 'Monasterio, A Belmond Hotel, Cusco', note: 'Belmond brand — 16th-century San Antonio Abad seminary on Plazoleta Nazarenas, baroque chapel, altitude oxygen service · 9.8 Booking.com', url: 'https://www.booking.com/hotel/pe/monasterio-cusco.html', tier: 'luxury' },
+      { name: 'Inkaterra La Casona Relais & Chateaux', note: 'Relais & Châteaux — 16th-century colonial manor on Plaza de las Nazarenas, 11 suites with original Inca stonework · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pe/inkaterra-la-casona.html', tier: 'luxury' }
+    ], price: { budget: '$60–100', mid: '$100–200', expensive: '$200–400', luxury: '$400+' } },
     'dallas': { h: [
       { name: 'Rosewood Mansion on Turtle Creek', note: 'Rosewood brand — 1925 Tudor mansion in Uptown, outdoor heated pool and terrace, acclaimed Restaurant at Rosewood Mansion, full-service spa · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/us/rosewood-mansion-on-turtle-creek.html' },
       { name: 'The Ritz-Carlton, Dallas', note: "Ritz-Carlton brand — Uptown at McKinney and Maple, indoor pool, Ellie's Restaurant and Lounge, 24-hour butler · 8.8 Booking.com" , url: 'https://www.booking.com/hotel/us/the-ritz-carlton-dallas.html' },
@@ -10840,7 +10844,7 @@ window.TVE.home = (function () {
        its airport. */
     var LOUNGE_IATAS = [
       'AGP','AMS','ARN','ATH','ATL','AUA','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG','CMB',
-      'CPH','CPT','CUN','CUR','CWB','DBV','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT',
+      'CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT',
       'GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS',
       'LAX','LGA','LGW','LHR','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MSP','MUC','MXP',
       'NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PVG','RAK','SAN','SCL','SEA','SFO','SIN','SJO',
