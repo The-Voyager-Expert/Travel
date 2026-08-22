@@ -182,7 +182,15 @@
    Recipes are in the comment above each <img>. They go stale the ordinary way
    (a hotel changes, the weather strip is the weather of the day it was shot) —
    re-run the capture, do not paint over the file. ── */
-.gi { max-width: 1120px; margin: 0 auto clamp(2rem, 4vw, 3rem); padding: 0 24px; }
+/* THE GAP BELOW THE BLOCK EQUALS THE GAP ABOVE THE ICON KEY, and that is not a
+   coincidence — it is the Fifty-fourth non-negotiable applied to the key card:
+   its two sides carry the same clamp, so the banner sits with equal air above
+   and below at every viewport. Owner 2026-08-22: "move bookmark lower it is too
+   glued to the icons." What was glued was the KEY, which had no card of its own
+   and 22-32px of margin under a bare row of marks; #pinned-strip's own 24px
+   margin-top collapses under this one, so THIS is the number that moves the
+   bookmark strip. Raise the smaller gap, never cut the larger. */
+.gi { max-width: 1120px; margin: 0 auto clamp(2.2rem, 4vw, 3.2rem); padding: 0 24px; }
 #guides-intro[hidden] { display: none !important; }
 .gi-lead { max-width: 760px; margin: 0 auto clamp(1.5rem, 3vw, 2.1rem); text-align: center; }
 .gi-lead h2 { font-size: clamp(1.45rem, 3vw, 2.05rem); line-height: 1.15; letter-spacing: -.025em;
@@ -233,32 +241,102 @@
    reality"). The world map IS quantized, and that is measured too, not assumed:
    flat fills and labels, no gradient icons, worst error 44 and 0.00% of pixels
    off by more than 40. The stops map stays JPEG for its raster tiles. */
-.gi-cards { display: grid; grid-template-columns: 1fr 1fr;
-  gap: clamp(10px, 1.6vw, 16px); align-items: stretch; grid-auto-rows: 1fr; }
-.gi-card { background: var(--surface, #fff); border: 1px solid var(--border2, #e6e2da);
-  border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+/* TWO CAROUSELS, SIDE BY SIDE — copied from the landing page field for field
+   (owner rule 2026-08-22: "actually copy the home page solution put them all in
+   two carousels. copy size etc" · "like that put map and a good one as the top
+   image make sure the arrows work at the end").
+
+   THIS REPLACES THE SIX-CARD GRID of 2026-08-21. That grid was right about
+   equal heights and wrong about size: six 17:10 cards two to a row is ~1,050px
+   of screenshots sitting on top of the 237 guides, and the owner's word was
+   "way too big". Two carousels show two pictures at a time and page through the
+   rest, so the block is ~510px and every screenshot is still full size.
+   Do NOT "restore" the grid — a card per feature is what was measured as too
+   much page.
+
+   Everything below matches .lp-carousels / .lp-tools / .lp-plan in
+   Travel-Website/index.html. Those rules live in that page's own <style>, not
+   in shared CSS, so this is a copy rather than a reuse — keep the two in step
+   when either moves. The three that are load-bearing there are load-bearing
+   here for the same reasons:
+     · `min-width: 0` on each section, or a grid column refuses to shrink below
+       its content and the pair overflows the rail.
+     · ONE column below 1000px. At the rail's 1072px two columns are ~528px and
+       a screenshot still reads; much under that a column stops being a picture
+       and starts being a thumbnail. 1000 is an INTERMEDIATE reflow breakpoint,
+       so it takes no `pointer: coarse` term and must not be moved onto
+       600/601/1260 (check_mobile_breakpoints_gated_on_pointer).
+     · The 600px card cap, and `.gi-steps-nav` sharing it — without the second
+       half the arrows float out at the rail's right edge, half a screen from
+       the card they page.
+   The gap is the grid's, in one place, horizontal side by side and vertical
+   when stacked, so the two can never drift apart. */
+.gi-carousels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2.2vw, 1.6rem); align-items: start; }
+@media (max-width: 1000px) {
+  .gi-carousels { grid-template-columns: 1fr; gap: clamp(2.6rem, 5vw, 4rem); }
+}
+.gi-tour, .gi-mine { display: block; min-width: 0; }
+.gi-tile { display: block; text-decoration: none; border-radius: 14px;
+  overflow: hidden; -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 1px 2px rgba(23,21,15,.08), 0 8px 24px rgba(23,21,15,.10);
+  transition: transform .12s ease; }
+.gi-tile:active { transform: scale(.992); }
+.gi-tile, .gi-steps-nav { max-width: 600px; margin-left: auto; margin-right: auto; }
+
 /* THE IMAGE IS TAKEN OUT OF FLOW, and that is not tidiness — it is the only way
    the aspect-ratio actually holds. An in-flow `height: 100%` against a height
    that comes FROM aspect-ratio is a cyclic dependency, so the browser resolves
    the height as auto, the img lays out at its own intrinsic ratio, and the
-   block grows to whatever that is. Measured: the boxes came out 325 / 318 / 309
-   / 308 / 309 / 310 — a 17px spread in the exact thing the owner asked to be
-   equal, with aspect-ratio present and computing 17/10 the whole time. Absolute
-   positioning breaks the cycle: the box is sized by the ratio alone and the img
-   fills it. Do not "simplify" this back to an in-flow image. */
+   block grows to whatever that is. Measured on the old grid: the boxes came out
+   325 / 318 / 309 / 308 / 309 / 310 — a 17px spread in the exact thing the
+   owner asked to be equal, with aspect-ratio present and computing 17/10 the
+   whole time. Absolute positioning breaks the cycle: the box is sized by the
+   ratio alone and the img fills it. Do not "simplify" this back to an in-flow
+   image.
+
+   OBJECT-FIT IS CONTAIN, NEVER COVER, and that matters MORE in a carousel than
+   it did in the grid. The six sources are genuinely different shapes (1.40 to
+   3.46), so one shared box plus `cover` would trim whichever step is tallest,
+   always from the bottom, which is where the payoff sits — and it would trim it
+   silently, one step in six. Contain scales the whole picture down and
+   letterboxes what is left, which is why the card never changes height as you
+   page without anything being cropped to get there. The letterbox ground is
+   #f5f4f0, the guides' own page cream, so a wide-short shot reads as page
+   margin rather than as dead space. 16/10 is the landing carousel's own ratio
+   ("copy size"), which is also Best Of's tile. */
 .gi-shot { display: block; position: relative; overflow: hidden;
-  background: #f5f4f0; aspect-ratio: 17 / 10;
-  border-bottom: 1px solid var(--border2, #e6e2da); }
+  background: #f5f4f0; aspect-ratio: 16 / 10; }
 .gi-shot img { position: absolute; inset: 0; display: block;
   width: 100%; height: 100%; object-fit: contain; object-position: center; }
-/* A caption is ONE line of label and ONE short line under it. flex:1 is what
-   lets a two-line caption stretch its own card without the row going ragged. */
-.gi-body { padding: 16px 20px; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; }
-/* The CTA rides inside the map card's caption now that the card is in the grid. */
-.gi-body .gx-btn { align-self: flex-start; margin-top: .85rem; }
-.gi-body h3 { margin: 0 0 .35rem; font-size: 1.02rem; font-weight: 700; letter-spacing: -.015em;
-  color: var(--text, #17150f); }
-.gi-body p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--muted, #6a6660); }
+
+/* The terracotta band under each shot — the landing carousels' band, same
+   values. The title carries the chevron because the whole tile is one <a>. */
+.gi-band { display: block; padding: 13px 15px 15px; background: var(--rust, #C04E1A); }
+.gi-band-t { display: block; font-size: 16.5px; font-weight: 700; line-height: 1.25; color: #fff; }
+.gi-band-t::after { content: ' \203A'; opacity: .75; }
+.gi-band-d { display: block; margin-top: 5px; font-size: 13.5px; line-height: 1.5;
+  color: rgba(255,255,255,.88); }
+
+/* The step counter and the two arrows. `.gi-arrow` is `.lp-hero-arrow` copied
+   value for value — that class is declared inside the landing page's own
+   <style>, so it cannot be reused from here; if either moves, move both. */
+.gi-steps-nav { display: flex; align-items: center; justify-content: flex-end;
+  gap: .55rem; margin-top: .55rem; }
+.gi-steps-count { margin-right: auto; font-size: 12px; font-weight: 600;
+  letter-spacing: .04em; color: var(--muted, #6a6660); font-variant-numeric: tabular-nums; }
+.gi-arrow { width: 2rem; height: 2rem; padding: 0; display: grid; place-items: center;
+  background: #fff; border: 1px solid rgba(192, 78, 26, .30); border-radius: 999px;
+  color: var(--brand, #a94e1c); cursor: pointer;
+  transition: background .18s ease, border-color .18s ease; }
+.gi-arrow:hover, .gi-arrow:focus-visible { background: var(--warm, #fdf4ed); border-color: rgba(192, 78, 26, .55); }
+.gi-arrow svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* A finger needs a bigger target than a cursor — the stop-control size inside a
+   guide (Thirty-third non-negotiable) rather than the 32px desktop dot. */
+@media (max-width: 600px) and (pointer: coarse) {
+  .gi-arrow { width: 2.5rem; height: 2.5rem; }
+}
 
 /* THE SCAN-LIST. Every feature a guide carries, as LABELS — never sentences.
    Multicol, not grid: 26 items of one line each balance into even columns by
@@ -278,45 +356,98 @@
 .gi-list li em { font-style: normal; font-weight: 700; }
 .gi-list li a { color: var(--rust, #C04E1A); font-weight: 600; }
 
-/* Icon key — 5 drawn marks explained with a real example value each. Sits
-   between the scan-list and the map spill. The SVG <use> refs resolve against
-   the #gm-sprite toolbar.js injects on every page. */
-.gi-key { margin: clamp(1.4rem, 2.5vw, 2rem) 0 0; }
-.gi-key-label { margin: 0 0 .7rem; font-size: .78rem; font-weight: 700;
+/* ── THE ICON KEY ─────────────────────────────────────────────────────────────
+   EVERY MARK A READER MEETS INSIDE A GUIDE, EXPLAINED (owner rule 2026-08-22:
+   "we have the hiking, accessibility icons and not sure what else add to this
+   list. make sure all icons are here explained. heads up should say what the
+   section does not just repeat the name!").
+
+   It shipped with five marks and the guides carry twenty-three. The ones it was
+   missing are exactly the ones a reader cannot work out: the Maps route link,
+   which is an icon with NO text beside it at all; the hotel-and-coach pair that
+   means the tour collects you, which is two pictures and nothing else on 533
+   rows; the hiking terrain row; and the five Position 2c notes (Fifty-first
+   non-negotiable) that say what you have to climb, walk or squeeze through.
+
+   A LABEL SAYS WHAT THE MARK IS FOR, NEVER WHAT IT IS CALLED. "heads up" was
+   the whole entry for the warning row and told a reader nothing they could not
+   already see from the triangle — that was the owner's second note, and it is
+   the rule for every row here.
+
+   WHITE BANNER, NOT LOOSE TEXT ON THE PAGE (owner: "maybe the icons should be
+   on top of a white banner? i want to call more attention to it"). The card
+   also gives the block an edge, which is what puts real air between it and the
+   bookmark strip below — the other half of the same instruction.
+
+   Grouped rather than one long wrap: twenty-three items in a single centred
+   flex run reads as soup. The SVG <use> refs resolve against the #gm-sprite
+   toolbar.js injects on every page. */
+.gi-key { margin: clamp(2.2rem, 4vw, 3.2rem) 0 0;
+  background: var(--surface, #fff); border: 1px solid var(--border2, #e6e2da);
+  border-radius: 14px; padding: clamp(20px, 2.8vw, 28px) clamp(16px, 3vw, 30px); }
+.gi-key-label { margin: 0 0 1rem; font-size: .78rem; font-weight: 700;
   letter-spacing: .1em; text-transform: uppercase; color: var(--rust, #C04E1A); text-align: center; }
+.gi-key-grp + .gi-key-grp { margin-top: clamp(15px, 2.2vw, 21px);
+  padding-top: clamp(15px, 2.2vw, 21px); border-top: 1px solid var(--border2, #e6e2da); }
+.gi-key-sub { margin: 0 0 .6rem; text-align: center; font-size: .73rem; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase; color: var(--muted, #6a6660); }
 .gi-key-row { display: flex; flex-wrap: wrap; justify-content: center;
-  gap: clamp(10px, 2vw, 18px) clamp(20px, 4vw, 48px); }
+  gap: clamp(9px, 1.6vw, 14px) clamp(16px, 2.8vw, 34px); }
 .gi-key-item { display: flex; align-items: center; gap: 7px;
   font-size: .88rem; color: var(--text, #17150f); }
 .gi-key-item svg { flex-shrink: 0; }
+/* The one row that is TWO marks — hotel and coach, the tour-pickup pair. They
+   sit tighter than the 7px gap above so the pair reads as one mark. */
+.gi-key-pair { display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; }
 .gi-key-val { font-weight: 700; }
 /* --muted, not --border: the border token is a hairline colour and in dark mode
    it is #3a3730, which puts this dash at 1.48:1 on the page ground — below AA
    and caught by validate_dark_mode. It reads as decoration but it is text. */
 .gi-key-sep { margin: 0 3px; color: var(--muted, #6a6660); }
 @media (max-width: 480px) {
-  .gi-key-row { gap: 10px 16px; }
+  .gi-key-row { gap: 9px 14px; }
+  .gi-key-item { font-size: .84rem; }
 }
 
 /* RETIRED 2026-08-21 — `.gi-mark`, the side-by-side map panel that used to sit
    under the whole block: text in one column, the pins in the other, full width.
    Owner: "add the map up one side only ... dont put side by side with the pins
-   but they should be all fiting in two colluns". The world map is a plain
-   .gi-card in the grid now, picture on top and caption under it like every
-   other card, with its CTA in the caption. Re-adding a wide panel below the
-   cards puts the map back at the bottom, which is what "add the map up" moved
-   it out of. The rules are deleted rather than left orphaned — CSS that still
-   describes a retired component is how the next crib talks itself into
-   rebuilding it.
-   WEIGHT-ONLY emphasis survives the move and is not decoration: --rust is
-   #D4663A in dark mode, which is 4.03:1 on the --surface card and under AA at
-   this size, so the map caption's <strong> stays a weight and never a colour.
-   Measured — a terracotta emphasis here is what validate_dark_mode.py catches. */
-.gi-body p strong { font-weight: 700; color: var(--text, #17150f); }
+   but they should be all fiting in two colluns". The world map is the FIRST
+   STEP of the second carousel now (owner 2026-08-22: "put map and a good one as
+   the top image"), so it opens the block rather than closing it. Re-adding a
+   wide panel below the carousels puts the map back at the bottom, which is what
+   "add the map up" moved it out of. The rules are deleted rather than left
+   orphaned — CSS that still describes a retired component is how the next crib
+   talks itself into rebuilding it.
+   WEIGHT-ONLY emphasis survives every move of this block, and it is not
+   decoration: the band description is cream on solid terracotta, where a
+   coloured <strong> has nowhere to go that still passes — so emphasis is a
+   weight and the ink stays #fff. Same reasoning as the guides-intro band on the
+   landing page; measured with validate_dark_mode.py. */
+.gi-band-d strong { font-weight: 700; color: #fff; }
 
 @media (prefers-color-scheme: dark) {
   .gi-shot { background: #201e1c; }
   .gi-shot img { opacity: .92; }
+  /* THE BAND TAKES THE DARKER TERRACOTTA IN DARK MODE, for the same measured
+     reason as the .gx-btn note below it: --rust is #D4663A on a dark ground —
+     the LIFT that makes terracotta legible as ink or as a thin rim — and cream
+     on that fill is 3.65:1, under AA. The darker #C04E1A puts it at 4.83:1.
+     Both are the one approved terracotta pair (Thirty-fifth non-negotiable);
+     what changes is which of them a large filled area wants. Caught by
+     validate_dark_mode.py — do not "simplify" it back to var(--rust). */
+  .gi-band { background: #C04E1A; }
+  /* The key card sits at #201e1c rather than --surface (#2a2825), and that is
+     measured too: its terracotta label is 12.5px/700, so it needs 4.5:1, and
+     #D4663A gives only 4.03 on --surface against 4.56 here. The alternative
+     was to recolour the label, and there is no approved terracotta that clears
+     AA on the lighter card — so the card moves and the label stays terracotta.
+     #201e1c is the value .gi-shot already uses on this page, not a new one, and
+     it still reads as raised against the #1a1917 page ground. */
+  .gi-key { background: #201e1c; }
+  /* Copied from .lp-hero-arrow's own dark rule on the landing page — a
+     hardcoded #fff disc is the one BRIGHT SURFACE validate_dark_mode finds. */
+  .gi-arrow { background: var(--surface); border-color: var(--border); }
   /* The filled CTA is the one thing here that does NOT take var(--rust) in dark
      mode, and the hexes are deliberate rather than drift. --rust is #D4663A on a
      dark ground — the LIFT that makes terracotta legible as ink or as a thin rim
@@ -335,10 +466,22 @@
 }
 @media (max-width: 1000px) { .gi-list { columns: 3; } }
 @media (max-width: 760px) {
-  .gi { padding: 0 16px; }
-  /* One column on a phone. Two half-width cards at 393px gives each a ~180px
-     screenshot, at which point the thing being demonstrated is unreadable. */
-  .gi-cards { grid-template-columns: 1fr; }
+  /* NO PADDING OF ITS OWN ON A PHONE — it was 16px, and `.wrap` around it
+     already pays 32px, so the block sat a second gutter inside the 237-card
+     mosaic directly below it (measured 297px against the mosaic's 329px at
+     393px). That extra inset is what made the carousel tile narrower than the
+     landing page's, which is the one thing "copy size" (owner 2026-08-22) does
+     not allow. The rail is untouched — `.wrap`'s gutter is still there, so this
+     is not the Thirty-second non-negotiable's flush-to-the-edge case; it is one
+     gutter instead of two, matching .mosaic-wrap exactly. */
+  .gi { padding: 0; }
+  /* The carousels already stacked at 1000px — the old `.gi-cards` one-column
+     override lived here and is gone with the grid it collapsed. Nothing gates
+     the carousels by viewport: they render on DESKTOP AND MOBILE alike (owner
+     2026-08-22, "these is for mobile and desktop"), exactly like the landing
+     pair, and a phone-only display rule on either section is the regression to
+     watch for. On a phone the 600px cap never bites, so the tile is full-bleed
+     and byte-identical in shape to the tiles on the landing page. */
   /* Two columns of short labels on a phone, not one: 26 items in a single
      column is a wall to scroll past, which is the thing the owner objected to.
      They are labels, so they fit. */
@@ -771,93 +914,150 @@
     <p>Open any guide and the trip is all planned for you &mdash; what to see, in what order, how long it takes, and exactly how you get there.</p>
   </div>
 
-  <div class="gi-cards">
-    <div class="gi-card">
-      <!-- Screenshot: the top of a live guide. Regenerate rather than edit —
-           serve the site over HTTP (root-absolute /assets paths 404 under
-           file://), load /guides/rome.html at 820px / 2x, and clip x 16 from
-           16px above .title-page down to the bottom of the second .overview-day
-           row. The weather strip is the weather of the day it was shot; that is
-           expected and is not a reason to retouch the file. -->
-      <span class="gi-shot"><img src="/assets/guides-intro/guide-overview.png"
-        alt="The top of the Rome guide: the hotel it is built around, a week of weather, a row of buttons including I&rsquo;ve Been, and the first days of the trip overview with their stops"
-        loading="lazy" width="1200" height="742"></span>
-      <div class="gi-body">
-        <h3>The whole trip, one screen</h3>
-        <p>Hotel, weather, every day, every stop.</p>
-      </div>
-    </div>
+  <!-- ═══ TWO CAROUSELS ══════════════════════════════════════════════════════
+       Owner 2026-08-22: "actually copy the home page solution put them all in
+       two carousels. copy size etc" &middot; "like that put map and a good one
+       as the top image make sure the arrows work at the end" &middot; "these is
+       for mobile and desktop".
 
-    <div class="gi-card">
-      <!-- Screenshot: one stop of a live guide, ending on the motion row that
-           leads to the next one. /guides/rome.html at 1100px / 2x — 1100 rather
-           than 820 because at 820 the card is 1.17 wide and letterboxes hard in
-           a 1.7 box. Clip the Galleria Borghese .stop-block plus the .next row
-           after it. FLIP EVERY img[loading=lazy] TO EAGER AND SCROLL THE STOP
-           INTO VIEW FIRST: the stop is ~12,000px down, so a clip taken without
-           that captures an empty photo well and nothing about it looks wrong. -->
-      <span class="gi-shot"><img src="/assets/guides-intro/guide-stop.png"
-        alt="A single stop in the Rome guide: Galleria Borghese with a two-hour estimate, a ticket link, opening hours, the day it closes, a copyable address, a photo of Bernini&rsquo;s Apollo and Daphne, and a row reading thirty-two minutes on foot or fourteen by ride app back to the hotel"
-        loading="lazy" width="1200" height="725"></span>
-      <div class="gi-body">
-        <h3>Every stop, spelled out</h3>
-        <p>How long, when it&rsquo;s open, where it is &mdash; and the walk or ride to the next one.</p>
-      </div>
-    </div>
+       THE SIX SCREENSHOTS DID NOT CHANGE — only how many are on screen at once.
+       They were six cards two to a row, about 1,050px of pictures stacked on
+       top of the 237 guides ("reduce the size of all screenshots ... they are
+       way too big"). Two carousels put two on screen and page through the rest,
+       so the block is roughly half the height and every picture is still full
+       size. Do NOT restore the grid to "show them all at once": showing them
+       all at once is the thing that was measured as too much page.
 
-    <div class="gi-card">
-      <!-- Screenshot: the all-stops map with one day selected. Load
-           /guides/rome-stops-map.html at 900x820 / 2x, click the Day 1 chip,
-           then zoom OUT one step (at the fitted bounds the outer pins sit on
-           the edge and one falls off the clip) — but no further, or the pins
-           re-cluster into bare counts and the point of the picture is gone.
-           Hide the zoom and attribution controls and clip from the chip row
-           down at 1.7. JPEG, not PNG: raster map tiles quantise badly. -->
-      <span class="gi-shot"><img src="/assets/guides-intro/day-map.jpg"
-        alt="The Rome all-stops map with Day 1 selected: five pins within a few streets of each other in the centre, and chips above for All days and Days 1 to 6"
-        loading="lazy" width="1200" height="705"></span>
-      <div class="gi-body">
-        <h3>A day is one pocket of the city</h3>
-        <p>Stops grouped by where they are. No zig-zagging.</p>
-      </div>
-    </div>
+       WHAT LEADS EACH ONE IS THE OWNER'S CALL, NOT AN ORDERING ACCIDENT.
+       Carousel 2 opens on the WORLD MAP, by name. Carousel 1 opens on a single
+       stop — the richest frame of the six, a photograph plus the hours, the
+       ticket, the address and the walk-or-ride row all in one card. A carousel
+       that opens on its weakest frame is judged on that frame.
 
-    <div class="gi-card">
-      <!-- Screenshot: the calendar export the action row opens.
-                 /guides/rome at 1100px / 4x — click Export to Calendar in
-                 #ics-pill-row and clip the dialog. FOUR times, not two: the
-                 panel is only 320 CSS px wide, and at 2x it upscales to 1200
-                 and goes soft. The dialog is position:fixed, so its rect is
-                 VIEWPORT-relative — add scrollY to it and you photograph the
-                 dimmed page behind it instead.
-                 THIS CARD USED TO SHOW THE CURRENCY CONVERTER and carried
-                 card 1's title card, weather strip and pill row above it to
-                 fill the frame — three of that card's four blocks, the same
-                 screen twice (owner 2026-08-21, on the landing carousels:
-                 "no more than one image per feature"). The overlap is
-                 STRUCTURAL: the action row is a 1036x30 strip and cropping to
-                 it alone gives a 7:1 sliver floating in cream. Do not "restore"
-                 the converter shot — take what the row opens. -->
-                <span class="gi-shot"><img src="/assets/guides-intro/calendar-export.png"
-                     alt="The Rome guide&rsquo;s calendar export: a date field asking when Day 1 starts, with all six days to be added at once"
-                     loading="lazy" width="1200" height="859"></span>
-      <div class="gi-body">
-        <h3>Calendar, currency, offline &mdash; one row</h3>
-        <p>Convert in either direction, export a day to Apple Calendar, or save the guide to read with no signal.</p>
-      </div>
-    </div>
+       ONLY STEP 1 OF EACH IS IN THE MARKUP, and that is deliberate: with no
+       JavaScript the pair reads as the two single-screenshot tiles it used to
+       be, with no dead arrows. Every other step lives in the STEPS table in the
+       script below, and each row carries its own href, alt, title and caption.
+       A NEW SCREENSHOT GOES IN THAT TABLE, not here.
 
-    <div class="gi-card">
-      <!-- THE WORLD MAP. Was a full-width side-by-side panel under the whole
-           block until 2026-08-21; it is a card in the grid now, and the CTA
-           moved into the caption with it. See the .gi-mark retirement note in
-           the stylesheet above before putting a wide panel back.
-           Screenshot recipe, and every step matters:
+       The captures themselves are unchanged and their recipes are unchanged —
+       they are in the comments beside each STEPS row. They go stale the
+       ordinary way (a hotel changes, the weather strip is the weather of the
+       day it was shot); the fix is to re-run the capture, never to paint over
+       the file. -->
+  <div class="gi-carousels">
+
+    <section class="gi-tour">
+      <a class="gi-tile" href="/guides/rome">
+        <span class="gi-shot"><img src="/assets/guides-intro/guide-stop.png"
+          alt="A single stop in the Rome guide: Galleria Borghese with a two-hour estimate, a ticket link, opening hours, the day it closes, a copyable address, a photo of Bernini&rsquo;s Apollo and Daphne, and a row reading thirty-two minutes on foot or fourteen by ride app back to the hotel"
+          loading="lazy" width="1200" height="725"></span>
+        <span class="gi-band">
+          <span class="gi-band-t">Every stop, spelled out</span>
+          <span class="gi-band-d">How long people spend there, when it is open, the address in one tap &mdash; and the walk or the ride to the next one.</span>
+        </span>
+      </a>
+    </section>
+
+    <section class="gi-mine">
+      <a class="gi-tile" href="/maps/world/">
+        <span class="gi-shot"><img src="/assets/guides-intro/visited-map.png"
+          alt="The world map over Europe: gold pins on the cities marked as visited, terracotta pins on the ones still ahead, and a pill at the bottom reading Visited 27"
+          loading="lazy" width="1200" height="706"></span>
+        <span class="gi-band">
+          <span class="gi-band-t">Watch your own map fill in</span>
+          <span class="gi-band-d">Tap <strong>I&rsquo;ve Been</strong> on any guide and that city turns gold. Your map, in your own browser.</span>
+        </span>
+      </a>
+    </section>
+
+  </div>
+
+  <script>
+  /* ── The two step carousels ────────────────────────────────────────────────
+     DESKTOP AND MOBILE ALIKE (owner 2026-08-22). Nothing here is gated by
+     viewport and nothing in the CSS hides either section — a phone-only or
+     desktop-only rule on `.gi-tour` / `.gi-mine` is the regression to watch for.
+
+     Each row is [src, width, height, alt, title, description, href]:
+       · WIDTH AND HEIGHT ARE THE FILE'S REAL ONES and are set on the <img> per
+         step. They do not size the box — `.gi-shot` owns one 16/10 box for
+         every step and the fit is `contain` — but they are what stops the
+         browser reflowing the page as each image decodes.
+       · THE HREF IS PER STEP and is not optional. A carousel here spans several
+         destinations (a guide, the stops map, the world map), so `tile.href`
+         moves with the step. Leave it out and a tap sends the reader to
+         whatever the PREVIOUS step showed, silently, because the tile still
+         looks right.
+       · The ALT moves with the step too. A carousel that keeps step 1's alt
+         text describes a picture that is no longer on screen.
+
+     The arrows are `.gi-arrow`, and they are appended AFTER the tile rather
+     than inside it because the tile is a single <a>: a <button> nested in an
+     anchor is invalid markup and makes every tap a guess between paging and
+     opening the page.
+
+     WITH NO JAVASCRIPT nothing here runs, both tiles keep the step already in
+     their markup, and no arrow is drawn — which is exactly what the pair looked
+     like before this became a carousel. */
+  (function () {
+    /* FULL PATHS, never a base var plus a filename. brain_check reads the
+       screenshot list straight out of this table (only two of the six are in
+       the markup now), so a concatenated path makes the set invisible to it and
+       the count assertion silently passes on two. */
+    var STEPS = {
+      'gi-tour': [
+        /* ONE STOP OF A LIVE GUIDE, ending on the motion row that leads to the
+           next one. This LEADS the carousel by owner instruction ("a good
+           one"): it is the richest of the six frames — a photograph plus the
+           hours, the ticket, the address and the walk-or-ride row in one card.
+           Recipe: /guides/rome.html at 1100px / 2x — 1100 rather than 820
+           because at 820 the card is 1.17 wide and letterboxes hard. Clip the
+           Galleria Borghese .stop-block plus the .next row after it. FLIP EVERY
+           img[loading=lazy] TO EAGER AND SCROLL THE STOP INTO VIEW FIRST: the
+           stop is ~12,000px down, so a clip taken without that captures an
+           empty photo well and nothing about it looks wrong. */
+        ['/assets/guides-intro/guide-stop.png', 1200, 725,
+         'A single stop in the Rome guide: Galleria Borghese with a two-hour estimate, a ticket link, opening hours, the day it closes, a copyable address, a photo of Bernini’s Apollo and Daphne, and a row reading thirty-two minutes on foot or fourteen by ride app back to the hotel',
+         'Every stop, spelled out',
+         'How long people spend there, when it is open, the address in one tap &mdash; and the walk or the ride to the next one.',
+         '/guides/rome'],
+
+        /* THE TOP OF A LIVE GUIDE. Regenerate rather than edit — serve the site
+           over HTTP (root-absolute /assets paths 404 under file://), load
+           /guides/rome.html at 820px / 2x, and clip x 16 from 16px above
+           .title-page down to the bottom of the second .overview-day row. The
+           weather strip is the weather of the day it was shot; that is expected
+           and is not a reason to retouch the file. */
+        ['/assets/guides-intro/guide-overview.png', 1200, 742,
+         'The top of the Rome guide: the hotel it is built around, a week of weather, a row of buttons including I’ve Been, and the first days of the trip overview with their stops',
+         'The whole trip, one screen',
+         'The hotel it is built around, a week of weather, then every day and every stop in the order you walk them.',
+         '/guides/rome'],
+
+        /* THE EXTRAS GRID and the filter row under it. /guides/rome at 1100px /
+           2x — clip from the grid's own top edge down past SHOW ONLY. IT USED
+           TO LEAD WITH THE TRIP OVERVIEW, which is step 2's subject: one image
+           per feature (owner 2026-08-21). The grid is a 1036x154 strip, so it
+           needs a neighbour to fill the frame — take the one BELOW it, which
+           belongs to no other step. */
+        ['/assets/guides-intro/trip-extras.png', 1200, 347,
+         'The Rome guide’s extras: sixteen sections one tap away &mdash; Michelin, Getting Around, Train Stations, Day Trips, Hiking &mdash; and the filter row that narrows the stops to museums, nature or landmarks',
+         'Every extra, one tap away',
+         'Coffee, Michelin, day trips, getting around &mdash; sixteen sections under the plan, and a filter that narrows the stops to what you came for.',
+         '/guides/rome']
+      ],
+
+      'gi-mine': [
+        /* THE WORLD MAP. It LEADS this carousel by owner instruction ("put map
+           ... as the top image"), which is also what took it out of the retired
+           full-width .gi-mark panel below the block. Recipe, and every step
+           matters:
              · Serve over HTTP and load /maps/world/#mine=<slugs> at 1020x880 /
                2x, then let it settle.
-             · CLICK the "Europe" pill in #left-panel — and click it BEFORE the
-               panel is hidden. Do NOT call map.setView: the Leaflet instance is
-               a `const map` in module scope and is not on window, so a setView
+             · CLICK the "Europe" pill in #left-panel — BEFORE the panel is
+               hidden. Do NOT call map.setView: the Leaflet instance is a
+               `const map` in module scope and is not on window, so a setView
                call silently does nothing and you ship the world view.
              · CLICK #visited-pill-mobile, then ASSERT data-on === "1" and click
                again until it is. The hash restores the list but does NOT turn
@@ -867,47 +1067,116 @@
              · Zoom in TWO steps via .leaflet-control-zoom-in. At the Europe
                default the pins cluster into count bubbles and no city is
                legible; two steps takes it to zero clusters.
-             · HIDE #left-panel. The region browser is navigation for the map
-               page and says nothing here (owner 2026-08-21: "not needs of the
-               browse etc"). Hide #mine-hint too — it is a transient toast — and
-               the zoom and attribution controls.
-             · Then keep nudging the map UP until NO pin sits under the Visited
-               pill (owner 2026-08-18). The pill is fixed over the map, so it
-               lands on whatever is beneath it and buries a city. Check it in
-               code, not by eye — compare each .leaflet-marker-icon rect against
-               the #visited-pill-mobile rect plus ~14px, and drag up until the
-               count is 0.
+             · HIDE #left-panel (the region browser is navigation for the map
+               page and says nothing here), #mine-hint, and the zoom and
+               attribution controls.
+             · Then nudge the map UP until NO pin sits under the Visited pill.
+               The pill is fixed over the map, so it lands on whatever is
+               beneath it and buries a city. Check it in code: compare each
+               .leaflet-marker-icon rect against the #visited-pill-mobile rect
+               plus ~14px, and drag up until the count is 0.
              · Clip the bottom 1/1.7 of #map and save QUANTIZED (192 colours):
                flat map fills plus text give 66 KB, where a JPEG of the same
-               thing fringes every city label. -->
-      <span class="gi-shot"><img src="/assets/guides-intro/visited-map.png"
-        alt="The world map over Europe: gold pins on the cities marked as visited, terracotta pins on the ones still ahead, and a pill at the bottom reading Visited 27"
-        loading="lazy" width="1200" height="706"></span>
-      <div class="gi-body">
-        <h3>Watch your own map fill in</h3>
-        <p>Tap <strong>I&rsquo;ve Been</strong> on any guide and that city turns gold. Your map, in your own browser.</p>
-        <a class="gx-btn" href="/maps/world/">Open the world map</a>
-      </div>
-    </div>
+               thing fringes every city label. It is the ONE file here allowed
+               to be a palette PNG, and that is measured — no gradient icons,
+               worst error 44. */
+        ['/assets/guides-intro/visited-map.png', 1200, 706,
+         'The world map over Europe: gold pins on the cities marked as visited, terracotta pins on the ones still ahead, and a pill at the bottom reading Visited 27',
+         'Watch your own map fill in',
+         'Tap <strong>I&rsquo;ve Been</strong> on any guide and that city turns gold. Your map, in your own browser.',
+         '/maps/world/'],
 
-    <div class="gi-card">
-      <!-- Screenshot: the extras grid and the filter row under it.
-                 /guides/rome at 1100px / 2x — clip from the grid's own top
-                 edge down past SHOW ONLY. IT USED TO LEAD WITH THE TRIP
-                 OVERVIEW, which is card 1's subject: same rule as card 4
-                 above, one image per feature. The grid is a 1036x154 strip,
-                 so it needs a neighbour to fill the card — take the one
-                 BELOW it, which belongs to no other card. -->
-      <span class="gi-shot"><img src="/assets/guides-intro/trip-extras.png"
-        alt="The Rome guide&rsquo;s extras: sixteen sections one tap away &mdash; Michelin, Getting Around, Train Stations, Day Trips, Hiking &mdash; and the filter row that narrows the stops to museums, nature or landmarks"
-        loading="lazy" width="1200" height="347"></span>
-      <div class="gi-body">
-        <h3>Every extra, one tap away</h3>
-        <p>Coffee, Michelin, day trips, getting around &mdash; every section under the plan.</p>
-      </div>
-    </div>
+        /* THE ALL-STOPS MAP with one day selected. Load
+           /guides/rome-stops-map.html at 900x820 / 2x, click the Day 1 chip,
+           then zoom OUT one step (at the fitted bounds the outer pins sit on
+           the edge and one falls off the clip) — but no further, or the pins
+           re-cluster into bare counts and the point of the picture is gone.
+           Hide the zoom and attribution controls and clip from the chip row
+           down at 1.7. JPEG, not PNG: raster map tiles quantise badly. */
+        ['/assets/guides-intro/day-map.jpg', 1200, 705,
+         'The Rome all-stops map with Day 1 selected: five pins within a few streets of each other in the centre, and chips above for All days and Days 1 to 6',
+         'A day is one pocket of the city',
+         'Every stop on one map, or narrowed to a single day &mdash; grouped by where they are, so no day zig-zags across town.',
+         '/guides/rome-stops-map.html'],
 
-  </div>
+        /* THE CALENDAR EXPORT the action row opens. /guides/rome at 1100px / 4x
+           — click Export to Calendar in #ics-pill-row and clip the dialog. FOUR
+           times, not two: the panel is only 320 CSS px wide, and at 2x it
+           upscales to 1200 and goes soft. The dialog is position:fixed, so its
+           rect is VIEWPORT-relative — add scrollY to it and you photograph the
+           dimmed page behind it instead.
+           THIS STEP USED TO SHOW THE CURRENCY CONVERTER and carried step 2's
+           title card, weather strip and pill row above it to fill the frame —
+           three of that step's four blocks, the same screen twice (owner
+           2026-08-21: "no more than one image per feature"). The overlap is
+           STRUCTURAL: the action row is a 1036x30 strip and cropping to it
+           alone gives a 7:1 sliver floating in cream. Do not "restore" the
+           converter shot — take what the row opens. */
+        ['/assets/guides-intro/calendar-export.png', 1200, 859,
+         'The Rome guide’s calendar export: a date field asking when Day 1 starts, with all six days to be added at once',
+         'Calendar, currency, offline &mdash; one row',
+         'Convert in either direction, export a day straight to Apple Calendar, or save the whole guide to read with no signal.',
+         '/guides/rome']
+      ]
+    };
+
+    Object.keys(STEPS).forEach(function (key) {
+      var sec = document.querySelector('.' + key);
+      if (!sec) return;
+      var rows = STEPS[key];
+      if (!rows || rows.length < 2) return;
+      var tile  = sec.querySelector('a.gi-tile');
+      var shot  = sec.querySelector('.gi-shot');
+      var img   = shot && shot.querySelector('img');
+      var title = sec.querySelector('.gi-band-t');
+      var desc  = sec.querySelector('.gi-band-d');
+      if (!tile || !shot || !img || !title || !desc) return;
+
+      var at = 0;
+      var count = document.createElement('span');
+      count.className = 'gi-steps-count';
+
+      function wrap(i) { return ((i % rows.length) + rows.length) % rows.length; }
+
+      function paint(i) {
+        var r = rows[wrap(i)];
+        img.src = r[0];
+        img.width = r[1];
+        img.height = r[2];
+        img.alt = r[3];
+        title.innerHTML = r[4];
+        desc.innerHTML = r[5];
+        if (r[6]) tile.href = r[6];
+        count.textContent = (wrap(i) + 1) + ' / ' + rows.length;
+      }
+      function warm(i) { var im = new Image(); im.src = rows[wrap(i)][0]; }
+      function button(label, step) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'gi-arrow';
+        b.setAttribute('aria-label', label);
+        b.innerHTML = step < 0
+          ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>'
+          : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+        b.addEventListener('click', function () {
+          at = wrap(at + step);
+          paint(at);
+          warm(at + step);
+        });
+        return b;
+      }
+
+      paint(0);
+      warm(1);
+      var nav = document.createElement('div');
+      nav.className = 'gi-steps-nav';
+      nav.appendChild(count);
+      nav.appendChild(button('Previous screen', -1));
+      nav.appendChild(button('Next screen', 1));
+      tile.parentNode.insertBefore(nav, tile.nextSibling);
+    });
+  })();
+  </script>
 
   <p class="gi-all">Everything in a guide</p>
   <ul class="gi-list">
@@ -950,27 +1219,117 @@
 
   <div class="gi-key">
     <p class="gi-key-label">Reading a guide</p>
-    <div class="gi-key-row">
+    <div class="gi-key-grp">
+      <p class="gi-key-sub">At a stop</p>
+      <div class="gi-key-row">
       <span class="gi-key-item">
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-clock-stop"/></svg>
-        <span><span class="gi-key-val">2 hrs</span><span class="gi-key-sep">—</span>time spent</span>
-      </span>
-      <span class="gi-key-item">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-walk"/></svg>
-        <span><span class="gi-key-val">12 min</span><span class="gi-key-sep">—</span>on foot to the next stop</span>
-      </span>
-      <span class="gi-key-item">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-delivery-car"/></svg>
-        <span><span class="gi-key-val">4 min</span><span class="gi-key-sep">—</span>by ride app</span>
+        <span><span class="gi-key-val">2 hrs</span><span class="gi-key-sep">&mdash;</span>how long most people spend here</span>
       </span>
       <span class="gi-key-item">
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-pin"/></svg>
-        <span>address<span class="gi-key-sep">—</span>copies in one tap</span>
+        <span><span class="gi-key-val">address</span><span class="gi-key-sep">&mdash;</span>copies in one tap</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-closed"/></svg>
+        <span><span class="gi-key-val">Closed Monday</span><span class="gi-key-sep">&mdash;</span>the day it shuts each week</span>
       </span>
       <span class="gi-key-item">
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-warn"/></svg>
-        <span>heads up</span>
+        <span><span class="gi-key-val">heads up</span><span class="gi-key-sep">&mdash;</span>a season, a closure, or something to book well ahead</span>
       </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-ticket"/></svg>
+        <span><span class="gi-key-val">book at</span><span class="gi-key-sep">&mdash;</span>where the ticket is really sold</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-star"/></svg>
+        <span><span class="gi-key-val">4.8</span><span class="gi-key-sep">&mdash;</span>the rating it was picked on</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-book"/></svg>
+        <span><span class="gi-key-val">Read more</span><span class="gi-key-sep">&mdash;</span>the longer read on the place itself</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-link-out"/></svg>
+        <span>the venue&rsquo;s own site</span>
+      </span>
+      </div>
+    </div>
+    <div class="gi-key-grp">
+      <p class="gi-key-sub">Getting to the next stop</p>
+      <div class="gi-key-row">
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-walk"/></svg>
+        <span><span class="gi-key-val">12 min</span><span class="gi-key-sep">&mdash;</span>on foot</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-delivery-car"/></svg>
+        <span><span class="gi-key-val">4 min</span><span class="gi-key-sep">&mdash;</span>by ride app</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-tram"/></svg>
+        <span>by metro, tram or bus</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-train"/></svg>
+        <span>the train, and the line it runs on</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-ship"/></svg>
+        <span>by ferry</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-route-ab"/></svg>
+        <span>opens that leg in your maps app</span>
+      </span>
+      </div>
+    </div>
+    <div class="gi-key-grp">
+      <p class="gi-key-sub">Before you set off</p>
+      <div class="gi-key-row">
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-steps"/></svg>
+        <span><span class="gi-key-val">62 steps</span><span class="gi-key-sep">&mdash;</span>what you climb to get in, and whether there is a lift</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-uphill"/></svg>
+        <span><span class="gi-key-val">Steep uphill</span><span class="gi-key-sep">&mdash;</span>the way in climbs hard</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-long-walk"/></svg>
+        <span><span class="gi-key-val">Long walk</span><span class="gi-key-sep">&mdash;</span>ground to cover once you are there</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-viaduct"/></svg>
+        <span><span class="gi-key-val">Heights</span><span class="gi-key-sep">&mdash;</span>a drop beside you</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-squeeze"/></svg>
+        <span><span class="gi-key-val">Enclosed space</span><span class="gi-key-sep">&mdash;</span>a narrow passage to get through</span>
+      </span>
+      </div>
+    </div>
+    <div class="gi-key-grp">
+      <p class="gi-key-sub">On a tour or a hike</p>
+      <div class="gi-key-row">
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-hourglass"/></svg>
+        <span><span class="gi-key-val">3 hrs</span><span class="gi-key-sep">&mdash;</span>how long the tour runs</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-people"/></svg>
+        <span><span class="gi-key-val">Small group</span><span class="gi-key-sep">&mdash;</span>how many people go</span>
+      </span>
+      <span class="gi-key-item">
+        <span class="gi-key-pair"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-hotel"/></svg> &harr; <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-transportation"/></svg></span>
+        <span>the tour collects you at the hotel</span>
+      </span>
+      <span class="gi-key-item">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><use href="#gm-i-peak"/></svg>
+        <span><span class="gi-key-val">6 km</span><span class="gi-key-sep">&mdash;</span>the distance, and the climb</span>
+      </span>
+      </div>
     </div>
   </div>
 
@@ -3926,8 +4285,8 @@
   }
 
   /* Flat slug from the card href — the SAME parse compare mode and Help Me Choose
-     use (`/guides/athens.html` -> `athens`). This read `split('/')[1]`, the
-     pre-2026-08-16 `./Folder/...` shape; against a root-absolute href that is the
+     use (`/guides/athens.html` → `athens`). This read `split('/')[1]`, the
+     pre-2026-08-16 `./Folder/…` shape; against a root-absolute href that is the
      literal string 'guides' for every card, so _CLIMATE never resolved and picking
      a month hid all 239 guides. Never re-derive the key by folder position. */
   function climateKey(card) {
