@@ -5762,7 +5762,7 @@ window.TVE.home = (function () {
       { name: 'Hotel Athenaeum InterContinental Athens', note: 'IHG brand — Syngrou Avenue, large outdoor pool complex, full-service spa, 25-min walk to Acropolis · 8.7 Booking.com' , url: 'https://www.booking.com/hotel/gr/athenaeum-intercontinental.html', tier: 'expensive' },
       { name: 'Hotel Grande Bretagne', note: 'Marriott Luxury Collection — 1874 landmark on Syntagma Square, Acropolis-view balconies, rooftop restaurant, indoor pool · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/gr/grande-bretagne.html', tier: 'luxury' },
       { name: 'King George, a Luxury Collection Hotel, Athens', note: 'Marriott Luxury Collection — intimate 102-room boutique on Syntagma Square, rooftop Tudor Hall with Acropolis panorama · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/gr/king-george-palace.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: '€75–195', mid: '€130–515', expensive: '€145–370', luxury: '€330–900' } },
     'atlanta': { h: [
       { name: 'Hilton Garden Inn Atlanta Midtown', note: 'Hilton Garden Inn brand — 10th Street off Peachtree, year-round rooftop pool, fitness centre, valet parking · 7.7 Booking.com', url: 'https://www.booking.com/hotel/us/atlanta-midtown.html', tier: 'budget' },
       { name: 'Hyatt Place Atlanta Downtown', note: 'Hyatt Place brand — Peachtree Street by Woodruff Park, fitness centre, garden terrace, 24h reception · 7.9 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-place-atlanta-downtown.html', tier: 'budget' },
