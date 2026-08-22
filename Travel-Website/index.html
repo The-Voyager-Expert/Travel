@@ -1328,6 +1328,8 @@ a.land-cta:hover:visited {
    would be a second, unasked change. */
 .lp-ask { max-width: var(--lp-max, 1180px); margin: clamp(2.4rem, 5vw, 4rem) auto 0; }
 .ask-row { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.6rem, 1.4vw, 1rem); }
+/* Compare cities is the third card and takes the whole row beneath the pair. */
+.ask-card--wide { grid-column: 1 / -1; }
 @media (max-width: 700px) { .ask-row { grid-template-columns: 1fr; } }
 .ask-card {
   display: grid; grid-template-columns: auto 1fr; column-gap: 0.85rem; row-gap: 0.25rem;
@@ -1778,8 +1780,8 @@ a.land-cta:hover:visited {
 
 /* ── The quiet end ────────────────────────────────────────────────────────── */
 .lp-quiet { max-width: var(--lp-max, 1180px); margin: clamp(2.4rem, 5vw, 4rem) auto 0; }
-.qt-row { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.6rem, 1.4vw, 0.9rem); }
-@media (max-width: 700px) { .qt-row { grid-template-columns: 1fr; } }
+/* One card now — Compare moved up under Help Me Choose on 2026-08-22. */
+.qt-row { display: grid; grid-template-columns: 1fr; gap: clamp(0.6rem, 1.4vw, 0.9rem); }
 .qt-card {
   display: grid; grid-template-columns: auto 1fr; column-gap: 0.65rem; row-gap: 0.2rem;
   align-content: start; text-align: left; cursor: pointer; font: inherit; text-decoration: none;
@@ -3394,6 +3396,48 @@ window.lpGuideCard = function (href, flag, name, extra) {
       </div>
     </div>
   </div>
+    <!-- COMPARE CITIES sits here, under Help Me Choose and Trip Escape (owner
+         rule 2026-08-22: "they are related") — three ways to decide, one block.
+         It left the quiet-end row it shared with Stats; its panel stays the
+         next sibling so the answer lands under the control that asked for it. -->
+    <button type="button" class="ask-card ask-card--wide" data-tool="compare" aria-expanded="false" aria-controls="tp-compare">
+      <span class="ask-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-compare"/></svg></span>
+      <span class="ask-name">Compare cities</span>
+      <span class="ask-desc">Up to five cities side by side &mdash; days, weather, flight time.</span>
+    </button>
+  <!-- ═══ COMPARE ══════════════════════════════════════════════════════════════
+       The comparison itself, on this page. It used to be a link to
+       /guides/#compare, which is a different page with a different way in: you
+       had to find five cities in a 237-card mosaic and click each one.
+
+       The TABLE is not reimplemented — the whole compare engine is lifted from
+       the guides index (see the script at the foot of this file), so the rows,
+       the climate bars, the visa data and the currency conversion are the same
+       code, not a second version of it that can drift. What is new is only the
+       way cities are chosen: a search box, because this page has no visible
+       mosaic to click. The engine still selects by clicking a .dest-card, so
+       the picker clicks the real (hidden) card the bootstrap grafted in.
+
+       #view-compare is hidden and holds no label: the engine binds its
+       enter/exit toggle to it, and the card above is what the reader sees. -->
+  <div class="tl-panel" id="tp-compare" hidden>
+    <!-- "flight time" without an origin, because the origin is now the
+         reader's own and is named in the table's row header. Naming Seattle
+         here would contradict the column it introduces. -->
+    <p class="cmpx-lede">Pick <strong>2 to 5 cities</strong> and see them side by
+    side &mdash; flight time, visa, climate month by month, best season,
+    languages, what a day costs and how safe it is.</p>
+
+    <div class="cmpx-pick">
+      <label for="cmpx-search" class="sr-only">City to compare</label>
+      <input type="search" id="cmpx-search" class="search-input" placeholder="City or country" aria-label="City to compare" autocomplete="off" spellcheck="false">
+      <div id="cmpx-list" role="listbox" aria-label="Cities to compare"></div>
+    </div>
+
+    <button id="view-compare" hidden aria-hidden="true"></button>
+    <div id="compare-mount"></div>
+    <div id="compare-view" hidden></div>
+  </div>
   </div>
 </section>
 
@@ -3913,44 +3957,6 @@ window.lpGuideCard = function (href, flag, name, extra) {
      they were taking the same visual weight as the finder. -->
 <section class="lp-quiet" id="quiet">
   <div class="qt-row">
-    <button type="button" class="qt-card" data-tool="compare" aria-expanded="false" aria-controls="tp-compare">
-      <span class="qt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-compare"/></svg></span>
-      <span class="qt-name">Compare cities</span>
-      <span class="qt-desc">Up to five cities side by side &mdash; days, weather, flight time.</span>
-    </button>
-  <!-- ═══ COMPARE ══════════════════════════════════════════════════════════════
-       The comparison itself, on this page. It used to be a link to
-       /guides/#compare, which is a different page with a different way in: you
-       had to find five cities in a 237-card mosaic and click each one.
-
-       The TABLE is not reimplemented — the whole compare engine is lifted from
-       the guides index (see the script at the foot of this file), so the rows,
-       the climate bars, the visa data and the currency conversion are the same
-       code, not a second version of it that can drift. What is new is only the
-       way cities are chosen: a search box, because this page has no visible
-       mosaic to click. The engine still selects by clicking a .dest-card, so
-       the picker clicks the real (hidden) card the bootstrap grafted in.
-
-       #view-compare is hidden and holds no label: the engine binds its
-       enter/exit toggle to it, and the card above is what the reader sees. -->
-  <div class="tl-panel" id="tp-compare" hidden>
-    <!-- "flight time" without an origin, because the origin is now the
-         reader's own and is named in the table's row header. Naming Seattle
-         here would contradict the column it introduces. -->
-    <p class="cmpx-lede">Pick <strong>2 to 5 cities</strong> and see them side by
-    side &mdash; flight time, visa, climate month by month, best season,
-    languages, what a day costs and how safe it is.</p>
-
-    <div class="cmpx-pick">
-      <label for="cmpx-search" class="sr-only">City to compare</label>
-      <input type="search" id="cmpx-search" class="search-input" placeholder="City or country" aria-label="City to compare" autocomplete="off" spellcheck="false">
-      <div id="cmpx-list" role="listbox" aria-label="Cities to compare"></div>
-    </div>
-
-    <button id="view-compare" hidden aria-hidden="true"></button>
-    <div id="compare-mount"></div>
-    <div id="compare-view" hidden></div>
-  </div>
     <button type="button" class="qt-card" data-tool="stats" aria-expanded="false" aria-controls="tp-stats">
       <span class="qt-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-bar-chart"/></svg></span>
       <span class="qt-name">Stats</span>
