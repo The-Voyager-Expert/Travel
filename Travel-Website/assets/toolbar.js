@@ -6987,11 +6987,19 @@ window.TVE.home = (function () {
       { name: 'Friday Harbor House Hotel', note: 'Independent boutique — above Friday Harbor Marina, harbor and Olympic Mountain views, Pacific Northwest design · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/friday-harbor-house.html', tier: 'luxury' }
     ], price: { budget: '$160–190', mid: '$190–260', expensive: '$260–370', luxury: '$370+' } },
     'san-sebastian': { h: [
-      { name: 'Hotel Maria Cristina, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1912 Belle Époque landmark on Urumea riverside, San Sebastián Film Festival HQ · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/maria-cristina-san-sebastian.html' },
-      { name: 'Akelarre Hotel', note: 'Independent — Pedro Subijana three-Michelin-star restaurant, 22 rooms on Igeldo cliffs, Bay of Biscay panorama · 9.7 Booking.com', url: 'https://www.booking.com/hotel/es/akelarre-igueldo.html' },
-      { name: 'Hotel Villa Soro', note: 'Independent — 1890s Edwardian mansion in Ondarreta, pool, garden, 10 min to La Concha beach · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/villa-soro.html' },
-      { name: 'Hotel de Londres y de Inglaterra', note: 'Independent — Paseo de la Concha seafront, terrace with bay views, Brasserie restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/es/de-londres-y-de-inglaterra.html' }
-    ] },
+      { name: 'URBAIA Rooms', note: 'Independent — Felisa Martín Bravo 4 in Egia behind the Renfe station, soundproofed rooms, 24h check-in, AC · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/urbaia-rooms.html', tier: 'budget' },
+      { name: 'Pensión San Martin', note: 'Independent — San Martin 10 in the Centro, a first-floor pensión two blocks from La Concha, AC · 8.7 Booking.com', url: 'https://www.booking.com/hotel/es/pension-san-martin-san-sebastian.html', tier: 'budget' },
+      { name: 'Pensión Aia', note: 'Independent — Zabaleta 40 in Gros, a first-floor pensión three blocks from Zurriola beach, shared kitchen, AC', url: 'https://www.booking.com/hotel/es/pension-aia.html', tier: 'budget' },
+      { name: 'Hotel Zinema7', note: 'Independent — Sagrada Familia 1 in Amara by the EuskoTren station, film-themed rooms, fitness centre, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/hotelzinema7.html', tier: 'mid' },
+      { name: 'Pension Kursaal', note: 'Independent — Peña y Goñi 2 in Gros beside the Kursaal, a first-floor pensión with soundproofed rooms, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/pension-kursaal-de-pensiones-con-encanto.html', tier: 'mid' },
+      { name: 'Hotel Arbaso', note: 'Independent — Hondarribia 24 in the Centro, sauna and steam room, fitness centre, 24h reception, AC · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/arbaso.html', tier: 'expensive' },
+      { name: 'Catalonia Donosti', note: 'Catalonia Hotels — Alto San Bartolomé 9 above La Concha, rooftop pool with bay views, spa, fitness centre, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/es/catalonia-donosti.html', tier: 'expensive' },
+      { name: 'Zenit Convento San Martin', note: 'Zenit Hotels — San Martin 45 in a converted convent in the Centro, rooftop pool, fitness centre, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/es/zenit-convento-san-martin.html', tier: 'expensive' },
+      { name: 'Hotel de Londres y de Inglaterra', note: 'Independent — Paseo de la Concha seafront, terrace with bay views, Brasserie restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/es/de-londres-y-de-inglaterra.html', tier: 'expensive' },
+      { name: 'Hotel Maria Cristina, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1912 Belle Époque landmark on Urumea riverside, San Sebastián Film Festival HQ · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/maria-cristina-san-sebastian.html', tier: 'luxury' },
+      { name: 'Akelarre Hotel', note: 'Independent — Pedro Subijana three-Michelin-star restaurant, 22 rooms on Igeldo cliffs, Bay of Biscay panorama · 9.7 Booking.com', url: 'https://www.booking.com/hotel/es/akelarre-igueldo.html', tier: 'luxury' },
+      { name: 'Hotel Villa Soro', note: 'Independent — 1890s Edwardian mansion in Ondarreta, pool, garden, 10 min to La Concha beach · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/villa-soro.html', tier: 'luxury' }
+    ], price: { budget: '€75–110', mid: '€110–180', expensive: '€180–300', luxury: '€300+' } },
     'santa-barbara': { h: [
       { name: 'El Encanto, A Belmond Hotel', note: 'Belmond brand — hilltop Spanish-Colonial bungalows, infinity pool, ocean and garden views · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/el-encanto.html' },
       { name: 'Rosewood Miramar Beach', note: 'Rosewood brand — Montecito oceanfront, 16 acres of gardens, pool, beachfront restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/rosewood-miramar-beach-montecito.html' },
@@ -10946,13 +10954,13 @@ window.TVE.home = (function () {
        list) while every European guide jumped to its country rather than to
        its airport. */
     var LOUNGE_IATAS = [
-      'AGP','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI',
-      'CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS','DXB',
-      'EDI','EYW','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND',
-      'IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS',
-      'MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL',
-      'PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC',
-      'SPU','STR','SXB','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'AGP','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS','BRU',
+      'CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS',
+      'DXB','EDI','EYW','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG',
+      'HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX',
+      'LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY',
+      'OSL','PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG',
+      'SLC','SPU','STR','SXB','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
