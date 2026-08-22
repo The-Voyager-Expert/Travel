@@ -4,133 +4,110 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="/assets/web-travel-style.css">
-<title>What a Day Costs by City | Guide My Days</title>
+<title>How Expensive Is It? | Guide My Days</title>
 <style>/* Hero D is defined once in web-travel-style.css — the page-local copy that
    used to sit here still carried the old `margin: 0 -32px` bleed and silently
    overrode the shared rail-aware one. Do not paste it back. */
 .index-section { max-width: var(--rail); margin: 0 auto; padding: 0 var(--gutter); }
 
-/* Two control rows: filter by tier, then sort. Both are .pill-badge strips —
-   box, colour, case and the selected state all come from the shared
-   .pill-badge + .fam-* classes (spec: Brain/Reference/Formatting/). A page
-   carries NO colour of its own; never re-add a box or a border here. */
-.bd-controls { margin: var(--search-gap,32px) 0 0; display: flex; flex-direction: column; gap: 10px; }
-.bd-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.bd-row-label {
+/* Two control rows: filter by cost level, then sort. Both are .pill-badge
+   strips — box, colour, case and the selected state all come from the shared
+   .pill-badge + .fam-* classes. A page carries NO colour of its own; never
+   re-add a box or a border here. */
+.ci-controls { margin: var(--search-gap,32px) 0 0; display: flex; flex-direction: column; gap: 10px; }
+.ci-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.ci-row-label {
   font-size: var(--fs-label,11px); font-weight: 700; color: var(--muted,#6a6660);
-  letter-spacing: .1em; text-transform: uppercase; margin-right: 2px; min-width: 74px;
+  letter-spacing: .1em; text-transform: uppercase; margin-right: 2px; min-width: 84px;
 }
-.sort-btn, .tier-btn { font-family: inherit; }
+.ci-btn { font-family: inherit; }
 
-/* The count line — how many cities the current filter leaves, and what the
-   cheapest and dearest day in that set costs. It sits under the controls that
-   produced it (CLAUDE.md Sixty-second non-negotiable). */
-.bd-summary {
+/* The count line sits under the controls that produced it — CLAUDE.md
+   Sixty-second non-negotiable. */
+.ci-summary {
   margin: 16px 0 12px; font-size: var(--fs-sub,12px); color: var(--muted,#6a6660);
   font-variant-numeric: tabular-nums;
 }
-.bd-summary strong { color: var(--text); font-weight: 700; }
+.ci-summary strong { color: var(--text); font-weight: 700; }
 
 .index-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border,#d8d4cc); border-radius: 8px; overflow: hidden; }
-/* Matched to the Plugs table, which is the reference: three sibling pages ship
-   the same .index-table and all three headers were different. */
 .index-table thead th {
   background: var(--surface2, #f0ede8); border-bottom: 2px solid var(--border, #d8d4cc);
   padding: 10px 14px; text-align: left;
-  font-size: var(--fs-label, 11px);
-  font-weight: 700;
-  color: var(--muted, #6a6660);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: var(--fs-label, 11px); font-weight: 700; color: var(--muted, #6a6660);
+  letter-spacing: 0.1em; text-transform: uppercase;
 }
 .index-table th.num, .index-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
 .index-table tbody td { font-size: var(--fs-body,14px); box-shadow: inset 0 -1px 0 var(--border2,#e6e2da); padding: 7px 14px; }
-.index-table tbody tr.bd-row-city { cursor: pointer; background: var(--surface,#fff); }
-.index-table tbody tr.bd-row-city:hover td { background: #FAE8DE; box-shadow: inset 0 1px 0 rgba(192,78,26,.15), inset 0 -1px 0 rgba(192,78,26,.15); }
-.index-table tbody tr.bd-row-city:active td { background: #f2d0bb; box-shadow: inset 0 2px 0 #C04E1A, inset 0 -2px 0 #C04E1A; }
-.index-table tbody tr.idx-hide { display: none; }
+.index-table tbody tr.ci-city { cursor: pointer; background: var(--surface,#fff); }
+.index-table tbody tr.ci-city:hover td { background: #FAE8DE; box-shadow: inset 0 1px 0 rgba(192,78,26,.15), inset 0 -1px 0 rgba(192,78,26,.15); }
+.index-table tbody tr.ci-city:active td { background: #f2d0bb; box-shadow: inset 0 2px 0 #C04E1A, inset 0 -2px 0 #C04E1A; }
 
-.bd-city { font-weight: 600; color: var(--text); }
-.bd-city a { color: var(--text); text-decoration: none; }
-.bd-city a:visited { color: #3d3a32; }
-.bd-city a:hover { color: var(--accent,#8a6c1a); }
-.bd-country .bd-flag { display: inline-block; margin-right: 6px; }
-.bd-country { display: block; font-size: var(--fs-sub,12px); font-weight: 400; color: var(--muted,#6a6660); }
-.bd-total { font-weight: 700; }
-/* An estimate is marked where it stands, never only in a footnote. */
-.bd-est { color: var(--muted,#6a6660); font-weight: 400; font-size: var(--fs-sub,12px); }
+.ci-name { font-weight: 600; color: var(--text); }
+.ci-name a { color: var(--text); text-decoration: none; }
+.ci-name a:visited { color: #3d3a32; }
+.ci-name a:hover { color: var(--accent,#8a6c1a); }
+.ci-country { display: block; font-size: var(--fs-sub,12px); font-weight: 400; color: var(--muted,#6a6660); }
+.ci-country .ci-flag { display: inline-block; margin-right: 6px; }
 
-/* The expanded row: the four price rungs the guide's own hotel research wrote,
-   in the destination's own currency — the same ladder the guide's Hotel
-   Recommendations section prints. */
-.bd-detail > td { background: var(--surface2,#f0ede8); padding: 14px !important;
+/* The bar is the whole point of the page — you should be able to see which
+   places are dear without reading a single number. Width is the index against
+   the dearest place in the fleet, so the scale never shifts with the filter. */
+.ci-bar-cell { width: 100%; }
+.ci-bar-wrap { display: flex; align-items: center; gap: 10px; }
+.ci-bar { flex: 1 1 auto; height: 8px; border-radius: 4px; background: var(--surface2,#f0ede8); overflow: hidden; min-width: 60px; }
+.ci-bar i { display: block; height: 100%; border-radius: 4px; background: currentColor; }
+.ci-val { flex: 0 0 auto; font-variant-numeric: tabular-nums; font-weight: 700; min-width: 42px; text-align: right; }
+.ci-c-cheap          { color: var(--fam-green-ink,#1a5a1a); }
+.ci-c-moderate       { color: var(--fam-blue-ink,#1a3a8b); }
+.ci-c-expensive      { color: var(--fam-orange-ink,#8a4a10); }
+.ci-c-very-expensive { color: var(--fam-purple-ink,#7c3aed); }
+
+/* The expanded row: the prices the number is built from, beside New York's. */
+.ci-detail > td { background: var(--surface2,#f0ede8); padding: 14px !important;
   box-shadow: inset 0 1px 0 var(--border,#d8d4cc), inset 0 -1px 0 var(--border,#d8d4cc) !important; }
-.bd-ladder { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
-.bd-rung {
-  border: 1px solid var(--border,#d8d4cc); border-radius: 6px; padding: 6px 10px;
-  background: var(--surface,#fff); min-width: 118px;
+.ci-basket { width: 100%; border-collapse: collapse; margin: 0 0 10px; max-width: 520px; }
+.ci-basket th {
+  text-align: left; font-size: var(--fs-label,11px); font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted,#6a6660); padding: 0 10px 4px 0;
 }
-.bd-rung-name {
-  display: block; font-size: var(--fs-label,11px); font-weight: 700; letter-spacing: .08em;
-  text-transform: uppercase; color: var(--muted,#6a6660); margin-bottom: 2px;
-}
-.bd-rung-val { font-size: var(--fs-body,14px); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
-.bd-detail-note { font-size: var(--fs-sub,12px); color: var(--muted,#6a6660); margin: 0; }
-.bd-detail-note a { color: var(--accent,#8a6c1a); }
+.ci-basket th.num, .ci-basket td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.ci-basket td { font-size: var(--fs-sub,12px); padding: 3px 10px 3px 0; color: var(--text); }
+.ci-detail-note { font-size: var(--fs-sub,12px); color: var(--muted,#6a6660); margin: 0; }
+.ci-detail-note a { color: var(--accent,#8a6c1a); }
 
-#budget-search { margin-bottom: 0; }
-#budget-noresult { display: none; padding: 12px 4px; font-size: var(--fs-body,14px); color: var(--muted,#6a6660); }
+#cost-search { margin-bottom: 0; }
+#cost-noresult { display: none; padding: 12px 4px; font-size: var(--fs-body,14px); color: var(--muted,#6a6660); }
 html { scroll-behavior: smooth; }
 .note { font-size: var(--fs-sub,12px); color: var(--muted,#6a6660); margin-top: 12px; }
+.note a { color: var(--accent,#8a6c1a); }
 @media (max-width: 600px) and (pointer: coarse) {
   .index-section { padding: 0 12px; }
   /* Horizontal bleed comes from the shared rule — (100vw - 100%)/2 off the .wrap
      gutter. Restating it as a number here made the band stop short of the edge. */
   .hero-band { padding-top: 32px; padding-bottom: 28px; }
   .hero-title { font-size: 32px; }
-  /* No phone override on the search gap: it is one token (--search-gap) at
-     every viewport — owner rule 2026-08-17. */
+  /* No phone override on the search gap: one token at every viewport. */
   .index-table td, .index-table th { font-size: var(--fs-sub,12px) !important; padding: 6px 8px !important; }
-  .bd-row-label { min-width: 0; width: 100%; }
-  .bd-row { justify-content: center; gap: 6px; }
-  .bd-controls { margin: var(--search-gap,32px) 0 0 !important; }
-  /* The food column is the one an estimate lives in and the one a phone can
-     lose without losing the answer — the day total still carries it. */
-  .index-table th.col-food, .index-table td.col-food { display: none; }
-  .bd-rung { min-width: 104px; flex: 1 1 40%; }
+  .ci-row-label { min-width: 0; width: 100%; }
+  .ci-row { justify-content: center; gap: 6px; }
+  .ci-controls { margin: var(--search-gap,32px) 0 0 !important; }
+  /* The badge repeats what the bar's colour already says; the bar and the
+     number are what a phone keeps. */
+  .index-table th.col-band, .index-table td.col-band { display: none; }
+  .ci-bar { min-width: 40px; }
 }
 @media (prefers-color-scheme: dark) {
-  /* tier/sort dark mode is handled by the .fam-* tokens — no overrides needed */
-  .index-table tbody tr.bd-row-city:hover td { background: rgba(212,102,58,.16); box-shadow: inset 0 1px 0 rgba(212,102,58,.25), inset 0 -1px 0 rgba(212,102,58,.25); }
-  .index-table tbody tr.bd-row-city:active td { background: rgba(212,102,58,.28); }
+  .index-table tbody tr.ci-city:hover td { background: rgba(212,102,58,.16); box-shadow: inset 0 1px 0 rgba(212,102,58,.25), inset 0 -1px 0 rgba(212,102,58,.25); }
+  .index-table tbody tr.ci-city:active td { background: rgba(212,102,58,.28); }
 }
 </style>
 <link rel="stylesheet" href="/assets/mobile.css?v=53">
-<!-- seo:start — generated by Brain/scripts/build/build_seo.py · do not hand-edit -->
-<meta name="description" content="What a day costs per person in each city — a mid-range room plus food. The nightly rates are the ones each guide&#x27;s own hotel research found.">
-<link rel="canonical" href="https://guidemydays.com/essentials/budget/">
-<meta name="robots" content="index,follow,max-image-preview:large">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Guide My Days">
-<meta property="og:locale" content="en_US">
-<meta property="og:title" content="What a Day Costs by City">
-<meta property="og:description" content="What a day costs per person in each city — a mid-range room plus food. The nightly rates are the ones each guide&#x27;s own hotel research found.">
-<meta property="og:url" content="https://guidemydays.com/essentials/budget/">
-<meta property="og:image" content="https://guidemydays.com/assets/og/default.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Guide My Days — Travel guides, planned day by day">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="What a Day Costs by City">
-<meta name="twitter:description" content="What a day costs per person in each city — a mid-range room plus food. The nightly rates are the ones each guide&#x27;s own hotel research found.">
-<meta name="twitter:image" content="https://guidemydays.com/assets/og/default.png">
 <link rel="icon" href="/assets/icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#f5f4f0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1a1917" media="(prefers-color-scheme: dark)">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://guidemydays.com/essentials/budget/#page","name":"What a Day Costs by City","description":"What a day costs per person in each city — a mid-range room plus food. The nightly rates are the ones each guide's own hotel research found.","url":"https://guidemydays.com/essentials/budget/","inLanguage":"en","isPartOf":{"@id":"https://guidemydays.com/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://guidemydays.com/"},{"@type":"ListItem","position":2,"name":"What a Day Costs by City","item":"https://guidemydays.com/essentials/budget/"}]}]}</script>
-<!-- seo:end -->
 </head>
 <body>
 
@@ -139,385 +116,397 @@ html { scroll-behavior: smooth; }
 
 <div class="index-section">
   <div class="hero-band">
-    <h1 class="hero-title">Budget Guide</h1>
-    <p class="hero-sub">What a day costs per person in each city — a mid-range room plus food. The nightly rates are the ones each guide's own hotel research found, so a night in Amsterdam reads like Amsterdam and a night in Hanoi reads like Hanoi.</p>
+    <h1 class="hero-title">How Expensive Is It?</h1>
+    <p class="hero-sub">Which places are dear and which are cheap, on one scale. The same basket of everyday things — a meal out, a beer, a coffee, a transit ticket, a taxi, a month's rent — priced in every destination and set against New York, which is 100.</p>
   </div>
   <div class="hero-ground">
-    <input id="budget-search" type="search" placeholder="City or country" aria-label="Search by city or country" autocomplete="off" spellcheck="false" class="search-input">
+    <input id="cost-search" type="search" placeholder="City or country" aria-label="Search by city or country" autocomplete="off" spellcheck="false" class="search-input">
   </div>
 
-  <div class="bd-controls">
-    <div class="bd-row pill-badge-strip" id="band-row" role="group" aria-label="Filter by what a day costs">
-      <span class="bd-row-label">A day costs</span>
-      <button class="tier-btn pill-badge fam-grey is-on" data-band="all"            aria-pressed="true">All</button>
-      <button class="tier-btn pill-badge fam-green"      data-band="Budget"         aria-pressed="false">Budget · under $150</button>
-      <button class="tier-btn pill-badge fam-blue"       data-band="Moderate"       aria-pressed="false">Moderate · $150–250</button>
-      <button class="tier-btn pill-badge fam-orange"     data-band="Expensive"      aria-pressed="false">Expensive · $250–400</button>
-      <button class="tier-btn pill-badge fam-purple"     data-band="Very expensive" aria-pressed="false">Very expensive · $400+</button>
+  <div class="ci-controls">
+    <div class="ci-row pill-badge-strip" id="band-row" role="group" aria-label="Filter by cost level">
+      <span class="ci-row-label">Cost level</span>
+      <button class="ci-btn pill-badge fam-grey is-on" data-band="all"            aria-pressed="true">All</button>
+      <button class="ci-btn pill-badge fam-green"      data-band="Cheap"          aria-pressed="false">Cheap · under 35</button>
+      <button class="ci-btn pill-badge fam-blue"       data-band="Moderate"       aria-pressed="false">Moderate · 35–50</button>
+      <button class="ci-btn pill-badge fam-orange"     data-band="Expensive"      aria-pressed="false">Expensive · 50–70</button>
+      <button class="ci-btn pill-badge fam-purple"     data-band="Very expensive" aria-pressed="false">Very expensive · 70+</button>
     </div>
-    <div class="bd-row pill-badge-strip" id="sort-row" role="group" aria-label="Sort">
-      <span class="bd-row-label">Sort</span>
-      <button class="sort-btn pill-badge fam-green" id="sort-asc"   aria-pressed="false">Cheapest first</button>
-      <button class="sort-btn pill-badge fam-red"   id="sort-desc"  aria-pressed="false">Most expensive first</button>
-      <button class="sort-btn pill-badge fam-grey is-on" id="sort-reset" aria-pressed="true">A–Z</button>
+    <div class="ci-row pill-badge-strip" id="sort-row" role="group" aria-label="Sort">
+      <span class="ci-row-label">Sort</span>
+      <button class="ci-btn pill-badge fam-green is-on" id="sort-asc"  aria-pressed="true">Cheapest first</button>
+      <button class="ci-btn pill-badge fam-red"   id="sort-desc" aria-pressed="false">Most expensive first</button>
+      <button class="ci-btn pill-badge fam-grey"  id="sort-az"   aria-pressed="false">A–Z</button>
     </div>
   </div>
 
-  <p class="bd-summary" id="bd-summary"></p>
-  <div id="budget-noresult">No city matches that search.</div>
+  <p class="ci-summary" id="ci-summary"></p>
+  <div id="cost-noresult">No place matches that search.</div>
 
   <table class="index-table">
-    <colgroup><col style="width:28%"><col style="width:15%"><col style="width:20%"><col style="width:17%"><col style="width:20%"></colgroup>
+    <colgroup><col style="width:34%"><col style="width:20%"><col style="width:46%"></colgroup>
     <thead><tr>
-      <th>City</th>
-      <th>Bracket</th>
-      <th class="num">Stay (mid-range/night)</th>
-      <th class="num col-food">Food (per person/day)</th>
-      <th class="num">Day total</th>
+      <th>Place</th>
+      <th class="col-band">Cost level</th>
+      <th>Compared with New York</th>
     </tr></thead>
-    <tbody id="budget-tbody"></tbody>
+    <tbody id="cost-tbody"></tbody>
   </table>
 
-  <p class="note" id="bd-note"></p>
+  <p class="note" id="ci-note"></p>
 </div>
 
 <script>
-/* budget:data:start — generated by Brain/scripts/build/build_budget_page.py · do not hand-edit */
-var BC=[
-['Abu Dhabi','abu-dhabi','United Arab Emirates','🇦🇪','Expensive',110,210,40,70,'g',['AED 330–790','AED 400–780','AED 420–1,120','AED 930–3,900'],215,'Moderate'],
-['Aix-en-Provence','aix-en-provence','France','🇫🇷','Expensive',260,430,30,50,'g',['€110–135','€225–370','€240–690','€335–1,000'],385,'Expensive'],
-['Alaska','alaska','United States','🇺🇸','Expensive',220,420,35,60,'g',['$145–490','$225–425','$245–600','$280–645'],368,'Expensive'],
-['Amalfi','amalfi','Italy','🇮🇹','Expensive',195,500,35,55,'g',['€240–320','€170–435','€165–1,365','€615–2,235'],392,'Expensive'],
-['Amsterdam','amsterdam','Netherlands','🇳🇱','Expensive',240,580,30,50,'g',['€100–455','€205–505','€190–620','€380–660'],450,'Very expensive'],
-['Annecy','annecy','France','🇫🇷','Expensive',170,370,30,50,'g',['€80–210','€145–320','€175–390','€215–370'],310,'Expensive'],
-['Aracaju','aracaju','Brazil','🇧🇷','Budget',125,170,15,28,'g',['R$685–740','R$640+','R$610–1,430','R$660–2,145'],169,'Moderate'],
-['Arenal','arenal','Costa Rica','🇨🇷','Budget',240,510,20,38,'g',['$205+','$235–510','$170–700','$430–2,400'],404,'Very expensive'],
-['Aruba','aruba','Aruba','🇦🇼','Expensive',340,780,45,70,'g',['$215–360','$340–785','$495–1,250','$530–1,035'],618,'Very expensive'],
-['Athens','athens','Greece','🇬🇷','Moderate',150,600,25,45,'g',['€75–195','€130–515','€145–370','€330–900'],410,'Very expensive'],
-['Atlanta','atlanta','United States','🇺🇸','Moderate',165,250,30,50,'g',['$135–265','$165–250','$175–280','$520–750'],248,'Moderate'],
-['Austin','austin','United States','🇺🇸','Moderate',270,440,30,50,'g',['$250–525','$270–445','$380–600','$390–1,600'],395,'Expensive'],
-['Azores','azores','Portugal','🇵🇹','Moderate',105,430,30,50,'g',['€125–465','€90–375','€125–255','€175–400'],308,'Expensive'],
-['Bali','bali','Indonesia','🇮🇩','Budget',90,155,12,25,'e',['$50–85','$90–155','$180–200','$210+'],141,'Budget'],
-['Banff','banff','Canada','🇨🇦','Expensive',580,630,40,70,'e',['$530–570','$580–630','$670–830','$880+'],660,'Very expensive'],
-['Bangkok','bangkok','Thailand','🇹🇭','Budget',70,105,12,25,'e',['$35–65','$70–105','$115–140','$160+'],106,'Budget'],
-['Barbados','barbados','Barbados','🇧🇧','Expensive',160,340,45,70,'e',['$105–160','$160–340','$390–670','$760+'],308,'Expensive'],
-['Barcelona','barcelona','Spain','🇪🇸','Moderate',190,220,30,50,'e',['$175–180','$190–220','$220–260','$270+'],245,'Moderate'],
-['Beijing','beijing','China','🇨🇳','Moderate',80,105,20,40,'e',['$65–75','$80–105','$105–145','$160+'],122,'Budget'],
-['Bend','bend','United States','🇺🇸','Moderate',100,150,30,50,'e',0,165,'Moderate'],
-['Bergen','bergen','Norway','🇳🇴','Premium',110,160,40,65,'e',0,188,'Moderate'],
-['Berlin','berlin','Germany','🇩🇪','Moderate',70,110,25,45,'e',0,125,'Budget'],
-['Big Island','big-island','United States','🇺🇸','Moderate',120,170,40,65,'e',0,198,'Moderate'],
-['Bilbao','bilbao','Spain','🇪🇸','Moderate',210,220,30,50,'e',['$175–200','$210–220','$220–300','$300+'],255,'Expensive'],
-['Bologna','bologna','Italy','🇮🇹','Moderate',70,110,30,50,'e',0,130,'Budget'],
-['Bora Bora','bora-bora','French Polynesia','🇵🇫','Premium',350,500,60,90,'e',0,500,'Very expensive'],
-['Bordeaux','bordeaux','France','🇫🇷','Moderate',75,115,30,50,'e',0,135,'Budget'],
-['Boston','boston','United States','🇺🇸','Expensive',250,320,35,55,'g',['$220–300','$250–320','$520–710','$700+'],330,'Expensive'],
-['Boulder','boulder','United States','🇺🇸','Moderate',160,170,30,50,'g',['$130–140','$160–170','$220–300','$350+'],205,'Moderate'],
-['Bruges','bruges','Belgium','🇧🇪','Moderate',170,190,30,50,'g',['€120–145','€145–165','€195–210','€250+'],220,'Moderate'],
-['Brussels','brussels','Belgium','🇧🇪','Moderate',240,280,30,50,'g',['€180–195','€205–245','€265–300','€380+'],300,'Expensive'],
-['Budapest','budapest','Hungary','🇭🇺','Budget',165,220,20,40,'g',['HUF 36,000–40,000','HUF 52,000–70,000','HUF 75,000–100,000','HUF 195,000+'],222,'Moderate'],
-['Buenos Aires','buenos-aires','Argentina','🇦🇷','Budget',220,250,25,45,'g',['$160–180','$220–250','$320–430','$650+'],270,'Expensive'],
-['Busan','busan','South Korea','🇰🇷','Moderate',155,170,22,40,'g',['KRW 130,000–150,000','KRW 220,000–240,000','KRW 285,000–300,000','KRW 325,000+'],194,'Moderate'],
-['Cairo','cairo','Egypt','🇪🇬','Budget',185,210,15,28,'g',['$90–125','$185–210','$280–325','$450+'],219,'Moderate'],
-['Cambridge','cambridge','United Kingdom','🇬🇧','Expensive',175,220,30,50,'g',['£70–100','£130–165','£170–190','£330+'],238,'Moderate'],
-['Cancún','cancun','Mexico','🇲🇽','Moderate',210,410,30,55,'g',['MXN 2,400–3,500','MXN 3,500–7,000','MXN 7,000–11,000','MXN 11,000+'],352,'Expensive'],
-['Cannes','cannes','France','🇫🇷','Premium',175,270,35,55,'g',['€100–150','€150–230','€230–300','€300+'],268,'Expensive'],
-['Cape Cod','cape-cod','United States','🇺🇸','Moderate',140,220,35,55,'g',['$100–140','$140–220','$220–380','$380+'],225,'Moderate'],
-['Cape Town','cape-town','South Africa','🇿🇦','Budget',100,195,20,38,'e',['$95–100','$100–195','$220–290','$320+'],176,'Moderate'],
-['Capri','capri','Italy','🇮🇹','Premium',120,170,40,65,'e',0,198,'Moderate'],
-['Carmel by the Sea','carmel-by-the-sea','United States','🇺🇸','Expensive',120,170,40,65,'e',0,198,'Moderate'],
-['Cascais','cascais','Portugal','🇵🇹','Moderate',70,110,28,48,'e',0,128,'Budget'],
-['Cayman Islands','cayman-islands','Cayman Islands','🇰🇾','Premium',160,220,50,80,'e',0,255,'Expensive'],
-['Charlotte','charlotte','United States','🇺🇸','Moderate',80,120,30,50,'e',0,140,'Budget'],
-['Chiang Mai','chiang-mai','Thailand','🇹🇭','Budget',25,50,8,18,'e',0,50,'Budget'],
-['Chicago','chicago','United States','🇺🇸','Moderate',90,140,30,50,'e',0,155,'Moderate'],
-['Chongqing','chongqing','China','🇨🇳','Budget',50,80,15,30,'e',0,88,'Budget'],
-['Cinque Terre','cinque-terre','Italy','🇮🇹','Moderate',90,140,30,50,'e',0,155,'Moderate'],
-['Colmar','colmar','France','🇫🇷','Moderate',75,115,30,50,'e',0,135,'Budget'],
-['Cologne','cologne','Germany','🇩🇪','Moderate',130,165,30,50,'e',['$120–125','$130–165','$170–190','$195+'],188,'Moderate'],
-['Colombo','colombo','Sri Lanka','🇱🇰','Budget',50,85,15,28,'e',0,89,'Budget'],
-['Columbia','columbia','United States','🇺🇸','Budget',70,110,25,45,'e',0,125,'Budget'],
-['Copenhagen','copenhagen','Denmark','🇩🇰','Premium',100,150,35,55,'e',0,170,'Moderate'],
-['Corfu','corfu','Greece','🇬🇷','Moderate',60,100,25,45,'e',0,115,'Budget'],
-['Curaçao','curacao','Curaçao','🇨🇼','Expensive',185,200,40,65,'g',['$140–170','$185–200','$250–360','$700+'],245,'Moderate'],
-['Curitiba','curitiba','Brazil','🇧🇷','Budget',90,135,18,32,'g',['R$350–480','R$480–700','R$700–900','R$1,100+'],138,'Budget'],
-['Cusco','cusco','Peru','🇵🇪','Budget',100,200,15,30,'g',['$60–100','$100–200','$200–400','$400+'],172,'Moderate'],
-['Dallas','dallas','United States','🇺🇸','Moderate',200,300,30,50,'g',['$150–200','$200–300','$300–600','$600+'],290,'Expensive'],
-['Denver','denver','United States','🇺🇸','Moderate',180,300,30,50,'g',['$140–180','$180–300','$300–450','$450+'],280,'Expensive'],
-['Doha','doha','Qatar','🇶🇦','Expensive',150,250,35,60,'g',['$90–150','$150–250','$250–400','$400+'],248,'Moderate'],
-['Dubai','dubai','United Arab Emirates','🇦🇪','Expensive',220,300,35,60,'g',['$130–220','$220–300','$300–600','$600+'],308,'Expensive'],
-['Dublin','dublin','Ireland','🇮🇪','Expensive',170,350,35,55,'g',['€130–145','€145–300','€300–450','€450+'],305,'Expensive'],
-['Dubrovnik','dubrovnik','Croatia','🇭🇷','Moderate',175,290,30,50,'g',['€120–150','€150–250','€250–400','€400+'],272,'Expensive'],
-['Edinburgh','edinburgh','United Kingdom','🇬🇧','Moderate',220,340,30,50,'g',['£140–160','£160–250','£250–400','£400+'],320,'Expensive'],
-['Florence','florence','Italy','🇮🇹','Moderate',185,350,30,50,'g',['€120–160','€160–300','€300–600','€600+'],308,'Expensive'],
-['Florianópolis','florianopolis','Brazil','🇧🇷','Budget',105,175,18,35,'g',['R$400–550','R$550–900','R$900–1,300','R$1,300+'],166,'Moderate'],
-['Florida Keys','florida-keys','United States','🇺🇸','Expensive',430,600,40,65,'g',['$290–430','$430–600','$600–750','$750+'],568,'Very expensive'],
-['Fortaleza','fortaleza','Brazil','🇧🇷','Budget',115,175,15,28,'g',['R$280–650','R$600–900','R$900–1,300','R$1,300+'],166,'Moderate'],
-['Foz do Iguaçu','foz-do-iguacu','Brazil','🇧🇷','Budget',135,230,15,28,'g',['R$400–700','R$700–1,200','R$1,200–2,500','R$2,500+'],204,'Moderate'],
-['Frankfurt','frankfurt','Germany','🇩🇪','Expensive',240,350,32,55,'g',['€170–210','€210–300','€300–450','€450+'],338,'Expensive'],
-['Geneva','geneva','Switzerland','🇨🇭','Premium',120,180,40,70,'e',0,205,'Moderate'],
-['Glacier National Park','glacier-national-park','United States','🇺🇸','Moderate',100,160,30,50,'e',0,170,'Moderate'],
-['Glasgow','glasgow','United Kingdom','🇬🇧','Moderate',70,110,28,48,'e',0,128,'Budget'],
-['Gothenburg','gothenburg','Sweden','🇸🇪','Premium',90,140,35,55,'e',0,160,'Moderate'],
-['Hamburg','hamburg','Germany','🇩🇪','Moderate',80,130,30,50,'e',0,145,'Budget'],
-['Hanoi','hanoi','Vietnam','🇻🇳','Budget',25,50,8,18,'e',0,50,'Budget'],
-['Helsinki','helsinki','Finland','🇫🇮','Expensive',90,140,35,55,'e',0,160,'Moderate'],
-['Hoi An','hoi-an','Vietnam','🇻🇳','Budget',30,55,10,22,'e',0,58,'Budget'],
-['Hong Kong','hong-kong','China','🇨🇳','Expensive',100,160,25,45,'e',0,165,'Moderate'],
-['Istanbul','istanbul','Turkey','🇹🇷','Moderate',50,90,20,40,'e',0,100,'Budget'],
-['João Pessoa','joao-pessoa','Brazil','🇧🇷','Budget',135,165,12,25,'g',['R$500–600','R$700–850','R$1,100–1,300','R$1,450+'],168,'Moderate'],
-['Kauai','kauai','United States','🇺🇸','Expensive',330,400,40,65,'g',['$210–290','$330–400','$500–700','$730+'],418,'Very expensive'],
-['Key West','keywest','United States','🇺🇸','Moderate',260,300,40,65,'g',['$170–240','$260–300','$360–500','$500+'],332,'Expensive'],
-['Kotor','kotor','Montenegro','🇲🇪','Budget',150,200,20,35,'g',['€75–100','€130–175','€200–240','€400+'],202,'Moderate'],
-['Kraków','krakow','Poland','🇵🇱','Budget',135,175,18,35,'g',['PLN 370–470','PLN 500–660','PLN 800–1,050','PLN 1,800+'],182,'Moderate'],
-['Kyoto','kyoto','Japan','🇯🇵','Moderate',230,280,25,45,'g',['¥26,000–31,000','¥37,000–45,000','¥57,000–90,000','¥240,000+'],290,'Expensive'],
-['La Jolla','la-jolla','United States','🇺🇸','Expensive',130,190,40,65,'e',0,212,'Moderate'],
-['Lagos','lagos','Portugal','🇵🇹','Budget',60,100,20,35,'e',0,108,'Budget'],
-['Lake Como','lake-como','Italy','🇮🇹','Expensive',100,150,30,50,'e',0,165,'Moderate'],
-['Lake Tahoe','lake-tahoe','United States','🇺🇸','Moderate',100,160,35,55,'e',0,175,'Moderate'],
-['Las Vegas','las-vegas','United States','🇺🇸','Moderate',70,120,30,50,'e',0,135,'Budget'],
-['Lecce','lecce','Italy','🇮🇹','Budget',60,100,25,42,'e',0,114,'Budget'],
-['Lille','lille','France','🇫🇷','Moderate',70,110,28,48,'e',0,128,'Budget'],
-['Lima','lima','Peru','🇵🇪','Budget',70,110,25,45,'e',0,125,'Budget'],
-['Lisbon','lisbon','Portugal','🇵🇹','Moderate',70,110,25,45,'e',0,125,'Budget'],
-['Ljubljana','ljubljana','Slovenia','🇸🇮','Moderate',60,100,22,40,'e',0,111,'Budget'],
-['London','london','United Kingdom','🇬🇧','Expensive',100,150,35,55,'e',0,170,'Moderate'],
-['Los Angeles','los-angeles','United States','🇺🇸','Expensive',90,140,30,50,'e',0,155,'Moderate'],
-['Lucerne','lucerne','Switzerland','🇨🇭','Premium',130,190,40,70,'e',0,215,'Moderate'],
-['Luxembourg','luxembourg','Luxembourg','🇱🇺','Expensive',100,150,35,55,'e',0,170,'Moderate'],
-['Lyon','lyon','France','🇫🇷','Moderate',80,120,30,50,'e',0,140,'Budget'],
-['Maceió','maceio','Brazil','🇧🇷','Budget',40,70,14,26,'e',0,75,'Budget'],
-['Machu Picchu','machupicchu','Peru','🇵🇪','Budget',50,90,20,35,'e',0,98,'Budget'],
-['Madeira','madeira','Portugal','🇵🇹','Moderate',70,110,28,48,'e',0,128,'Budget'],
-['Madrid','madrid','Spain','🇪🇸','Moderate',75,115,28,48,'e',0,133,'Budget'],
-['Maldives','maldives','Maldives','🇲🇻','Premium',350,500,60,90,'e',0,500,'Very expensive'],
-['Malibu','malibu','United States','🇺🇸','Expensive',130,190,40,65,'e',0,212,'Moderate'],
-['Manuel Antonio','manuel-antonio','Costa Rica','🇨🇷','Moderate',130,210,25,45,'g',['$90–130','$130–210','$210–380','$380+'],205,'Moderate'],
-['Marco Island','marco-island','United States','🇺🇸','Expensive',330,450,45,75,'g',['$250–330','$330–450','$450–650','$650+'],450,'Very expensive'],
-['Marktoberdorf','marktoberdorf','Germany','🇩🇪','Moderate',140,230,28,48,'g',['€90–120','€120–200','€200–320','€320+'],223,'Moderate'],
-['Marrakech','marrakech','Morocco','🇲🇦','Budget',95,270,18,35,'g',['MAD 400–900','MAD 900–2,500','MAD 2,500–5,000','MAD 5,000+'],209,'Moderate'],
-['Marseille','marseille','France','🇫🇷','Moderate',140,230,30,50,'g',['€70–120','€120–200','€200–320','€320+'],225,'Moderate'],
-['Maui','maui','United States','🇺🇸','Expensive',340,500,40,65,'g',['$230–340','$340–500','$500–700','$700+'],472,'Very expensive'],
-['Melbourne','melbourne','Australia','🇦🇺','Moderate',210,280,30,50,'g',['AUD 200–300','AUD 300–400','AUD 400–560','AUD 560+'],285,'Expensive'],
-['Miami','miami','United States','🇺🇸','Expensive',250,340,35,55,'g',['$150–250','$250–340','$340–600','$600+'],340,'Expensive'],
-['Milan','milan','Italy','🇮🇹','Expensive',290,410,30,50,'g',['€150–250','€250–350','€350–600','€600+'],390,'Expensive'],
-['Monaco','monaco','Monaco','🇲🇨','Premium',230,350,50,85,'g',['€100–200','€200–300','€300–450','€450+'],358,'Expensive'],
-['Montevideo','montevideo','Uruguay','🇺🇾','Moderate',70,110,28,48,'e',0,128,'Budget'],
-['Montréal','montreal','Canada','🇨🇦','Moderate',80,130,30,50,'e',0,145,'Budget'],
-['Munich','munich','Germany','🇩🇪','Expensive',90,140,30,50,'e',0,155,'Moderate'],
-['Mykonos','mykonos','Greece','🇬🇷','Expensive',120,180,35,60,'e',0,198,'Moderate'],
-['Málaga','malaga','Spain','🇪🇸','Moderate',65,105,25,45,'e',0,120,'Budget'],
-['Napa','napa','United States','🇺🇸','Expensive',120,170,40,65,'e',0,198,'Moderate'],
-['Naples','naples','Italy','🇮🇹','Moderate',70,110,28,48,'e',0,128,'Budget'],
-['Naples, FL','naples-florida','United States','🇺🇸','Expensive',100,160,35,60,'e',0,178,'Moderate'],
-['Nashville','nashville','United States','🇺🇸','Moderate',80,120,30,50,'e',0,140,'Budget'],
-['Natal','natal','Brazil','🇧🇷','Budget',40,65,12,25,'e',0,71,'Budget'],
-['New Orleans','new-orleans','United States','🇺🇸','Moderate',100,150,30,50,'e',0,165,'Moderate'],
-['New York','new-york','United States','🇺🇸','Expensive',130,190,40,65,'e',0,212,'Moderate'],
-['Nice','nice','France','🇫🇷','Expensive',90,140,30,50,'e',0,155,'Moderate'],
-['Oahu','oahu','United States','🇺🇸','Expensive',120,170,40,65,'e',0,198,'Moderate'],
-['Orcas Island','orcas-island','United States','🇺🇸','Moderate',120,180,35,55,'e',0,195,'Moderate'],
-['Orlando','orlando','United States','🇺🇸','Moderate',80,130,30,50,'e',0,145,'Budget'],
-['Osaka','osaka','Japan','🇯🇵','Moderate',70,110,20,40,'e',0,120,'Budget'],
-['Oslo','oslo','Norway','🇳🇴','Premium',110,160,40,65,'e',0,188,'Moderate'],
-['Oxford','oxford','United Kingdom','🇬🇧','Expensive',160,270,30,50,'g',['£60–120','£120–200','£200–320','£320+'],255,'Expensive'],
-['Palawan','palawan','Philippines','🇵🇭','Budget',40,95,15,28,'g',['PHP 1,000–2,500','PHP 2,500–6,000','PHP 6,000–15,000','PHP 15,000+'],89,'Budget'],
-['Palm Desert','palm-desert','United States','🇺🇸','Moderate',180,250,30,50,'g',['$120–180','$180–250','$250–450','$450+'],255,'Expensive'],
-['Palo Alto','palo-alto','United States','🇺🇸','Expensive',260,420,35,55,'g',['$160–260','$260–420','$420–700','$700+'],385,'Expensive'],
-['Paris','paris','France','🇫🇷','Expensive',320,520,35,55,'g',['€180–280','€280–450','€450–800','€800+'],465,'Very expensive'],
-['Pasadena','pasadena','United States','🇺🇸','Moderate',190,260,35,55,'g',['$110–190','$190–260','$260–400','$400+'],270,'Expensive'],
-['Pensacola','pensacola','United States','🇺🇸','Moderate',175,230,28,48,'g',['$100–175','$175–230','$230–350','$350+'],240,'Moderate'],
-['Petra','petra','Jordan','🇯🇴','Moderate',80,125,22,40,'g',['JOD 30–55','JOD 55–90','JOD 90–140','JOD 140+'],134,'Budget'],
-['Philadelphia','philadelphia','United States','🇺🇸','Moderate',190,280,30,50,'g',['$130–190','$190–280','$280–450','$450+'],275,'Expensive'],
-['Phoenix','phoenix','United States','🇺🇸','Moderate',190,280,30,50,'g',['$120–190','$190–280','$280–450','$450+'],275,'Expensive'],
-['Phuket','phuket','Thailand','🇹🇭','Budget',90,180,15,30,'g',['THB 1,000–3,000','THB 3,000–6,000','THB 6,000–12,000','THB 12,000+'],158,'Moderate'],
-['Pisa','pisa','Italy','🇮🇹','Moderate',140,195,28,48,'g',['€80–120','€120–170','€170–230','€230+'],206,'Moderate'],
-['Pokhara','pokhara','Nepal','🇳🇵','Budget',40,80,8,18,'g',['NPR 3,000–6,000','NPR 6,000–12,000','NPR 12,000–20,000','NPR 20,000+'],73,'Budget'],
-['Portland','portland','United States','🇺🇸','Moderate',150,210,30,50,'g',['$110–150','$150–210','$210–300','$300+'],220,'Moderate'],
-['Porto','porto','Portugal','🇵🇹','Moderate',160,230,25,45,'g',['€90–140','€140–200','€200–300','€300+'],230,'Moderate'],
-['Porto Alegre','porto-alegre','Brazil','🇧🇷','Budget',50,80,18,32,'e',0,90,'Budget'],
-['Prague','prague','Czechia','🇨🇿','Moderate',60,100,22,40,'e',0,111,'Budget'],
-['Puerto Rico','puerto-rico','Puerto Rico','🇵🇷','Moderate',100,150,35,55,'e',0,170,'Moderate'],
-['Queenstown','queenstown','New Zealand','🇳🇿','Expensive',100,150,35,55,'e',0,170,'Moderate'],
-['Québec City','quebec-city','Canada','🇨🇦','Moderate',80,130,30,50,'e',0,145,'Budget'],
-['Recife','recife','Brazil','🇧🇷','Budget',40,70,15,28,'e',0,76,'Budget'],
-['Reykjavik','reykjavik','Iceland','🇮🇸','Premium',120,170,45,70,'e',0,202,'Moderate'],
-['Rio de Janeiro','rio-de-janeiro','Brazil','🇧🇷','Budget',70,110,28,48,'e',0,128,'Budget'],
-['Rome','rome','Italy','🇮🇹','Moderate',80,130,30,50,'e',0,145,'Budget'],
-['Rotterdam','rotterdam','Netherlands','🇳🇱','Moderate',125,135,30,50,'e',['$110–125','$125–135','$135–175','$185+'],170,'Moderate'],
-['Salvador','salvador','Brazil','🇧🇷','Budget',40,75,15,30,'e',0,80,'Budget'],
-['Salzburg','salzburg','Austria','🇦🇹','Expensive',80,130,30,50,'e',0,145,'Budget'],
-['San Diego','san-diego','United States','🇺🇸','Expensive',240,340,35,55,'g',['$180–240','$240–340','$340–460','$460+'],335,'Expensive'],
-['San Francisco','san-francisco','United States','🇺🇸','Premium',260,340,40,65,'g',['$190–260','$260–340','$340–480','$480+'],352,'Expensive'],
-['San Jose','san-jose','United States','🇺🇸','Moderate',190,260,35,55,'g',['$140–190','$190–260','$260–340','$340+'],270,'Expensive'],
-['San José','san-jose-costa-rica','Costa Rica','🇨🇷','Moderate',90,140,18,35,'g',['$55–90','$90–140','$140–200','$200+'],142,'Budget'],
-['San Juan Island','san-juan-island','United States','🇺🇸','Expensive',190,260,35,55,'g',['$160–190','$190–260','$260–370','$370+'],270,'Expensive'],
-['San Sebastián','san-sebastian','Spain','🇪🇸','Moderate',125,210,35,55,'g',['€75–110','€110–180','€180–300','€300+'],212,'Moderate'],
-['Santa Barbara','santa-barbara','United States','🇺🇸','Premium',230,330,40,65,'g',['$180–230','$230–330','$330–500','$500+'],332,'Expensive'],
-['Santa Cruz','santa-cruz','United States','🇺🇸','Moderate',170,250,35,55,'g',['$120–170','$170–250','$250–400','$400+'],255,'Expensive'],
-['Santa Fe','santa-fe','United States','🇺🇸','Moderate',170,260,35,60,'g',['$130–170','$170–260','$260–400','$400+'],262,'Expensive'],
-['Santa Monica','santa-monica','United States','🇺🇸','Expensive',120,180,40,65,'e',0,202,'Moderate'],
-['Santiago','santiago','Chile','🇨🇱','Budget',70,110,28,48,'e',0,128,'Budget'],
-['Santorini','santorini','Greece','🇬🇷','Expensive',120,180,35,60,'e',0,198,'Moderate'],
-['Sarasota','sarasota','United States','🇺🇸','Moderate',90,140,30,50,'e',0,155,'Moderate'],
-['Sardinia','sardinia','Italy','🇮🇹','Premium',80,130,28,48,'e',0,143,'Budget'],
-['Scottsdale','scottsdale','United States','🇺🇸','Moderate',100,150,35,55,'e',0,170,'Moderate'],
-['Seattle','seattle','United States','🇺🇸','Expensive',100,150,35,55,'e',0,170,'Moderate'],
-['Sedona','sedona','United States','🇺🇸','Moderate',110,170,35,55,'e',0,185,'Moderate'],
-['Seoul','seoul','South Korea','🇰🇷','Moderate',70,110,20,40,'e',0,120,'Budget'],
-['Seville','seville','Spain','🇪🇸','Moderate',70,110,25,45,'e',0,125,'Budget'],
-['Shanghai','shanghai','China','🇨🇳','Moderate',80,130,22,40,'e',0,136,'Budget'],
-['Sicily','sicily','Italy','🇮🇹','Moderate',70,110,25,45,'e',0,125,'Budget'],
-['Siena','siena','Italy','🇮🇹','Moderate',80,120,28,48,'e',0,138,'Budget'],
-['Singapore','singapore','Singapore','🇸🇬','Expensive',100,150,25,45,'e',0,160,'Moderate'],
-['Sint Maarten','sint-maarten','Sint Maarten','🇸🇽','Expensive',130,190,45,70,'e',0,218,'Moderate'],
-['Sintra','sintra','Portugal','🇵🇹','Moderate',70,110,25,45,'e',0,125,'Budget'],
-['Sorrento','sorrento','Italy','🇮🇹','Expensive',90,140,30,50,'e',0,155,'Moderate'],
-['Split','split','Croatia','🇭🇷','Moderate',70,110,28,48,'e',0,128,'Budget'],
-['Stockholm','stockholm','Sweden','🇸🇪','Premium',210,280,35,55,'g',['SEK 1,500–2,000','SEK 2,000–2,700','SEK 2,700–4,000','SEK 4,000+'],290,'Expensive'],
-['Strasbourg','strasbourg','France','🇫🇷','Moderate',150,220,30,50,'g',['€90–130','€130–190','€190–280','€280+'],225,'Moderate'],
-['Stuttgart','stuttgart','Germany','🇩🇪','Moderate',140,210,30,50,'g',['€80–120','€120–180','€180–240','€240+'],215,'Moderate'],
-['Sydney','sydney','Australia','🇦🇺','Expensive',230,300,35,55,'g',['AUD 220–320','AUD 320–420','AUD 420–600','AUD 600+'],310,'Expensive'],
-['São Luís','sao-luis','Brazil','🇧🇷','Budget',40,65,12,22,'e',0,70,'Budget'],
-['São Paulo','sao-paulo','Brazil','🇧🇷','Moderate',60,100,20,38,'e',0,109,'Budget'],
-['Taipei','taipei','Taiwan','🇹🇼','Budget',155,250,18,35,'g',['TWD 3,500–5,000','TWD 5,000–8,000','TWD 8,000–12,000','TWD 12,000+'],229,'Moderate'],
-['Tallinn','tallinn','Estonia','🇪🇪','Moderate',120,160,22,40,'g',['€80–105','€105–140','€140–200','€200+'],171,'Moderate'],
-['Tbilisi','tbilisi','Georgia','🇬🇪','Budget',115,190,15,28,'g',['GEL 150–300','GEL 300–500','GEL 500–900','GEL 900+'],174,'Moderate'],
-['Tenerife','tenerife','Spain','🇪🇸','Moderate',140,230,25,45,'g',['€80–120','€120–200','€200–300','€300+'],220,'Moderate'],
-['The Bahamas','bahamas','The Bahamas','🇧🇸','Expensive',185,350,50,80,'e',['$125–165','$185–350','$370–440','$440+'],332,'Expensive'],
-['Tokyo','tokyo','Japan','🇯🇵','Moderate',310,560,30,55,'g',['JPY 25,000–50,000','JPY 50,000–90,000','JPY 90,000–150,000','JPY 150,000+'],478,'Very expensive'],
-['Toledo','toledo','Spain','🇪🇸','Moderate',160,220,25,45,'g',['€90–140','€140–190','€190–250','€250+'],225,'Moderate'],
-['Toronto','toronto','Canada','🇨🇦','Moderate',90,140,30,50,'e',0,155,'Moderate'],
-['Tromsø','tromso','Norway','🇳🇴','Premium',100,150,40,65,'e',0,178,'Moderate'],
-['Turin','turin','Italy','🇮🇹','Moderate',80,120,28,48,'e',0,138,'Budget'],
-['Turks and Caicos','turks-and-caicos','Turks and Caicos','🇹🇨','Premium',160,220,50,80,'e',0,255,'Expensive'],
-['Vancouver','vancouver','Canada','🇨🇦','Expensive',100,150,35,55,'e',0,170,'Moderate'],
-['Venice','venice','Italy','🇮🇹','Expensive',100,150,35,55,'e',0,170,'Moderate'],
-['Verona','verona','Italy','🇮🇹','Moderate',80,120,28,48,'e',0,138,'Budget'],
-['Victoria','victoria','Canada','🇨🇦','Moderate',90,140,30,50,'e',0,155,'Moderate'],
-['Vienna','vienna','Austria','🇦🇹','Moderate',80,130,30,50,'e',0,145,'Budget'],
-['Vilnius','vilnius','Lithuania','🇱🇹','Moderate',95,130,20,35,'e',['$65–90','$95–130','$135–195','$230+'],140,'Budget'],
-['Virgin Islands','virgin-islands','Virgin Islands','🇻🇮','Moderate',130,190,45,70,'e',0,218,'Moderate'],
-['Washington DC','washington-dc','United States','🇺🇸','Moderate',100,150,35,55,'e',0,170,'Moderate'],
-['Wellington','wellington','New Zealand','🇳🇿','Expensive',90,140,32,52,'e',0,157,'Moderate'],
-['Whistler','whistler','Canada','🇨🇦','Premium',130,200,40,65,'e',0,218,'Moderate'],
-['Yellowstone','yellowstone','United States','🇺🇸','Moderate',100,160,30,50,'e',0,170,'Moderate'],
-['Zhangjiajie','zhangjiajie','China','🇨🇳','Budget',40,70,15,30,'e',0,78,'Budget'],
-['Zurich','zurich','Switzerland','🇨🇭','Premium',140,200,45,75,'e',0,230,'Moderate'],
-['Ålesund','alesund','Norway','🇳🇴','Premium',115,165,35,55,'g',['NOK 1,150–1,810','NOK 1,090–1,570','NOK 1,610–1,630','NOK 1,900–2,200'],185,'Moderate']
+/* cost:data:start — generated by Brain/scripts/build/build_cost_page.py · do not hand-edit */
+var CI=[
+['Abu Dhabi','abu-dhabi','United Arab Emirates','🇦🇪',51,'Expensive','city','Abu Dhabi, United Arab Emirates',[['Rent',46.3],['Eating out',53.1],['Groceries',49.5]]],
+['Aix-en-Provence','aix-en-provence','France','🇫🇷',45.7,'Moderate','country','France',[['Rent',20.6],['Eating out',64.7],['Groceries',73.8]]],
+['Alaska','alaska','United States','🇺🇸',66.7,'Expensive','nearby','Anchorage, AK, United States',[['Rent',39.4],['Eating out',88.8],['Groceries',96.5]]],
+['Amalfi','amalfi','Italy','🇮🇹',41.9,'Moderate','country','Italy',[['Rent',18.9],['Eating out',64.2],['Groceries',63.8]]],
+['Amsterdam','amsterdam','Netherlands','🇳🇱',69.7,'Expensive','city','Amsterdam, Netherlands',[['Rent',54.4],['Eating out',82.5],['Groceries',80.6]]],
+['Annecy','annecy','France','🇫🇷',45.7,'Moderate','country','France',[['Rent',20.6],['Eating out',64.7],['Groceries',73.8]]],
+['Aracaju','aracaju','Brazil','🇧🇷',21.9,'Cheap','country','Brazil',[['Rent',8.6],['Eating out',29.8],['Groceries',33]]],
+['Arenal','arenal','Costa Rica','🇨🇷',42.2,'Moderate','nearby','San Jose, Costa Rica',[['Rent',22.8],['Eating out',50.7],['Groceries',72.3]]],
+['Aruba','aruba','Aruba','🇦🇼',65.8,'Expensive','derived','Aruba',[]],
+['Athens','athens','Greece','🇬🇷',40.4,'Moderate','city','Athens, Greece',[['Rent',18.5],['Eating out',63.1],['Groceries',59.2]]],
+['Atlanta','atlanta','United States','🇺🇸',62.8,'Expensive','city','Atlanta, GA, United States',[['Rent',42.8],['Eating out',93.8],['Groceries',88.7]]],
+['Austin','austin','United States','🇺🇸',59.3,'Expensive','city','Austin, TX, United States',[['Rent',45.1],['Eating out',76.6],['Groceries',78.5]]],
+['Azores','azores','Portugal','🇵🇹',37.1,'Moderate','country','Portugal',[['Rent',23.5],['Eating out',45.7],['Groceries',47.5]]],
+['Bali','bali','Indonesia','🇮🇩',32.5,'Cheap','city','Bali, Indonesia',[['Rent',29],['Eating out',24],['Groceries',48.6]]],
+['Banff','banff','Canada','🇨🇦',46.6,'Moderate','country','Canada',[['Rent',29.1],['Eating out',61.1],['Groceries',69.2]]],
+['Bangkok','bangkok','Thailand','🇹🇭',32.6,'Cheap','city','Bangkok, Thailand',[['Rent',18.5],['Eating out',28.9],['Groceries',54.1]]],
+['Barbados','barbados','Barbados','🇧🇧',36,'Moderate','proxy','Trinidad And Tobago',[['Rent',14.1],['Eating out',48.9],['Groceries',57.4]]],
+['Barcelona','barcelona','Spain','🇪🇸',49.6,'Moderate','city','Barcelona, Spain',[['Rent',35.4],['Eating out',63.9],['Groceries',64.4]]],
+['Beijing','beijing','China','🇨🇳',31.6,'Cheap','city','Beijing, China',[['Rent',23.2],['Eating out',25.8],['Groceries',41.9]]],
+['Bend','bend','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Bergen','bergen','Norway','🇳🇴',68,'Expensive','city','Bergen, Norway',[['Rent',33.3],['Eating out',106],['Groceries',104.8]]],
+['Berlin','berlin','Germany','🇩🇪',55.9,'Expensive','city','Berlin, Germany',[['Rent',34.5],['Eating out',70.7],['Groceries',70.3]]],
+['Big Island','big-island','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Bilbao','bilbao','Spain','🇪🇸',45.1,'Moderate','city','Bilbao, Spain',[['Rent',31.4],['Eating out',64.3],['Groceries',54.6]]],
+['Bologna','bologna','Italy','🇮🇹',50.4,'Expensive','city','Bologna, Italy',[['Rent',27.7],['Eating out',75.8],['Groceries',73.3]]],
+['Bordeaux','bordeaux','France','🇫🇷',49.2,'Moderate','city','Bordeaux, France',[['Rent',23.1],['Eating out',74.4],['Groceries',79]]],
+['Boston','boston','United States','🇺🇸',83.4,'Very expensive','city','Boston, MA, United States',[['Rent',73.7],['Eating out',95.9],['Groceries',98.6]]],
+['Boulder','boulder','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Bruges','bruges','Belgium','🇧🇪',47.2,'Moderate','country','Belgium',[['Rent',22],['Eating out',77.3],['Groceries',68.1]]],
+['Brussels','brussels','Belgium','🇧🇪',56.5,'Expensive','city','Brussels, Belgium',[['Rent',34.5],['Eating out',81.8],['Groceries',81.5]]],
+['Budapest','budapest','Hungary','🇭🇺',39.9,'Moderate','city','Budapest, Hungary',[['Rent',21.4],['Eating out',55.3],['Groceries',54.9]]],
+['Buenos Aires','buenos-aires','Argentina','🇦🇷',37.5,'Moderate','city','Buenos Aires, Argentina',[['Rent',19.3],['Eating out',64.3],['Groceries',50.7]]],
+['Busan','busan','South Korea','🇰🇷',37,'Moderate','country','South Korea',[['Rent',13.6],['Eating out',32.8],['Groceries',72.2]]],
+['Cairo','cairo','Egypt','🇪🇬',15.7,'Cheap','city','Cairo, Egypt',[['Rent',6],['Eating out',23.6],['Groceries',24.9]]],
+['Cambridge','cambridge','United Kingdom','🇬🇧',62.8,'Expensive','city','Cambridge, United Kingdom',[['Rent',46.4],['Eating out',77.5],['Groceries',73]]],
+['Cancún','cancun','Mexico','🇲🇽',35.2,'Moderate','city','Cancun, Mexico',[['Rent',17.2],['Eating out',52.9],['Groceries',55.5]]],
+['Cannes','cannes','France','🇫🇷',45.7,'Moderate','country','France',[['Rent',20.6],['Eating out',64.7],['Groceries',73.8]]],
+['Cape Cod','cape-cod','United States','🇺🇸',83.4,'Very expensive','nearby','Boston, MA, United States',[['Rent',73.7],['Eating out',95.9],['Groceries',98.6]]],
+['Cape Town','cape-town','South Africa','🇿🇦',34.5,'Cheap','city','Cape Town, South Africa',[['Rent',23.6],['Eating out',41.4],['Groceries',41.2]]],
+['Capri','capri','Italy','🇮🇹',43.6,'Moderate','nearby','Naples, Italy',[['Rent',22.9],['Eating out',62.9],['Groceries',66.4]]],
+['Carmel by the Sea','carmel-by-the-sea','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Cascais','cascais','Portugal','🇵🇹',37.1,'Moderate','country','Portugal',[['Rent',23.5],['Eating out',45.7],['Groceries',47.5]]],
+['Cayman Islands','cayman-islands','Cayman Islands','🇰🇾',99,'Very expensive','country','Cayman Islands',[['Rent',74.1],['Eating out',99.7],['Groceries',126.9]]],
+['Charlotte','charlotte','United States','🇺🇸',58.3,'Expensive','city','Charlotte, NC, United States',[['Rent',42.2],['Eating out',69.4],['Groceries',84.1]]],
+['Chiang Mai','chiang-mai','Thailand','🇹🇭',22.9,'Cheap','city','Chiang Mai, Thailand',[['Rent',10.3],['Eating out',19.5],['Groceries',44]]],
+['Chicago','chicago','United States','🇺🇸',65.8,'Expensive','city','Chicago, IL, United States',[['Rent',53.5],['Eating out',75.6],['Groceries',88.6]]],
+['Chongqing','chongqing','China','🇨🇳',19.8,'Cheap','city','Chongqing, China',[['Rent',8.9],['Eating out',19],['Groceries',37.8]]],
+['Cinque Terre','cinque-terre','Italy','🇮🇹',41.9,'Moderate','country','Italy',[['Rent',18.9],['Eating out',64.2],['Groceries',63.8]]],
+['Coeur d\'Alene','coeur-dalene','United States','🇺🇸',56.3,'Expensive','nearby','Spokane, WA, United States',[['Rent',35.9],['Eating out',71.4],['Groceries',87.1]]],
+['Colmar','colmar','France','🇫🇷',45.7,'Moderate','country','France',[['Rent',20.6],['Eating out',64.7],['Groceries',73.8]]],
+['Cologne','cologne','Germany','🇩🇪',53.4,'Expensive','city','Cologne, Germany',[['Rent',29],['Eating out',72.4],['Groceries',72.2]]],
+['Colombo','colombo','Sri Lanka','🇱🇰',24.4,'Cheap','city','Colombo, Sri Lanka',[['Rent',12.1],['Eating out',25.2],['Groceries',50]]],
+['Columbia','columbia','United States','🇺🇸',47.1,'Moderate','city','Columbia, SC, United States',[['Rent',28.1],['Eating out',66.7],['Groceries',70.6]]],
+['Copenhagen','copenhagen','Denmark','🇩🇰',68.4,'Expensive','city','Copenhagen, Denmark',[['Rent',42.6],['Eating out',98.4],['Groceries',90.2]]],
+['Corfu','corfu','Greece','🇬🇷',34.8,'Cheap','country','Greece',[['Rent',12.9],['Eating out',57.2],['Groceries',51.7]]],
+['Crete','crete','Greece','🇬🇷',34.8,'Cheap','country','Greece',[['Rent',12.9],['Eating out',57.2],['Groceries',51.7]]],
+['Curaçao','curacao','Curaçao','🇨🇼',77.2,'Very expensive','proxy','Bahamas',[['Rent',48.5],['Eating out',115.5],['Groceries',102.5]]],
+['Curitiba','curitiba','Brazil','🇧🇷',24,'Cheap','city','Curitiba, Brazil',[['Rent',9.7],['Eating out',36],['Groceries',34.4]]],
+['Cusco','cusco','Peru','🇵🇪',22.1,'Cheap','country','Peru',[['Rent',9.8],['Eating out',26.3],['Groceries',36.5]]],
+['Dallas','dallas','United States','🇺🇸',62.1,'Expensive','city','Dallas, TX, United States',[['Rent',44.9],['Eating out',79.5],['Groceries',80.4]]],
+['Denver','denver','United States','🇺🇸',63,'Expensive','city','Denver, CO, United States',[['Rent',45],['Eating out',77],['Groceries',90.7]]],
+['Doha','doha','Qatar','🇶🇦',47.7,'Moderate','city','Doha, Qatar',[['Rent',41.6],['Eating out',64.5],['Groceries',46]]],
+['Dubai','dubai','United Arab Emirates','🇦🇪',58.4,'Expensive','city','Dubai, United Arab Emirates',[['Rent',53.4],['Eating out',68.7],['Groceries',51]]],
+['Dublin','dublin','Ireland','🇮🇪',70.4,'Very expensive','city','Dublin, Ireland',[['Rent',60.2],['Eating out',85.5],['Groceries',78.6]]],
+['Dubrovnik','dubrovnik','Croatia','🇭🇷',35.2,'Moderate','country','Croatia',[['Rent',16.1],['Eating out',53.2],['Groceries',49.7]]],
+['Edinburgh','edinburgh','United Kingdom','🇬🇧',58,'Expensive','city','Edinburgh, United Kingdom',[['Rent',37.2],['Eating out',85.1],['Groceries',73.2]]],
+['Florence','florence','Italy','🇮🇹',55,'Expensive','city','Florence, Italy',[['Rent',34],['Eating out',78.1],['Groceries',81.3]]],
+['Florianópolis','florianopolis','Brazil','🇧🇷',28,'Cheap','city','Florianopolis, Brazil',[['Rent',16.2],['Eating out',37.3],['Groceries',36.1]]],
+['Florida Keys','florida-keys','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Fortaleza','fortaleza','Brazil','🇧🇷',21.8,'Cheap','city','Fortaleza, Brazil',[['Rent',7.5],['Eating out',28.5],['Groceries',34.2]]],
+['Foz do Iguaçu','foz-do-iguacu','Brazil','🇧🇷',24,'Cheap','nearby','Curitiba, Brazil',[['Rent',9.7],['Eating out',36],['Groceries',34.4]]],
+['Frankfurt','frankfurt','Germany','🇩🇪',56.1,'Expensive','city','Frankfurt, Germany',[['Rent',34.7],['Eating out',76.8],['Groceries',68.9]]],
+['Galápagos Islands','galapagos-islands','Ecuador','🇪🇨',25.1,'Cheap','nearby','Guayaquil, Ecuador',[['Rent',11.3],['Eating out',35.7],['Groceries',35.7]]],
+['Geneva','geneva','Switzerland','🇨🇭',89.4,'Very expensive','city','Geneva, Switzerland',[['Rent',63.1],['Eating out',113.9],['Groceries',111.3]]],
+['Glacier National Park','glacier-national-park','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Glasgow','glasgow','United Kingdom','🇬🇧',53.4,'Expensive','city','Glasgow, United Kingdom',[['Rent',33.6],['Eating out',70.1],['Groceries',71.4]]],
+['Gothenburg','gothenburg','Sweden','🇸🇪',47.6,'Moderate','city','Gothenburg, Sweden',[['Rent',25.2],['Eating out',69.4],['Groceries',70.6]]],
+['Granada','granada','Spain','🇪🇸',35.4,'Moderate','city','Granada, Spain',[['Rent',18],['Eating out',48.1],['Groceries',53.1]]],
+['Hamburg','hamburg','Germany','🇩🇪',53.6,'Expensive','city','Hamburg, Germany',[['Rent',30.5],['Eating out',68.8],['Groceries',69.2]]],
+['Hanoi','hanoi','Vietnam','🇻🇳',19.9,'Cheap','city','Hanoi, Vietnam',[['Rent',9.7],['Eating out',17.6],['Groceries',34.3]]],
+['Helsinki','helsinki','Finland','🇫🇮',55.7,'Expensive','city','Helsinki, Finland',[['Rent',30.2],['Eating out',85.7],['Groceries',77]]],
+['Hilton Head Island','hilton-head-island','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Hiroshima','hiroshima','Japan','🇯🇵',32.1,'Cheap','country','Japan',[['Rent',13.6],['Eating out',30.8],['Groceries',58.2]]],
+['Hoi An','hoi-an','Vietnam','🇻🇳',19,'Cheap','country','Vietnam',[['Rent',9.6],['Eating out',15.7],['Groceries',32.6]]],
+['Hong Kong','hong-kong','China','🇨🇳',68.7,'Expensive','city','Hong Kong, Hong Kong (China)',[['Rent',56.8],['Eating out',48.4],['Groceries',80.2]]],
+['Istanbul','istanbul','Turkey','🇹🇷',35.3,'Moderate','city','Istanbul, Turkey',[['Rent',21.9],['Eating out',47.2],['Groceries',46.3]]],
+['João Pessoa','joao-pessoa','Brazil','🇧🇷',22.5,'Cheap','nearby','Recife, Brazil',[['Rent',10.4],['Eating out',31.9],['Groceries',30.6]]],
+['Kauai','kauai','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Key West','keywest','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Kotor','kotor','Montenegro','🇲🇪',30.4,'Cheap','country','Montenegro',[['Rent',15.7],['Eating out',45.8],['Groceries',40.7]]],
+['Kraków','krakow','Poland','🇵🇱',37.8,'Moderate','city','Krakow (Cracow), Poland',[['Rent',20.9],['Eating out',52.9],['Groceries',47.3]]],
+['Kyoto','kyoto','Japan','🇯🇵',32.1,'Cheap','country','Japan',[['Rent',13.6],['Eating out',30.8],['Groceries',58.2]]],
+['La Jolla','la-jolla','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Lagos','lagos','Portugal','🇵🇹',37.1,'Moderate','country','Portugal',[['Rent',23.5],['Eating out',45.7],['Groceries',47.5]]],
+['Lake Como','lake-como','Italy','🇮🇹',41.9,'Moderate','country','Italy',[['Rent',18.9],['Eating out',64.2],['Groceries',63.8]]],
+['Lake Tahoe','lake-tahoe','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Las Vegas','las-vegas','United States','🇺🇸',56.2,'Expensive','city','Las Vegas, NV, United States',[['Rent',36.6],['Eating out',87.5],['Groceries',73.4]]],
+['Lecce','lecce','Italy','🇮🇹',41.9,'Moderate','country','Italy',[['Rent',18.9],['Eating out',64.2],['Groceries',63.8]]],
+['Lille','lille','France','🇫🇷',46.3,'Moderate','city','Lille, France',[['Rent',21.1],['Eating out',69.5],['Groceries',78.7]]],
+['Lima','lima','Peru','🇵🇪',26.3,'Cheap','city','Lima, Peru',[['Rent',14.2],['Eating out',30.2],['Groceries',41.4]]],
+['Lisbon','lisbon','Portugal','🇵🇹',48.2,'Moderate','city','Lisbon, Portugal',[['Rent',37.3],['Eating out',58],['Groceries',54.9]]],
+['Ljubljana','ljubljana','Slovenia','🇸🇮',44.2,'Moderate','city','Ljubljana, Slovenia',[['Rent',25.6],['Eating out',59.5],['Groceries',59]]],
+['London','london','United Kingdom','🇬🇧',81.4,'Very expensive','city','London, United Kingdom',[['Rent',70.3],['Eating out',90.7],['Groceries',77.2]]],
+['Los Angeles','los-angeles','United States','🇺🇸',77.4,'Very expensive','city','Los Angeles, CA, United States',[['Rent',66],['Eating out',93.9],['Groceries',90.5]]],
+['Los Cabos','los-cabos','Mexico','🇲🇽',31.9,'Cheap','country','Mexico',[['Rent',17.1],['Eating out',44.6],['Groceries',49.6]]],
+['Luang Prabang','luang-prabang','Laos','🇱🇦',23.5,'Cheap','proxy','Cambodia',[['Rent',9.8],['Eating out',23.7],['Groceries',43.1]]],
+['Lucerne','lucerne','Switzerland','🇨🇭',81.6,'Very expensive','city','Lucerne, Switzerland',[['Rent',48.4],['Eating out',109.4],['Groceries',110.9]]],
+['Luxembourg','luxembourg','Luxembourg','🇱🇺',69,'Expensive','city','Luxembourg, Luxembourg',[['Rent',53],['Eating out',93.4],['Groceries',81.9]]],
+['Lyon','lyon','France','🇫🇷',50.2,'Expensive','city','Lyon, France',[['Rent',22.5],['Eating out',67.1],['Groceries',84.7]]],
+['Maceió','maceio','Brazil','🇧🇷',21.9,'Cheap','country','Brazil',[['Rent',8.6],['Eating out',29.8],['Groceries',33]]],
+['Machu Picchu','machupicchu','Peru','🇵🇪',22.1,'Cheap','country','Peru',[['Rent',9.8],['Eating out',26.3],['Groceries',36.5]]],
+['Madeira','madeira','Portugal','🇵🇹',37.1,'Moderate','country','Portugal',[['Rent',23.5],['Eating out',45.7],['Groceries',47.5]]],
+['Madrid','madrid','Spain','🇪🇸',48.8,'Moderate','city','Madrid, Spain',[['Rent',34.9],['Eating out',63.1],['Groceries',60.9]]],
+['Maldives','maldives','Maldives','🇲🇻',37.5,'Moderate','country','Maldives',[['Rent',24.2],['Eating out',42.2],['Groceries',54.6]]],
+['Malibu','malibu','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Manuel Antonio','manuel-antonio','Costa Rica','🇨🇷',42.2,'Moderate','nearby','San Jose, Costa Rica',[['Rent',22.8],['Eating out',50.7],['Groceries',72.3]]],
+['Marco Island','marco-island','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Marktoberdorf','marktoberdorf','Germany','🇩🇪',62.5,'Expensive','nearby','Munich, Germany',[['Rent',40.8],['Eating out',77.2],['Groceries',77]]],
+['Marrakech','marrakech','Morocco','🇲🇦',22.3,'Cheap','city','Marrakech, Morocco',[['Rent',9.6],['Eating out',29.8],['Groceries',35]]],
+['Marseille','marseille','France','🇫🇷',50.7,'Expensive','city','Marseille, France',[['Rent',21.8],['Eating out',72.3],['Groceries',94.9]]],
+['Maui','maui','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Melbourne','melbourne','Australia','🇦🇺',63.4,'Expensive','city','Melbourne, Australia',[['Rent',42.5],['Eating out',71.4],['Groceries',99.3]]],
+['Miami','miami','United States','🇺🇸',77.6,'Very expensive','city','Miami, FL, United States',[['Rent',68.3],['Eating out',99.7],['Groceries',92.1]]],
+['Milan','milan','Italy','🇮🇹',61.2,'Expensive','city','Milan, Italy',[['Rent',41.2],['Eating out',79.9],['Groceries',81.2]]],
+['Monaco','monaco','Monaco','🇲🇨',140.6,'Very expensive','derived','Monaco',[]],
+['Montevideo','montevideo','Uruguay','🇺🇾',38.7,'Moderate','city','Montevideo, Uruguay',[['Rent',16.3],['Eating out',60.8],['Groceries',61]]],
+['Montréal','montreal','Canada','🇨🇦',46,'Moderate','city','Montreal, Canada',[['Rent',29.2],['Eating out',64.3],['Groceries',69.1]]],
+['Munich','munich','Germany','🇩🇪',62.5,'Expensive','city','Munich, Germany',[['Rent',40.8],['Eating out',77.2],['Groceries',77]]],
+['Muscat','muscat','Oman','🇴🇲',33.3,'Cheap','city','Muscat, Oman',[['Rent',15.5],['Eating out',42.8],['Groceries',48.9]]],
+['Mykonos','mykonos','Greece','🇬🇷',34.8,'Cheap','country','Greece',[['Rent',12.9],['Eating out',57.2],['Groceries',51.7]]],
+['Málaga','malaga','Spain','🇪🇸',43.4,'Moderate','city','Malaga, Spain',[['Rent',31.9],['Eating out',60.1],['Groceries',53.9]]],
+['Napa','napa','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Naples','naples','Italy','🇮🇹',43.6,'Moderate','city','Naples, Italy',[['Rent',22.9],['Eating out',62.9],['Groceries',66.4]]],
+['Naples, FL','naples-florida','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Nashville','nashville','United States','🇺🇸',62.2,'Expensive','city','Nashville, TN, United States',[['Rent',47.5],['Eating out',74.7],['Groceries',81.7]]],
+['Natal','natal','Brazil','🇧🇷',21.9,'Cheap','country','Brazil',[['Rent',8.6],['Eating out',29.8],['Groceries',33]]],
+['New Orleans','new-orleans','United States','🇺🇸',59.9,'Expensive','city','New Orleans, LA, United States',[['Rent',38.1],['Eating out',92.2],['Groceries',84.8]]],
+['New York','new-york','United States','🇺🇸',100,'Very expensive','city','New York, NY, United States',[['Rent',100],['Eating out',100],['Groceries',100]]],
+['Nice','nice','France','🇫🇷',54.1,'Expensive','city','Nice, France',[['Rent',27.8],['Eating out',78.3],['Groceries',87.8]]],
+['Oahu','oahu','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Oaxaca','oaxaca','Mexico','🇲🇽',31.9,'Cheap','country','Mexico',[['Rent',17.1],['Eating out',44.6],['Groceries',49.6]]],
+['Olinda','olinda','Brazil','🇧🇷',22.5,'Cheap','nearby','Recife, Brazil',[['Rent',10.4],['Eating out',31.9],['Groceries',30.6]]],
+['Orcas Island','orcas-island','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Orlando','orlando','United States','🇺🇸',59,'Expensive','city','Orlando, FL, United States',[['Rent',42.5],['Eating out',79.5],['Groceries',83.3]]],
+['Osaka','osaka','Japan','🇯🇵',31.9,'Cheap','city','Osaka, Japan',[['Rent',17.8],['Eating out',28.9],['Groceries',54]]],
+['Oslo','oslo','Norway','🇳🇴',72,'Very expensive','city','Oslo, Norway',[['Rent',41.7],['Eating out',98.9],['Groceries',100.9]]],
+['Oxford','oxford','United Kingdom','🇬🇧',63.8,'Expensive','city','Oxford, United Kingdom',[['Rent',47],['Eating out',87.2],['Groceries',73.3]]],
+['Palawan','palawan','Philippines','🇵🇭',19.1,'Cheap','country','Philippines',[['Rent',7.2],['Eating out',19.4],['Groceries',35.3]]],
+['Palm Desert','palm-desert','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Palo Alto','palo-alto','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Paris','paris','France','🇫🇷',62.2,'Expensive','city','Paris, France',[['Rent',40.6],['Eating out',76.2],['Groceries',83.8]]],
+['Paro','bhutan','Bhutan','🇧🇹',13.2,'Cheap','proxy','Nepal',[['Rent',2.8],['Eating out',16.5],['Groceries',22.7]]],
+['Pasadena','pasadena','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Pensacola','pensacola','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Petra','petra','Jordan','🇯🇴',28.7,'Cheap','nearby','Amman, Jordan',[['Rent',8.4],['Eating out',49.3],['Groceries',43.4]]],
+['Philadelphia','philadelphia','United States','🇺🇸',63.8,'Expensive','city','Philadelphia, PA, United States',[['Rent',44.5],['Eating out',75.3],['Groceries',88.5]]],
+['Phoenix','phoenix','United States','🇺🇸',59.5,'Expensive','city','Phoenix, AZ, United States',[['Rent',40.1],['Eating out',78.2],['Groceries',84]]],
+['Phuket','phuket','Thailand','🇹🇭',32.4,'Cheap','city','Phuket, Thailand',[['Rent',21.6],['Eating out',31.1],['Groceries',50.1]]],
+['Pisa','pisa','Italy','🇮🇹',49.9,'Moderate','city','Pisa, Italy',[['Rent',23.4],['Eating out',67.4],['Groceries',85.7]]],
+['Pokhara','pokhara','Nepal','🇳🇵',13.2,'Cheap','country','Nepal',[['Rent',2.8],['Eating out',16.5],['Groceries',22.7]]],
+['Portland','portland','United States','🇺🇸',67.1,'Expensive','city','Portland, OR, United States',[['Rent',46.3],['Eating out',84],['Groceries',102.4]]],
+['Porto','porto','Portugal','🇵🇹',42.1,'Moderate','city','Porto, Portugal',[['Rent',29.8],['Eating out',50.5],['Groceries',52.9]]],
+['Porto Alegre','porto-alegre','Brazil','🇧🇷',23.5,'Cheap','city','Porto Alegre, Brazil',[['Rent',9.3],['Eating out',33.4],['Groceries',36.5]]],
+['Prague','prague','Czechia','🇨🇿',45.2,'Moderate','city','Prague, Czech Republic',[['Rent',29.3],['Eating out',48.3],['Groceries',55.2]]],
+['Puerto Rico','puerto-rico','Puerto Rico','🇵🇷',45.8,'Moderate','country','Puerto Rico',[['Rent',23],['Eating out',57.2],['Groceries',72]]],
+['Puerto Vallarta','puerto-vallarta','Mexico','🇲🇽',41.7,'Moderate','city','Puerto Vallarta, Mexico',[['Rent',26.4],['Eating out',57],['Groceries',61.3]]],
+['Queenstown','queenstown','New Zealand','🇳🇿',43.9,'Moderate','country','New Zealand',[['Rent',24.6],['Eating out',56.1],['Groceries',67.5]]],
+['Québec City','quebec-city','Canada','🇨🇦',42.4,'Moderate','city','Quebec City, Canada',[['Rent',21.6],['Eating out',61.7],['Groceries',70.6]]],
+['Recife','recife','Brazil','🇧🇷',22.5,'Cheap','city','Recife, Brazil',[['Rent',10.4],['Eating out',31.9],['Groceries',30.6]]],
+['Reykjavik','reykjavik','Iceland','🇮🇸',80.3,'Very expensive','city','Reykjavik, Iceland',[['Rent',50.3],['Eating out',118.7],['Groceries',116.5]]],
+['Rhodes','rhodes','Greece','🇬🇷',34.8,'Cheap','country','Greece',[['Rent',12.9],['Eating out',57.2],['Groceries',51.7]]],
+['Rio de Janeiro','rio-de-janeiro','Brazil','🇧🇷',27,'Cheap','city','Rio de Janeiro, Brazil',[['Rent',14.8],['Eating out',34.1],['Groceries',38.2]]],
+['Rome','rome','Italy','🇮🇹',47.5,'Moderate','city','Rome, Italy',[['Rent',30.7],['Eating out',60.2],['Groceries',63.3]]],
+['Rotterdam','rotterdam','Netherlands','🇳🇱',62.2,'Expensive','city','Rotterdam, Netherlands',[['Rent',42.5],['Eating out',85.7],['Groceries',74.3]]],
+['Salvador','salvador','Brazil','🇧🇷',22.7,'Cheap','city','Salvador, Brazil',[['Rent',10],['Eating out',31.5],['Groceries',33.1]]],
+['Salzburg','salzburg','Austria','🇦🇹',49.3,'Moderate','country','Austria',[['Rent',23.8],['Eating out',70.8],['Groceries',72.1]]],
+['San Diego','san-diego','United States','🇺🇸',79.8,'Very expensive','city','San Diego, CA, United States',[['Rent',73.3],['Eating out',90.4],['Groceries',90.6]]],
+['San Francisco','san-francisco','United States','🇺🇸',89.3,'Very expensive','city','San Francisco, CA, United States',[['Rent',81.3],['Eating out',92],['Groceries',106.7]]],
+['San Jose','san-jose','United States','🇺🇸',79.6,'Very expensive','city','San Jose, CA, United States',[['Rent',68.6],['Eating out',87.4],['Groceries',94.4]]],
+['San José','san-jose-costa-rica','Costa Rica','🇨🇷',42.2,'Moderate','city','San Jose, Costa Rica',[['Rent',22.8],['Eating out',50.7],['Groceries',72.3]]],
+['San Juan Island','san-juan-island','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['San Sebastián','san-sebastian','Spain','🇪🇸',38.1,'Moderate','country','Spain',[['Rent',22.3],['Eating out',53.9],['Groceries',51.9]]],
+['Santa Barbara','santa-barbara','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Santa Cruz','santa-cruz','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Santa Fe','santa-fe','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Santa Monica','santa-monica','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Santiago','santiago','Chile','🇨🇱',29.7,'Cheap','city','Santiago, Chile',[['Rent',13.6],['Eating out',47.2],['Groceries',46.8]]],
+['Santorini','santorini','Greece','🇬🇷',34.8,'Cheap','country','Greece',[['Rent',12.9],['Eating out',57.2],['Groceries',51.7]]],
+['Sarasota','sarasota','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Sardinia','sardinia','Italy','🇮🇹',41.9,'Moderate','country','Italy',[['Rent',18.9],['Eating out',64.2],['Groceries',63.8]]],
+['Scottsdale','scottsdale','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Seattle','seattle','United States','🇺🇸',77.2,'Very expensive','city','Seattle, WA, United States',[['Rent',59.8],['Eating out',89.9],['Groceries',104]]],
+['Sedona','sedona','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Seoul','seoul','South Korea','🇰🇷',49.9,'Moderate','city','Seoul, South Korea',[['Rent',24.1],['Eating out',47.7],['Groceries',84.7]]],
+['Seville','seville','Spain','🇪🇸',36.3,'Moderate','city','Seville (Sevilla), Spain',[['Rent',20],['Eating out',51],['Groceries',54.4]]],
+['Seychelles','seychelles','Seychelles','🇸🇨',49,'Moderate','country','Seychelles',[['Rent',26.8],['Eating out',73.6],['Groceries',76.8]]],
+['Shanghai','shanghai','China','🇨🇳',33.1,'Cheap','city','Shanghai, China',[['Rent',24.2],['Eating out',25.7],['Groceries',44.2]]],
+['Sicily','sicily','Italy','🇮🇹',41.9,'Moderate','country','Italy',[['Rent',18.9],['Eating out',64.2],['Groceries',63.8]]],
+['Siena','siena','Italy','🇮🇹',41.9,'Moderate','country','Italy',[['Rent',18.9],['Eating out',64.2],['Groceries',63.8]]],
+['Singapore','singapore','Singapore','🇸🇬',82.1,'Very expensive','city','Singapore, Singapore',[['Rent',69.3],['Eating out',56],['Groceries',88.6]]],
+['Sint Maarten','sint-maarten','Sint Maarten','🇸🇽',77.2,'Very expensive','proxy','Bahamas',[['Rent',48.5],['Eating out',115.5],['Groceries',102.5]]],
+['Sintra','sintra','Portugal','🇵🇹',48.2,'Moderate','nearby','Lisbon, Portugal',[['Rent',37.3],['Eating out',58],['Groceries',54.9]]],
+['Sorrento','sorrento','Italy','🇮🇹',41.9,'Moderate','country','Italy',[['Rent',18.9],['Eating out',64.2],['Groceries',63.8]]],
+['Split','split','Croatia','🇭🇷',42.9,'Moderate','city','Split, Croatia',[['Rent',24.3],['Eating out',64],['Groceries',56.8]]],
+['Stockholm','stockholm','Sweden','🇸🇪',61.5,'Expensive','city','Stockholm, Sweden',[['Rent',37.5],['Eating out',81.1],['Groceries',82.5]]],
+['Strasbourg','strasbourg','France','🇫🇷',50.8,'Expensive','city','Strasbourg, France',[['Rent',22.4],['Eating out',70.2],['Groceries',89.5]]],
+['Stuttgart','stuttgart','Germany','🇩🇪',51.3,'Expensive','city','Stuttgart, Germany',[['Rent',25.8],['Eating out',75.7],['Groceries',70.9]]],
+['Sydney','sydney','Australia','🇦🇺',71.2,'Very expensive','city','Sydney, Australia',[['Rent',56.5],['Eating out',70.5],['Groceries',96.9]]],
+['São Luís','sao-luis','Brazil','🇧🇷',21.8,'Cheap','nearby','Fortaleza, Brazil',[['Rent',7.5],['Eating out',28.5],['Groceries',34.2]]],
+['São Paulo','sao-paulo','Brazil','🇧🇷',29.9,'Cheap','city','Sao Paulo, Brazil',[['Rent',16.2],['Eating out',39.4],['Groceries',42.2]]],
+['Taipei','taipei','Taiwan','🇹🇼',37.7,'Moderate','city','Taipei, Taiwan',[['Rent',18],['Eating out',33.1],['Groceries',72.8]]],
+['Tallinn','tallinn','Estonia','🇪🇪',44.3,'Moderate','city','Tallinn, Estonia',[['Rent',19.1],['Eating out',72.3],['Groceries',63.6]]],
+['Tbilisi','tbilisi','Georgia','🇬🇪',28.8,'Cheap','city','Tbilisi, Georgia',[['Rent',15.5],['Eating out',41.5],['Groceries',42.4]]],
+['Tenerife','tenerife','Spain','🇪🇸',38.1,'Moderate','country','Spain',[['Rent',22.3],['Eating out',53.9],['Groceries',51.9]]],
+['The Bahamas','bahamas','The Bahamas','🇧🇸',77.2,'Very expensive','country','Bahamas',[['Rent',48.5],['Eating out',115.5],['Groceries',102.5]]],
+['Tokyo','tokyo','Japan','🇯🇵',41.7,'Moderate','city','Tokyo, Japan',[['Rent',26.5],['Eating out',35.9],['Groceries',68.7]]],
+['Toledo','toledo','Spain','🇪🇸',38.1,'Moderate','country','Spain',[['Rent',22.3],['Eating out',53.9],['Groceries',51.9]]],
+['Toronto','toronto','Canada','🇨🇦',53.6,'Expensive','city','Toronto, Canada',[['Rent',37.9],['Eating out',68.7],['Groceries',72.5]]],
+['Tromsø','tromso','Norway','🇳🇴',59.3,'Expensive','country','Norway',[['Rent',28.2],['Eating out',87.5],['Groceries',89.4]]],
+['Turin','turin','Italy','🇮🇹',43.5,'Moderate','city','Turin, Italy',[['Rent',19.2],['Eating out',67.6],['Groceries',67.9]]],
+['Turks and Caicos','turks-and-caicos','Turks and Caicos','🇹🇨',77.2,'Very expensive','proxy','Bahamas',[['Rent',48.5],['Eating out',115.5],['Groceries',102.5]]],
+['Valletta','valletta','Malta','🇲🇹',43.3,'Moderate','country','Malta',[['Rent',27.2],['Eating out',63],['Groceries',57.2]]],
+['Vancouver','vancouver','Canada','🇨🇦',58.1,'Expensive','city','Vancouver, Canada',[['Rent',44.2],['Eating out',68.6],['Groceries',83.4]]],
+['Venice','venice','Italy','🇮🇹',41.9,'Moderate','country','Italy',[['Rent',18.9],['Eating out',64.2],['Groceries',63.8]]],
+['Verona','verona','Italy','🇮🇹',47.3,'Moderate','city','Verona, Italy',[['Rent',23.1],['Eating out',68.9],['Groceries',78.4]]],
+['Victoria','victoria','Canada','🇨🇦',55.1,'Expensive','city','Victoria, Canada',[['Rent',38.2],['Eating out',64.9],['Groceries',90.7]]],
+['Vienna','vienna','Austria','🇦🇹',55.1,'Expensive','city','Vienna, Austria',[['Rent',30.7],['Eating out',78.9],['Groceries',76.7]]],
+['Vilnius','vilnius','Lithuania','🇱🇹',38,'Moderate','city','Vilnius, Lithuania',[['Rent',18.9],['Eating out',59.9],['Groceries',49.3]]],
+['Virgin Islands','virgin-islands','Virgin Islands','🇻🇮',45.8,'Moderate','proxy','Puerto Rico',[['Rent',23],['Eating out',57.2],['Groceries',72]]],
+['Washington DC','washington-dc','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Wellington','wellington','New Zealand','🇳🇿',51.5,'Expensive','city','Wellington, New Zealand',[['Rent',30.8],['Eating out',59.7],['Groceries',82]]],
+['Whistler','whistler','Canada','🇨🇦',46.6,'Moderate','country','Canada',[['Rent',29.1],['Eating out',61.1],['Groceries',69.2]]],
+['Yellowstone','yellowstone','United States','🇺🇸',54.8,'Expensive','country','United States',[['Rent',37.1],['Eating out',71.7],['Groceries',76.4]]],
+['Zakynthos','zakynthos','Greece','🇬🇷',34.8,'Cheap','country','Greece',[['Rent',12.9],['Eating out',57.2],['Groceries',51.7]]],
+['Zhangjiajie','zhangjiajie','China','🇨🇳',20.6,'Cheap','nearby','Changsha, China',[['Rent',6.4],['Eating out',22],['Groceries',42.4]]],
+['Zurich','zurich','Switzerland','🇨🇭',102.6,'Very expensive','city','Zurich, Switzerland',[['Rent',75],['Eating out',127],['Groceries',127.8]]],
+['Ålesund','alesund','Norway','🇳🇴',59.3,'Expensive','country','Norway',[['Rent',28.2],['Eating out',87.5],['Groceries',89.4]]]
 ];
-/* budget:data:end */
+/* cost:data:end */
 
-/* Column order in a BC row. */
-var C_NAME=0, C_SLUG=1, C_COUNTRY=2, C_FLAG=3, C_TIER=4,
-    C_SLO=5, C_SHI=6, C_FLO=7, C_FHI=8, C_SRC=9, C_LADDER=10, C_TOTAL=11,
-    C_BAND=12;
+var N_NAME=0, N_SLUG=1, N_COUNTRY=2, N_FLAG=3, N_IDX=4, N_BAND=5, N_VIA=6,
+    N_RESOLVED=7, N_EV=8;
 
-/* The badge and the filter both follow the DAY TOTAL — the range, in money,
-   the way the guides index's own budget filter states it. The guide's
-   COST_DATA tier answers a different question (how far your money goes there)
-   and lives in the expanded row instead: Ålesund is Premium on its guide and
-   $185 a day here, and badging that "Very expensive" beside a $450 Amsterdam
-   was the disconnect this page was asked to close. */
-var BAND_FAM = { 'Budget':'fam-green', 'Moderate':'fam-blue',
+var BAND_FAM = { 'Cheap':'fam-green', 'Moderate':'fam-blue',
                  'Expensive':'fam-orange', 'Very expensive':'fam-purple' };
-var RUNGS = ['Budget', 'Mid-range', 'Expensive', 'Luxury'];
+function bandClass(b) { return 'ci-c-' + b.toLowerCase().replace(/ /g, '-'); }
 
-var state = { band:'all', sort:'az', q:'' };
-
-function money(lo, hi) { return '$' + lo + '–' + hi; }
-
-/* Built here, never inline in the href: an href assembled from string pieces
-   inside the attribute reads to the link-spaces scanner as a path containing
-   spaces (brain_check [link-spaces]). One helper, one shape. */
-function guideURL(r) { return '/guides/' + r[C_SLUG] + '.html'; }
+var state = { band:'all', sort:'asc', q:'' };
+var MAX = 100;
 
 function visible() {
   var q = state.q;
-  return BC.filter(function (r) {
-    if (state.band !== 'all' && r[C_BAND] !== state.band) return false;
+  return CI.filter(function (r) {
+    if (state.band !== 'all' && r[N_BAND] !== state.band) return false;
     if (!q) return true;
-    return (r[C_NAME] + ' ' + r[C_COUNTRY]).toLowerCase().indexOf(q) !== -1;
+    return (r[N_NAME] + ' ' + r[N_COUNTRY]).toLowerCase().indexOf(q) !== -1;
   });
 }
 
 function sorted(list) {
   var a = list.slice();
-  if (state.sort === 'asc')  return a.sort(function (x, y) { return x[C_TOTAL] - y[C_TOTAL]; });
-  if (state.sort === 'desc') return a.sort(function (x, y) { return y[C_TOTAL] - x[C_TOTAL]; });
-  return a.sort(function (x, y) { return x[C_NAME].localeCompare(y[C_NAME]); });
+  if (state.sort === 'asc')  return a.sort(function (x, y) { return x[N_IDX] - y[N_IDX]; });
+  if (state.sort === 'desc') return a.sort(function (x, y) { return y[N_IDX] - x[N_IDX]; });
+  return a.sort(function (x, y) { return x[N_NAME].localeCompare(y[N_NAME]); });
+}
+
+function guideURL(r) { return '/guides/' + r[N_SLUG] + '.html'; }
+
+function barCell(idx, band) {
+  var pct = Math.max(2, Math.round(idx / MAX * 100));
+  return '<td class="ci-bar-cell ' + bandClass(band) + '"><span class="ci-bar-wrap">' +
+         '<span class="ci-bar"><i style="width:' + pct + '%"></i></span>' +
+         '<span class="ci-val">' + idx + '</span></span></td>';
 }
 
 function rowHTML(r) {
-  var est = r[C_SRC] === 'e' ? ' <span class="bd-est" title="An estimate — this guide&#39;s own hotel research has not landed yet">est.</span>' : '';
-  return '<td class="bd-city"><a href="' + guideURL(r) + '">' + r[C_NAME] + '</a>' +
-           '<span class="bd-country"><span class="bd-flag">' + r[C_FLAG] + '</span>' + r[C_COUNTRY] + '</span></td>' +
-         '<td><span class="badge ' + BAND_FAM[r[C_BAND]] + '">' + r[C_BAND] + '</span></td>' +
-         '<td class="num">' + money(r[C_SLO], r[C_SHI]) + est + '</td>' +
-         '<td class="num col-food">' + money(r[C_FLO], r[C_FHI]) + '</td>' +
-         '<td class="num bd-total">$' + r[C_TOTAL] + '</td>';
+  return '<td class="ci-name"><a href="' + guideURL(r) + '">' + r[N_NAME] + '</a>' +
+           '<span class="ci-country"><span class="ci-flag">' + r[N_FLAG] + '</span>' + r[N_COUNTRY] + '</span></td>' +
+         '<td class="col-band"><span class="badge ' + BAND_FAM[r[N_BAND]] + '">' + r[N_BAND] + '</span></td>' +
+         barCell(r[N_IDX], r[N_BAND]);
 }
 
 function detailHTML(r) {
-  var out = '<td colspan="5">';
-  if (r[C_LADDER]) {
-    out += '<div class="bd-ladder">';
-    for (var i = 0; i < 4; i++) {
-      out += '<div class="bd-rung"><span class="bd-rung-name">' + RUNGS[i] + '</span>' +
-             '<span class="bd-rung-val">' + r[C_LADDER][i] + '</span></div>';
-    }
-    out += '</div>';
-    out += '<p class="bd-detail-note">' + (r[C_SRC] === 'g'
-      ? 'Per night, double room, in ' + r[C_COUNTRY] + '&#39;s own currency — the four price tiers behind the hotels this guide recommends. '
-      : 'Per night, double room — a market snapshot, until this guide&#39;s own hotel research lands. ') +
-      'The guide rates ' + r[C_COUNTRY] + ' <strong>' + r[C_TIER].toLowerCase() +
-      '</strong> for day-to-day costs. ' +
-      '<a class="chevron-link-pill" href="' + guideURL(r) + '">Open the ' + r[C_NAME] + ' guide</a></p>';
-  } else {
-    out += '<p class="bd-detail-note">The four price tiers for ' + r[C_NAME] +
-           ' have not been researched yet, so the figure above is an estimate. ' +
-           '<a class="chevron-link-pill" href="' + guideURL(r) + '">Open the ' + r[C_NAME] + ' guide</a></p>';
+  var out = '<td colspan="3">';
+  if (r[N_EV] && r[N_EV].length) {
+    out += '<table class="ci-basket"><thead><tr><th>Broken down</th>' +
+           '<th class="num">' + r[N_NAME] + '</th><th class="num">New York</th></tr></thead><tbody>';
+    r[N_EV].forEach(function (e) {
+      out += '<tr><td>' + e[0] + '</td><td class="num">' + e[1] +
+             '</td><td class="num">100</td></tr>';
+    });
+    out += '</tbody></table>';
   }
+  /* Say whose prices these are. A stand-in that does not name itself is the
+     one thing this page must never do. */
+  var src = { city:     'Prices surveyed in ' + r[N_NAME] + ' itself.',
+              nearby:   r[N_NAME] + ' is too small to be surveyed on its own — this is ' +
+                        r[N_RESOLVED] + ', the nearest place that is.',
+              country:  'No separate reading for ' + r[N_NAME] + ' — this is ' +
+                        r[N_COUNTRY] + ' as a whole.',
+              proxy:    r[N_COUNTRY] + ' is not surveyed — this is ' + r[N_RESOLVED] +
+                        ', its nearest surveyed neighbour.',
+              derived:  'Not in the published ranking, so this one is worked out from ' +
+                        r[N_RESOLVED] + '&#39;s own price page against New York&#39;s.' }[r[N_VIA]]
+            || '';
+  out += '<p class="ci-detail-note">' + src +
+    ' <a class="chevron-link-pill" href="' + guideURL(r) + '">Open the ' + r[N_NAME] + ' guide</a></p>';
   return out + '</td>';
 }
 
 function render() {
   var list = sorted(visible());
-  var tb = document.getElementById('budget-tbody');
+  var tb = document.getElementById('cost-tbody');
   tb.innerHTML = '';
   list.forEach(function (r) {
     var tr = document.createElement('tr');
-    tr.className = 'bd-row-city';
+    tr.className = 'ci-city';
     tr.innerHTML = rowHTML(r);
     var dt = document.createElement('tr');
-    dt.className = 'bd-detail';
+    dt.className = 'ci-detail';
     dt.hidden = true;
     dt.innerHTML = detailHTML(r);
     tr.addEventListener('click', function (e) {
-      if (e.target.closest('a')) return;   /* the city name is the guide link */
+      if (e.target.closest('a')) return;   /* the name is the guide link */
       dt.hidden = !dt.hidden;
     });
     tb.appendChild(tr);
     tb.appendChild(dt);
   });
 
-  document.getElementById('budget-noresult').style.display = list.length ? 'none' : 'block';
+  document.getElementById('cost-noresult').style.display = list.length ? 'none' : 'block';
 
-  var sum = document.getElementById('bd-summary');
+  var sum = document.getElementById('ci-summary');
   if (!list.length) { sum.textContent = ''; return; }
-  var totals = list.map(function (r) { return r[C_TOTAL]; });
-  var lo = Math.min.apply(null, totals), hi = Math.max.apply(null, totals);
-  var cheapest = list[totals.indexOf(lo)], dearest = list[totals.indexOf(hi)];
-  sum.innerHTML = '<strong>' + list.length + '</strong> ' + (list.length === 1 ? 'city' : 'cities') +
-    ' · cheapest day <strong>$' + lo + '</strong> in ' + cheapest[C_NAME] +
-    ' · most expensive <strong>$' + hi + '</strong> in ' + dearest[C_NAME];
+  var vals = list.map(function (r) { return r[N_IDX]; });
+  var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+  var cheapest = list[vals.indexOf(lo)], dearest = list[vals.indexOf(hi)];
+  sum.innerHTML = '<strong>' + list.length + '</strong> ' + (list.length === 1 ? 'place' : 'places') +
+    ' · cheapest <strong>' + cheapest[N_NAME] + '</strong> at ' + lo +
+    ' · dearest <strong>' + dearest[N_NAME] + '</strong> at ' + hi +
+    ' · New York is 100';
 }
 
-function bindTiers() {
-  var btns = [].slice.call(document.querySelectorAll('.tier-btn'));
+function bindGroup(sel, apply) {
+  var btns = [].slice.call(document.querySelectorAll(sel));
   btns.forEach(function (b) {
     b.addEventListener('click', function () {
-      state.band = b.dataset.band;
+      apply(b);
       btns.forEach(function (o) {
         var on = o === b;
         o.classList.toggle('is-on', on);
@@ -525,62 +514,45 @@ function bindTiers() {
       });
       render();
     });
-  });
-}
-
-function bindSort() {
-  var map = { 'sort-asc':'asc', 'sort-desc':'desc', 'sort-reset':'az' };
-  var btns = Object.keys(map).map(function (id) { return document.getElementById(id); });
-  btns.forEach(function (b) {
-    b.addEventListener('click', function () {
-      state.sort = map[b.id];
-      btns.forEach(function (o) {
-        var on = o === b;
-        o.classList.toggle('is-on', on);
-        o.setAttribute('aria-pressed', on ? 'true' : 'false');
-      });
-      render();
-    });
-  });
-}
-
-function bindSearch() {
-  document.getElementById('budget-search').addEventListener('input', function (e) {
-    state.q = e.target.value.trim().toLowerCase();
-    render();
   });
 }
 
 function writeNote() {
-  var est = BC.filter(function (r) { return r[C_SRC] === 'e'; }).length;
-  var researched = BC.length - est;
-  var t = 'Per person, per day. The stay column is a mid-range room for two, ' +
-    'halved; the food column is a day of casual-restaurant meals and is an estimate ' +
-    'everywhere. Nightly rates for ' + researched + ' of these ' + BC.length +
-    ' cities come from that guide’s own hotel research, in the local currency, ' +
-    'converted at today’s rates';
-  t += est ? '; the ' + est + ' marked “est.” are a market snapshot until their guide’s research lands. '
-           : '. ';
-  t += 'Open a row to see all four price tiers. Rates move with the season.';
-  document.getElementById('bd-note').textContent = t;
+  var byCountry = CI.filter(function (r) { return r[N_VIA] === 'country'; }).length;
+  var t = 'The number is a price level, not a trip budget — what you spend is your ' +
+    'choice, what a place costs is not. The same basket is priced everywhere: a meal ' +
+    'at a cheap restaurant, dinner for two, a beer, a coffee, a transit ticket, a taxi ' +
+    'kilometre and a one-bedroom flat in the centre, weighted towards where a ' +
+    'traveller’s money goes, all in US dollars, all against New York at 100. ';
+  if (byCountry) {
+    t += byCountry + ' of the ' + CI.length + ' places are too small for their own ' +
+         'reading and show their country’s prices instead — the row says which. ';
+  }
+  t += 'Open any row to see the prices behind its number. Prices from Numbeo.';
+  document.getElementById('ci-note').textContent = t;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  MAX = CI.reduce(function (m, r) { return Math.max(m, r[N_IDX]); }, 100);
   render();
   writeNote();
-  bindTiers();
-  bindSort();
-  bindSearch();
+  bindGroup('#band-row .ci-btn', function (b) { state.band = b.dataset.band; });
+  bindGroup('#sort-row .ci-btn', function (b) {
+    state.sort = b.id === 'sort-asc' ? 'asc' : b.id === 'sort-desc' ? 'desc' : 'az';
+  });
+  document.getElementById('cost-search').addEventListener('input', function (e) {
+    state.q = e.target.value.trim().toLowerCase();
+    render();
+  });
 });
 </script>
 
 <script src="/assets/search-autocomplete.js?v=8"></script>
 <script>document.addEventListener('DOMContentLoaded', function(){
   if(!window.TVESearch) return;
-  var input=document.getElementById('budget-search');
+  var input=document.getElementById('cost-search');
   if(!input) return;
-  var items=BC.map(function(r){ return { name:r[0], sub:r[2] }; });
-  TVESearch.attach(input,{items:items});
+  TVESearch.attach(input,{items:CI.map(function(r){ return { name:r[0], sub:r[2] }; })});
 });</script>
 </body>
 </html>
