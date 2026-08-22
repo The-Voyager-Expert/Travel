@@ -1245,7 +1245,7 @@ a.land-cta:hover:visited {
 
 .fnd-go-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; margin-top: clamp(1rem, 2.2vw, 1.5rem); }
 .fnd-go {
-  display: inline-flex; align-items: center; gap: 0.55rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem;
   background: var(--rust, #C04E1A); border: 1px solid var(--rust, #C04E1A);
   color: #fff; font: inherit; font-weight: 700; cursor: pointer;
   transition: background .15s, color .15s;
@@ -1990,7 +1990,32 @@ summary.res-head:focus-visible { outline: 2px solid var(--rust, #C04E1A); outlin
 .hc-month-grid { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
 .hc-month-grid .hcchip { min-width:52px; text-align:center; }
 .hc-activity-grid { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-.hc-nav { margin-top:18px; display:flex; flex-wrap:wrap; align-items:center; gap:14px; }
+/* OWNER 2026-08-22, second pass: "they dont look like same size". The HEIGHTS
+   were already identical — 112 device pixels each, read off the rendered page
+   rather than off the CSS. What was still unequal was the WIDTH, 230px against
+   188px, because each button was sized by its own label.
+
+   Both columns now take the WIDER of the two, with no magic number in the file:
+   in an intrinsically-sized grid an `1fr` track resolves to the largest
+   (max-content / flex-factor) across every item, so equal factors hand each
+   column the widest button's width. `width: max-content` is the half that keeps
+   the pair at their own size — swap it for a percentage, or drop it, and the fr
+   tracks resolve against the card instead and the two stretch the whole row.
+
+   It stays a plain flex row until the second button exists: Clear everything is
+   `hidden` until a filter is picked, and a one-item grid is just that item at
+   its natural width, which is what we want then.
+
+   THE OVERRIDE BELONGS ON THIS PAGE, not in guides-index-style.css where
+   .hc-nav is also declared. The guides-index chooser shares the class, and its
+   second control is a plain underlined "← Back" — padding that out to the width
+   of a filled CTA would turn a text link into a phantom button. This page's
+   <style> is page-local, so this reaches only the finder's own row. */
+.hc-nav {
+  margin-top:18px; display:grid; width:max-content;
+  grid-auto-flow:column; grid-auto-columns:1fr;
+  align-items:center; gap:14px;
+}
 /* The door's steps: one finder field per step, the width the finder gave it. */
 .hc-lede { margin: 0 0 1rem; font-size: .95rem; color: var(--muted,#6a6660); }
 .hc-hint { margin: 0 0 .55rem; font-size: .84rem; font-weight: 400; color: var(--muted,#6a6660); }
