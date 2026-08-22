@@ -7331,11 +7331,17 @@ window.TVE.home = (function () {
       { name: 'Schlössle Hotel', note: 'Small Luxury Hotels — 15th-century merchant house in medieval Old Town, oak-panelled rooms, intimate · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/ee/schlossle.html', tier: 'luxury' }
     ], price: { budget: '€80–105', mid: '€105–140', expensive: '€140–200', luxury: '€200+' } },
     'tbilisi': { h: [
-      { name: 'Qarvasla Hotel', note: 'Independent — 36 Kote Afkhazi Street in Sololaki, restored caravanserai walls, 24h reception, AC · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ge/qarvasla-tbilisi.html' },
-      { name: 'Stamba Hotel', note: 'Independent — 1930s Soviet-era publishing house on Merab Kostava Street, 8-metre loft ceilings, garden, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ge/stamba-tbilisi.html' },
-      { name: 'Biltmore Hotel Tbilisi', note: 'Marriott Autograph Collection — Rustaveli Avenue, outdoor pool, Salve restaurant, spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ge/biltmore-hotel-tbilisi.html' },
-      { name: 'Radisson Blu Iveria Hotel Tbilisi', note: 'Radisson Blu — Rose Revolution Square, outdoor pool, Shavi Lomi restaurant, spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/ge/radisson-sas-iveria-tbilisi.html' }
-    ] },
+      { name: 'Moxy Tbilisi', note: 'Marriott Moxy brand — Saarbrücken Square on the left bank by the Dry Bridge, 24h reception, AC · 8.3 Booking.com', url: 'https://www.booking.com/hotel/ge/moxy-tbilisi.html', tier: 'budget' },
+      { name: 'Hotel Monday', note: 'DNT Group — Ushangi Chkheidze Street in Chugureti across the river from Rustaveli, rooftop terrace, 24h reception, AC · 9.7 Booking.com', url: 'https://www.booking.com/hotel/ge/monday.html', tier: 'budget' },
+      { name: 'Courtyard by Marriott Tbilisi', note: 'Marriott Courtyard brand — Freedom Square itself, indoor pool, sauna, 24h reception, AC · 8.3 Booking.com', url: 'https://www.booking.com/hotel/ge/coutyard-tbilisi.html', tier: 'mid' },
+      { name: 'Graf Hotel', note: 'Independent — Gia Abesadze Street in Sololaki two blocks from Freedom Square, rooftop terrace, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ge/graf.html', tier: 'mid' },
+      { name: 'Iris Hotel', note: 'Independent — Elene Akhvlediani Street in Avlabari, indoor pool, free parking, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ge/iris.html', tier: 'mid' },
+      { name: 'Sheraton Grand Tbilisi Metechi Palace', note: 'Marriott Sheraton brand — Telavi Street above Avlabari, indoor and outdoor pools, spa, 24h reception, AC · 8.7 Booking.com', url: 'https://www.booking.com/hotel/ge/sheraton-metechi-palace-tbilisi.html', tier: 'expensive' },
+      { name: 'Biltmore Hotel Tbilisi', note: 'Marriott Autograph Collection — Rustaveli Avenue, outdoor pool, Salve restaurant, spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ge/biltmore-hotel-tbilisi.html', tier: 'expensive' },
+      { name: 'Radisson Blu Iveria Hotel Tbilisi', note: 'Radisson Blu — Rose Revolution Square, outdoor pool, Shavi Lomi restaurant, spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/ge/radisson-sas-iveria-tbilisi.html', tier: 'expensive' },
+      { name: 'Qarvasla Hotel', note: 'Independent — 36 Kote Afkhazi Street in Sololaki, restored caravanserai walls, 24h reception, AC · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ge/qarvasla-tbilisi.html', tier: 'expensive' },
+      { name: 'Stamba Hotel', note: 'Independent — 1930s Soviet-era publishing house on Merab Kostava Street, 8-metre loft ceilings, garden, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ge/stamba-tbilisi.html', tier: 'luxury' }
+    ], price: { budget: 'GEL 150–300', mid: 'GEL 300–500', expensive: 'GEL 500–900', luxury: 'GEL 900+' } },
     'tenerife': { h: [
       { name: 'Hotel Botanico y Oriental Spa Garden', note: 'Independent luxury — Avenida Richard J. Yeoward in Puerto de la Cruz, Oriental Spa Garden, indoor and outdoor pools, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/botanico-y-oriental-spa-garden.html' },
       { name: 'Iberostar Grand Hotel El Mirador', note: 'Iberostar Grand — adults-only Costa Adeje cliffside, infinity pool, Michelin-guide dining · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/iberostar-grand-hotel-el-mirador.html' },
@@ -11093,7 +11099,7 @@ window.TVE.home = (function () {
       'HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
       'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
-      'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TLL','TPE','VCE','VIE','VLC',
+      'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TBS','TIV','TLL','TPE','VCE','VIE','VLC',
       'WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
