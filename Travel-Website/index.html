@@ -7207,9 +7207,18 @@ function render() {
           .sort(function (a, b) { return b.sc - a.sc || (a.g.name < b.g.name ? -1 : 1); })
           .slice(0, 5).map(function (x) { return x.g; });
         if (best.length) {
+          /* The second grid is the REMAINDER, never the whole list again: `best`
+             is a slice of `hits`, so printing `all` under it showed the top five
+             twice and labelled the repeat "All N matches" when N was split over
+             both grids. Keyed on url — two guides can share a city name. */
+          var picked = {};
+          best.forEach(function (g) { picked[g.url] = 1; });
+          var rest = all.filter(function (g) { return !picked[g.url]; });
           out.innerHTML = head +
             '<p class="fnd-res-tier">Best matches</p><div class="flt-grid">' + best.map(function (g) { return card(d, g, s); }).join('') + '</div>' +
-            '<p class="fnd-res-tier">All ' + all.length + ' match' + (all.length === 1 ? '' : 'es') + '</p><div class="flt-grid">' + all.map(function (g) { return card(d, g, s); }).join('') + '</div>';
+            (rest.length
+              ? '<p class="fnd-res-tier">The other ' + rest.length + '</p><div class="flt-grid">' + rest.map(function (g) { return card(d, g, s); }).join('') + '</div>'
+              : '');
           return;
         }
       }
