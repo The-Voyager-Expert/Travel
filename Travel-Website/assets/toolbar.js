@@ -5666,7 +5666,7 @@ window.TVE.home = (function () {
       { name: 'Quality Hotel Waterfront', note: 'Nordic Choice — Nedre Strandgate on the harbour front, fitness centre, 24h reception · 8.0 Booking.com', url: 'https://www.booking.com/hotel/no/quality-waterfront.html', tier: 'mid' },
       { name: 'Quality Hotel Ålesund', note: 'Nordic Choice — Sorenskriver Bullsgate in the centre, fitness centre, room service, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/no/quality-hotel-alesund.html', tier: 'expensive' },
       { name: 'Hotel 1904', note: 'Independent — Løvenvoldgata in the Art Nouveau quarter, garden terrace, restaurant and bar, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/no/hotel-1904.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: 'NOK 1,150–1,810', mid: 'NOK 1,090–1,570', expensive: 'NOK 1,610–1,630', luxury: 'NOK 1,900–2,200' } },
     'amalfi': { h: [
       { name: 'Hotel Antica Repubblica', note: 'Independent — historic centre off Salita Truglio, 170 m from the beach, soundproofed rooms, terrace · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/anticarepubblica.html', tier: 'budget' },
       { name: 'Hotel Floridiana', note: 'Independent — Via Brancia beside the Duomo steps, hot tub on the solarium terrace, free parking, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/hotelfloridiana.html', tier: 'budget' },
@@ -10977,13 +10977,14 @@ window.TVE.home = (function () {
        list) while every European guide jumped to its country rather than to
        its airport. */
     var LOUNGE_IATAS = [
-      'AGP','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS','BRU',
-      'CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS',
-      'DXB','EDI','EYW','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG',
-      'HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX',
-      'LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY',
-      'OSL','PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG',
-      'SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'AES','AGP','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
+      'BRU','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB',
+      'DUS','DXB','EDI','EYW','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER',
+      'HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS',
+      'LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD',
+      'ORY','OSL','PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO',
+      'SKG','SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG',
+      'ZRH'
     ];
 
     function _inject() {
