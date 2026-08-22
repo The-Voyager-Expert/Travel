@@ -6041,11 +6041,17 @@ window.TVE.home = (function () {
     ], price: { budget: 'KRW 130,000–150,000', mid: 'KRW 220,000–240,000', expensive: 'KRW 285,000–300,000', luxury: 'KRW 325,000+' } },
 
     'cairo': { h: [
-      { name: 'Four Seasons Hotel Cairo at Nile Plaza', note: 'Four Seasons brand — Garden City Nile frontage, indoor pool, spa, panoramic city views across the river · 9.2 Booking.com', url: 'https://www.booking.com/hotel/eg/four-seasons-cairo-at-nile-plaza.html' },
-      { name: 'Kempinski Nile Hotel Cairo', note: 'Kempinski brand — Garden City Nile address, rooftop pool, Osmanly Ottoman restaurant, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/eg/kempinski-nile-cairo.html' },
-      { name: 'Marriott Mena House Cairo', note: 'Marriott brand — Giza, legendary 1869 lodge with direct Great Pyramid view, outdoor pool, 9-hole golf course, extensive gardens · 9.0 Booking.com', url: 'https://www.booking.com/hotel/eg/mena-house-oberoi.html' },
-      { name: 'Cairo Marriott Hotel & Omar Khayyam Casino', note: 'Marriott brand — 1869 Gezira Palace on Zamalek island, outdoor pool, casino, garden setting, central Nile island location · 8.5 Booking.com', url: 'https://www.booking.com/hotel/eg/cairo-marriott-omar-khayyam-casino.html' }
-    ] },
+      { name: 'Four Seasons Hotel Cairo at Nile Plaza', note: 'Four Seasons brand — Garden City Nile frontage, indoor pool, spa, panoramic city views across the river · 9.2 Booking.com', url: 'https://www.booking.com/hotel/eg/four-seasons-cairo-at-nile-plaza.html', tier: 'luxury' },
+      { name: 'Kempinski Nile Hotel Cairo', note: 'Kempinski brand — Garden City Nile address, rooftop pool, Osmanly Ottoman restaurant, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/eg/kempinski-nile-cairo.html', tier: 'expensive' },
+      { name: 'Marriott Mena House Cairo', note: 'Marriott brand — Giza, legendary 1869 lodge with direct Great Pyramid view, outdoor pool, 9-hole golf course, extensive gardens · 9.0 Booking.com', url: 'https://www.booking.com/hotel/eg/mena-house-oberoi.html', tier: 'luxury' },
+      { name: 'Cairo Marriott Hotel & Omar Khayyam Casino', note: 'Marriott brand — 1869 Gezira Palace on Zamalek island, outdoor pool, casino, garden setting, central Nile island location · 8.5 Booking.com', url: 'https://www.booking.com/hotel/eg/cairo-marriott-omar-khayyam-casino.html', tier: 'expensive' },
+      { name: 'Yacoubian Suites', note: 'Independent — apartments in the 1937 Yacoubian Building at 34 Talaat Harb, downtown, 24h reception, airport pickup, ten minutes on foot from Tahrir · 9.0 Booking.com', url: 'https://www.booking.com/hotel/eg/yacoubian-suites.html', tier: 'budget' },
+      { name: 'Tahrir Hub', note: 'Independent boutique — 11 Mereet Basha Street on Tahrir Square, rooftop terrace, 24h reception, airport pickup, Egyptian Museum across the square · 9.8 Booking.com', url: 'https://www.booking.com/hotel/eg/huub-hh.html', tier: 'budget' },
+      { name: 'Ramses Hilton', note: 'Hilton brand — 1115 Corniche el-Nil beside the Ritz-Carlton, Nile-view tower rooms, rooftop pool, 24h reception, casino · 8.7 Booking.com', url: 'https://www.booking.com/hotel/eg/ramses-hilton.html', tier: 'mid' },
+      { name: 'Steigenberger Hotel El Tahrir', note: 'Steigenberger brand — Kasr el-Nil Street off Tahrir Square, rooftop pool, sauna, 24h reception, the Egyptian Museum two blocks away · 9.2 Booking.com', url: 'https://www.booking.com/hotel/eg/steigenberger-el-tahrir.html', tier: 'mid' },
+      { name: 'The St. Regis Cairo', note: 'Marriott St. Regis — Corniche el-Nil north of the Ritz-Carlton, indoor and outdoor pools, Iridium spa, butler service, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/eg/the-st-regis-cairo.html', tier: 'luxury' }
+    ], price: { budget: '$90–125', mid: '$185–210', expensive: '$280–325', luxury: '$450+' } },
+
     'cambridge': { h: [
       { name: 'The Varsity Hotel & Spa', note: 'Independent boutique — Thompsons Lane, rooftop Glassworks restaurant, River Cam views, spa with rooftop pool · 9.1 Booking.com', url: 'https://www.booking.com/hotel/gb/the-varsity-spa.html' },
       { name: 'Graduate Cambridge', note: 'Graduate Hotels brand — Granta Place riverside, punting-at-the-door location on the Cam, boutique heritage interiors · 8.9 Booking.com', url: 'https://www.booking.com/hotel/gb/cambridge-cambridge.html' },

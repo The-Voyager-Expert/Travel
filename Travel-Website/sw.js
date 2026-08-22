@@ -1838,7 +1838,8 @@
 /* 2026-08-22: tallinn hotel tiers + price range; LOUNGE_IATAS +TLL toolbar.js -> v903. CACHE to v1283. */
 /* 2026-08-22: the five continent train guides re-thought (owner: "all these pages open all of them same problem" · "each of them needs to be re thought"). 119 controls above 100 operators become an opening band per continent; the 3-pill dot legend (its green pill decoded a tag 0 of 100 cards used) and the Rail-pass pill (0–1 matches) retired on all five; africa/americas/oceania regrouped by purpose with no filter row and no jump nav; europe/asia keep theirs. Every card, review, route, tag and booking link byte-identical. trains.css -> v11, trains.js -> v2. CACHE to v1286. */
 /* 2026-08-22: philadelphia hotel tiers + price; LOUNGE_IATAS +PHL toolbar.js -> v905. CACHE to v1287. */
-var CACHE = 'travel-cache-v1287';
+/* 2026-08-22: cairo HOTEL_ALT_DATA tiers + USD price ranges toolbar.js -> v906. CACHE to v1288. */
+var CACHE = 'travel-cache-v1288';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1851,7 +1852,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 259,'toolbar.js': 905, 'mobile.css': 88, 'web-travel-style.css': 93, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 11, 'trains.js': 2, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 259,'toolbar.js': 906, 'mobile.css': 88, 'web-travel-style.css': 93, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 11, 'trains.js': 2, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
