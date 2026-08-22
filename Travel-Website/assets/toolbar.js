@@ -6524,11 +6524,11 @@ window.TVE.home = (function () {
       { name: 'Marco Beach Ocean Resort', note: 'Independent boutique — 58 suites on the Esplanade, rooftop pool, Gulf-view balconies', url: 'https://www.expedia.com/Naples-Hotels-Marco-Beach-Ocean-Resort.h798448.Hotel-Information', tier: 'luxury' }
     ], price: { budget: '$250–330', mid: '$330–450', expensive: '$450–650', luxury: '$650+' } },
     'marktoberdorf': { h: [
-      { name: 'Wellnesshotel Hanusel Hof', note: 'Independent — wellness-focused Allgäu retreat, thermal pool and spa, hiking access into the Ammergauer Alps · 8.7 Booking.com' , url: 'https://www.booking.com/hotel/de/wellnesshotel-hanusel-hof.html' },
-      { name: 'Hotel Hirsch Kaufbeuren', note: 'Independent — Kaufbeuren town centre (10 km north of Marktoberdorf), comfortable regional hotel with restaurant, easy rail connections · 8.5 Booking.com' , url: 'https://www.booking.com/hotel/de/hotel-hirsch-kaufbeuren.html' },
-      { name: 'Gasthof Sonnenalp Marktoberdorf', note: 'Independent — Marktoberdorf town centre, traditional Bavarian inn, regional cuisine, walking distance to historic centre · 8.3 Booking.com' , url: 'https://www.booking.com/hotel/de/gasthof-sonnenalp.html' },
-      { name: 'Landhotel Zur Post Marktoberdorf', note: 'Independent — Marktoberdorf centre, classic Allgäu country hotel, good base for Neuschwanstein and Füssen day trips · 8.1 Booking.com' , url: 'https://www.booking.com/hotel/de/landhotel-zur-post.html' }
-    ] },
+      { name: 'Trendic Hotel', note: 'Independent — staff-less design hotel on Frankenstraße, 24-hour code entry, sauna, free parking, 12 min walk to the Marktplatz · 8.8 Booking.com', url: 'https://www.booking.com/hotel/de/trendic.html', tier: 'budget' },
+      { name: 'Beim Forchi', note: 'Entire holiday home on Booking — converted farm building with sauna and plunge pool on Schongauer Straße, the rental fallback: no mid-priced hotel in town runs a 24h desk · 9.2 Booking.com', url: 'https://www.booking.com/hotel/de/gemutlicher-kuhstall-mit-sauna.html', tier: 'mid' },
+      { name: 'Das Weitblick Allgäu', note: 'Independent — 4-star spa hotel on Schongauer Straße with heated outdoor pool, 24h front desk, 1.9 km east of the centre · 8.9 Booking.com', url: 'https://www.booking.com/hotel/de/das-weitblick-allgau.html', tier: 'expensive' },
+      { name: 'Wellnesshotel Hanusel Hof', note: 'Independent — wellness-focused Allgäu retreat at Hellengerst, indoor and outdoor pools, thermal spa, hiking access into the Ammergauer Alps · 9.2 Booking.com', url: 'https://www.booking.com/hotel/de/hanusel-hof.html', tier: 'luxury' }
+    ], price: { budget: '€90–120', mid: '€120–200', expensive: '€200–320', luxury: '€320+' } },
     'marrakech': { h: [
       { name: 'Mandarin Oriental, Marrakech', note: 'Independent luxury — 20 acres of olive groves and rose gardens off the Route du Golf Royal, private-pool villas, indoor and outdoor pools, spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ma/mandarin-oriental-marrakech.html' },
       { name: 'Royal Mansour Marrakech', note: 'Independent ultra-luxury — private riads with plunge pools, 2,500 sq m spa, three restaurants · 9.7 Booking.com', url: 'https://www.booking.com/hotel/ma/royal-mansour-marrakech.html' },
