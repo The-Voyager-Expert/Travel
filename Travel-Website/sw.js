@@ -1761,7 +1761,17 @@
    788,567px -> 353,235px. best-of-features.js -> v4. CACHE to v1218. */
 
 /* 2026-08-22: phone menu: the row reads US Airline Networks, matching the page toolbar.js -> v842. CACHE to v1219. */
-var CACHE = 'travel-cache-v1219';
+/* 2026-08-22: Best-Of fact chips wrap instead of leaving their card. .showcase-meta
+   span carried white-space:nowrap and a .showcase-card column is 261px at 1440, so
+   any phrase longer than that ran out through the card's right edge, over the gutter
+   and under its neighbour. Measured in a browser pass over all 37 pages: 101 chips on
+   27 of them, worst 116px clear of the card. PREDATES the flat-grid conversion — the
+   column width is identical either way — and it is invisible in any page's own source,
+   because the chip text is authored per entry and the nowrap that breaks it is shared.
+   Short chips are untouched: 32 of wine-regions' 38 still sit on one line.
+   web-travel-style.css -> v92. CACHE to v1220. */
+
+var CACHE = 'travel-cache-v1220';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1774,7 +1784,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 842, 'mobile.css': 88, 'web-travel-style.css': 91, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 842, 'mobile.css': 88, 'web-travel-style.css': 92, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
