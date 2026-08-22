@@ -620,7 +620,16 @@ a.apply-link:hover { background: #C04E1A; color: #fff; border-color: var(--rust)
                 var gEl = document.createElement('span');
                 gEl.className = 'cty-guides';
                 gEl.style.cssText = 'font-size:11px;color:var(--muted,#6a6660);display:block;margin-top:3px;';
-                gs.slice(0, 4).forEach(function (guide, idx) {
+                /* The cap stays — 58 city names in one 11px row under a
+                   country is not a list, it is a wall — but it SAYS what it
+                   hid. It shipped as a bare .slice(0, 4), so the United States
+                   row showed 4 of its 58 guides and read as if that were all
+                   of them; 104 guides were dropped that way across 10
+                   countries. No link on the "+N more": the guides index has no
+                   country-filter hash to point at, and a dead link is worse
+                   than a plain count (Links.html § 1). */
+                var shown = gs.slice(0, 4);
+                shown.forEach(function (guide, idx) {
                   if (idx) gEl.appendChild(document.createTextNode(' · '));
                   var a = document.createElement('a');
                   a.href = '/guides/' + guide.slug;
@@ -628,6 +637,10 @@ a.apply-link:hover { background: #C04E1A; color: #fff; border-color: var(--rust)
                   a.textContent = guide.city;
                   gEl.appendChild(a);
                 });
+                if (gs.length > shown.length) {
+                  gEl.appendChild(document.createTextNode(
+                    ' · +' + (gs.length - shown.length) + ' more'));
+                }
                 div.appendChild(gEl);
               }
               rowsEl.appendChild(div);

@@ -700,7 +700,14 @@ a.pill-voa:visited  { color: #8a4a10; }  /* orange — visa on arrival */
    rule exists to stop, and living in shared CSS is why no page diff showed
    them. best-of/index.html no longer carries the class. Never re-add a
    per-page search width — the token is the standard. */
-.best-of-region-filters { text-align:center; margin:0 0 14px; display:flex; flex-wrap:wrap; justify-content:center; gap:5px; position:sticky; top:56px; z-index:10; background:var(--bg); padding:8px 0; border-bottom:1px solid var(--border2); }
+/* NOT STICKY (owner rule 2026-08-22: "can we fail any stick bar?"). It was
+   position:sticky;top:56px;z-index:10 — and the 56px was an offset for a
+   toolbar that has been position:relative for a long time, so on all 34 Best Of
+   pages the strip pinned 56px DOWN from the viewport top with a band of
+   scrolling content running above it. The opaque ground and the border-bottom
+   are kept: they still read as the divider between the controls and the cards.
+   Never re-add position:sticky here. */
+.best-of-region-filters { text-align:center; margin:0 0 14px; display:flex; flex-wrap:wrap; justify-content:center; gap:5px; background:var(--bg); padding:8px 0; border-bottom:1px solid var(--border2); }
 
 /* ── Page source footnote (Passport, info pages) ── */
 .page-source { font-size: 12px; color: var(--muted); margin: 0 0 32px; line-height: 1.6; }
@@ -902,28 +909,32 @@ input[type="text"]::placeholder,
   margin-top: var(--search-gap, 32px);
 }
 
-.hero-band + .search-wrap > input[type="search"],
-.hero-band + .search-row > input[type="search"],
-.hero-band + .search-box > input[type="search"],
-.hero-band + .sc-search-wrap > input[type="search"],
-.hero-band + .an-search-wrap > input[type="search"],
-.hero-band + .ff-search-wrap > input[type="search"],
-.hero-band + .ti-search-wrap > input[type="search"],
-.hero-band + .train-search-row > input[type="search"],
-.hero-band + .controls-row > input[type="search"],
-.hero-band + .filter-bar > input[type="search"],
-.hero-band + .legend > input[type="search"],
-.hero-band + * > .search-wrap:first-child > input[type="search"],
-.hero-band + * > .search-row:first-child > input[type="search"],
-.hero-band + * > .search-box:first-child > input[type="search"],
-.hero-band + * > .sc-search-wrap:first-child > input[type="search"],
-.hero-band + * > .an-search-wrap:first-child > input[type="search"],
-.hero-band + * > .ff-search-wrap:first-child > input[type="search"],
-.hero-band + * > .ti-search-wrap:first-child > input[type="search"],
-.hero-band + * > .train-search-row:first-child > input[type="search"],
-.hero-band + * > .controls-row:first-child > input[type="search"],
-.hero-band + * > .filter-bar:first-child > input[type="search"],
-.hero-band + * > .legend:first-child > input[type="search"] {
+/* THE WRAPPER OWNS THE GAP, SO THE INPUT OWNS NONE — WHEREVER THAT WRAPPER SITS.
+   This used to be 22 selectors, every one prefixed `.hero-band +` or
+   `.hero-band + * > …:first-child`, i.e. it only reached a search bar that
+   happened to be the FIRST thing under the band. A bar three elements down has
+   exactly the same requirement, and the § 14 base rule's own
+   `margin-bottom: 14px` stayed on it — so the wrapper measured 70px around a
+   56px bar and the distance below the bar came out 14px larger than the
+   distance above it. Measured 2026-08-22, that was live on festival-finder,
+   nomad-visas, pickleball and scams, and festival-finder's own stylesheet
+   already carried a comment naming the adjacency as the cause.
+
+   Same class list, no adjacency — half the selectors and it works everywhere.
+   Adding a wrapper here is how a new page joins the standard; never restate
+   `margin-bottom: 0` in a page stylesheet. */
+.search-wrap > input[type="search"],
+.search-row > input[type="search"],
+.search-box > input[type="search"],
+.sc-search-wrap > input[type="search"],
+.an-search-wrap > input[type="search"],
+.ff-search-wrap > input[type="search"],
+.ti-search-wrap > input[type="search"],
+.train-search-row > input[type="search"],
+.controls-row > input[type="search"],
+.filter-bar > input[type="search"],
+.legend > input[type="search"],
+.pkl-search-box > input[type="search"] {
   margin-bottom: 0 !important;
 }
 /* …and the element that FOLLOWS the search carries no top margin of its own.

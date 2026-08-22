@@ -1738,7 +1738,20 @@
    the rollout safe one page at a time. best-of-features.js -> v3. CACHE to v1214. */
 
 /* 2026-08-22: THE 'Updated …' STAMP GOES BACK ON THE RAIL. _injectStamp wrote 'margin: 18px 0 20px' plus 'padding-left: 32px' inline, and the shorthand zeroed the auto side margins in body > .title-updated — so on all nine /stats/ pages the stamp carried the rail's WIDTH pinned to the left window edge, 130px out of line with every other line on the page at 1440. The comment justifying it read 'stats pages close .wrap early', which was true of a stray </div> in stats/asia and is true of no page now (Rule 926). Typography and the vertical margin only now; the horizontal margin and the gutter belong to the shared rule. The hardcoded 14px phone override went with it — mobile.css already forces var(--gutter), which is 16px. Measured after: text at 162 on desktop and 16 on a phone, both exactly on .wrap. toolbar.js -> v840. CACHE to v1215. */
-var CACHE = 'travel-cache-v1215';
+/* 2026-08-22: no sticky bars (owner rule) — 20 control strips across the site
+   were position:sticky at the top of the viewport, taking a fixed slice of every
+   screen and painting over the rows underneath. Two shared-CSS halves ship here:
+   .best-of-region-filters loses a sticky pinned at top:56px, an offset for a
+   toolbar that has been position:relative for a long time (so on all 34 Best Of
+   pages the strip stopped 56px BELOW the viewport top with content scrolling
+   above it), and mobile.css drops the position:static !important overrides that
+   existed only to cancel that desktop sticky on phones. Same pass: the § 14
+   input-margin rule loses its `.hero-band +` adjacency, so a search bar owns a
+   symmetric gap wherever it sits rather than only when it is the first thing
+   under the band — festival-finder, nomad-visas, pickleball and scams were all
+   56px bars in 70px boxes. web-travel-style.css -> 91, mobile.css -> 88.
+   CACHE to v1216. */
+var CACHE = 'travel-cache-v1216';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1751,7 +1764,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 840, 'mobile.css': 87, 'web-travel-style.css': 90, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 3, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 840, 'mobile.css': 88, 'web-travel-style.css': 91, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 3, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
