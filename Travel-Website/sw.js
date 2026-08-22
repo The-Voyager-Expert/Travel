@@ -1794,7 +1794,8 @@
 /* 2026-08-22: Dallas hotel tiers + price ranges; DFW joins LOUNGE_IATAS toolbar.js -> v862. CACHE to v1241. */
 /* 2026-08-22: kauai hotel tiers + price ranges; LIH Premier Club card + LOUNGE_IATAS toolbar.js -> v863. CACHE to v1242. */
 /* 2026-08-22: strasbourg hotel tiers + price range; LOUNGE_IATAS +SXB toolbar.js -> v864. CACHE to v1243. */
-var CACHE = 'travel-cache-v1243';
+/* 2026-08-22: palm-desert hotel tiers + price; LOUNGE_IATAS +PSP toolbar.js -> v865. CACHE to v1244. */
+var CACHE = 'travel-cache-v1244';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1807,7 +1808,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 259,'toolbar.js': 864, 'mobile.css': 88, 'web-travel-style.css': 93, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 259,'toolbar.js': 865, 'mobile.css': 88, 'web-travel-style.css': 93, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
