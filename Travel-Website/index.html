@@ -3038,15 +3038,6 @@ window.lpGuideCard = function (href, flag, name, extra) {
                     </select></div>
                   </div>
         <div class="fnd-field">
-          <label for="fnd-days">How many days do you have?</label>
-          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-day-dots"/></svg></span><select id="fnd-days">
-            <option value="">Flexible</option>
-            <option value="2">2 days</option><option value="3">3 days</option><option value="4">4 days</option>
-            <option value="5">5 days</option><option value="6">6 days</option><option value="7">7 days</option>
-            <option value="8">8 days or more</option>
-          </select></div>
-        </div>
-        <div class="fnd-field">
                   <label for="fnd-type">What do you want to do?</label>
                   <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-binoculars"/></svg></span><select id="fnd-type">
                     <option value="">No preference</option>
@@ -6479,9 +6470,12 @@ function render() {
 
 <script>
 /* ── Find the right destination for your trip ─────────────────────────────────
-   Eleven controls over one list. Every one of them is an AND: "July, warm,
-   4-6 days, under 10 hours, nonstop, Europe" is a single question with one
-   answer, and answering it is the only reason this block exists.
+   Thirteen controls over one list — the thirteen in PRUNE_PAIRS, plus the
+   airport box, which is an input rather than a filter. Every one of them is an
+   AND: "July, warm, under 10 hours, Europe" is a single question with one
+   answer, and answering it is the only reason this block exists. There is no
+   trip-length control among them and there is not meant to be; see the note
+   above the go button.
 
    It has to be computed here. The obvious alternative — deep-link the answers
    into /guides/?month=…&days=… — cannot work: that page runs
@@ -6915,11 +6909,10 @@ function render() {
        filter on the form that could hold a single answer — "6 to 9h OR 9 to
        12h" is exactly the question a reader with a fortnight asks. */
     for (var k in picks) s[k] = picks[k].map(function (p) { return p.value; });
-    s.days = days;
     return s;
   }
   function anySet(s) {
-    return !!(s.mo.length || s.wx.length || s.fr.length || s.days !== null ||
+    return !!(s.mo.length || s.wx.length || s.fr.length ||
               s.ty.length || s.lg.length || s.ct.length || s.bd.length ||
               s.sf.length || s.co.length || s.tr.length ||
               s.tz.length || s.cu.length || s.dl.length);
@@ -6935,10 +6928,6 @@ function render() {
       if (s.ct.length && s.ct.indexOf(d.cont[g.country]) === -1) return false;
       if (s.lg.length && !anyOf(s.lg, function (l) { return g.lang.indexOf(l) > -1; })) return false;
       if (s.ty.length && !anyOf(s.ty, function (t) { return (d.themes[g.name] || []).indexOf(t) > -1; })) return false;
-      /* The day count FILTERS (owner rule 2026-08-22). It used to feed the sort
-         and nothing else, so when the ranking went the picker would have gone
-         quiet while still looking live. */
-      if (!daysFits(d, g)) return false;
       /* An exact count, not a floor: "2 day trips planned" means two.
          Multi-pick is the way to widen it — 1 OR 2 — like every other
          dimension here. Values stay strings, as addPick leaves them. */
@@ -7129,13 +7118,16 @@ function render() {
     return lpGuideCard(g.url, g.flag, g.name, flt + facts(d, g, s));
   }
 
-  /* ── Days (orders only), the go button, and the facts line ────────────── */
-  var days = null;
-  var fDays = document.getElementById('fnd-days');
-  if (fDays) fDays.addEventListener('change', function () {
-    days = fDays.value ? parseInt(fDays.value, 10) : null;
-    run();
-  });
+  /* ── The go button and the facts line ─────────────────────────────────── */
+  /* THERE IS NO TRIP-LENGTH FILTER (owner rule 2026-08-23). "How many days do
+     you have?" cut the answer on the guide's own day count, ±1 — and every day
+     of a guide is a self-contained geographic cluster off the same hotel, so a
+     reader with 3 days reads the first three days of a 6-day guide and loses
+     nothing. The filter was therefore hiding usable answers rather than
+     narrowing to fit ones: picking 5 dropped 97 of the 239 guides, picking 3
+     dropped every guide of 5 days or more. The day count STAYS on the card, in
+     the facts line — it is worth knowing before you click, it is not worth
+     being filtered on. Do not re-add the select. */
   var hcGo = document.getElementById('hc-go');
   if (hcGo) hcGo.addEventListener('click', function () {
     forced = true;
@@ -7151,21 +7143,6 @@ function render() {
     loadRates();
     if (!BUDGET) loadBudget().then(function () { if (anySet(state())) run(); });
   }, { once: true });
-
-  /* daysFits: the day count FILTERS, it does not rank (owner rule 2026-08-22 —
-     one list, alphabetical). A guide planned for the asked-for number of days
-     matches, and so does one either side of it, because "4 days" and a 5-day
-     itinerary are the same trip to a reader; "8+" matches 8 and more. A guide
-     with no day count in DAYS_DATA does not match — coverage is validator-
-     enforced complete (check_guides_index_inline_data_coverage), so that is a
-     broken record rather than a guide with a shorter answer. */
-  function daysFits(d, g) {
-    if (days === null) return true;
-    var n = Number(d.days && d.days[g.name]);
-    if (!n) return false;
-    if (days >= 8) return n >= 8;
-    return Math.abs(n - days) <= 1;
-  }
 
   /* ── The facts line: everything the site already holds about a destination,
      funnelled onto the card (owner rule 2026-08-22: "all the data we have
@@ -7371,7 +7348,6 @@ function render() {
       /* A month on its own narrows nothing — every guide is open every month.
          Say that, rather than returning all 237 as though it were an answer. */
       var monthOnly = (s.mo.length > 0 && !s.wx.length && !s.fr.length &&
-                       s.days === null &&
                        !s.ty.length && !s.lg.length && !s.ct.length &&
                        !s.bd.length && !s.sf.length && !s.co.length && !s.tr.length &&
                        !s.tz.length && !s.cu.length && !s.dl.length);
@@ -7500,8 +7476,6 @@ function render() {
     forced = false;
     for (var k in picks) picks[k] = [];
     all.forEach(function (el) { el.value = ''; });
-    days = null;
-    if (fDays) fDays.value = '';
     if (HOME) HOME.clear();
     run();
   }
