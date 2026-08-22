@@ -6073,11 +6073,18 @@ window.TVE.home = (function () {
     ], price: { budget: '£70–100', mid: '£130–165', expensive: '£170–190', luxury: '£330+' } },
 
     'cancun': { h: [
-      { name: 'Nizuc Resort & Spa', note: 'Independent luxury — southernmost tip of the Hotel Zone, 5 pools, overwater hammam spa, private beach, adults-only · 9.2 Booking.com', url: 'https://www.booking.com/hotel/mx/nizuc-resort-amp-spa.html' },
-      { name: 'Hyatt Zilara Cancun', note: 'Hyatt brand — adults-only all-inclusive, 3 oceanfront pools, 8 dining options, beachfront Hotel Zone · 9.0 Booking.com', url: 'https://www.booking.com/hotel/mx/the-royal-in-cancun.html' },
-      { name: 'Le Blanc Spa Resort Cancun', note: 'OHL Hotels — adults-only all-inclusive beachfront, butler service, seven à la carte restaurants · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mx/le-blanc-spa-resort-cancun.html' },
-      { name: 'Secrets The Vine Cancun', note: 'AMResorts Secrets brand — adults-only all-inclusive Hotel Zone beachfront, unlimited gourmet dining · 8.9 Booking.com', url: 'https://www.booking.com/hotel/mx/secrets-the-vine-cancun.html' }
-    ] },
+      { name: 'Nizuc Resort & Spa', note: 'Independent luxury — southernmost tip of the Hotel Zone, 5 pools, overwater hammam spa, private beach, adults-only · 9.2 Booking.com', url: 'https://www.booking.com/hotel/mx/nizuc-resort-amp-spa.html', tier: 'luxury' },
+      { name: 'Hyatt Zilara Cancun', note: 'Hyatt brand — adults-only all-inclusive, 3 oceanfront pools, 8 dining options, beachfront Hotel Zone · 9.0 Booking.com', url: 'https://www.booking.com/hotel/mx/the-royal-in-cancun.html', tier: 'luxury' },
+      { name: 'Le Blanc Spa Resort Cancun', note: 'OHL Hotels — adults-only all-inclusive beachfront, butler service, seven à la carte restaurants · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mx/le-blanc-spa-resort-cancun.html', tier: 'luxury' },
+      { name: 'Secrets The Vine Cancun', note: 'AMResorts Secrets brand — adults-only all-inclusive Hotel Zone beachfront, unlimited gourmet dining · 8.9 Booking.com', url: 'https://www.booking.com/hotel/mx/secrets-the-vine-cancun.html', tier: 'expensive' },
+      { name: 'Marriott Cancun, An All-Inclusive Resort', note: 'Marriott brand — all-inclusive beachfront at Km 14.5, water park, heated pool, seven restaurants, 5 min drive south of the Hyatt Zilara · 8.6 Booking.com', url: 'https://www.booking.com/hotel/mx/casamagna-cancun-marriott-resort.html', tier: 'expensive' },
+      { name: 'Kempinski Hotel Cancun', note: 'Kempinski — beachfront on Retorno del Rey at Km 13.5, heated pool, full spa, kids club, 3 min drive from the Hyatt Zilara · 9.2 Booking.com', url: 'https://www.booking.com/hotel/mx/the-grand-hotel-cancun-managed-by-kempinski.html', tier: 'mid' },
+      { name: 'JW Marriott Cancun Resort & Spa', note: 'Marriott brand — beachfront at Km 14.5 with indoor and outdoor pools, Mayan-inspired spa and dive centre, 4 min drive from the Hyatt Zilara · 8.7 Booking.com', url: 'https://www.booking.com/hotel/mx/jw-marriott-cancun.html', tier: 'mid' },
+      { name: 'The Westin Lagunamar Ocean Resort Villas & Spa', note: 'Marriott brand — villa-style resort at Km 12 beside La Isla mall, infinity pool, kitchenette suites, 3 min walk from the Hyatt Zilara', url: 'https://www.booking.com/hotel/mx/the-westin-laguna-mar-ocean-resort.html', tier: 'mid' },
+      { name: 'Canopy by Hilton Cancun La Isla', note: 'Hilton brand — lagoon-side at Km 12.5 inside La Isla, rooftop pool, no beach but the Hotel Zone bus stops outside, 5 min walk from the Hyatt Zilara · 8.6 Booking.com', url: 'https://www.booking.com/hotel/mx/canopy-by-hilton-cancun-la-isla.html', tier: 'budget' },
+      { name: 'Aloft by Marriott Cancun', note: 'Marriott brand — lagoon-side at Km 9 across from Plaza Caracol, outdoor pool, no beach, 6 min drive north of the Hyatt Zilara · 8.1 Booking.com', url: 'https://www.booking.com/hotel/mx/aloft-cancun.html', tier: 'budget' }
+    ], price: { budget: 'MXN 2,400–3,500', mid: 'MXN 3,500–7,000', expensive: 'MXN 7,000–11,000', luxury: 'MXN 11,000+' } },
+
     'cannes': { h: [
       { name: 'Carlton Cannes, a Regent Hotel', note: 'IHG Regent brand — iconic 1911 La Croisette palace, private beach concession, Belle Époque sea-view suites · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/carlton-cannes-a-regent-hotel.html' },
       { name: 'Majestic Barrière Cannes', note: 'Barrière group — La Croisette landmark, two pools, private beach club, Fouquet\'s Cannes restaurant, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/majestic-barriere.html' },
