@@ -6869,11 +6869,13 @@ window.TVE.home = (function () {
       { name: 'Hyatt Place Pensacola Airport', note: 'Hyatt Place brand — 161 Airport Lane, indoor pool, 24h reception, free airport shuttle · 7.9 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-place-pensacola-airport.html', tier: 'budget' }
     ], price: { budget: '$100–175', mid: '$175–230', expensive: '$230–350', luxury: '$350+' } },
     'petra': { h: [
-      { name: 'Petra Guest House Hotel', note: 'Independent boutique — at the siq entrance gate, Cave Bar in a 2,000-year-old Nabataean cave, unbeatable proximity to the Treasury · 8.9 Booking.com', url: 'https://www.booking.com/hotel/jo/guesthouse-petra.html' },
-      { name: 'The Old Village Hotel & Resort Petra', note: 'Independent — village setting near the siq entrance, terrace pool with wadi views, traditional stone architecture · 9.0 Booking.com', url: 'https://www.booking.com/hotel/jo/the-old-village-amp-resort.html' },
-      { name: 'Mövenpick Resort Petra', note: 'Mövenpick brand — Petra gate, walking distance to Treasury entrance, pool, Rüm Fusion restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/jo/movenpick-petra.html' },
-      { name: 'Petra Marriott Hotel', note: 'Marriott brand — beside the Petra visitors\' entrance, Al Iwan restaurant, outdoor pool · 8.5 Booking.com', url: 'https://www.booking.com/hotel/jo/petra-marriott.html' }
-    ] },
+      { name: 'Petra Guest House Hotel', note: 'Independent boutique — at the siq entrance gate, Cave Bar in a 2,000-year-old Nabataean cave, unbeatable proximity to the Treasury · 8.9 Booking.com', url: 'https://www.booking.com/hotel/jo/guesthouse-petra.html', tier: 'expensive' },
+      { name: 'The Old Village Hotel & Resort Petra', note: 'Independent — village setting near the siq entrance, terrace pool with wadi views, traditional stone architecture · 9.0 Booking.com', url: 'https://www.booking.com/hotel/jo/the-old-village-amp-resort.html', tier: 'expensive' },
+      { name: 'Mövenpick Resort Petra', note: 'Mövenpick brand — Petra gate, walking distance to Treasury entrance, pool, Rüm Fusion restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/jo/movenpick-petra.html', tier: 'luxury' },
+      { name: 'Petra Marriott Hotel', note: 'Marriott brand — beside the Petra visitors\' entrance, Al Iwan restaurant, outdoor pool · 8.5 Booking.com', url: 'https://www.booking.com/hotel/jo/petra-marriott.html', tier: 'luxury' },
+      { name: 'Petra Canyon Hotel', note: 'Independent 4-star — Wadi Musa, five minutes by car from the gate, seasonal outdoor pool, 24h reception, AC, free parking · 9.6 Booking.com', url: 'https://www.booking.com/hotel/jo/petra-canyon.html', tier: 'mid' },
+      { name: 'Petra Sella Hotel', note: 'Independent 4-star — Tourism Street in Wadi Musa, 24h reception, AC, steam bath, free shuttle to the gate · 9.9 Booking.com', url: 'https://www.booking.com/hotel/jo/sella.html', tier: 'budget' }
+    ], price: { budget: 'JOD 30–55', mid: 'JOD 55–90', expensive: 'JOD 90–140', luxury: 'JOD 140+' } },
     'philadelphia': { h: [
       { name: 'The Logan Philadelphia, Curio Collection by Hilton', note: 'Hilton Curio — One Logan Square on the Parkway, indoor pool, spa, Urban Farmer steakhouse · 8.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-logan-philadelphia.html' },
       { name: 'Four Seasons Hotel Philadelphia at Comcast Center', note: 'Independent luxury — 60th-floor pool with panoramic views, Jean-Georges restaurant, spa · 9.6 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-philadelphia-at-comcast-center.html' },
@@ -11051,7 +11053,7 @@ window.TVE.home = (function () {
        list) while every European guide jumped to its country rather than to
        its airport. */
     var LOUNGE_IATAS = [
-      'AES','AGP','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
+      'AES','AGP','AMM','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLR','FRA','GIG','GOT','GRU','GVA','HAM',
       'HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
