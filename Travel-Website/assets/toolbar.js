@@ -5735,7 +5735,7 @@ window.TVE.home = (function () {
       { name: 'Lost Iguana Resort & Spa', note: 'Adults-only boutique — cloud-forest hillside, infinity pool with Arenal Volcano views · 9.0 Booking.com', url: 'https://www.booking.com/hotel/cr/lost-iguana-resort-spa.html', tier: 'expensive' },
       { name: 'Tabacón Thermal Resort & Spa', note: 'Small Luxury Hotels — natural volcanic thermal river on-site, waterfalls and pools up to 100°F, 900+ acres of rainforest · 9.1 Booking.com', url: 'https://www.booking.com/hotel/cr/tabacon-grand-spa-thermal-resort.html', tier: 'luxury' },
       { name: 'Nayara Springs', note: 'Small Luxury Hotels — adults-only, 35 private villas each with volcanic hot-spring plunge pool, Arenal Volcano views, 24-hour butler', url: 'https://www.booking.com/hotel/cr/nayara-springs.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: '$205+', mid: '$235–510', expensive: '$170–700', luxury: '$430–2,400' } },
     'aruba': { h: [
       { name: 'Hyatt Place Aruba Airport', note: 'Hyatt Place brand — Oranjestad by the airport, rooftop pool and bar, fitness centre, 24h reception · 8.2 Booking.com', url: 'https://www.booking.com/hotel/aw/hyatt-place-aruba-airport.html', tier: 'budget' },
       { name: 'Courtyard by Marriott Aruba Resort', note: 'Marriott Courtyard brand — J.E. Irausquin Blvd on Eagle Beach, saltwater pool, private beach area, kids club · 8.6 Booking.com', url: 'https://www.booking.com/hotel/aw/the-mill-resort-and-suites.html', tier: 'mid' },
