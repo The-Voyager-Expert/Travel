@@ -7449,11 +7449,13 @@ window.TVE.home = (function () {
       { name: 'Park Hyatt Tokyo', note: 'Hyatt brand — Shinjuku floors 41–52 of the Tokyo Park Tower, 14th-floor pool, New York Bar and Grill, full-service spa · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/jp/park-hyatt-tokyo.html', tier: 'luxury' }
     ], price: { budget: 'JPY 25,000–50,000', mid: 'JPY 50,000–90,000', expensive: 'JPY 90,000–150,000', luxury: 'JPY 150,000+' } },
     'toledo': { h: [
-      { name: 'Áurea Toledo by Eurostars', note: 'Independent — Bajada Pozo Amargo below the cathedral, spa, 24h reception, AC · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/aurea-toledo.html' },
-      { name: 'Eurostars Palacio Buenavista', note: 'Eurostars Hotels — Buenavista Palace 3 km west of the walls, outdoor pool, spa, city panoramas · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/eurostars-buenavista.html' },
-      { name: 'Posada Sillería', note: 'Independent boutique — Calle Sillería inside the walls, 24h reception, restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/posada-de-la-silleria.html' },
-      { name: 'AC Hotel Ciudad de Toledo by Marriott', note: 'Marriott AC Hotels — Carretera de Circunvalación on the south rim with the El Greco panorama, restaurant, free parking · 8.2 Booking.com', url: 'https://www.booking.com/hotel/es/acciudaddetoledo.html' }
-    ] },
+      { name: 'Posada Sillería', note: 'Independent boutique — Calle Sillería inside the walls, 24h reception, restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/posada-de-la-silleria.html', tier: 'budget' },
+      { name: 'Hotel San Juan de los Reyes', note: 'Independent — Calle Reyes Católicos beside the monastery, 1889 Neo-Mudéjar façade, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/es/sanjuandelosreyes.html', tier: 'mid' },
+      { name: 'AC Hotel Ciudad de Toledo by Marriott', note: 'Marriott AC Hotels — Carretera de Circunvalación on the south rim with the El Greco panorama, restaurant, free parking · 8.2 Booking.com', url: 'https://www.booking.com/hotel/es/acciudaddetoledo.html', tier: 'mid' },
+      { name: 'Hotel Boutique Casón de los López', note: 'Independent boutique — Calle Sillería, 16th-century mansion with a patio, 24h reception, AC · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/cason-de-los-lopez.html', tier: 'expensive' },
+      { name: 'Áurea Toledo by Eurostars', note: 'Independent — Bajada Pozo Amargo below the cathedral, spa, 24h reception, AC · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/aurea-toledo.html', tier: 'expensive' },
+      { name: 'Eurostars Palacio Buenavista', note: 'Eurostars Hotels — Buenavista Palace 3 km west of the walls, outdoor pool, spa, city panoramas · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/eurostars-buenavista.html', tier: 'luxury' }
+    ], price: { budget: '€90–140', mid: '€140–190', expensive: '€190–250', luxury: '€250+' } },
     'toronto': { h: [
       { name: 'The Hazelton Hotel', note: 'Independent luxury — Yorkville, private cinema, ONE Restaurant by Mark McEwan, spa · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/ca/the-hazelton.html' },
       { name: 'Four Seasons Hotel Toronto', note: 'Four Seasons brand — Yorkville, outdoor pool, Café Boulud, spa, gallery-level art collection · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/ca/four-seasons-hotel-toronto.html' },
