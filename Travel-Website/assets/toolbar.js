@@ -7191,11 +7191,16 @@ window.TVE.home = (function () {
       { name: 'Steigenberger Graf Zeppelin', note: 'Steigenberger brand — Arnulf-Klett-Platz opposite the Hauptbahnhof, spa, 24h reception, AC · 8.1 Booking.com', url: 'https://www.booking.com/hotel/de/steigenberger-graf-zeppelin.html', tier: 'luxury' }
     ], price: { budget: '€80–120', mid: '€120–180', expensive: '€180–240', luxury: '€240+' } },
     'sydney': { h: [
-      { name: 'Park Hyatt Sydney', note: 'Hyatt brand — Lavender Bay, Opera House and Harbour Bridge views from 155 rooms, rooftop pool · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/au/park-hyatt-sydney.html' },
-      { name: 'Capella Sydney', note: 'Capella Hotels — restored 1950s–60s heritage ensemble, spa, David Laris-conceived dining · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/au/capella-sydney.html' },
-      { name: 'Four Seasons Hotel Sydney', note: 'Four Seasons brand — George Street in the CBD, outdoor pool with harbour views, MODE kitchen & bar, full-service spa · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/au/four-seasons-sydney.html' },
-      { name: 'Shangri-La Sydney', note: 'Shangri-La brand — Millers Point with Bridge and Opera House views, outdoor infinity pool, CHI Spa, The Rocks district · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/au/shangri-la-sydney.html' }
-    ] },
+      { name: 'Little National Hotel Sydney', note: 'Independent — Clarence Street in the CBD, compact design rooms, rooftop terrace and library lounge, gym, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/au/little-national-sydney-sydney.html', tier: 'budget' },
+      { name: 'Crystalbrook Albion', note: 'Crystalbrook — Little Albion Street in Surry Hills, 1903 convent turned boutique guesthouse, rooftop terrace, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/au/little-albion-guest-house-surry-hills.html', tier: 'budget' },
+      { name: 'Sydney Harbour Marriott at Circular Quay', note: 'Marriott brand — Pitt Street two blocks from the Quay, indoor pool, gym, 24h reception, AC · 8.7 Booking.com', url: 'https://www.booking.com/hotel/au/sydney-habour-marriott.html', tier: 'mid' },
+      { name: 'Sheraton Grand Sydney Hyde Park', note: 'Marriott Sheraton brand — Elizabeth Street facing Hyde Park, rooftop indoor pool, spa, 24h reception, AC · 8.7 Booking.com', url: 'https://www.booking.com/hotel/au/sheraton-on-the-park-sydney.html', tier: 'mid' },
+      { name: 'Four Seasons Hotel Sydney', note: 'Four Seasons brand — George Street in the CBD, outdoor pool with harbour views, MODE kitchen & bar, full-service spa · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/au/four-seasons-sydney.html', tier: 'expensive' },
+      { name: 'Shangri-La Sydney', note: 'Shangri-La brand — Millers Point with Bridge and Opera House views, outdoor infinity pool, CHI Spa, The Rocks district · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/au/shangri-la-sydney.html', tier: 'expensive' },
+      { name: 'Spicers Potts Point', note: 'Spicers Retreats — Victoria Street in Potts Point, three Victorian terraces with 20 rooms, lounge bar, AC · 9.6 Booking.com', url: 'https://www.booking.com/hotel/au/spicers-potts-point.html', tier: 'expensive' },
+      { name: 'Park Hyatt Sydney', note: 'Hyatt brand — Lavender Bay, Opera House and Harbour Bridge views from 155 rooms, rooftop pool · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/au/park-hyatt-sydney.html', tier: 'luxury' },
+      { name: 'Capella Sydney', note: 'Capella Hotels — restored 1950s–60s heritage ensemble, spa, David Laris-conceived dining · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/au/capella-sydney.html', tier: 'luxury' }
+    ], price: { budget: 'AUD 220–320', mid: 'AUD 320–420', expensive: 'AUD 420–600', luxury: 'AUD 600+' } },
     'sao-luis': { h: [
       { name: 'Brisamar Hotel & SPA São Luís', note: 'Independent — Avenida São Marcos on Ponta da Areia beach, outdoor pool, spa, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/brisamar.html' },
       { name: 'Blue Tree Premium São Luís', note: 'Blue Tree — Avenida Avicênia on the Calhau beachfront, outdoor pool, tennis court, 24h reception, AC · 8.7 Booking.com', url: 'https://www.booking.com/hotel/br/pestana-sao-luis.html' },
