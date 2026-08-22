@@ -5786,7 +5786,7 @@ window.TVE.home = (function () {
       { name: 'Avila Beach Hotel', note: 'Independent — historic 1780 mansion on Penstraat beach, Blues Music Bar, diving centre · 8.8 Booking.com', url: 'https://www.booking.com/hotel/cw/avila-beach-hotel.html', tier: 'expensive' },
       { name: 'Renaissance Wind Creek Curaçao Resort', note: 'Renaissance brand — Punda waterfront, casino, full-service spa, harbour location · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cw/renaissance-curacao-resort-casino.html', tier: 'expensive' },
       { name: 'Baoase Luxury Resort', note: 'Independent boutique — adults-only, private beach on Piscadera Bay, Baoase Culinary Beach restaurant, full-service spa', url: 'https://baoase.com/', tier: 'luxury' }
-    ] },
+    ], price: { budget: '$140–170', mid: '$185–200', expensive: '$250–360', luxury: '$700+' } },
     'curitiba': { h: [
       { name: 'Nomaa Hotel', note: 'Independent boutique — Batel, 5-star, Nomade Restaurant with seasonal Brazilian tasting menu, intimate rooftop deck · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/nomaa.html' },
       { name: 'Full Jazz by Slaviero Hotéis', note: 'Slaviero Hotéis — Batel, 5-star, 24h reception, fitness centre, walking distance to the Batel restaurant strip · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/slaviero-full-jazz.html' },
