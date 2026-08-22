@@ -6930,11 +6930,13 @@ window.TVE.home = (function () {
       { name: 'Hyatt Place Phoenix/Downtown', note: 'Hyatt Place brand — 150 West Adams Street, two blocks from the Hyatt Regency, 24h reception', url: 'https://www.booking.com/hotel/us/hyatt-place-phoenix-downtown.html', tier: 'budget' }
     ], price: { budget: '$120–190', mid: '$190–280', expensive: '$280–450', luxury: '$450+' } },
     'phuket': { h: [
-      { name: 'Arco Phuket Town', note: 'Independent — Thaling Chan Road in Phuket Town, saltwater pool, rooftop restaurant, 10-min walk to the Old Town shophouses · 9.5 Booking.com', url: 'https://www.booking.com/hotel/th/arco-phuket-town.html' },
-      { name: 'Trisara', note: 'Independent luxury — private pool villas on Nai Thon Bay, Pru restaurant (Asia\'s 50 Best), beachfront setting · 9.6 Booking.com', url: 'https://www.booking.com/hotel/th/trisara.html' },
-      { name: 'Paresa Resort Phuket', note: 'Independent — Kamala cliff-edge, adults-only, eight pool villas, Aspara spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/th/paresa-resort-phuket.html' },
-      { name: 'Keemala Phuket', note: 'Small Luxury Hotels — Kamala rainforest, pool-villa-only property, Mala restaurant · 9.5 Booking.com', url: 'https://www.booking.com/hotel/th/keemala.html' }
-    ] },
+      { name: 'Arco Phuket Town', note: 'Independent — Thaling Chan Road in Phuket Town, saltwater pool, rooftop restaurant, 10-min walk to the Old Town shophouses · 9.5 Booking.com', url: 'https://www.booking.com/hotel/th/arco-phuket-town.html', tier: 'mid' },
+      { name: 'Trisara', note: 'Independent luxury — private pool villas on Nai Thon Bay, Pru restaurant (Asia\'s 50 Best), beachfront setting · 9.6 Booking.com', url: 'https://www.booking.com/hotel/th/trisara.html', tier: 'luxury' },
+      { name: 'Paresa Resort Phuket', note: 'Independent — Kamala cliff-edge, adults-only, eight pool villas, Aspara spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/th/paresa-resort-phuket.html', tier: 'luxury' },
+      { name: 'Keemala Phuket', note: 'Small Luxury Hotels — Kamala rainforest, pool-villa-only property, Mala restaurant · 9.5 Booking.com', url: 'https://www.booking.com/hotel/th/keemala.html', tier: 'luxury' },
+      { name: 'Hotel Verdigris', note: 'Independent 4-star — 154 Yaowarat Road in the Old Town, adults-only, outdoor pool, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/th/verdigris.html', tier: 'expensive' },
+      { name: 'The Memory at On On Hotel', note: 'Independent — 19 Phang-Nga Road, the 1929 shophouse hotel of the Old Town, 24h reception, AC · 9.3 Booking.com', url: 'https://www.booking.com/hotel/th/the-memory-at-on-on.html', tier: 'budget' }
+    ], price: { budget: 'THB 1,000–3,000', mid: 'THB 3,000–6,000', expensive: 'THB 6,000–12,000', luxury: 'THB 12,000+' } },
     'pisa': { h: [
       { name: 'Grand Hotel Duomo', note: 'Independent — steps from Piazza dei Miracoli, rooftop terrace with Leaning Tower and Baptistery views, bar · 8.1 Booking.com', url: 'https://www.booking.com/hotel/it/grandhotelduomopisa.html' },
       { name: 'NH Pisa', note: 'NH Hotels — Piazza della Stazione, 5-min walk from the Campo dei Miracoli, restaurant and bar · 8.3 Booking.com', url: 'https://www.booking.com/hotel/it/nh-pisa.html' },
@@ -11109,7 +11111,7 @@ window.TVE.home = (function () {
       'AES','AGP','AJU','AMM','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FRA','GIG','GOT','GRU','GVA','HAM',
-      'HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
+      'HAN','HEL','HER','HKG','HKT','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
       'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
       'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TBS','TIV','TLL','TPE','VCE','VIE','VLC',
