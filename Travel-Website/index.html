@@ -6828,6 +6828,10 @@ function render() {
       if (s.ct.length && s.ct.indexOf(d.cont[g.country]) === -1) return false;
       if (s.lg.length && !anyOf(s.lg, function (l) { return g.lang.indexOf(l) > -1; })) return false;
       if (s.ty.length && !anyOf(s.ty, function (t) { return (d.themes[g.name] || []).indexOf(t) > -1; })) return false;
+      /* The day count FILTERS (owner rule 2026-08-22). It used to feed the sort
+         and nothing else, so when the ranking went the picker would have gone
+         quiet while still looking live. */
+      if (!daysFits(d, g)) return false;
       /* An exact count, not a floor: "2 day trips planned" means two.
          Multi-pick is the way to widen it — 1 OR 2 — like every other
          dimension here. Values stay strings, as addPick leaves them. */
@@ -7007,22 +7011,20 @@ function render() {
     if (!BUDGET) loadBudget().then(function () { if (anySet(state())) run(); });
   }, { once: true });
 
-  /* daysScore: exact fit 2, one off 1, "8+" matches 8 and more. */
-  function daysScore(d, g) {
-    if (days === null) return 0;
+  /* daysFits: the day count FILTERS, it does not rank (owner rule 2026-08-22 —
+     one list, alphabetical). A guide planned for the asked-for number of days
+     matches, and so does one either side of it, because "4 days" and a 5-day
+     itinerary are the same trip to a reader; "8+" matches 8 and more. A guide
+     with no day count in DAYS_DATA does not match — coverage is validator-
+     enforced complete (check_guides_index_inline_data_coverage), so that is a
+     broken record rather than a guide with a shorter answer. */
+  function daysFits(d, g) {
+    if (days === null) return true;
     var n = Number(d.days && d.days[g.name]);
-    if (!n) return 0;
-    if (days >= 8) return n >= 8 ? 2 : (n === 7 ? 1 : 0);
-    var diff = Math.abs(n - days);
-    return diff === 0 ? 2 : (diff === 1 ? 1 : 0);
+    if (!n) return false;
+    if (days >= 8) return n >= 8;
+    return Math.abs(n - days) <= 1;
   }
-  function tagScore(d, g, s) {
-    if (!s.ty.length) return 0;
-    var tags = d.themes[g.name] || [], n = 0;
-    s.ty.forEach(function (t) { if (tags.indexOf(t) > -1) n++; });
-    return n;
-  }
-  function score(d, g, s) { return daysScore(d, g) * 2 + tagScore(d, g, s); }
 
   /* ── The facts line: everything the site already holds about a destination,
      funnelled onto the card (owner rule 2026-08-22: "all the data we have
@@ -7201,38 +7203,40 @@ function render() {
       /* A month on its own narrows nothing — every guide is open every month.
          Say that, rather than returning all 237 as though it were an answer. */
       var monthOnly = (s.mo.length > 0 && !s.wx.length && !s.fr &&
+                       s.days === null &&
                        !s.ty.length && !s.lg.length && !s.ct.length &&
                        !s.bd.length && !s.sf.length && !s.co.length && !s.tr.length &&
                        !s.tz.length && !s.cu.length && !s.dl.length);
       var moNames = s.mo.map(function (m) { return MON[m]; }).join(' or ');
 
-      /* "guides", not "destinations". The site has one unit and it is the
-         guide; a count of destinations implies the filter returned places, and
-         the reader then has to work out that each one is a written itinerary. */
-      var head = '<p class="fnd-res-head"><b>' + hits.length + '</b> guide' +
-                 (hits.length === 1 ? '' : 's') +
+      /* "All N matches" — the header names the whole answer, because the whole
+         answer is what is under it: one list, every match, nothing held back in
+         a second grid (owner rule 2026-08-22). A single hit reads "1 match";
+         "All 1 match" is not a sentence. */
+      var head = '<p class="fnd-res-head">' +
+                 (hits.length === 1 ? '<b>1</b> match'
+                                    : 'All <b>' + hits.length + '</b> matches') +
                  (monthOnly ? ' &mdash; every guide is open in ' + moNames +
                               '. Add a temperature and this narrows.' : '') + '</p>';
 
       if (!hits.length) {
-        out.innerHTML = head +
+        /* No count line above "no guide matches" — "All 0 matches" is not a
+           sentence, and the message below already says the number. */
+        out.innerHTML =
           '<p class="fnd-res-empty">No guide matches all of those at once. ' +
           'Drop one and try again.</p>';
         return;
       }
-      /* ONE list (owner rule 2026-08-22: "only one list! either we will be best
-         matches or all matches"). Every match is shown once. When the reader gave
-         something to rank on — a day count, a trip type — the ranking becomes the
-         ORDER, best fit first; with nothing to rank on the order is A-Z, because a
-         ranking with nothing behind it would be a lie. No tiers, no headings, no
-         cap: the count in the head is the number of cards below it. */
-      var rankable = s.days !== null || s.ty.length > 0;
+      /* ONE list, ALPHABETICAL (owner rule 2026-08-22: "we wont have this
+         concept! we will list all that matches the period in alphabetical order").
+         There is no best-fit tier and no ranking behind the order: everything the
+         reader asked for is a filter, so every card below is an equal answer and
+         A-Z is the only order that claims nothing. localeCompare, not `<`: a
+         code-point sort puts every accent after Z, which measured as Malaga
+         after Mykonos, Quebec City after Queenstown and Sao Luis after Sydney —
+         four cities filed past the end of the alphabet. */
       var all = hits.slice().sort(function (a, b) {
-        if (rankable) {
-          var sa = score(d, a, s), sb = score(d, b, s);
-          if (sa !== sb) return sb - sa;
-        }
-        return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+        return a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
       });
       out.innerHTML = head + '<div class="flt-grid">' +
                       all.map(function (g) { return card(d, g, s); }).join('') + '</div>';
