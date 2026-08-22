@@ -1996,7 +1996,6 @@ summary.res-head:focus-visible { outline: 2px solid var(--rust, #C04E1A); outlin
 .hc-hint { margin: 0 0 .55rem; font-size: .84rem; font-weight: 400; color: var(--muted,#6a6660); }
 #help-choose-panel .fnd-results { margin-top: 20px; }
 .tt-narrow .fnd-row { margin-top: 6px; }
-.fnd-res-tier { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted,#6a6660); margin: 1.1rem 0 .5rem; }
 .fnd-facts { flex-basis: 100%; font-size: 11.5px; line-height: 1.5; color: #8a857c; margin-top: 3px; font-variant-numeric: tabular-nums; }
 @media (hover:hover) { .flt-grid .dest-card:hover .fnd-facts { color: #fff !important; } }
 #hc-back { font-family:inherit; font-size:12px; background:none; border:none; color:var(--accent, #8a6c1a); cursor:pointer; padding:0; text-decoration:underline; }
@@ -7196,32 +7195,20 @@ function render() {
           'Drop one and try again.</p>';
         return;
       }
-      /* RANKED when the reader gave something to rank on (days, activities):
-         the five best fits first, then everything that matched, A-Z. Otherwise
-         one grid — a ranking with nothing to rank on would be a lie. */
+      /* ONE list (owner rule 2026-08-22: "only one list! either we will be best
+         matches or all matches"). Every match is shown once. When the reader gave
+         something to rank on — a day count, a trip type — the ranking becomes the
+         ORDER, best fit first; with nothing to rank on the order is A-Z, because a
+         ranking with nothing behind it would be a lie. No tiers, no headings, no
+         cap: the count in the head is the number of cards below it. */
       var rankable = s.days !== null || s.ty.length > 0;
-      var all = hits.slice().sort(function (a, b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
-      if (rankable) {
-        var best = hits.slice().map(function (g) { return { g: g, sc: score(d, g, s) }; })
-          .filter(function (x) { return x.sc > 0; })
-          .sort(function (a, b) { return b.sc - a.sc || (a.g.name < b.g.name ? -1 : 1); })
-          .slice(0, 5).map(function (x) { return x.g; });
-        if (best.length) {
-          /* The second grid is the REMAINDER, never the whole list again: `best`
-             is a slice of `hits`, so printing `all` under it showed the top five
-             twice and labelled the repeat "All N matches" when N was split over
-             both grids. Keyed on url — two guides can share a city name. */
-          var picked = {};
-          best.forEach(function (g) { picked[g.url] = 1; });
-          var rest = all.filter(function (g) { return !picked[g.url]; });
-          out.innerHTML = head +
-            '<p class="fnd-res-tier">Best matches</p><div class="flt-grid">' + best.map(function (g) { return card(d, g, s); }).join('') + '</div>' +
-            (rest.length
-              ? '<p class="fnd-res-tier">The other ' + rest.length + '</p><div class="flt-grid">' + rest.map(function (g) { return card(d, g, s); }).join('') + '</div>'
-              : '');
-          return;
+      var all = hits.slice().sort(function (a, b) {
+        if (rankable) {
+          var sa = score(d, a, s), sb = score(d, b, s);
+          if (sa !== sb) return sb - sa;
         }
-      }
+        return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+      });
       out.innerHTML = head + '<div class="flt-grid">' +
                       all.map(function (g) { return card(d, g, s); }).join('') + '</div>';
     });
