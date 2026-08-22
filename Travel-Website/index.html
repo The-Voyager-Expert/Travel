@@ -3075,30 +3075,26 @@ window.lpGuideCard = function (href, flag, name, extra) {
                   </select></div>
                 </div>
         <div class="fnd-field">
-                  <label for="fnd-budget">What is your budget?</label>
-                  <!-- Real money, from /essentials/budget/ — that page IS the site's
-                       budget data (hotel + food, per person per day) and this reads it
-                       rather than keeping a second copy. The four-tier COST_DATA scale
-                       that stood here (Budget/Moderate/Expensive/Premium) answered a
-                       different question — a "tier" is a label, and a visitor with a
-                       number in mind could not use it. Bands are the midpoint of the
-                       two ranges the page publishes, summed. -->
+                  <label for="fnd-budget">How expensive a place?</label>
+                  <!-- The PRICE LEVEL, from /essentials/budget/ — that page IS the
+                       site's cost data and this reads it rather than keeping a second
+                       copy. It used to ask "What is your budget?" over dollar-a-day
+                       bands, which is the wrong question twice over: owner rule
+                       2026-08-22, "people can travel to the same places and spend 500 a
+                       day or 50 at least in most places" — what a reader spends is a
+                       choice and says nothing about where they are going. What a place
+                       COSTS is not a choice, so that is what is asked. Same four bands,
+                       same numbers, as the guides-index filter and the cost page. -->
                   <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-budget"/></svg></span><select id="fnd-budget">
                     <option value="">Flexible</option>
-                    <!-- Bands are $100 wide at the bottom and widen upward to a luxury tier
-                         (owner, 2026-08-22: "there can't be a difference of 50 … until luxury
-                         prices"). The upper bands sit pruned until /essentials/budget/ carries
-                         those daily totals — the page is being raised to match. -->
-                    <option value="u100">Under $100 a day</option>
-                    <option value="100-200">$100 to $200 a day</option>
-                    <option value="200-300">$200 to $300 a day</option>
-                    <option value="300-500">$300 to $500 a day</option>
-                    <option value="500-800">$500 to $800 a day</option>
-                    <option value="o800">$800 a day or more</option>
+                    <option value="cheap">Cheap — a third of New York or less</option>
+                    <option value="moderate">Moderate — about half New York</option>
+                    <option value="expensive">Expensive</option>
+                    <option value="very">Very expensive — New York and up</option>
                   </select></div>
                 </div>
         <div class="fnd-field">
-                  <label for="fnd-safety">Safety</label>
+                  <label for="fnd-safety">How safe does it need to be?</label>
                   <!-- The State Department levels, from /essentials/safety/ — the page
                        that already sorts all 237 guides into L1/L2/L3/L4 against the
                        advisories. The invented four-word scale that stood here ("Very
@@ -6555,12 +6551,15 @@ function render() {
       .then(function (r) { return r.text(); })
       .then(function (html) {
         var m = {};
-        /* The page's own CITIES array: {name, hotel: "80-120", food: "30-50"},
-           both per person per day. A band is the midpoint of each range, summed
-           — the single number the page's own Total column shows. */
-        var re = /name:\s*"([^"]+)"\s*,\s*hotel:\s*"(\d+)\s*-\s*(\d+)"\s*,\s*food:\s*"(\d+)\s*-\s*(\d+)"/g, x;
+        /* The page's own CI array — [name, slug, country, flag, index, band, …],
+           where the index is the price level against New York at 100. Keyed by
+           SLUG as well as name: the slug is exact, and the name fold is only
+           still here because a card can carry a display name the page spells
+           differently. */
+        var re = /\['([^']+)','([a-z0-9-]+)','[^']*','[^']*',([\d.]+),/g, x;
         while ((x = re.exec(html))) {
-          m[bkey(x[1])] = (+x[2] + +x[3]) / 2 + (+x[4] + +x[5]) / 2;
+          m[bkey(x[2])] = +x[3];
+          m[bkey(x[1])] = +x[3];
         }
         BUDGET = m;
         return m;
@@ -6575,13 +6574,14 @@ function render() {
      gitignored json — so the filter could not answer until that page had loaded,
      and its pruning sat disabled until then. */
 
+  /* The same four cut points the cost page and the guides-index filter use, on
+     the New-York-is-100 scale. Change them in one place and change them in all
+     three — Brain/scripts/build/build_cost_page.py BANDS is that place. */
   var BUDGET_BAND = {
-    'u100':    function (n) { return n < 100; },
-    '100-200': function (n) { return n >= 100 && n < 200; },
-    '200-300': function (n) { return n >= 200 && n < 300; },
-    '300-500': function (n) { return n >= 300 && n < 500; },
-    '500-800': function (n) { return n >= 500 && n < 800; },
-    'o800':    function (n) { return n >= 800; }
+    'cheap':     function (n) { return n < 35; },
+    'moderate':  function (n) { return n >= 35 && n < 50; },
+    'expensive': function (n) { return n >= 50 && n < 70; },
+    'very':      function (n) { return n >= 70; }
   };
 
   /* The continent table, and the resolved listing. Both are held here because
