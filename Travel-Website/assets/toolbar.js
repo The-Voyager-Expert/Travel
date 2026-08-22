@@ -6150,12 +6150,16 @@ window.TVE.home = (function () {
       { name: 'Inkaterra La Casona Relais & Chateaux', note: 'Relais & Châteaux — 16th-century colonial manor on Plaza de las Nazarenas, 11 suites with original Inca stonework · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pe/inkaterra-la-casona.html', tier: 'luxury' }
     ], price: { budget: '$60–100', mid: '$100–200', expensive: '$200–400', luxury: '$400+' } },
     'dallas': { h: [
-      { name: 'Rosewood Mansion on Turtle Creek', note: 'Rosewood brand — 1925 Tudor mansion in Uptown, outdoor heated pool and terrace, acclaimed Restaurant at Rosewood Mansion, full-service spa · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/us/rosewood-mansion-on-turtle-creek.html' },
-      { name: 'The Ritz-Carlton, Dallas', note: "Ritz-Carlton brand — Uptown at McKinney and Maple, indoor pool, Ellie's Restaurant and Lounge, 24-hour butler · 8.8 Booking.com" , url: 'https://www.booking.com/hotel/us/the-ritz-carlton-dallas.html' },
-    
-      { name: 'The Joule Dallas', note: 'Independent boutique — Arts District, rooftop pool cantilevered over Main Street, Charlie Palmer restaurant, spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-joule.html' },
-      { name: 'Hotel ZaZa Dallas', note: 'Independent boutique — Uptown near McKinney Avenue, resort pool, Dragonfly restaurant, ZaSpa, themed suites · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-zaza-dallas.html' }
-    ] },
+      { name: 'Courtyard by Marriott Dallas Downtown/Reunion District', note: 'Marriott Courtyard brand — 310 South Houston Street beside Union Station and Reunion Tower, bistro bar, 24h reception · 7.7 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-by-marriott-dallas-downtown-47-reunion-district.html', tier: 'budget' },
+      { name: 'Hampton Inn & Suites Dallas Downtown', note: 'Hilton Hampton brand — 1700 Commerce Street in the Main Street District, indoor pool, breakfast included, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/commerce-street-suites-dallas-downtown-tx.html', tier: 'budget' },
+      { name: 'Residence Inn by Marriott Dallas Downtown', note: 'Marriott Residence Inn brand — 1712 Commerce Street in the Main Street District, suites with full kitchens, indoor pool, 24h reception · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/residence-inn-by-marriott-dallas-downtown.html', tier: 'mid' },
+      { name: 'AC Hotel by Marriott Dallas Downtown', note: 'Marriott AC brand — 1712 Commerce Street in the Main Street District, indoor pool, AC Lounge, 24h reception · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/ac-by-marriott-dallas-downtown.html', tier: 'mid' },
+      { name: 'Hyatt Regency Dallas', note: 'Hyatt Regency brand — 300 Reunion Boulevard at the foot of Reunion Tower, outdoor pool, 24h reception · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-regency-dallas.html', tier: 'mid' },
+      { name: 'The Joule Dallas', note: 'Independent boutique — Arts District, rooftop pool cantilevered over Main Street, Charlie Palmer restaurant, spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-joule.html', tier: 'expensive' },
+      { name: 'Hotel ZaZa Dallas', note: 'Independent boutique — Uptown near McKinney Avenue, resort pool, Dragonfly restaurant, ZaSpa, themed suites · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-zaza-dallas.html', tier: 'expensive' },
+      { name: 'Rosewood Mansion on Turtle Creek', note: 'Rosewood brand — 1925 Tudor mansion in Uptown, outdoor heated pool and terrace, acclaimed Restaurant at Rosewood Mansion, full-service spa · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/us/rosewood-mansion-on-turtle-creek.html', tier: 'luxury' },
+      { name: 'The Ritz-Carlton, Dallas', note: "Ritz-Carlton brand — Uptown at McKinney and Maple, indoor pool, Ellie's Restaurant and Lounge, 24-hour butler · 8.8 Booking.com" , url: 'https://www.booking.com/hotel/us/the-ritz-carlton-dallas.html', tier: 'luxury' }
+    ], price: { budget: '$150–200', mid: '$200–300', expensive: '$300–600', luxury: '$600+' } },
     'denver': { h: [
       { name: 'Four Seasons Hotel Denver', note: 'Four Seasons brand — 14th Street downtown, rooftop heated outdoor pool with mountain views, EDGE Restaurant & Bar, spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-denver.html' },
       { name: 'The Crawford Hotel', note: 'Independent boutique — inside Denver Union Station on Wynkoop Street, spa access, Union Station dining and bars steps away · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-crawford-at-union-station-denver.html' },
@@ -10854,7 +10858,7 @@ window.TVE.home = (function () {
        its airport. */
     var LOUNGE_IATAS = [
       'AGP','AMS','ARN','ATH','ATL','AUA','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG','CMB',
-      'CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT',
+      'CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DFW','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT',
       'GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS',
       'LAX','LGA','LGW','LHR','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MSP','MUC','MXP',
       'NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PVG','RAK','SAN','SCL','SEA','SFO','SIN','SJO',
