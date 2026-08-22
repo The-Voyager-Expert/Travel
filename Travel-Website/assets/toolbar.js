@@ -6531,11 +6531,12 @@ window.TVE.home = (function () {
       { name: 'One&Only Portonovi', note: 'One&Only brand — Portonovi resort at the mouth of the bay in Herceg Novi, 5-star, private beach, Chenot spa, 24h reception · 9.5 Booking.com', url: 'https://www.booking.com/hotel/me/one-amp-only-portonovi.html', tier: 'luxury' }
     ], price: { budget: '€75–100', mid: '€130–175', expensive: '€200–240', luxury: '€400+' } },
     'krakow': { h: [
-      { name: 'Hotel Copernicus', note: 'Relais & Châteaux — 15th-century Renaissance house in Old Town, rooftop pool with Royal Castle and Wawel panorama, Copernicus restaurant · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/pl/copernicus.html' },
-      { name: 'Sheraton Grand Kraków', note: 'Marriott family — Wisła Riverfront with Wawel Castle views, Dolce Vita Spa, indoor pool, walking distance to Old Town · 8.6 Booking.com' , url: 'https://www.booking.com/hotel/pl/sheraton-grand-krakow.html' },
-      { name: 'Stary Hotel Kraków', note: 'Relais & Châteaux — 13th-century townhouse in the Old Town, indoor pool, rooftop terrace overlooking Wawel Castle · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/pl/stary.html' },
-      { name: 'Qubus Hotel Kraków', note: 'Qubus Hotels — Wisła Riverfront opposite Wawel Castle, riverside views, outdoor terrace, modern amenities · 8.7 Booking.com' , url: 'https://www.booking.com/hotel/pl/qubus-krakow.html' }
-    ] },
+      { name: 'Hotel Copernicus', note: 'Relais & Châteaux — 15th-century Renaissance house in Old Town, rooftop pool with Royal Castle and Wawel panorama, Copernicus restaurant · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/pl/copernicus.html', tier: 'luxury' },
+      { name: 'Sheraton Grand Kraków', note: 'Marriott family — Wisła Riverfront with Wawel Castle views, Dolce Vita Spa, indoor pool, walking distance to Old Town · 8.6 Booking.com' , url: 'https://www.booking.com/hotel/pl/sheraton-grand-krakow.html', tier: 'expensive' },
+      { name: 'Stary Hotel Kraków', note: 'Relais & Châteaux — 13th-century townhouse in the Old Town, indoor pool, rooftop terrace overlooking Wawel Castle · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/pl/stary.html', tier: 'luxury' },
+      { name: 'Qubus Hotel Kraków', note: 'Qubus Hotels — Wisła Riverfront opposite Wawel Castle, riverside views, outdoor terrace, modern amenities · 8.7 Booking.com' , url: 'https://www.booking.com/hotel/pl/qubus-krakow.html', tier: 'mid' },
+      { name: 'Hotel Wit Stwosz Kraków', note: 'Independent — 15th-century townhouse in Old Town two minutes from the Main Market Square, compact rooms, 24h reception · 8.5 Booking.com' , url: 'https://www.booking.com/hotel/pl/wit-stwosz.html', tier: 'budget' }
+    ], price: { budget: 'PLN 250–400', mid: 'PLN 500–800', expensive: 'PLN 900–1400', luxury: 'PLN 2000+' } },
     'kyoto': { h: [
       { name: 'THE THOUSAND KYOTO', note: 'Independent — Shimogyo Ward beside Kyoto Station, 5-star, spa and wellness centre, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/jp/the-thousand-kyoto.html', tier: 'expensive' },
       { name: 'The Royal Park Hotel Iconic Kyoto', note: 'Royal Park Hotels — Nakagyo Ward on Kawaramachi, 5-star, public bath, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/jp/za-roirupakuhoteru-aikonitukujing-du.html', tier: 'expensive' },
@@ -11250,7 +11251,7 @@ window.TVE.home = (function () {
       'AES','AGP','AJU','AMM','AMS','ANC','ARN','ATH','ATL','AUA','AUH','AUS','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FOR', 'FRA','GIG','GOT','GRU','GVA','HAM',
-      'HAN','HEL','HER','HKG','HKT','HND','IAD','IAH','ICN','IGU', 'IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
+      'HAN','HEL','HER','HKG','HKT','HND','IAD','IAH','ICN','IGU', 'IST','JFK','JPA','KRK','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
       'NCE', 'OGG','OPO','ORD','ORY','PDL','PDX','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSA','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
       'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TBS','TFS','TIV','TLL','TPE','VCE','VIE','VLC',
