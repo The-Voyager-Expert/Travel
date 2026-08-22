@@ -719,15 +719,18 @@ a.land-cta:hover:visited {
 .contact-hint { font-size: 0.82rem; line-height: 1.45; color: var(--muted,#6a6660); }
 .contact-d[open] > summary { margin-bottom: 0.9rem; }
 
-.cf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin: 0 0 0.8rem; }
-.cf-field { display: flex; flex-direction: column; gap: 0.25rem; }
+/* minmax(0, 1fr), not 1fr: a bare 1fr column is minmax(auto, 1fr), and the
+   input's 440px intrinsic width (the shared search-bar rule) is the 'auto' — so
+   both columns grew to 440 and the form ran off a 393px phone. */
+.cf-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.6rem; margin: 0 0 0.8rem; }
+.cf-field { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
 .cf-full { grid-column: 1 / -1; }
 .cf-field label { font-size: 0.78rem; font-weight: 600; color: var(--text,#3d3a32); }
 .cf-field input, .cf-field textarea {
   /* The shared input[type=text] rule sets the 440px search-bar width; on a
      393px phone that ran 63px past the viewport and scrolled the whole landing
      page sideways (Playwright, 2026-08-22). Clamp, never restate the number. */
-  max-width: 100%;
+  width: 100%; max-width: 100%;
   font: inherit; font-size: 0.88rem;
   padding: 0.55em 0.7em;
   border: 1px solid var(--border,#e3ddd2);
