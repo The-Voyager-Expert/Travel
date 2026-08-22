@@ -190,7 +190,18 @@
    and 22-32px of margin under a bare row of marks; #pinned-strip's own 24px
    margin-top collapses under this one, so THIS is the number that moves the
    bookmark strip. Raise the smaller gap, never cut the larger. */
-.gi { max-width: 1120px; margin: 0 auto clamp(2.2rem, 4vw, 3.2rem); padding: 0 24px; }
+/* NO HORIZONTAL PADDING OF ITS OWN, AT ANY WIDTH — MEASURED AGAINST THE LANDING
+   PAGE (owner 2026-08-22: "did you measure and do the same size as the index?").
+   It carried 24px desktop / 16px phone, and `.wrap` around it already pays the
+   site gutter, so the block sat a SECOND gutter inside the 237-card mosaic
+   directly below it. Measured in Chrome at 1364px before the fix: the carousel
+   row was 1068px against the landing pair's 1116, so each tile came out 521.2
+   where the landing's is 545.2 — 24px narrower, on a change whose whole
+   instruction was "copy size etc". On a phone it was 297px against the mosaic's
+   329. One gutter now, `.wrap`'s, matching `.mosaic-wrap` exactly; the rail is
+   untouched, so this is not the Thirty-second non-negotiable's flush-to-the-edge
+   case. `.wrap` caps its content at 1116, so `.gi`'s own 1120 never bites. */
+.gi { max-width: 1120px; margin: 0 auto clamp(2.2rem, 4vw, 3.2rem); }
 #guides-intro[hidden] { display: none !important; }
 .gi-lead { max-width: 760px; margin: 0 auto clamp(1.5rem, 3vw, 2.1rem); text-align: center; }
 .gi-lead h2 { font-size: clamp(1.45rem, 3vw, 2.05rem); line-height: 1.15; letter-spacing: -.025em;
@@ -303,10 +314,17 @@
    letterboxes what is left, which is why the card never changes height as you
    page without anything being cropped to get there. The letterbox ground is
    #f5f4f0, the guides' own page cream, so a wide-short shot reads as page
-   margin rather than as dead space. 16/10 is the landing carousel's own ratio
-   ("copy size"), which is also Best Of's tile. */
+   margin rather than as dead space.
+
+   THE RATIO IS THE LANDING CROP'S OWN 1101 / 687, not a rounded 16/10. Over
+   there the box takes its shape from the screenshots themselves — every landing
+   step is captured at 1101x687 and the ratio is set per step from JS — so a
+   tidy 1.600 here rendered 0.7px shorter than the 1.6026 next door. Invisible,
+   and still not "the same size" (owner 2026-08-22: "did you measure and do the
+   same size as the index?"). One number settles it with nothing left to
+   explain. */
 .gi-shot { display: block; position: relative; overflow: hidden;
-  background: #f5f4f0; aspect-ratio: 16 / 10; }
+  background: #f5f4f0; aspect-ratio: 1101 / 687; }
 .gi-shot img { position: absolute; inset: 0; display: block;
   width: 100%; height: 100%; object-fit: contain; object-position: center; }
 
@@ -466,15 +484,6 @@
 }
 @media (max-width: 1000px) { .gi-list { columns: 3; } }
 @media (max-width: 760px) {
-  /* NO PADDING OF ITS OWN ON A PHONE — it was 16px, and `.wrap` around it
-     already pays 32px, so the block sat a second gutter inside the 237-card
-     mosaic directly below it (measured 297px against the mosaic's 329px at
-     393px). That extra inset is what made the carousel tile narrower than the
-     landing page's, which is the one thing "copy size" (owner 2026-08-22) does
-     not allow. The rail is untouched — `.wrap`'s gutter is still there, so this
-     is not the Thirty-second non-negotiable's flush-to-the-edge case; it is one
-     gutter instead of two, matching .mosaic-wrap exactly. */
-  .gi { padding: 0; }
   /* The carousels already stacked at 1000px — the old `.gi-cards` one-column
      override lived here and is gone with the grid it collapsed. Nothing gates
      the carousels by viewport: they render on DESKTOP AND MOBILE alike (owner
