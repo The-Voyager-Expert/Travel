@@ -1129,7 +1129,31 @@
       var desc  = sec.querySelector('.gi-band-d');
       if (!tile || !shot || !img || !title || !desc) return;
 
-      var at = 0;
+      /* ── THE DAILY REFRESH ────────────────────────────────────────────────
+         Owner rule 2026-08-22: "add the daily refresh too copy from the index
+         homepage." Copied from the hero mosaic's own day index on the landing
+         page, which is what makes the front door a different set of cities each
+         day — a reader who comes back tomorrow meets a screen they have not
+         seen rather than the same one every visit.
+
+         DATE.UTC ON THE LOCAL Y/M/D, never Date.now()/86400000. That is the
+         whole reason the landing page spells it this way: Date.UTC of the local
+         calendar date is a whole number of days with no DST drift, where
+         dividing a timestamp is an hour out twice a year and can tip the index
+         to the wrong step for part of a day.
+
+         It is the reader's LOCAL calendar day, and it is a constant for that
+         day — never Math.random and never a timer. The set changes at midnight
+         and otherwise only when an arrow is pressed. A carousel that reshuffles
+         on refresh reads as flicker, not as freshness.
+
+         The MARKUP still leads on the map and on a single stop (owner, earlier
+         the same day: "put map and a good one as the top image"). That is the
+         no-JavaScript fallback and the order of the table; what rotates is
+         which step the carousel OPENS on. */
+      var _n = new Date();
+      var _day = Math.floor(Date.UTC(_n.getFullYear(), _n.getMonth(), _n.getDate()) / 86400000);
+      var at = ((_day % rows.length) + rows.length) % rows.length;
       var count = document.createElement('span');
       count.className = 'gi-steps-count';
 
@@ -1163,8 +1187,8 @@
         return b;
       }
 
-      paint(0);
-      warm(1);
+      paint(at);
+      warm(at + 1);
       var nav = document.createElement('div');
       nav.className = 'gi-steps-nav';
       nav.appendChild(count);
