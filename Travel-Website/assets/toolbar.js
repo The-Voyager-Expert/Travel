@@ -6001,11 +6001,18 @@ window.TVE.home = (function () {
     ], price: { budget: '€180–195', mid: '€205–245', expensive: '€265–300', luxury: '€380+' } },
 
     'budapest': { h: [
-      { name: 'Four Seasons Hotel Gresham Palace Budapest', note: 'Four Seasons brand — 1906 Art Nouveau palace at Chain Bridge, Danube-view rooms, spa, Kollázs Brasserie & Bar · 9.4 Booking.com', url: 'https://www.booking.com/hotel/hu/four-seasons-gresham-palace-budapest.html' },
-      { name: 'Corinthia Budapest', note: 'Independent luxury — 1896 grand Victorian building in central Pest, Royal Spa, Brasserie & Atrium, indoor pool · 9.2 Booking.com', url: 'https://www.booking.com/hotel/hu/corinthiaroyal.html' },
-      { name: 'Anantara New York Palace Budapest Hotel', note: 'Anantara brand — 1894 neo-baroque palace on Andrássy út, the most ornamented facade in Budapest, rooftop pool, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/hu/new-york-palace-dedica-collection.html' },
-      { name: 'Párisi Udvar Hotel Budapest', note: 'Hyatt Unbound Collection — converted 1909 Párisi Arcade in Belváros, indoor pool, eclectic historic interiors, Kollázs cafe in the atrium · 9.3 Booking.com', url: 'https://www.booking.com/hotel/hu/parisi-udvar-budapest-in-the-unbound-collection-by-hyatt.html' }
-    ] },
+      { name: 'Four Seasons Hotel Gresham Palace Budapest', note: 'Four Seasons brand — 1906 Art Nouveau palace at Chain Bridge, Danube-view rooms, spa, Kollázs Brasserie & Bar · 9.4 Booking.com', url: 'https://www.booking.com/hotel/hu/four-seasons-gresham-palace-budapest.html', tier: 'luxury' },
+      { name: 'Corinthia Budapest', note: 'Independent luxury — 1896 grand Victorian building in central Pest, Royal Spa, Brasserie & Atrium, indoor pool · 9.2 Booking.com', url: 'https://www.booking.com/hotel/hu/corinthiaroyal.html', tier: 'mid' },
+      { name: 'Anantara New York Palace Budapest Hotel', note: 'Anantara brand — 1894 neo-baroque palace on Andrássy út, the most ornamented facade in Budapest, rooftop pool, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/hu/new-york-palace-dedica-collection.html', tier: 'expensive' },
+      { name: 'Párisi Udvar Hotel Budapest', note: 'Hyatt Unbound Collection — converted 1909 Párisi Arcade in Belváros, indoor pool, eclectic historic interiors, Kollázs cafe in the atrium · 9.3 Booking.com', url: 'https://www.booking.com/hotel/hu/parisi-udvar-budapest-in-the-unbound-collection-by-hyatt.html', tier: 'luxury' },
+      { name: 'Hampton by Hilton Budapest City Centre', note: 'Hilton Hampton — Dessewffy utca 7-11 by the Opera, breakfast included, 24h reception, fitness room, two blocks from Andrássy út · 9.1 Booking.com', url: 'https://www.booking.com/hotel/hu/hampton-by-hilton-budapest-city-centre.html', tier: 'budget' },
+      { name: 'Hotel Oktogon Haggenmacher', note: 'Continental Group — 1890s building at Andrássy út 52 on Oktogon, sauna and fitness room, 24h reception, metro M1 at the door · 9.3 Booking.com', url: 'https://www.booking.com/hotel/hu/oktogon-budapest12345.html', tier: 'budget' },
+      { name: 'Hilton Budapest', note: 'Hilton brand — Hess András tér 1-3 in the Castle District beside Fisherman\'s Bastion, Danube-view rooms, 24h reception, valet parking · 9.0 Booking.com', url: 'https://www.booking.com/hotel/hu/hilton-budapest.html', tier: 'mid' },
+      { name: 'Hotel Vision Budapest', note: 'Continental Group — Belgrád rakpart 24 on the Pest embankment, sauna, free parking, 24h reception, Danube-view rooms · 9.5 Booking.com', url: 'https://www.booking.com/hotel/hu/vision.html', tier: 'mid' },
+      { name: 'Kimpton BEM Budapest', note: 'IHG Kimpton — former 19th-century barracks on Bem József tér by the Danube in Buda, spa with hot tub and sauna, 24h reception, garden · 9.6 Booking.com', url: 'https://www.booking.com/hotel/hu/kimpton-bem-budapest-an-ihg.html', tier: 'expensive' },
+      { name: 'Hotel Clark Budapest', note: 'Independent adults-only — Clark Ádám tér 1 at the Buda end of the Chain Bridge, rooftop bar, sauna and fitness room, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/hu/clark-budapest.html', tier: 'expensive' }
+    ], price: { budget: 'HUF 36,000–40,000', mid: 'HUF 52,000–70,000', expensive: 'HUF 75,000–100,000', luxury: 'HUF 195,000+' } },
+
     'buenos-aires': { h: [
       { name: 'Park Hyatt Buenos Aires', note: 'Hyatt brand — 1934 Palacio Duhau mansion merged with contemporary tower, Recoleta, Duhau Restaurant & Vinoteca, 3 pools · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ar/park-hyatt-buenos-aires.html' },
       { name: 'Alvear Palace Hotel', note: 'Leading Hotels of the World — 1932 French Renaissance landmark in Recoleta, Alvear Art Restaurant, butler service · 9.5 Booking.com', url: 'https://www.booking.com/hotel/ar/alvear-palace.html' },
@@ -11002,13 +11009,13 @@ window.TVE.home = (function () {
        its airport. */
     var LOUNGE_IATAS = [
       'AES','AGP','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
-      'BRU','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB',
-      'DUS','DXB','EDI','EYW','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER',
-      'HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS',
-      'LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD',
-      'ORY','OSL','PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO',
-      'SKG','SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG',
-      'ZRH'
+      'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
+      'DUB','DUS','DXB','EDI','EYW','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL',
+      'HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH',
+      'LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO',
+      'ORD','ORY','OSL','PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC',
+      'SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ',
+      'ZAG','ZRH'
     ];
 
     function _inject() {
