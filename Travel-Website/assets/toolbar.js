@@ -5773,7 +5773,7 @@ window.TVE.home = (function () {
       { name: 'The Westin Peachtree Plaza, Atlanta', note: 'Marriott family — landmark 73-story cylinder tower, indoor/outdoor rooftop pool, city views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/the-westin-peachtree-plaza.html', tier: 'expensive' },
       { name: 'Four Seasons Hotel Atlanta', note: 'Four Seasons brand — Midtown on 14th Street, year-round indoor pool, full-service spa, sauna · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-atlanta.html', tier: 'luxury' },
       { name: 'The St. Regis Atlanta', note: 'Marriott St. Regis brand — Buckhead on West Paces Ferry Road, heated outdoor pool with pool bar, spa, garden terrace · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/st-regis-buckhead-atlanta.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: '$135–265', mid: '$165–250', expensive: '$175–280', luxury: '$520–750' } },
     'austin': { h: [
       { name: 'Hyatt Place Austin Downtown', note: 'Hyatt Place brand — East 3rd Street a block from the Convention Center, fitness centre, valet parking, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-place-downtown.html', tier: 'budget' },
       { name: 'Aloft by Marriott Austin Downtown', note: 'Marriott Aloft brand — East 7th Street off Congress Avenue, adults-only, fitness centre, valet parking · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/aloft-austin-downtown.html', tier: 'budget' },
