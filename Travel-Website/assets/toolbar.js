@@ -6302,11 +6302,15 @@ window.TVE.home = (function () {
       { name: 'Four Seasons Hotel Firenze', note: 'Four Seasons — 15th-century Palazzo della Gherardesca, 11-acre private garden with pool, Il Palagio restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/four-seasons-firenze.html', tier: 'luxury' }
     ], price: { budget: '€120–160', mid: '€160–300', expensive: '€300–600', luxury: '€600+' } },
     'florianopolis': { h: [
-      { name: 'LK Design Hotel Florianópolis', note: 'Independent — Rua Bocaiúva above Beira-Mar Norte, rooftop infinity pool over the bay, spa, beachfront · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/lk-design-florianopolis.html' },
-      { name: 'Blue Tree Premium Florianópolis', note: 'Blue Tree Hotels — Rua Bocaiúva off Beira-Mar Norte, rooftop pool, sauna and fitness · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/blue-tree-towers-florianopolis.html' },
-      { name: 'Costão do Santinho Resort Golf & Spa', note: 'Independent — Santinho Beach north coast, 18-hole golf, six pools, Costão Spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/costao-do-santinho-resort-golf-e-spa.html' },
-      { name: 'Majestic Palace Hotel', note: 'Independent — Beira Mar Norte waterfront, rooftop pool with bay panorama, on-site restaurant, central Florianópolis · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/majestic-palace.html' }
-    ] },
+      { name: 'Belle Arti Pousada', note: 'Independent — Avenida das Pitangueiras in Jurerê, heated rooftop pool, 24h reception · 9.6 Booking.com', url: 'https://www.booking.com/hotel/br/pousada-dos-artistas-florianopolis.html', tier: 'budget' },
+      { name: 'Cris Hotel', note: 'Independent — on the Lagoa da Conceição waterfront, hot tub, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/cris-florianopolis.html', tier: 'budget' },
+      { name: 'Intercity Florianópolis', note: 'Intercity Hotels — Avenida Paulo Fontes downtown by the Hercílio Luz bridge, outdoor pool, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/intercity-premium-florianopolis.html', tier: 'mid' },
+      { name: 'Blue Tree Premium Florianópolis', note: 'Blue Tree Hotels — Rua Bocaiúva off Beira-Mar Norte, rooftop pool, sauna and fitness · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/blue-tree-towers-florianopolis.html', tier: 'mid' },
+      { name: 'Majestic Palace Hotel', note: 'Independent — Beira Mar Norte waterfront, rooftop pool with bay panorama, on-site restaurant, central Florianópolis · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/majestic-palace.html', tier: 'mid' },
+      { name: 'Hotel Sete Ilhas', note: 'Independent — Jurerê beachfront, heated rooftop pool, kids\' club, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/br/sete-ilhas.html', tier: 'expensive' },
+      { name: 'LK Design Hotel Florianópolis', note: 'Independent — Rua Bocaiúva above Beira-Mar Norte, rooftop infinity pool over the bay, spa, beachfront · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/lk-design-florianopolis.html', tier: 'expensive' },
+      { name: 'Costão do Santinho Resort Golf & Spa', note: 'Independent — Santinho Beach north coast, 18-hole golf, six pools, Costão Spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/costao-do-santinho-resort-golf-e-spa.html', tier: 'luxury' }
+    ], price: { budget: 'R$400–550', mid: 'R$550–900', expensive: 'R$900–1,300', luxury: 'R$1,300+' } },
     'florida-keys': { h: [
       { name: 'Simonton Court Historic Inn & Cottages', note: 'Independent — 1880s cigar-workers\u2019 cottages and a conch house off Simonton Street, four pools, adults only \u00b7 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/simonton-court.html' },
       { name: 'Truman Hotel', note: 'Independent \u2014 Truman Avenue eight blocks off Duval, heated pool and sun deck, 24-hour front desk, on-site parking \u00b7 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/truman.html' },
@@ -11075,7 +11079,7 @@ window.TVE.home = (function () {
     var LOUNGE_IATAS = [
       'AES','AGP','AMM','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
-      'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLR','FRA','GIG','GOT','GRU','GVA','HAM',
+      'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FRA','GIG','GOT','GRU','GVA','HAM',
       'HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
       'NCE','OPO','ORD','ORY','OSL','PEK','PHL','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
