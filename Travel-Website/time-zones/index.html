@@ -40,6 +40,13 @@ input.search:focus { border-color: var(--c-search-focus-border); box-shadow: non
    click lands on #region-pills, which focuses the search. */
 .pill:disabled { opacity: .45; cursor: default; pointer-events: none; }
 .pill:disabled:hover { background: var(--surface, #fff); border-color: var(--border2, #e6e2da); color: #6a6660; }
+/* WAITING, not disabled. Same faded read as :disabled so it never looks like a
+   live filter, but it keeps its pointer events and its pointer cursor — it has
+   something to say when pressed, and a control with an answer is not dead. */
+.pill.is-waiting { opacity: .45; cursor: pointer; }
+.pill.is-waiting:hover { opacity: .7; }
+.sort-note { margin: 8px 0 0; font-size: 12.5px; color: var(--muted, #6a6660); text-align: center; }
+.sort-note[hidden] { display: none; }
 a.pill:visited { color: #6a6660; }
 /* The sort pill shares the row with the region filters but is not one of them —
    a gap says so without a divider or a second row. */
@@ -247,8 +254,18 @@ a.pill:visited { color: #6a6660; }
       <button class="pill" data-region="europe">Europe</button>
       <button class="pill" data-region="asiapac">Asia · Pacific</button>
       <button class="pill" data-region="other">M.E. &amp; Africa</button>
-      <button class="pill sort-pill" data-sort="time" id="sort-time" disabled>Closest to your city</button>
+      <!-- NOT `disabled` (owner, 2026-08-23: "the button closest in the time zone is
+           broken! we can['t] click on it it is grey out"). The sort measures distance
+           from a searched city and there is none until the reader names one — but a
+           greyed control that swallows every click reads as a bug, not as a
+           precondition. It stays a real button in a waiting state and, pressed,
+           says the one thing that brings it to life. -->
+      <button class="pill sort-pill is-waiting" data-sort="time" id="sort-time" aria-disabled="true">Closest to your city</button>
     </div>
+    <!-- The answer sits under the control that asked for it (Sixty-second
+         non-negotiable) — this is the sort pill's reply, not a standing caption,
+         so it is hidden until the pill is actually pressed. -->
+    <p id="sort-note" class="sort-note" role="status" hidden></p>
   </div>
 
   <!-- No "Home base" row (owner 2026-08-17: "remove home base it should not be
@@ -539,11 +556,16 @@ function setHome(city) {
      grid's resting alphabetical order. */
   var timePill = document.querySelector('.sort-pill[data-sort="time"]');
   if (timePill) {
-    timePill.disabled = !city;
+    /* `is-waiting` + aria-disabled, never the disabled PROPERTY — see the markup.
+       Picking a city clears both; clearing the search puts them back. */
+    timePill.classList.toggle('is-waiting', !city);
+    timePill.setAttribute('aria-disabled', city ? 'false' : 'true');
     timePill.textContent = city ? 'Closest to ' + city.name : 'Closest to your city';
     activeSort = city ? 'time' : 'alpha';
     timePill.classList.toggle('active', !!city);
   }
+  var sortNote = document.getElementById('sort-note');
+  if (sortNote && city) { sortNote.hidden = true; sortNote.textContent = ''; }
 }
 
 function getOffsetMinutes(tz, date) {
@@ -689,13 +711,11 @@ function render() {
 document.getElementById('region-pills').addEventListener('click', function(e) {
   var btn = e.target.closest('.pill[data-region]');
   if (!btn) {
-    /* A disabled button swallows its own click, and `pointer-events:none` sends
-       it here instead — so the dead sort pill points at the one thing that
-       brings it to life rather than doing nothing at all. */
-    if (!HOME_TZ && e.target.closest('#region-pills')) {
-      var s = document.getElementById('search');
-      if (s) s.focus();
-    }
+    /* The sort pill is not a region pill, so it lands here first — and it has
+       its own handler further down that answers a press properly. Leave it
+       alone; anything else in the row is dead space. (This block used to catch
+       the sort pill because it was `disabled` and `pointer-events:none` sent
+       its click to the row. It is a live button now.) */
     return;
   }
   activeRegion = btn.dataset.region;
@@ -713,7 +733,21 @@ document.getElementById('region-pills').addEventListener('click', function(e) {
    it was the state you were already in. */
 document.getElementById('region-pills').addEventListener('click', function(e) {
   var btn = e.target.closest('.sort-pill');
-  if (!btn || btn.disabled) return;
+  if (!btn) return;
+  var note = document.getElementById('sort-note');
+  /* No city named yet: the pill cannot sort, so it says what it needs and puts
+     the caret where the reader supplies it. It used to be `disabled`, which
+     answered a press with nothing at all (owner, 2026-08-23: "broken"). */
+  if (!HOME_TZ) {
+    if (note) {
+      note.textContent = 'Search a city first — this sorts every clock by how far it is from that one.';
+      note.hidden = false;
+    }
+    var s = document.getElementById('search');
+    if (s) { s.focus(); if (s.scrollIntoView) s.scrollIntoView({block: 'center', behavior: 'smooth'}); }
+    return;
+  }
+  if (note) { note.hidden = true; note.textContent = ''; }
   activeSort = (activeSort === 'time') ? 'alpha' : 'time';
   btn.classList.toggle('active', activeSort === 'time');
   render();
