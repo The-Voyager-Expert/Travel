@@ -3063,80 +3063,16 @@ window.lpGuideCard = function (href, flag, name, extra) {
         <div class="fnd-field">
                   <label for="fnd-country">Country</label>
                   <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-country-map"/></svg></span><select id="fnd-country">
+                    <!-- THE OPTIONS ARE BUILT FROM THE DATA (buildCountryOpts), never listed
+                         here — the same rule as Language directly above. The hand-written
+                         list that stood in this spot carried a count per country and had
+                         drifted from the guides it filters: Latvia and Lithuania were missing
+                         outright (Riga and Vilnius shipped after the list was typed), so two
+                         guides could not be reached from this field at all, and every count
+                         went stale the day a guide shipped. The guide is the source
+                         (Seventy-sixth non-negotiable). The count is spelled "(N guides)"
+                         (owner, 2026-08-22: a bare "(1)" reads as a ranking or a code). -->
                     <option value="">Any country</option>
-                    <option value="argentina">Argentina (1)</option>
-                    <option value="aruba">Aruba (1)</option>
-                    <option value="australia">Australia (2)</option>
-                    <option value="austria">Austria (2)</option>
-                    <option value="bahamas">Bahamas (1)</option>
-                    <option value="barbados">Barbados (1)</option>
-                    <option value="belgium">Belgium (2)</option>
-                    <option value="bhutan">Bhutan (1)</option>
-                    <option value="brazil">Brazil (15)</option>
-                    <option value="canada">Canada (7)</option>
-                    <option value="cayman-islands">Cayman Islands (1)</option>
-                    <option value="chile">Chile (1)</option>
-                    <option value="china">China (5)</option>
-                    <option value="costa-rica">Costa Rica (3)</option>
-                    <option value="croatia">Croatia (2)</option>
-                    <option value="curacao">Curacao (1)</option>
-                    <option value="czechia">Czechia (1)</option>
-                    <option value="denmark">Denmark (1)</option>
-                    <option value="ecuador">Ecuador (1)</option>
-                    <option value="egypt">Egypt (1)</option>
-                    <option value="estonia">Estonia (1)</option>
-                    <option value="finland">Finland (1)</option>
-                    <option value="france">France (11)</option>
-                    <option value="french-polynesia">French Polynesia (1)</option>
-                    <option value="georgia">Georgia (1)</option>
-                    <option value="germany">Germany (7)</option>
-                    <option value="greece">Greece (7)</option>
-                    <option value="hungary">Hungary (1)</option>
-                    <option value="iceland">Iceland (1)</option>
-                    <option value="indonesia">Indonesia (1)</option>
-                    <option value="ireland">Ireland (1)</option>
-                    <option value="italy">Italy (18)</option>
-                    <option value="japan">Japan (4)</option>
-                    <option value="jordan">Jordan (1)</option>
-                    <option value="laos">Laos (1)</option>
-                    <option value="luxembourg">Luxembourg (1)</option>
-                    <option value="maldives">Maldives (1)</option>
-                    <option value="malta">Malta (1)</option>
-                    <option value="mexico">Mexico (4)</option>
-                    <option value="monaco">Monaco (1)</option>
-                    <option value="montenegro">Montenegro (1)</option>
-                    <option value="morocco">Morocco (1)</option>
-                    <option value="nepal">Nepal (1)</option>
-                    <option value="netherlands">Netherlands (2)</option>
-                    <option value="new-zealand">New Zealand (2)</option>
-                    <option value="norway">Norway (4)</option>
-                    <option value="oman">Oman (1)</option>
-                    <option value="peru">Peru (3)</option>
-                    <option value="philippines">Philippines (1)</option>
-                    <option value="poland">Poland (1)</option>
-                    <option value="portugal">Portugal (7)</option>
-                    <option value="puerto-rico">Puerto Rico (1)</option>
-                    <option value="qatar">Qatar (1)</option>
-                    <option value="seychelles">Seychelles (1)</option>
-                    <option value="singapore">Singapore (1)</option>
-                    <option value="sint-maarten">Sint Maarten (1)</option>
-                    <option value="slovenia">Slovenia (1)</option>
-                    <option value="south-africa">South Africa (1)</option>
-                    <option value="south-korea">South Korea (2)</option>
-                    <option value="spain">Spain (9)</option>
-                    <option value="sri-lanka">Sri Lanka (1)</option>
-                    <option value="sweden">Sweden (2)</option>
-                    <option value="switzerland">Switzerland (3)</option>
-                    <option value="taiwan">Taiwan (1)</option>
-                    <option value="thailand">Thailand (3)</option>
-                    <option value="turkey">Turkey (1)</option>
-                    <option value="turks-and-caicos">Turks And Caicos (1)</option>
-                    <option value="united-arab-emirates">United Arab Emirates (2)</option>
-                    <option value="united-kingdom">United Kingdom (5)</option>
-                    <option value="united-states">United States (57)</option>
-                    <option value="uruguay">Uruguay (1)</option>
-                    <option value="vietnam">Vietnam (2)</option>
-                    <option value="virgin-islands">Virgin Islands (1)</option>
                   </select></div>
                 </div>
         <div class="fnd-field" id="fnd-train-field" hidden>
@@ -6656,7 +6592,40 @@ function render() {
       o.value = c;
       /* Counted like the Country field, and for the same reason: the number is
          what would have made the missing Greek obvious from the page itself. */
-      o.textContent = (LANG_NAMES[c] || c.toUpperCase()) + ' (' + n[c] + ')';
+      o.textContent = (LANG_NAMES[c] || c.toUpperCase()) + countSuffix(n[c]);
+      o.setAttribute('data-name', LANG_NAMES[c] || c.toUpperCase());
+      sel.appendChild(o);
+    });
+  }
+
+  /* "(15 guides)" / "(1 guide)" — the count says what a pick will return. It is
+     spelled out because a bare "(15)" beside a country name reads as a code or a
+     rank (owner, 2026-08-22). The chip a pick produces carries the NAME only
+     (data-name): the count helps choose, it is not part of the value chosen. */
+  function countSuffix(n) { return ' (' + n + (n === 1 ? ' guide' : ' guides') + ')'; }
+
+  /* Country options, BUILT FROM THE GUIDES — one line per country that has a
+     guide, A–Z, counted. The display name derives from the slug (Title Case,
+     hyphen → space), which every country in the fleet satisfies; a hand list is
+     exactly how Latvia and Lithuania went missing for the life of this field. */
+  var countryOptsBuilt = false;
+  function buildCountryOpts(d) {
+    var sel = document.getElementById('fnd-country');
+    if (countryOptsBuilt || !sel || !d || !d.guides) return;
+    var n = {};
+    d.guides.forEach(function (g) { if (g.country) n[g.country] = (n[g.country] || 0) + 1; });
+    var slugs = Object.keys(n);
+    if (!slugs.length) return;
+    countryOptsBuilt = true;
+    function nameOf(slug) {
+      return slug.split('-').map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
+    }
+    slugs.sort(function (a, b) { return nameOf(a).localeCompare(nameOf(b)); });
+    slugs.forEach(function (c) {
+      var o = document.createElement('option');
+      o.value = c;
+      o.textContent = nameOf(c) + countSuffix(n[c]);
+      o.setAttribute('data-name', nameOf(c));
       sel.appendChild(o);
     });
   }
@@ -6694,6 +6663,7 @@ function render() {
         var wasBuilt = trainOptsBuilt;
         DATA = d;
         buildLangOpts(d);
+        buildCountryOpts(d);
         buildTrainOpts(d);
         if (!CONT) { CONT = d.cont; run(); }
         else if (!wasBuilt && trainOptsBuilt) run();
@@ -7242,8 +7212,8 @@ function render() {
     var raw = el.value;
     if (raw) {
       var v = field === 'mo' ? parseInt(raw, 10) : raw;
-      var label = el.options[el.selectedIndex]
-                ? el.options[el.selectedIndex].textContent.trim() : String(raw);
+      var opt = el.options[el.selectedIndex];
+      var label = opt ? (opt.getAttribute('data-name') || opt.textContent.trim()) : String(raw);
       var dup = picks[field].some(function (p) { return p.value === v; });
       if (!dup) picks[field].push({ value: v, label: label });
       el.value = '';
