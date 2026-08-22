@@ -5788,12 +5788,15 @@ window.TVE.home = (function () {
       { name: 'Baoase Luxury Resort', note: 'Independent boutique — adults-only, private beach on Piscadera Bay, Baoase Culinary Beach restaurant, full-service spa', url: 'https://baoase.com/', tier: 'luxury' }
     ], price: { budget: '$140–170', mid: '$185–200', expensive: '$250–360', luxury: '$700+' } },
     'curitiba': { h: [
-      { name: 'Nomaa Hotel', note: 'Independent boutique — Batel, 5-star, Nomade Restaurant with seasonal Brazilian tasting menu, intimate rooftop deck · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/nomaa.html' },
-      { name: 'Full Jazz by Slaviero Hotéis', note: 'Slaviero Hotéis — Batel, 5-star, 24h reception, fitness centre, walking distance to the Batel restaurant strip · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/slaviero-full-jazz.html' },
-      { name: 'Hotel Deville Curitiba', note: 'Deville Hotéis — Rua Comendador Araújo in the city centre, 4-star, 24h reception, fitness centre · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/deville-curitiba.html' },
-      { name: 'Grand Mercure Curitiba', note: 'Accor Grand Mercure — Batel district, outdoor pool, Armazém do Chef restaurant · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/grand-mercure-curitiba.html' },
-      { name: 'Hotel Slaviero Conceptual Palace', note: 'Slaviero Hotels — near Passeio Público park, art-deco architecture, spa with sauna · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/slaviero-palace.html' }
-    ] },
+      { name: 'Hotel Moov Curitiba', note: 'Independent — Avenida Sete de Setembro in Batel, compact design rooms, 24h reception, soundproofing · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/moov-curitiba.html', tier: 'budget' },
+      { name: 'Hotel Deville Curitiba', note: 'Deville Hotéis — Rua Comendador Araújo in the city centre, 4-star, 24h reception, fitness centre · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/deville-curitiba.html', tier: 'budget' },
+      { name: 'Quality Hotel Curitiba', note: 'Choice Quality brand — Alameda Dom Pedro II in Batel, outdoor pool, sauna, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/quality-curitiba.html', tier: 'mid' },
+      { name: 'Full Jazz by Slaviero Hotéis', note: 'Slaviero Hotéis — Batel, 5-star, 24h reception, fitness centre, walking distance to the Batel restaurant strip · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/slaviero-full-jazz.html', tier: 'mid' },
+      { name: 'Grand Mercure Curitiba', note: 'Accor Grand Mercure — Batel district, outdoor pool, Armazém do Chef restaurant · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/grand-mercure-curitiba.html', tier: 'mid' },
+      { name: 'Hotel Slaviero Conceptual Palace', note: 'Slaviero Hotels — near Passeio Público park, art-deco architecture, spa with sauna · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/slaviero-palace.html', tier: 'mid' },
+      { name: 'Radisson Hotel Curitiba', note: 'Radisson brand — Avenida Sete de Setembro in Batel, heated rooftop pool, spa with steam room, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/radisson-curitiba.html', tier: 'expensive' },
+      { name: 'Nomaa Hotel', note: 'Independent boutique — Batel, 5-star, Nomade Restaurant with seasonal Brazilian tasting menu, intimate rooftop deck · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/nomaa.html', tier: 'luxury' }
+    ], price: { budget: 'R$350–480', mid: 'R$480–700', expensive: 'R$700–900', luxury: 'R$1,100+' } },
     'cusco': { h: [
       { name: 'Monasterio, A Belmond Hotel, Cusco', note: 'Belmond brand — 16th-century San Antonio Abad seminary on Plazoleta Nazarenas, baroque chapel, altitude oxygen service · 9.8 Booking.com', url: 'https://www.booking.com/hotel/pe/monasterio-cusco.html' },
       { name: 'Casa Cartagena Boutique Hotel & Spa', note: 'Independent boutique — Calle Pumacurco in the Centro Histórico, spa with sauna and steam bath, 24h reception · 9.6 Booking.com', url: 'https://www.booking.com/hotel/pe/casa-cartagena-boutique-spa.html' },
@@ -10495,7 +10498,7 @@ window.TVE.home = (function () {
        its airport. */
     var LOUNGE_IATAS = [
       'AGP','AMS','ARN','ATH','ATL','AUA','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG','CMB',
-      'CPH','CPT','CUN','CUR','DBV','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT',
+      'CPH','CPT','CUN','CUR','CWB','DBV','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT',
       'GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS',
       'LAX','LGA','LGW','LHR','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MSP','MUC','MXP',
       'NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PVG','RAK','SAN','SCL','SEA','SFO','SIN','SJO',
