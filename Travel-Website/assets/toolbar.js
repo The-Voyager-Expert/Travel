@@ -5639,7 +5639,7 @@ window.TVE.home = (function () {
       { name: 'Emirates Palace Mandarin Oriental', note: 'Mandarin Oriental brand — iconic West Corniche, 1km private beach, pool and spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ae/emirates-palace.html', tier: 'luxury' },
       { name: 'Four Seasons Hotel Abu Dhabi at Al Maryah Island', note: 'Four Seasons brand — Al Maryah Island, rooftop pool with city views, near The Galleria · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ae/four-seasons-abu-dhabi-at-al-maryah-island.html', tier: 'luxury' },
       { name: 'Park Hyatt Abu Dhabi Hotel and Villas', note: 'Hyatt brand — beachfront on Saadiyat Island, outdoor pool, tennis courts, full-service spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ae/park-hyatt-abu-dhabi-and-villas.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: 'AED 330–790', mid: 'AED 400–780', expensive: 'AED 420–1,120', luxury: 'AED 930–3,900' } },
     'aix-en-provence': { h: [
       { name: 'Novotel Aix-en-Provence Pont de L\'Arc', note: 'Novotel first-tier brand — Avenue Arc de Meyran south of the centre, seasonal outdoor pool, free parking, 24h reception · 8.0 Booking.com', url: 'https://www.booking.com/hotel/fr/aix-en-provence-pont-de-l-arc-fenouilleres.html', tier: 'budget' },
       { name: 'Les Suites du Cours & Spa', note: 'Independent boutique — 5-star on Cours Mirabeau in the historic centre, spa with hot tub, soundproofed suites · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/les-suites-du-cours.html', tier: 'mid' },
