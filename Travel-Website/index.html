@@ -3801,7 +3801,21 @@ window.lpGuideCard = function (href, flag, name, extra) {
     var desc  = sec.querySelector('[class$="-band-d"]');
     if (!tile || !shot || !img || !title || !desc) return;
 
-    var at = 0;
+    /* THE READER'S LOCAL CALENDAR DAY — the same clock the hero mosaic and
+       the Best Of tile already read. Date.UTC on the local Y/M/D gives a
+       whole number of days with no DST drift, which Date.now()/86400000
+       does not. Owner 2026-08-22: "i want the other two below to change
+       once a day too" — these two opened on step 1 on every visit forever,
+       so the front door showed one fixed pair of screens under a mosaic
+       that changed daily. The two lists are 3 and 4 long, so they advance
+       out of step with each other and the pair reads differently each day.
+       Never reseed this from Date.now() or Math.random(): the day index is
+       what makes the page stable all day and new at midnight, and a card
+       that reshuffles on refresh reads as flicker, not as freshness. The
+       arrows still page from wherever the day put you. */
+    var n = new Date();
+    var day = Math.floor(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) / 86400000);
+    var at = ((day % rows.length) + rows.length) % rows.length;
     var count = document.createElement('span');
     count.className = 'lp-steps-count';
 
@@ -3841,7 +3855,7 @@ window.lpGuideCard = function (href, flag, name, extra) {
       });
       return b;
     }
-    paint(0); warm(1);
+    paint(at); warm(at + 1);
     var nav = document.createElement('div');
     nav.className = 'lp-steps-nav';
     nav.appendChild(count);
