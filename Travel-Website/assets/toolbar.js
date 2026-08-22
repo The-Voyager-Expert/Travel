@@ -5648,7 +5648,7 @@ window.TVE.home = (function () {
       { name: 'Château de la Gaude', note: 'Independent — 18th-century château estate north of the centre, heated infinity pool, spa with steam room, gardens · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/chateau-de-la-gaude.html', tier: 'expensive' },
       { name: 'Villa Saint-Ange', note: 'Independent boutique — 18th-century bastide estate, heated pool, Provençal garden · 9.3 Booking.com', url: 'https://www.booking.com/hotel/fr/villa-saint-ange.html', tier: 'luxury' },
       { name: 'Villa Gallici Hôtel & Spa', note: 'Relais & Châteaux — 18th-century villa on Avenue de la Violette, year-round heated pool, Michelin-listed dining, cypress gardens · 9.4 Booking.com', url: 'https://www.booking.com/hotel/fr/villagallici.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: '€110–135', mid: '€225–370', expensive: '€240–690', luxury: '€335–1,000' } },
     'alaska': { h: [
       { name: 'Hampton Inn Anchorage', note: 'Hilton Hampton brand — Credit Union Drive in midtown, indoor pool, free airport shuttle and free parking · 8.1 Booking.com', url: 'https://www.booking.com/hotel/us/hampton-inn-anchorage.html', tier: 'budget' },
       { name: 'SpringHill Suites Anchorage Midtown', note: 'Marriott SpringHill brand — all-suite on A Street, indoor pool and hot tub, free parking · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/springhill-suites-anchorage-midtown.html', tier: 'budget' },
@@ -10905,9 +10905,9 @@ window.TVE.home = (function () {
       'CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS','DXB','EDI',
       'FAO','FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN',
       'IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT',
-      'MEL','MIA','MLE','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS','PSP',
-      'PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','SXB','SYD','TPE',
-      'VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS',
+      'PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','SXB','SYD',
+      'TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
