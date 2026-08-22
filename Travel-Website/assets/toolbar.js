@@ -7064,11 +7064,17 @@ window.TVE.home = (function () {
       { name: 'Ett Hem', note: 'Independent — Sköldungagatan 2 in Östermalm, 12-room private house, two gardens, communal kitchen-dining, butler and chef service · 9.7 Booking.com' , url: 'https://www.booking.com/hotel/se/ett-hem.html', tier: 'luxury' }
     ], price: { budget: 'SEK 1,500–2,000', mid: 'SEK 2,000–2,700', expensive: 'SEK 2,700–4,000', luxury: 'SEK 4,000+' } },
     'strasbourg': { h: [
-      { name: 'HANNONG Hotel & Wine Bar', note: 'Independent boutique — rue du 22 Novembre on the Grande Île, Art Deco interiors, wine bar, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/tihannong.html' },
-      { name: 'Hotel Beaucour', note: 'Independent — 5 rue des Bouchers off the cathedral quarter, timbered courtyard, jacuzzi rooms, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/beaucour.html' },
-      { name: 'Hôtel Rohan Strasbourg', note: 'Independent — Place du Corbeau on the Ill River, Cathedral views, boutique 36 rooms · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/rohan.html' },
-      { name: 'Cour du Corbeau, Strasbourg', note: 'Small Luxury Hotels — 16th-century coaching inn in the historic center, courtyard, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/fr/cour-du-corbeau.html' }
-    ] },
+      { name: 'Hilton Strasbourg', note: 'Hilton brand — Avenue Herrenschmidt by the Palais des Congrès and Parc de l\'Orangerie, gym, 24h reception, AC · 7.9 Booking.com', url: 'https://www.booking.com/hotel/fr/hilton-strasbourg.html', tier: 'budget' },
+      { name: 'Aloft Strasbourg City Centre', note: 'Marriott Aloft brand — Avenue du Rhin at the Étoile tram hub, WXYZ bar, gym, 24h reception, AC · 8.7 Booking.com', url: 'https://www.booking.com/hotel/fr/aloft-strasbourg-etoile.html', tier: 'budget' },
+      { name: 'Residence Inn Strasbourg', note: 'Marriott Residence Inn brand — Boulevard de Dresde in the European Quarter, kitchen suites, gym, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/residence-inn-by-marriott-strasbourg.html', tier: 'budget' },
+      { name: 'Hôtel Tandem', note: 'Independent boutique — Place de la Gare opposite the station, cycling-themed rooms, bistro, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/ha-tel-nid-de-cigognes.html', tier: 'mid' },
+      { name: 'HANNONG Hotel & Wine Bar', note: 'Independent boutique — rue du 22 Novembre on the Grande Île, Art Deco interiors, wine bar, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/tihannong.html', tier: 'mid' },
+      { name: 'Hotel Beaucour', note: 'Independent — 5 rue des Bouchers off the cathedral quarter, timbered courtyard, jacuzzi rooms, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/beaucour.html', tier: 'mid' },
+      { name: 'Hôtel Les Haras', note: 'Independent — rue des Glacières in the 18th-century royal stables, spa with hammam, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/ha-tel-les-haras.html', tier: 'expensive' },
+      { name: 'Hôtel & Spa Le Bouclier d\'Or', note: 'Independent — rue du Bouclier in Petite France, 16th-century house, spa with hot tub and hammam, 24h reception, AC · 9.2 Booking.com', url: 'https://www.booking.com/hotel/fr/le-bouclier-d-or.html', tier: 'expensive' },
+      { name: 'Hôtel Rohan Strasbourg', note: 'Independent — Place du Corbeau on the Ill River, Cathedral views, boutique 36 rooms · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/rohan.html', tier: 'luxury' },
+      { name: 'Cour du Corbeau, Strasbourg', note: 'Small Luxury Hotels — 16th-century coaching inn in the historic center, courtyard, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/fr/cour-du-corbeau.html', tier: 'luxury' }
+    ], price: { budget: '€90–130', mid: '€130–190', expensive: '€190–280', luxury: '€280+' } },
     'stuttgart': { h: [
       { name: 'EmiLu Design Hotel', note: 'Independent design hotel — Nadlerstraße 4 in Stuttgart-Mitte off Königstraße, sauna, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/de/emilu-gmbh-stuttgart.html' },
       { name: 'Steigenberger Graf Zeppelin', note: 'Steigenberger brand — Arnulf-Klett-Platz opposite the Hauptbahnhof, spa, 24h reception, AC · 8.1 Booking.com', url: 'https://www.booking.com/hotel/de/steigenberger-graf-zeppelin.html' },
@@ -10867,8 +10873,8 @@ window.TVE.home = (function () {
       'FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST',
       'JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL',
       'MIA','MLE','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS','PVG','RAK',
-      'RSW','SAN','SCL','SEA','SFO','SIN','SJO','SKG','SLC','SPU','SYD','TPE','VCE','VIE','VLC','WLG',
-      'YUL','YVR','YYZ','ZAG','ZRH'
+      'RSW','SAN','SCL','SEA','SFO','SIN','SJO','SKG','SLC','SPU','SXB','SYD','TPE','VCE','VIE','VLC',
+      'WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
