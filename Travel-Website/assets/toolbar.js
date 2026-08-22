@@ -5752,7 +5752,7 @@ window.TVE.home = (function () {
       { name: 'Aruba Marriott Resort & Stellaris Casino', note: 'Marriott brand — beachfront on Palm Beach, heated pool with swim-up bar, spa, tennis court · 8.8 Booking.com', url: 'https://www.booking.com/hotel/aw/aruba-marriott-resort-stellaris-casino.html', tier: 'expensive' },
       { name: 'Hyatt Regency Aruba Resort Spa & Casino', note: 'Hyatt brand — Palm Beach frontage, 8,000 sq ft pool complex with waterslide, adults-only pool, ZoiA Spa, casino on-site', url: 'https://www.booking.com/hotel/aw/hyatt-regency-aruba-resort-casino.html', tier: 'luxury' },
       { name: 'Bucuti & Tara Beach Resort', note: 'Independent — adults-only on Eagle Beach, low-rise beachfront wing, Elements oceanfront restaurant, spa and fitness pavilion', url: 'https://www.bucuti.com/', tier: 'luxury' }
-    ] },
+    ], price: { budget: '$215–360', mid: '$340–785', expensive: '$495–1,250', luxury: '$530–1,035' } },
     'athens': { h: [
       { name: 'Novotel Athens', note: 'Novotel first-tier brand — Michail Voda north of Omonoia, rooftop pool and bar with Acropolis view, free parking · 7.5 Booking.com', url: 'https://www.booking.com/hotel/gr/novotel-athens.html', tier: 'budget' },
       { name: 'Moxy Athens City', note: 'Marriott Moxy brand — Stadiou Street between Omonoia and Syntagma, fitness centre, bar, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/gr/moxy-athens-city.html', tier: 'budget' },
