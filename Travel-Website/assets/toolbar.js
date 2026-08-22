@@ -6350,11 +6350,19 @@ window.TVE.home = (function () {
       { name: 'Koa Kea Resort on Poipu Beach', note: 'Independent — Poipu Road on Poipu Beach, 4-star boutique, beachfront, heated saltwater pool, spa, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/koa-kea-resort.html', tier: 'luxury' }
     ], price: { budget: '$210–290', mid: '$330–400', expensive: '$500–700', luxury: '$730+' } },
     'keywest': { h: [
-      { name: 'Ocean Key Resort & Spa', note: 'Curio Collection by Hilton — Sunset Key views at Zero Duval, rooftop pool, private dock access, steps from Mallory Square sunset · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/ocean-key-resort-spa-key-west-florida.html' },
-      { name: 'The Marker Key West Harbor Resort', note: 'Autograph Collection by Marriott — Old Town historic district, three pools including adults-only, marina access, tropical gardens · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/po-the-marker-key-west-harbor-resort.html' },
-      { name: 'The Gardens Hotel', note: 'Independent — 1875 Old Town estate, lush tropical gardens, pool, afternoon wine included · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/gardens-hotel.html' },
-      { name: 'Pier House Resort & Spa', note: 'Independent — Duval Street waterfront, sunset cruise access, spa, Chart Room bar · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/pier-house-resort-spa.html' }
-    ] },
+      { name: 'Ocean Key Resort & Spa', note: 'Curio Collection by Hilton — Sunset Key views at Zero Duval, rooftop pool, private dock access, steps from Mallory Square sunset · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/ocean-key-resort-spa-key-west-florida.html', tier: 'expensive' },
+      { name: 'The Marker Key West Harbor Resort', note: 'Autograph Collection by Marriott — Old Town historic district, three pools including adults-only, marina access, tropical gardens · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/po-the-marker-key-west-harbor-resort.html', tier: 'luxury' },
+      { name: 'The Gardens Hotel', note: 'Independent — 1875 Old Town estate, lush tropical gardens, pool, afternoon wine included · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/gardens-hotel.html', tier: 'expensive' },
+      { name: 'Pier House Resort & Spa', note: 'Independent — Duval Street waterfront, sunset cruise access, spa, Chart Room bar · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/pier-house-resort-spa.html', tier: 'luxury' },
+      { name: 'Silver Palms Inn & Historic Homes', note: 'Independent — Truman Avenue in Old Town, 3-star, heated outdoor pool, free parking, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/silver-palms-inn.html', tier: 'budget' },
+      { name: 'DoubleTree by Hilton Grand Key Resort', note: 'Hilton DoubleTree brand — South Roosevelt Boulevard by the airport, 4-star, year-round outdoor pool, free Old Town shuttle, 24h reception · 8.2 Booking.com', url: 'https://www.booking.com/hotel/us/doubletree-grand-key-resort.html', tier: 'budget' },
+      { name: 'Hampton Inn Key West', note: 'Hilton Hampton brand — South Roosevelt Boulevard on the south shore, 3-star, heated pool with pool bar, free airport shuttle, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/best-western-key-ambassador-resort-inn.html', tier: 'mid' },
+      { name: 'Hilton Key West Resort & Marina', note: 'Hilton brand — Peninsular Avenue on Stock Island marina, 4-star, year-round pool, free Old Town shuttle, 24h reception · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-key-west-resort-marina.html', tier: 'mid' },
+      { name: 'Eden House', note: 'Independent — Fleming Street in Old Town, 3-star, heated pool and hot tub, free parking, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/eden-house.html', tier: 'mid' },
+      { name: 'La Concha Key West, Autograph Collection', note: 'Marriott Autograph Collection — 430 Duval Street, 4-star, rooftop views and outdoor pool, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/crowne-plaza-key-west-la-concha.html', tier: 'expensive' },
+      { name: 'Hyatt Centric Key West Resort & Spa', note: 'Hyatt Centric brand — Front Street on the harbour, 4-star, private beach area, outdoor pool, spa, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-key-west-resort.html', tier: 'expensive' },
+      { name: 'Santa Maria Suites Resort', note: 'Independent — Simonton Street by South Beach, 4-star all-suite, heated pool with pool bar, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/santa-maria-suites-resort.html', tier: 'luxury' }
+    ], price: { budget: '$170–240', mid: '$260–300', expensive: '$360–500', luxury: '$500+' } },
     'kotor': { h: [
       { name: 'Hotel Alkima', note: 'Independent — Dobrota waterfront on the bay, 4-star, outdoor pool, spa, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/me/alkima.html' },
       { name: 'Kerber-Graz 1860', note: 'Independent — Stari grad 381 inside the walled Old Town, 4-star, sauna and spa, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/me/kerber-graz-1860.html' },
@@ -10912,11 +10920,11 @@ window.TVE.home = (function () {
     var LOUNGE_IATAS = [
       'AGP','AMS','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG',
       'CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS','DXB','EDI',
-      'FAO','FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN',
-      'IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT',
-      'MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS',
-      'PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB',
-      'SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'EYW','FAO','FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH',
+      'ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN',
+      'MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI',
+      'PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR',
+      'SXB','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
