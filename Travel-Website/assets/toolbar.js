@@ -6879,11 +6879,17 @@ window.TVE.home = (function () {
       { name: 'Petra Sella Hotel', note: 'Independent 4-star — Tourism Street in Wadi Musa, 24h reception, AC, steam bath, free shuttle to the gate · 9.9 Booking.com', url: 'https://www.booking.com/hotel/jo/sella.html', tier: 'budget' }
     ], price: { budget: 'JOD 30–55', mid: 'JOD 55–90', expensive: 'JOD 90–140', luxury: 'JOD 140+' } },
     'philadelphia': { h: [
-      { name: 'The Logan Philadelphia, Curio Collection by Hilton', note: 'Hilton Curio — One Logan Square on the Parkway, indoor pool, spa, Urban Farmer steakhouse · 8.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-logan-philadelphia.html' },
-      { name: 'Four Seasons Hotel Philadelphia at Comcast Center', note: 'Independent luxury — 60th-floor pool with panoramic views, Jean-Georges restaurant, spa · 9.6 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-philadelphia-at-comcast-center.html' },
-      { name: 'Morris House Hotel', note: 'Independent — 1787 Georgian townhouse in Society Hill, walled garden, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/morris-house.html' },
-      { name: 'ROOST Midtown', note: 'Independent apart-hotel — 111 South 15th Street off Rittenhouse Row, full kitchens, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/idtown.html' }
-    ] },
+      { name: 'The Logan Philadelphia, Curio Collection by Hilton', note: 'Hilton Curio — One Logan Square on the Parkway, indoor pool, spa, Urban Farmer steakhouse · 8.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-logan-philadelphia.html', tier: 'expensive' },
+      { name: 'Four Seasons Hotel Philadelphia at Comcast Center', note: 'Independent luxury — 60th-floor pool with panoramic views, Jean-Georges restaurant, spa · 9.6 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-philadelphia-at-comcast-center.html', tier: 'luxury' },
+      { name: 'Morris House Hotel', note: 'Independent — 1787 Georgian townhouse in Society Hill, walled garden, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/morris-house.html', tier: 'expensive' },
+      { name: 'ROOST Midtown', note: 'Independent apart-hotel — 111 South 15th Street off Rittenhouse Row, full kitchens, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/idtown.html', tier: 'mid' },
+      { name: 'Element by Marriott Philadelphia Downtown', note: 'Marriott Element brand — 1441 Chestnut Street off Rittenhouse Row, kitchenettes, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/element-philadelphia.html', tier: 'mid' },
+      { name: 'Canopy By Hilton Philadelphia Center City', note: 'Hilton Canopy brand — 1180 Ludlow Street by Reading Terminal Market, 24h reception · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/canopy-by-hilton-philadelphia-center-city.html', tier: 'mid' },
+      { name: 'Courtyard by Marriott Philadelphia Downtown', note: 'Marriott Courtyard brand — 1421 Arch Street opposite City Hall, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-by-marriott-philadelphia-downtown.html', tier: 'mid' },
+      { name: 'Home2 Suites by Hilton Philadelphia Convention Center', note: 'Hilton Home2 brand — 1200 Arch Street, suites with kitchenettes, 24h reception, breakfast included · 8.1 Booking.com', url: 'https://www.booking.com/hotel/us/home2-suites-by-hilton-philadelphia-convention-center.html', tier: 'budget' },
+      { name: 'Hilton Garden Inn Philadelphia Center City', note: 'Hilton Garden Inn brand — 1100 Arch Street by the Convention Center, 24h reception · 7.9 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-garden-inn-philadelphia-center-city.html', tier: 'budget' },
+      { name: 'Hampton Inn Philadelphia Center City-Convention Center', note: 'Hilton Hampton brand — 1301 Race Street, 24h reception, breakfast included · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/hampton-inn-center-city.html', tier: 'budget' }
+    ], price: { budget: '$130–190', mid: '$190–280', expensive: '$280–450', luxury: '$450+' } },
     'phoenix': { h: [
       { name: 'The Arizona Biltmore, A Waldorf Astoria Resort', note: 'Waldorf Astoria brand — 1929 Frank Lloyd Wright-influenced design, eight pools, lush landscaping, Esplanade spa', url: 'https://www.expedia.com/Phoenix-Hotels-Arizona-Biltmore.h9796.Hotel-Information' },
       { name: 'Royal Palms Resort and Spa, A Tribute Portfolio Resort', note: 'Marriott Tribute — hacienda-style resort, T. Cook\'s restaurant, pool, Camelback Mountain backdrop', url: 'https://www.expedia.com/Phoenix-Hotels-Royal-Palms-Resort-And-Spa.h791197.Hotel-Information' },
@@ -11066,7 +11072,7 @@ window.TVE.home = (function () {
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLR','FRA','GIG','GOT','GRU','GVA','HAM',
       'HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
-      'NCE','OPO','ORD','ORY','OSL','PEK','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
+      'NCE','OPO','ORD','ORY','OSL','PEK','PHL','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
       'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TLL','TPE','VCE','VIE','VLC',
       'WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
