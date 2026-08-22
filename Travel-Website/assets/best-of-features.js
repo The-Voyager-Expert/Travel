@@ -82,6 +82,7 @@
   ───────────────────────────────────────────── */
   function initShowcase() {
     var sections = collectSections();
+    initCountryFilter(sections);
     injectToolbar(sections);
     sections.forEach(function (sec) {
       sec.cards.forEach(function (card) { augmentCard(card, sec.label, sec.continent); });
@@ -90,19 +91,45 @@
     document.body.appendChild(buildCompareModal());
   }
 
-  /* Collect [{label, labelEl, continent, cards[]}] in DOM order */
+  /* Collect [{label, labelEl, continent, cards[]}] in DOM order.
+
+     Two sources, and the country is the SAME fact either way:
+       · legacy page — a <div class="best-of-section-label">Peru</div> heading
+         above each run of cards;
+       · converted page — data-country="Peru" on the card itself, with no
+         heading at all, so the grid flows continuously instead of breaking to
+         a new row at every country (2026-08-22 owner rule).
+     labelEl is null on a converted page; every consumer below already guards
+     on it, so the continent chips, the sort dropdown and the country filter
+     all keep working with no heading to read. */
   function collectSections() {
     var result = [], cur = null;
+    var haveLabels = !!grid.querySelector('.best-of-section-label');
+    var byCountry = {};
     [].slice.call(grid.children).forEach(function (node) {
-      if (node.classList.contains('best-of-section-label') &&
+      if (haveLabels && node.classList.contains('best-of-section-label') &&
           !node.classList.contains('best-of-subsection-label')) {
         cur = { label: node.textContent.trim(), labelEl: node,
                 continent: getContinent(node.textContent.trim()), cards: [] };
         result.push(cur);
-      } else if (node.classList.contains('showcase-card')) {
-        if (!cur) { cur = { label: '', labelEl: null, continent: null, cards: [] }; result.push(cur); }
-        cur.cards.push(node);
+        return;
       }
+      if (!node.classList.contains('showcase-card')) return;
+      if (!haveLabels) {
+        /* Group by data-country, keyed rather than by consecutive run, so a
+           country appearing twice in the grid stays one section (and so one
+           entry in the filter) instead of two. */
+        var ctry = (node.dataset.country || '').trim();
+        if (!Object.prototype.hasOwnProperty.call(byCountry, ctry)) {
+          byCountry[ctry] = { label: ctry, labelEl: null,
+                              continent: getContinent(ctry), cards: [] };
+          result.push(byCountry[ctry]);
+        }
+        byCountry[ctry].cards.push(node);
+        return;
+      }
+      if (!cur) { cur = { label: '', labelEl: null, continent: null, cards: [] }; result.push(cur); }
+      cur.cards.push(node);
     });
     return result;
   }
@@ -117,6 +144,73 @@
   var activeSort   = 'default';
   var showFavsOnly = false;
   var regionJumpEl = document.getElementById('regionJump');
+
+  /* ── Country filter dropdown ──────────────────────────────────────────────
+     Owns #regionJump on a CONVERTED page — one whose country headings are gone
+     and whose cards carry data-country instead. A page that still has headings
+     keeps its own inline copy of this and is left alone here, so the two can
+     never both bind to the same dropdown during the rollout.
+
+     Behaviour is deliberately identical to the inline version it replaces:
+     the menu lists every country in grid order, picking one shows only that
+     country's cards, and _regionJumpReset (called when a continent chip or a
+     non-default sort is used) clears it. Only the SOURCE of the country moved
+     — from the heading above the card to an attribute on the card. */
+  function initCountryFilter(sections) {
+    if (document.querySelector('.best-of-section-label')) return;  /* legacy page owns its own */
+    var jump   = document.getElementById('regionJump');
+    var toggle = document.getElementById('regionJumpToggle');
+    var label  = document.getElementById('regionJumpLabel');
+    var list   = document.getElementById('regionJumpList');
+    if (!jump || !toggle || !label || !list) return;
+
+    var countries = [];
+    sections.forEach(function (s) {
+      if (s.label && countries.indexOf(s.label) === -1) countries.push(s.label);
+    });
+    if (countries.length < 2) { jump.style.display = 'none'; return; }
+    jump.style.display = '';
+
+    var defaultLabel = label.textContent;
+    var active = null;
+
+    var html = '<button type="button" class="days-jump-item on" data-region="all" role="menuitem">All countries</button>';
+    countries.forEach(function (c) {
+      html += '<button type="button" class="days-jump-item" data-region="' +
+              c.replace(/"/g, '&quot;') + '" role="menuitem">' + c + '</button>';
+    });
+    list.innerHTML = html;
+    var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
+
+    function applyCountry() {
+      items.forEach(function (it) {
+        it.classList.toggle('on', active === null ? it.dataset.region === 'all' : it.dataset.region === active);
+      });
+      label.textContent = active || defaultLabel;
+      toggle.classList.toggle('has-active', active !== null);
+      [].slice.call(document.querySelectorAll('.showcase-card')).forEach(function (c) {
+        c.style.display = (!active || (c.dataset.country || '') === active) ? '' : 'none';
+      });
+    }
+
+    window._regionJumpReset = function () { active = null; applyCountry(); };
+
+    function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
+
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var nowOpen = !jump.classList.contains('open');
+      jump.classList.toggle('open', nowOpen);
+      toggle.setAttribute('aria-expanded', String(nowOpen));
+    });
+    items.forEach(function (it) {
+      it.addEventListener('click', function () {
+        active = it.dataset.region === 'all' ? null : it.dataset.region;
+        applyCountry(); closeMenu();
+      });
+    });
+    document.addEventListener('click', function (e) { if (!jump.contains(e.target)) closeMenu(); }, true);
+  }
 
   /* ── Toolbar ── */
   function injectToolbar(sections) {

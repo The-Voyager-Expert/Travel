@@ -1727,7 +1727,17 @@
    by scrolling and a search was capped at 10 with nothing saying so. Now sorted
    by name on a copy and complete in both branches. passport.js -> 4.
    CACHE to v1213. */
-var CACHE = 'travel-cache-v1213';
+/* 2026-08-22: Best-Of pages go flat — the country headings that broke the grid to a
+   new row every few cards are being removed (owner rule: every page reads like
+   /best-of/surfing/), and the country moves onto the card as data-country.
+   best-of-features.js grew collectSections() support for that AND the country
+   dropdown itself, which every page used to carry its own inline copy of: with the
+   headings gone that inline copy finds fewer than two of them and sets #regionJump
+   to display:none before anything can fill it, so the shared file has to own the
+   control. Measured a no-op on a page that still has headings — which is what makes
+   the rollout safe one page at a time. best-of-features.js -> v3. CACHE to v1214. */
+
+var CACHE = 'travel-cache-v1214';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1740,7 +1750,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 839, 'mobile.css': 87, 'web-travel-style.css': 90, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 2, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 839, 'mobile.css': 87, 'web-travel-style.css': 90, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 3, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
