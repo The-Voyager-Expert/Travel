@@ -7358,11 +7358,13 @@ window.TVE.home = (function () {
       { name: 'Stamba Hotel', note: 'Independent — 1930s Soviet-era publishing house on Merab Kostava Street, 8-metre loft ceilings, garden, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ge/stamba-tbilisi.html', tier: 'luxury' }
     ], price: { budget: 'GEL 150–300', mid: 'GEL 300–500', expensive: 'GEL 500–900', luxury: 'GEL 900+' } },
     'tenerife': { h: [
-      { name: 'Hotel Botanico y Oriental Spa Garden', note: 'Independent luxury — Avenida Richard J. Yeoward in Puerto de la Cruz, Oriental Spa Garden, indoor and outdoor pools, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/botanico-y-oriental-spa-garden.html' },
-      { name: 'Iberostar Grand Hotel El Mirador', note: 'Iberostar Grand — adults-only Costa Adeje cliffside, infinity pool, Michelin-guide dining · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/iberostar-grand-hotel-el-mirador.html' },
-      { name: 'Hotel Tigaiga', note: 'Independent — Parque Taoro above Puerto de la Cruz, subtropical garden, outdoor pool with valley view, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/tigaiga.html' },
-      { name: 'Abama Resort Tenerife', note: 'Abama — clifftop west coast, two Michelin-star MB restaurant, golf, private beach · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/abama-resort.html' }
-    ] },
+      { name: 'DWO Nopal', note: 'Independent — Calle San Juan in the old town of Puerto de la Cruz, rooftop pool, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/dwo-nopal.html', tier: 'budget' },
+      { name: 'Radisson Resort & Residences Tenerife', note: 'Radisson — adults-only on Carretera de las Arenas below Parque Taoro, outdoor pool, gym, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/es/radisson-resortandresidences-tenerife-adults-only.html', tier: 'mid' },
+      { name: 'Hotel Tigaiga', note: 'Independent — Parque Taoro above Puerto de la Cruz, subtropical garden, outdoor pool with valley view, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/tigaiga.html', tier: 'mid' },
+      { name: 'Hotel Botanico y Oriental Spa Garden', note: 'Independent luxury — Avenida Richard J. Yeoward in Puerto de la Cruz, Oriental Spa Garden, indoor and outdoor pools, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/botanico-y-oriental-spa-garden.html', tier: 'expensive' },
+      { name: 'Iberostar Grand Hotel El Mirador', note: 'Iberostar Grand — adults-only Costa Adeje cliffside, infinity pool, Michelin-guide dining · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/iberostar-grand-hotel-el-mirador.html', tier: 'luxury' },
+      { name: 'Abama Resort Tenerife', note: 'Abama — clifftop west coast, two Michelin-star MB restaurant, golf, private beach · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/abama-resort.html', tier: 'luxury' }
+    ], price: { budget: '€80–120', mid: '€120–200', expensive: '€200–300', luxury: '€300+' } },
     'tokyo': { h: [
       { name: 'Aman Tokyo', note: 'Aman brand — Otemachi forest tower, 33rd–35th floor rooms with Imperial Palace views, spa with indoor pool · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/jp/aman-tokyo.html' },
       { name: 'The Okura Tokyo', note: 'Independent luxury — 1962 mid-century Japanese modernism, restored heritage wing, Orchid Bar, spa · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/jp/the-okura-tokyo.html' },
@@ -11114,7 +11116,7 @@ window.TVE.home = (function () {
       'HAN','HEL','HER','HKG','HKT','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
       'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
-      'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TBS','TIV','TLL','TPE','VCE','VIE','VLC',
+      'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TBS','TFS','TIV','TLL','TPE','VCE','VIE','VLC',
       'WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
