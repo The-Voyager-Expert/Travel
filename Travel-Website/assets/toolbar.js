@@ -5960,11 +5960,16 @@ window.TVE.home = (function () {
       { name: 'The Ritz-Carlton Istanbul', note: 'Ritz-Carlton brand — Beşiktaş on the Bosphorus, Laveda restaurant, spa with indoor pool · 9.1 Booking.com', url: 'https://www.booking.com/hotel/tr/the-ritz-carlton-istanbul.html' }
     ] },
     'joao-pessoa': { h: [
-      { name: 'Holanda Gold Hotel Praia de Tambaú', note: 'Independent — Av. Alm. Tamandaré on the Tambaú beachfront, 4-star, rooftop pool with sea view, 24h reception · 9.6 Booking.com', url: 'https://www.booking.com/hotel/br/holanda-gold.html' },
-      { name: 'HCM · Hotel Corais de Manaíra', note: 'Independent — Av. João Maurício on the Manaíra beachfront, 5-star, indoor and rooftop infinity pools, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/corais-de-manaira.html' },
-      { name: 'Place2You Hotel by Welkom', note: 'Welkom Hotéis — Av. Gen. Edson Ramalho in Manaíra, outdoor pool, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/place2you-by-welkom.html' },
-      { name: 'Kastel Jampa Hotel', note: 'Independent — Av. João Maurício beachfront, adults only, 4-star, year-round outdoor pool, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/kastel-jampa-joao-pessoa.html' }
-    ] },
+      { name: 'Holanda Gold Hotel Praia de Tambaú', note: 'Independent — Av. Alm. Tamandaré on the Tambaú beachfront, 4-star, rooftop pool with sea view, 24h reception · 9.6 Booking.com', url: 'https://www.booking.com/hotel/br/holanda-gold.html', tier: 'mid' },
+      { name: 'HCM · Hotel Corais de Manaíra', note: 'Independent — Av. João Maurício on the Manaíra beachfront, 5-star, indoor and rooftop infinity pools, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/corais-de-manaira.html', tier: 'luxury' },
+      { name: 'Place2You Hotel by Welkom', note: 'Welkom Hotéis — Av. Gen. Edson Ramalho in Manaíra, outdoor pool, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/place2you-by-welkom.html', tier: 'budget' },
+      { name: 'Kastel Jampa Hotel', note: 'Independent — Av. João Maurício beachfront, adults only, 4-star, year-round outdoor pool, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/kastel-jampa-joao-pessoa.html', tier: 'mid' },
+      { name: 'Hotel Village Premium João Pessoa', note: 'Village Hotéis — Rua Epitácio Pessoa in Tambaú, 4-star, year-round outdoor pool, fitness room, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/village-joao-pessoa.html', tier: 'budget' },
+      { name: 'Verdegreen Hotel', note: 'Independent — Av. João Maurício on the Manaíra beachfront, 4-star, outdoor pool, sauna and steam room, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/br/verdegreen.html', tier: 'mid' },
+      { name: 'Laguna Praia Hotel', note: 'Independent — Av. Alm. Tamandaré on the Tambaú beachfront, 4-star, sea-view pool with pool bar, steam room, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/laguna-praia.html', tier: 'expensive' },
+      { name: 'LS Hotel', note: 'Independent — Av. Ingá in Manaíra a block off the beach, 5-star, rooftop pool with view, spa, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/ls-joao-pessoa.html', tier: 'expensive' },
+      { name: 'BA\'RA Hotel', note: 'Independent — Av. Cabo Branco on the Cabo Branco beachfront, 5-star, year-round outdoor pool, full spa, kids\' club, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/ba-39-ra-joao-pessoa.html', tier: 'luxury' }
+    ], price: { budget: 'R$500–600', mid: 'R$700–850', expensive: 'R$1,100–1,300', luxury: 'R$1,450+' } },
     'kauai': { h: [
       { name: '1 Hotel Hanalei Bay', note: 'SH Hotels — Ka Haku Road on the Princeville cliffs above Hanalei Bay, 5-star, year-round pool, spa, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/1hotel-hanalei-bay.html' },
       { name: "Koloa Landing Resort at Po'ipu · Autograph Collection", note: 'Marriott Autograph Collection — Poipu Road, 4-star, five pools including a waterslide, spa, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/wyndham-koloa-landing-at-poipu-beach.html' },
@@ -10489,12 +10494,12 @@ window.TVE.home = (function () {
        list) while every European guide jumped to its country rather than to
        its airport. */
     var LOUNGE_IATAS = [
-      'AGP', 'AMS', 'ARN', 'ATH', 'ATL', 'AUA', 'BCN', 'BER', 'BGI', 'BGO', 'BKK', 'BOS', 'BRU', 'CAI', 'CDG', 'CMB',
-      'CPH', 'CPT', 'CUN', 'CUR', 'DBV', 'DOH', 'DTW', 'DUB', 'DUS', 'DXB', 'EDI', 'FAO', 'FCO', 'FRA', 'GIG', 'GOT',
-      'GRU', 'GVA', 'HAM', 'HAN', 'HEL', 'HER', 'HKG', 'HND', 'IAD', 'IAH', 'ICN', 'IST', 'JFK', 'KTM', 'LAS', 'LAX',
-      'LGA', 'LGW', 'LHR', 'LIS', 'LUX', 'LYS', 'MAD', 'MAN', 'MCT', 'MEL', 'MIA', 'MLE', 'MSP', 'MUC', 'MXP', 'NAP',
-      'NCE', 'OPO', 'ORD', 'ORY', 'OSL', 'PEK', 'PMI', 'PVG', 'RAK', 'SAN', 'SCL', 'SEA', 'SFO', 'SIN', 'SJO', 'SKG',
-      'SLC', 'SPU', 'SYD', 'TPE', 'VCE', 'VIE', 'VLC', 'WLG', 'YUL', 'YVR', 'YYZ', 'ZAG', 'ZRH',
+      'AGP','AMS','ARN','ATH','ATL','AUA','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG','CMB',
+      'CPH','CPT','CUN','CUR','DBV','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT',
+      'GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS',
+      'LAX','LGA','LGW','LHR','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MSP','MUC','MXP',
+      'NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PVG','RAK','SAN','SCL','SEA','SFO','SIN','SJO',
+      'SKG','SLC','SPU','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
