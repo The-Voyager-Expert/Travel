@@ -6966,11 +6966,14 @@ window.TVE.home = (function () {
       { name: 'The Memory at On On Hotel', note: 'Independent — 19 Phang-Nga Road, the 1929 shophouse hotel of the Old Town, 24h reception, AC · 9.3 Booking.com', url: 'https://www.booking.com/hotel/th/the-memory-at-on-on.html', tier: 'budget' }
     ], price: { budget: 'THB 1,000–3,000', mid: 'THB 3,000–6,000', expensive: 'THB 6,000–12,000', luxury: 'THB 12,000+' } },
     'pisa': { h: [
-      { name: 'Grand Hotel Duomo', note: 'Independent — steps from Piazza dei Miracoli, rooftop terrace with Leaning Tower and Baptistery views, bar · 8.1 Booking.com', url: 'https://www.booking.com/hotel/it/grandhotelduomopisa.html' },
-      { name: 'NH Pisa', note: 'NH Hotels — Piazza della Stazione, 5-min walk from the Campo dei Miracoli, restaurant and bar · 8.3 Booking.com', url: 'https://www.booking.com/hotel/it/nh-pisa.html' },
-      { name: 'Grand Hotel Bonanno', note: 'Independent — near Cathedral Square, neoclassical palazzo, free bikes, garden · 8.8 Booking.com', url: 'https://www.booking.com/hotel/it/grand-hotel-bonanno.html' },
-      { name: 'Hotel Minerva Pisa', note: 'Independent — Art Nouveau building, panoramic roof terrace, 3-min walk from the Leaning Tower · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/hotel-minerva-pisa.html' }
-    ] },
+      { name: 'Grand Hotel Duomo', note: 'Independent — steps from Piazza dei Miracoli, rooftop terrace with Leaning Tower and Baptistery views, bar · 8.1 Booking.com', url: 'https://www.booking.com/hotel/it/grandhotelduomopisa.html', tier: 'expensive' },
+      { name: 'NH Pisa', note: 'NH Hotels — Piazza della Stazione, 5-min walk from the Campo dei Miracoli, restaurant and bar · 8.3 Booking.com', url: 'https://www.booking.com/hotel/it/nh-pisa.html', tier: 'mid' },
+      { name: 'Grand Hotel Bonanno', note: 'Independent — near Cathedral Square, neoclassical palazzo, free bikes, garden · 8.8 Booking.com', url: 'https://www.booking.com/hotel/it/grand-hotel-bonanno.html', tier: 'mid' },
+      { name: 'Hotel Minerva Pisa', note: 'Independent — Art Nouveau building, panoramic roof terrace, 3-min walk from the Leaning Tower · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/hotel-minerva-pisa.html', tier: 'mid' },
+      { name: 'Prato dei Miracoli Residenza d\'Epoca', note: 'Independent residenza d\'epoca — 5 Piazza del Duomo, rooms facing the Leaning Tower, AC, lift · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/residenza-d-epoca-pisa.html', tier: 'luxury' },
+      { name: 'Palazzo Feroci - Residenza d\'epoca', note: 'Independent 4-star — 2 Via della Faggiola, a 16th-century palazzo two streets from the Leaning Tower, garden, AC, lift · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/palazzo-feroci.html', tier: 'luxury' },
+      { name: 'Hotel Pisa Tower', note: 'Independent 3-star — 9 Piazza Manin at the Porta Nuova gate to the Campo dei Miracoli, garden, AC, 9.0 on Expedia · 8.7 Booking.com', url: 'https://www.booking.com/hotel/it/pisa-tower.html', tier: 'budget' }
+    ], price: { budget: '€80–120', mid: '€120–170', expensive: '€170–230', luxury: '€230+' } },
     'pokhara': { h: [
       { name: 'Temple Himalaya Hotel & Spa', note: 'Independent — Street No. 13 in Lakeside, outdoor pool, sauna, 24h reception, free airport shuttle · 9.2 Booking.com', url: 'https://www.booking.com/hotel/np/temple-himalaya-amp-spa.html' },
       { name: 'Temple Tree Resort & Spa', note: 'Independent — Lakeside district, Phewa Lake views, pool, Himalayan spa treatments · 8.8 Booking.com', url: 'https://www.booking.com/hotel/np/temple-tree-resort.html' },
@@ -11150,7 +11153,7 @@ window.TVE.home = (function () {
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FOR', 'FRA','GIG','GOT','GRU','GVA','HAM',
       'HAN','HEL','HER','HKG','HKT','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
-      'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
+      'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSA','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
       'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TBS','TFS','TIV','TLL','TPE','VCE','VIE','VLC',
       'WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
