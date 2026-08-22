@@ -5776,10 +5776,14 @@ window.TVE.home = (function () {
       { name: 'Olive Green Hotel', note: 'Independent eco-boutique — sustainable 4-star near the city port, bike-friendly, organic breakfast, 8-min walk to the Heraklion waterfront · 8.7 Booking.com', url: 'https://www.booking.com/hotel/gr/olive-green-hotel.html' }
     ] },
     'curacao': { h: [
-      { name: 'Baoase Luxury Resort', note: 'Independent boutique — adults-only, private beach on Piscadera Bay, Baoase Culinary Beach restaurant, full-service spa', url: 'https://baoase.com/' },
-      { name: 'Mangrove Beach Corendon Curacao Resort, Curio Collection by Hilton', note: 'Hilton Curio — beachfront, aqua park, spa, multiple pools and dining, 10-min from Willemstad\'s historic waterfront · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cw/corendon-mangrove-beach-resort.html' },
-      { name: 'Avila Beach Hotel', note: 'Independent — historic 1780 mansion on Penstraat beach, Blues Music Bar, diving centre · 8.8 Booking.com', url: 'https://www.booking.com/hotel/cw/avila-beach-hotel.html' },
-      { name: 'Renaissance Wind Creek Curaçao Resort', note: 'Renaissance brand — Punda waterfront, casino, full-service spa, harbour location · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cw/renaissance-curacao-resort-casino.html' }
+      { name: 'Boutique Hotel \'t Klooster', note: 'Independent boutique — former convent on A. de Veerstraat in Pietermaai, outdoor pool, restaurant and bar, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/cw/t-klooster.html', tier: 'budget' },
+      { name: 'BOHO Bohemian Boutique Hotel', note: 'Independent boutique — Johan van Walbeeckplein in Pietermaai, restaurant, express check-in, 24h reception · 4.8 TripAdvisor', url: 'https://www.booking.com/hotel/cw/boho-bohemian-boutique.html', tier: 'budget' },
+      { name: 'Courtyard by Marriott Curaçao', note: 'Marriott Courtyard brand — Pater Euwensweg on the Otrobanda side of the harbour, infinity pool with pool bar, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cw/courtyard-by-marriott-curacao.html', tier: 'mid' },
+      { name: 'Kura Botanica Hotel', note: 'Independent boutique — adults-only, IJzerstraat in the restored Kurá Hulanda quarter of Otrobanda, outdoor pool, spa, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/cw/kura-botanica.html', tier: 'mid' },
+      { name: 'Mangrove Beach Corendon Curacao Resort, Curio Collection by Hilton', note: 'Hilton Curio — beachfront, aqua park, spa, multiple pools and dining, 10-min from Willemstad\'s historic waterfront · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cw/corendon-mangrove-beach-resort.html', tier: 'expensive' },
+      { name: 'Avila Beach Hotel', note: 'Independent — historic 1780 mansion on Penstraat beach, Blues Music Bar, diving centre · 8.8 Booking.com', url: 'https://www.booking.com/hotel/cw/avila-beach-hotel.html', tier: 'expensive' },
+      { name: 'Renaissance Wind Creek Curaçao Resort', note: 'Renaissance brand — Punda waterfront, casino, full-service spa, harbour location · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cw/renaissance-curacao-resort-casino.html', tier: 'expensive' },
+      { name: 'Baoase Luxury Resort', note: 'Independent boutique — adults-only, private beach on Piscadera Bay, Baoase Culinary Beach restaurant, full-service spa', url: 'https://baoase.com/', tier: 'luxury' }
     ] },
     'curitiba': { h: [
       { name: 'Nomaa Hotel', note: 'Independent boutique — Batel, 5-star, Nomade Restaurant with seasonal Brazilian tasting menu, intimate rooftop deck · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/nomaa.html' },
@@ -10461,11 +10465,11 @@ window.TVE.home = (function () {
        its airport. */
     var LOUNGE_IATAS = [
       'AGP','AMS','ARN','ATH','ATL','AUA','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG','CMB',
-      'CPH','CPT','CUN','DBV','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT','GRU',
-      'GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','KTM','LAS','LAX','LGA',
-      'LGW','LHR','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MSP','MUC','MXP','NAP','NCE',
-      'OPO','ORD','ORY','OSL','PEK','PMI','PVG','RAK','SAN','SCL','SEA','SFO','SIN','SKG','SLC','SPU',
-      'SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'CPH','CPT','CUN','CUR','DBV','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT',
+      'GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','KTM','LAS','LAX',
+      'LGA','LGW','LHR','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MSP','MUC','MXP','NAP',
+      'NCE','OPO','ORD','ORY','OSL','PEK','PMI','PVG','RAK','SAN','SCL','SEA','SFO','SIN','SKG','SLC',
+      'SPU','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
