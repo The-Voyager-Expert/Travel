@@ -5717,7 +5717,7 @@ window.TVE.home = (function () {
       { name: 'Les Trésoms Lake and Spa Resort', note: 'Independent — hillside on Boulevard de la Corniche with lake views, seasonal outdoor pool, spa, tennis court · 8.1 Booking.com', url: 'https://www.booking.com/hotel/fr/lestresomsannecy.html', tier: 'expensive' },
       { name: 'Le Pélican', note: 'Independent — Rue des Marquisats on the lakeshore below the old town, heated outdoor pool, restaurant, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/le-pelican-annecy1.html', tier: 'expensive' },
       { name: 'Impérial Palace Annecy', note: 'Independent — lakefront property in central Annecy, La Voile gastronomic restaurant with terrace, spa with pool and hammam · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/imperial-palace.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: '€80–210', mid: '€145–320', expensive: '€175–390', luxury: '€215–370' } },
     'aracaju': { h: [
       { name: 'Via Mar Praia Hotel', note: 'Independent — Av. Santos Dumont on the Atalaia beachfront, year-round outdoor pool, free parking, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/via-mar-praia.html', tier: 'budget' },
       { name: 'Hotel da Costa by Nobile', note: 'Nobile Hotels — beachfront on Orla de Atalaia, outdoor pool with sea view, breakfast highly rated · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/da-costa.html', tier: 'budget' },
