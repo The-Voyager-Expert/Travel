@@ -1968,6 +1968,7 @@ summary.res-head:focus-visible { outline: 2px solid var(--rust, #C04E1A); outlin
 #hc-s4 .fnd-more { display: inline-block; width: auto; margin: 16px 0 0; }
 #hc-s4 #fnd-more-panel { padding-left: 0; padding-right: 0; }
 #help-choose-panel .fnd-results { margin-top: 20px; }
+.tt-narrow .fnd-row { margin-top: 6px; }
 .fnd-res-tier { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted,#6a6660); margin: 1.1rem 0 .5rem; }
 .fnd-facts { flex-basis: 100%; font-size: 11.5px; line-height: 1.5; color: #8a857c; margin-top: 3px; font-variant-numeric: tabular-nums; }
 @media (hover:hover) { .flt-grid .dest-card:hover .fnd-facts { color: #fff !important; } }
@@ -3232,6 +3233,37 @@ window.lpGuideCard = function (href, flag, name, extra) {
             <option value="">Any</option>
           </select></div>
         </div>
+        <!-- THREE MORE WAYS, every one measured against the READER, never a place
+             (owner 2026-08-22: "adding time zone, currency and hours of daylight
+             ... we have all the data"). Time difference is against the reader's
+             own clock; currency is the destination's own; daylight is computed
+             from the guide's latitude for the picked month. -->
+        <div class="fnd-field">
+          <label for="fnd-tz">Time difference</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-wall-clock"/></svg></span><select id="fnd-tz">
+            <option value="">Any time zone</option>
+            <option value="1">Within 1h of your clock</option>
+            <option value="3">Up to 3h from your clock</option>
+            <option value="6">Up to 6h from your clock</option>
+          </select></div>
+        </div>
+        <div class="fnd-field">
+          <label for="fnd-cur">Currency</label>
+          <!-- Options are BUILT FROM THE DATA (buildCurOpts, currency-rates.json)
+               the first time the rates load: one line per currency a guide
+               actually uses, never a hand list. -->
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-exchange"/></svg></span><select id="fnd-cur">
+            <option value="">Any currency</option>
+          </select></div>
+        </div>
+        <div class="fnd-field">
+          <label for="fnd-day">Daylight</label>
+          <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-horizon-sun"/></svg></span><select id="fnd-day">
+            <option value="">Any daylight</option>
+            <option value="long">Long days (14h or more)</option>
+            <option value="short">Short days (under 10h)</option>
+          </select></div>
+        </div>
         <div class="fnd-field">
           <label for="fnd-home-in">Where are you flying from?</label>
           <p class="hc-hint">Shows a flying-time estimate on every card &mdash; from your airport, never from anywhere else.</p>
@@ -3305,6 +3337,20 @@ window.lpGuideCard = function (href, flag, name, extra) {
             <button type="button" class="ttchip" data-v="budget"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-bills"/></svg> Budget (under $100)</button>
             <button type="button" class="ttchip" data-v="mid"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-credit-card"/></svg> Mid-range ($100–$250)</button>
             <button type="button" class="ttchip" data-v="premium"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-money-bag"/></svg> Premium ($250+)</button>
+          </div>
+        </div>
+        <!-- NARROW THE ESCAPE (owner 2026-08-22: Trip Escape "gains the rows the finder
+             already has the data for"). The month makes the climate contrast the
+             contrast of THAT month rather than the annual mean; the activity keeps
+             only guides tagged with it. Weather and budget are deliberately NOT here
+             — this card picks the opposite of those itself. -->
+        <div class="tt-section tt-narrow">
+          <div class="tt-label">Narrow the escape</div>
+          <div class="fnd-row">
+            <div class="fnd-field"><label for="tt-month">When are you going?</label>
+              <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-wall-calendar"/></svg></span><select id="tt-month"><option value="">Any month</option><option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option><option value="4">May</option><option value="5">June</option><option value="6">July</option><option value="7">August</option><option value="8">September</option><option value="9">October</option><option value="10">November</option><option value="11">December</option></select></div></div>
+            <div class="fnd-field"><label for="tt-act">What do you want to do?</label>
+              <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-tours-tickets"/></svg></span><select id="tt-act"><option value="">Any activity</option><option value="beach">Beaches</option><option value="islands">Islands</option><option value="nature">Greenery</option><option value="snow">Snow &amp; ski</option><option value="history">History</option><option value="amusement">Theme parks</option><option value="hiking">Hiking</option></select></div></div>
           </div>
         </div>
         <div class="tt-safe-row">
@@ -5366,7 +5412,9 @@ function render() {
   }
 
   // Data extractors
-  function hiData(card) {
+  function ttMonth() { var el = document.getElementById('tt-month'); var v = el ? el.value : ''; return v === '' ? null : parseInt(v, 10); }
+  function ttAct() { var el = document.getElementById('tt-act'); return el && el.value ? el.value : null; }
+  function hiData(card, mi) {
     var raw = card.getAttribute('data-climate');
     if (!raw) return null;
     var d; try { d = JSON.parse(raw); } catch (e) { return null; }
@@ -5384,6 +5432,8 @@ function render() {
     var mx = Math.max.apply(null, arr);
     if (mx <= 55) arr = arr.map(function (v) { return v * 9 / 5 + 32; });
     var avg = arr.reduce(function (a, b) { return a + b; }, 0) / arr.length;
+    /* A picked month makes the contrast the contrast of THAT month. */
+    if (typeof mi === 'number' && arr[mi] !== undefined) avg = arr[mi];
     return { avg: avg };
   }
 
@@ -5481,7 +5531,7 @@ function render() {
 
   function buildRef() {
     if (matchedCard) {
-      var cl = hiData(matchedCard);
+      var cl = hiData(matchedCard, ttMonth());
       return { avgHi: cl ? cl.avg : null, costMid: costMid(matchedCard), safetyLvl: safety(matchedCard) };
     }
     return {
@@ -5492,7 +5542,7 @@ function render() {
   }
 
   function scoreCard(ref, card) {
-    var cl = hiData(card);
+    var cl = hiData(card, ttMonth());
     if (!cl) return -1;
     var cContrast = ref.avgHi !== null ? Math.min(1, Math.abs(ref.avgHi - cl.avg) / 50) : 0.5;
     var co = costMid(card);
@@ -5504,7 +5554,7 @@ function render() {
 
   function whyReasons(ref, card) {
     var list = [];
-    var cl = hiData(card);
+    var cl = hiData(card, ttMonth());
     if (cl && ref.avgHi !== null) {
       var d = Math.abs(ref.avgHi - cl.avg);
       if (d > 35) list.push('Complete climate flip');
@@ -5532,8 +5582,10 @@ function render() {
       return;
     }
     var safeOnly = safeBox.checked;
+    var act = ttAct();
     var scored = allCards.map(function (c) {
       if (c === matchedCard) return null;
+      if (act && ((window._THEME_DATA || {})[cityName(c)] || []).indexOf(act) === -1) return null;
       var sa = safety(c);
       if (safeOnly && sa !== null && sa > 1) return null;
       var s = scoreCard(ref, c);
@@ -6478,11 +6530,13 @@ function render() {
   /* fnd-stops (Routing) is gone from this list — owner rule 2026-08-17, see the
      markup comment where the field stood: it was Seattle-only FMAP data. */
   var adv = ['fnd-type', 'fnd-lang', 'fnd-cont',
-             'fnd-budget', 'fnd-safety', 'fnd-country', 'fnd-train'].map(function (id) {
+             'fnd-budget', 'fnd-safety', 'fnd-country', 'fnd-train',
+             'fnd-tz', 'fnd-cur', 'fnd-day'].map(function (id) {
     return document.getElementById(id);
   });
   var fType = adv[0], fLang = adv[1], fCont = adv[2],
-      fBudget = adv[3], fSafety = adv[4], fCountry = adv[5], fTrain = adv[6];
+      fBudget = adv[3], fSafety = adv[4], fCountry = adv[5], fTrain = adv[6],
+      fTz = adv[7], fCur = adv[8], fDay = adv[9];
 
   var BANDS = { hot: [28, 99], warm: [22, 28], mild: [15, 22], cool: [8, 15], cold: [-99, 8] };
   /* Same cut points the guides index uses for its duration chips, so "under
@@ -6827,7 +6881,7 @@ function render() {
      surfaces answer the same question the same way. Each pick keeps its
      option label so the chip reads like the menu did. */
   var picks = { mo: [], wx: [], ty: [], lg: [], ct: [],
-                bd: [], sf: [], co: [], tr: [] };
+                bd: [], sf: [], co: [], tr: [], tz: [], cu: [], dl: [] };
 
   function state() {
     var s = {};
@@ -6839,7 +6893,8 @@ function render() {
   function anySet(s) {
     return !!(s.mo.length || s.wx.length || s.fr || s.days !== null ||
               s.ty.length || s.lg.length || s.ct.length || s.bd.length ||
-              s.sf.length || s.co.length || s.tr.length);
+              s.sf.length || s.co.length || s.tr.length ||
+              s.tz.length || s.cu.length || s.dl.length);
   }
   function anyOf(vals, fn) {
     for (var i = 0; i < vals.length; i++) if (fn(vals[i])) return true;
@@ -6880,6 +6935,22 @@ function render() {
         if (!far) return false;
         if (s.fr === 'o15' && !(far.mins >= 900)) return false;
         if (s.fr !== 'o15' && !(far.mins < FAR[s.fr])) return false;
+      }
+      /* Time difference is |offset from the READER'S clock|; currency is the
+         destination's own; daylight is computed for the picked month(s). A guide
+         with no time zone, no currency row or no latitude is DROPPED from a
+         filtered answer, the same rule as climate and distance. */
+      if (s.tz.length) {
+        var tzm = tzDiffMinutes(g.name);
+        if (tzm === null || !anyOf(s.tz, function (h) { return Math.abs(tzm) <= (+h) * 60; })) return false;
+      }
+      if (s.cu.length) {
+        var iso = currencyIso(g);
+        if (!iso || s.cu.indexOf(iso) === -1) return false;
+      }
+      if (s.dl.length) {
+        var dhs = daylightFor(d, g, s);
+        if (!dhs || !anyOf(s.dl, function (k) { return anyOf(dhs, function (h) { return k === 'long' ? h >= 14 : h < 10; }); })) return false;
       }
       /* Weather × months: pass if ANY chosen month (or the annual mean when no
          month is chosen) lands in ANY chosen band — "warm or hot, June or
@@ -6937,7 +7008,10 @@ function render() {
       { el: fBudget,  field: 'bd' },
       { el: fSafety,  field: 'sf' },
       { el: fCountry, field: 'co' },
-      { el: fTrain,   field: 'tr' }
+      { el: fTrain,   field: 'tr' },
+      { el: fTz,      field: 'tz' },
+      { el: fCur,     field: 'cu' },
+      { el: fDay,     field: 'dl' }
     ];
   }
   function pruneSelects(d, s) {
@@ -6947,7 +7021,7 @@ function render() {
          loaded — testing against an empty map reads every guide as unpriced and
          would grey the whole select. Leave them enabled; the panel-open
          prefetch below loads both and re-prunes. */
-      if ((pair.field === 'bd' && !BUDGET) || (pair.field === 'sf' && !ADVISORY)) {
+      if ((pair.field === 'bd' && !BUDGET) || (pair.field === 'sf' && !ADVISORY) || (pair.field === 'cu' && !RATES)) {
         [].forEach.call(pair.el.options, function (o) { o.disabled = false; });
         return;
       }
@@ -7051,20 +7125,67 @@ function render() {
      should be funneled there"). Days planned · currency · daylight for the
      picked month · the time difference from THE READER'S OWN CLOCK — never
      from any city (Forty-seventh non-negotiable). ── */
-  var RATES = null, ratesPending = false;
+  var RATES = null, ratesP = null;
   function loadRates() {
-    if (RATES || ratesPending) return;
-    ratesPending = true;
-    fetch('/assets/currency-rates.json').then(function (r) { return r.json(); })
-      .then(function (j) { RATES = (j && j.rates) || {}; if (!out.hidden) run(); })
-      .catch(function () { RATES = {}; });
+    if (RATES) return Promise.resolve(RATES);
+    if (ratesP) return ratesP;
+    ratesP = fetch('/assets/currency-rates.json').then(function (r) { return r.json(); })
+      .then(function (j) { RATES = (j && j.rates) || {}; buildCurOpts(); if (!out.hidden) run(); return RATES; })
+      .catch(function () { RATES = {}; return RATES; });
+    return ratesP;
   }
   var CUR_ALIAS = { 'czechia': 'czech republic', 'virgin-islands': 'united states' };
   function currencyOf(g) {
+    var iso = currencyIso(g);
+    if (!iso) return null;
+    var r = RATES[CUR_ALIAS[g.country] || String(g.country || '').replace(/-/g, ' ')];
+    return r && r.sym ? r.sym + ' ' + iso : iso;
+  }
+
+  /* ── Three filters measured against the reader (owner 2026-08-22) ───────── */
+  function tzDiffMinutes(name) {
+    var tz = window._TZ_DATA && window._TZ_DATA[name];
+    if (!tz) return null;
+    try {
+      var now = new Date();
+      var there = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+      var utc = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
+      return Math.round((there - utc) / 60000) + now.getTimezoneOffset();
+    } catch (e) { return null; }
+  }
+  function currencyIso(g) {
     if (!RATES) return null;
     var k = CUR_ALIAS[g.country] || String(g.country || '').replace(/-/g, ' ');
     var r = RATES[k];
-    return r && r.iso ? (r.sym ? r.sym + ' ' + r.iso : r.iso) : null;
+    return r && r.iso ? r.iso : null;
+  }
+  /* Daylight hours for each month the reader picked (today's month if none). */
+  function daylightFor(d, g, s) {
+    var row = d.climate && d.climate[g.name];
+    var lat = row && parseFloat(row.lat);
+    if (!row || isNaN(lat)) return null;
+    var mos = s.mo.length ? s.mo : [new Date().getMonth()];
+    return mos.map(function (mi) { return daylightHours(lat, mi); });
+  }
+  var curOptsBuilt = false;
+  function buildCurOpts() {
+    if (curOptsBuilt || !fCur || !RATES || !window._lpData) return;
+    window._lpData().then(function (d) {
+      if (!d || curOptsBuilt) return;
+      var seen = {};
+      d.guides.forEach(function (g) { var iso = currencyIso(g); if (iso) seen[iso] = (seen[iso] || 0) + 1; });
+      var isos = Object.keys(seen).sort();
+      var byIso = {};
+      for (var k in RATES) if (RATES[k] && RATES[k].iso) byIso[RATES[k].iso] = RATES[k];
+      isos.forEach(function (iso) {
+        var o = document.createElement('option');
+        o.value = iso;
+        var r = byIso[iso] || {};
+        o.textContent = (r.name ? r.name + ' (' + iso + ')' : iso);
+        fCur.appendChild(o);
+      });
+      curOptsBuilt = true;
+    });
   }
   function daylightHours(lat, monthIdx) {
     var doy = [15, 46, 74, 105, 135, 166, 196, 227, 258, 288, 319, 349][monthIdx];
@@ -7076,17 +7197,11 @@ function render() {
   }
   function fmtHours(h) { var H = Math.floor(h), M = Math.round((h - H) * 60); if (M === 60) { H++; M = 0; } return H + 'h' + (M ? ' ' + (M < 10 ? '0' : '') + M + 'm' : ''); }
   function tzDiff(name) {
-    var tz = window._TZ_DATA && window._TZ_DATA[name];
-    if (!tz) return null;
-    try {
-      var now = new Date();
-      var there = new Date(now.toLocaleString('en-US', { timeZone: tz }));
-      var utc = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
-      var off = Math.round((there - utc) / 60000) + now.getTimezoneOffset();
-      if (!off) return 'same time as you';
-      var h = Math.floor(Math.abs(off) / 60), m = Math.abs(off) % 60;
-      return (off > 0 ? '+' : '−') + h + (m ? ':' + (m < 10 ? '0' : '') + m : '') + 'h vs your clock';
-    } catch (e) { return null; }
+    var off = tzDiffMinutes(name);
+    if (off === null) return null;
+    if (!off) return 'same time as you';
+    var h = Math.floor(Math.abs(off) / 60), m = Math.abs(off) % 60;
+    return (off > 0 ? '+' : '−') + h + (m ? ':' + (m < 10 ? '0' : '') + m : '') + 'h vs your clock';
   }
   function facts(d, g, s) {
     var parts = [];
@@ -7109,6 +7224,7 @@ function render() {
     var jobs = [];
     if (s.bd.length && !BUDGET)   jobs.push(loadBudget());
     if (s.sf.length && !ADVISORY) jobs.push(loadAdvisory());
+    if (s.cu.length && !RATES)    jobs.push(loadRates());
     return jobs.length ? Promise.all(jobs) : null;
   }
 
@@ -7181,7 +7297,8 @@ function render() {
          Say that, rather than returning all 237 as though it were an answer. */
       var monthOnly = (s.mo.length > 0 && !s.wx.length && !s.fr &&
                        !s.ty.length && !s.lg.length && !s.ct.length &&
-                       !s.bd.length && !s.sf.length && !s.co.length && !s.tr.length);
+                       !s.bd.length && !s.sf.length && !s.co.length && !s.tr.length &&
+                       !s.tz.length && !s.cu.length && !s.dl.length);
       var moNames = s.mo.map(function (m) { return MON[m]; }).join(' or ');
 
       /* "guides", not "destinations". The site has one unit and it is the
@@ -7226,7 +7343,7 @@ function render() {
      set; it carries NO count (owner rule 2026-08-19). */
   function syncChrome(s) {
     var n = s.ty.length + s.lg.length + s.ct.length + s.bd.length +
-            s.sf.length + s.co.length + s.tr.length;
+            s.sf.length + s.co.length + s.tr.length + s.tz.length + s.cu.length + s.dl.length;
     var btn = document.getElementById('fnd-more');
     if (btn) {
       btn.classList.toggle('on', n > 0);
@@ -7329,6 +7446,7 @@ function render() {
        been read — fetch both the first time the panel opens (two small pages,
        nobody who keeps the panel shut pays), then re-prune so no option in the
        open panel can lead to zero guides. */
+    if (opening) loadRates();
     if (opening && (!BUDGET || !ADVISORY)) {
       Promise.all([loadBudget(), loadAdvisory()]).then(function () {
         if (anySet(state())) run();
