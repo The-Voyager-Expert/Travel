@@ -6904,11 +6904,18 @@ window.TVE.home = (function () {
       { name: 'Hampton Inn Philadelphia Center City-Convention Center', note: 'Hilton Hampton brand — 1301 Race Street, 24h reception, breakfast included · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/hampton-inn-center-city.html', tier: 'budget' }
     ], price: { budget: '$130–190', mid: '$190–280', expensive: '$280–450', luxury: '$450+' } },
     'phoenix': { h: [
-      { name: 'The Arizona Biltmore, A Waldorf Astoria Resort', note: 'Waldorf Astoria brand — 1929 Frank Lloyd Wright-influenced design, eight pools, lush landscaping, Esplanade spa', url: 'https://www.expedia.com/Phoenix-Hotels-Arizona-Biltmore.h9796.Hotel-Information' },
-      { name: 'Royal Palms Resort and Spa, A Tribute Portfolio Resort', note: 'Marriott Tribute — hacienda-style resort, T. Cook\'s restaurant, pool, Camelback Mountain backdrop', url: 'https://www.expedia.com/Phoenix-Hotels-Royal-Palms-Resort-And-Spa.h791197.Hotel-Information' },
-      { name: 'Kimpton Hotel Palomar Phoenix Cityscape by IHG', note: 'Kimpton by IHG — 2 East Jefferson Street, downtown Phoenix Cityscape, rooftop outdoor pool deck, bar, fitness centre · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/kimpton-hotel-palomar-phoenix.html' },
-      { name: 'Hyatt Regency Phoenix Downtown', note: 'Hyatt brand — 122 North 2nd Street, downtown Phoenix, revolving Compass Arizona Grill restaurant, outdoor pool, Phoenix Convention Center adjacent · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/phoenix-north-second-street.html' }
-    ] },
+      { name: 'The Arizona Biltmore, A Waldorf Astoria Resort', note: 'Waldorf Astoria brand — 1929 Frank Lloyd Wright-influenced design, eight pools, lush landscaping, Esplanade spa', url: 'https://www.expedia.com/Phoenix-Hotels-Arizona-Biltmore.h9796.Hotel-Information', tier: 'luxury' },
+      { name: 'Royal Palms Resort and Spa, A Tribute Portfolio Resort', note: 'Marriott Tribute — hacienda-style resort, T. Cook\'s restaurant, pool, Camelback Mountain backdrop', url: 'https://www.expedia.com/Phoenix-Hotels-Royal-Palms-Resort-And-Spa.h791197.Hotel-Information', tier: 'luxury' },
+      { name: 'Kimpton Hotel Palomar Phoenix Cityscape by IHG', note: 'Kimpton by IHG — 2 East Jefferson Street, downtown Phoenix Cityscape, rooftop outdoor pool deck, bar, fitness centre · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/kimpton-hotel-palomar-phoenix.html', tier: 'expensive' },
+      { name: 'Hyatt Regency Phoenix Downtown', note: 'Hyatt brand — 122 North 2nd Street, downtown Phoenix, revolving Compass Arizona Grill restaurant, outdoor pool, Phoenix Convention Center adjacent · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/phoenix-north-second-street.html', tier: 'mid' },
+      { name: 'The Westin Phoenix Downtown', note: 'Marriott Westin brand — 333 North Central Avenue, rooftop heated pool, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/westin-phoenix-downtown.html', tier: 'expensive' },
+      { name: 'Sheraton Phoenix Downtown', note: 'Marriott Sheraton brand — 340 North 3rd Street by the Convention Center, rooftop pool, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/sheraton-phoenix-downtown.html', tier: 'expensive' },
+      { name: 'Residence Inn by Marriott Phoenix Downtown', note: 'Marriott Residence Inn brand — 132 South Central Avenue, suites with kitchens, indoor pool, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/residence-inn-by-marriott-phoenix-downtown.html', tier: 'mid' },
+      { name: 'Hampton Inn & Suites Phoenix Downtown', note: 'Hilton Hampton brand — 77 East Polk Street by Roosevelt Row, 24h reception, breakfast included · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hampton-inn-suites-phoenix-downtown.html', tier: 'mid' },
+      { name: 'Hilton Garden Inn Phoenix Downtown', note: 'Hilton Garden Inn brand — 15 East Monroe Street in the 1931 Professional Building, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-garden-inn-phoenix-downtown.html', tier: 'mid' },
+      { name: 'Courtyard by Marriott Phoenix Downtown', note: 'Marriott Courtyard brand — 132 South Central Avenue, heated saltwater indoor pool, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-by-marriott-phoenix-downtown.html', tier: 'budget' },
+      { name: 'Hyatt Place Phoenix/Downtown', note: 'Hyatt Place brand — 150 West Adams Street, two blocks from the Hyatt Regency, 24h reception', url: 'https://www.booking.com/hotel/us/hyatt-place-phoenix-downtown.html', tier: 'budget' }
+    ], price: { budget: '$120–190', mid: '$190–280', expensive: '$280–450', luxury: '$450+' } },
     'phuket': { h: [
       { name: 'Arco Phuket Town', note: 'Independent — Thaling Chan Road in Phuket Town, saltwater pool, rooftop restaurant, 10-min walk to the Old Town shophouses · 9.5 Booking.com', url: 'https://www.booking.com/hotel/th/arco-phuket-town.html' },
       { name: 'Trisara', note: 'Independent luxury — private pool villas on Nai Thon Bay, Pru restaurant (Asia\'s 50 Best), beachfront setting · 9.6 Booking.com', url: 'https://www.booking.com/hotel/th/trisara.html' },
@@ -11085,7 +11092,7 @@ window.TVE.home = (function () {
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FRA','GIG','GOT','GRU','GVA','HAM',
       'HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
-      'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
+      'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
       'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TLL','TPE','VCE','VIE','VLC',
       'WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
