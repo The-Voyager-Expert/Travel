@@ -6258,11 +6258,16 @@ window.TVE.home = (function () {
       { name: 'Bellevue Hotel Dubrovnik', note: 'Independent — clifftop above a private cove, sea-view rooms, outdoor pool, Vapor restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/hr/bellevue-dubrovnik.html' }
     ] },
     'edinburgh': { h: [
-      { name: 'The Balmoral Hotel', note: 'Rocco Forte brand — 1902 Waverley clock-tower landmark on Princes Street, Number One Michelin-starred restaurant, indoor pool and spa · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/gb/the-balmoral-edinburgh.html' },
-      { name: 'InterContinental Edinburgh The George', note: 'IHG first-tier — Georgian townhouses at 19-21 George Street, Tempus Restaurant and Bar, 24h reception · 8.1 Booking.com' , url: 'https://www.booking.com/hotel/gb/georgehotel-edinburgh.html' },
-      { name: 'The Scotsman Hotel', note: 'Independent — converted 1905 Scotsman newspaper HQ on North Bridge, Vermilion restaurant, rooftop Scottish hot tub suite · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/gb/the-scotsman.html' },
-      { name: 'G&V Royal Mile Hotel Edinburgh', note: 'G&V Hotels — Royal Mile Gothic building, Cucina restaurant, rooftop suites with castle views, boutique design interiors · 8.9 Booking.com' , url: 'https://www.booking.com/hotel/gb/gv-royal-mile-hotel-edinburgh.html' }
-    ] },
+      { name: 'Hampton by Hilton Edinburgh West End', note: 'Hilton Hampton brand — Fountainbridge, ten minutes on foot from Princes Street, breakfast included, 24h reception · 8.2 Booking.com', url: 'https://www.booking.com/hotel/gb/hampton-by-hilton-edinburgh-west-end.html', tier: 'budget' },
+      { name: 'Residence Inn by Marriott Edinburgh', note: 'Marriott Residence Inn brand — Quartermile beside the Meadows, suites with kitchens, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/gb/residence-inn-by-marriott-edinburgh.html', tier: 'budget' },
+      { name: 'Courtyard by Marriott Edinburgh', note: 'Marriott Courtyard brand — Baxter\'s Place at the top of Leith Walk, a few minutes from Waverley, 24h reception · 8.5 Booking.com', url: 'https://www.booking.com/hotel/gb/courtyard-by-marriott-edinburgh.html', tier: 'budget' },
+      { name: 'DoubleTree by Hilton Edinburgh City Centre', note: 'Hilton DoubleTree brand — Bread Street below the castle, Monboddo bar, 24h reception · 8.0 Booking.com', url: 'https://www.booking.com/hotel/gb/pointhotel.html', tier: 'mid' },
+      { name: 'W Edinburgh', note: 'Marriott W brand — the ribbon tower on St James Square, rooftop bar, spa, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/gb/w-edinburgh.html', tier: 'mid' },
+      { name: 'InterContinental Edinburgh The George', note: 'IHG first-tier — Georgian townhouses at 19-21 George Street, Tempus Restaurant and Bar, 24h reception · 8.1 Booking.com' , url: 'https://www.booking.com/hotel/gb/georgehotel-edinburgh.html', tier: 'expensive' },
+      { name: 'The Scotsman Hotel', note: 'Independent — converted 1905 Scotsman newspaper HQ on North Bridge, Vermilion restaurant, rooftop Scottish hot tub suite · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/gb/the-scotsman.html', tier: 'expensive' },
+      { name: 'G&V Royal Mile Hotel Edinburgh', note: 'G&V Hotels — Royal Mile Gothic building, Cucina restaurant, rooftop suites with castle views, boutique design interiors · 8.9 Booking.com' , url: 'https://www.booking.com/hotel/gb/gv-royal-mile-hotel-edinburgh.html', tier: 'expensive' },
+      { name: 'The Balmoral Hotel', note: 'Rocco Forte brand — 1902 Waverley clock-tower landmark on Princes Street, Number One Michelin-starred restaurant, indoor pool and spa · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/gb/the-balmoral-edinburgh.html', tier: 'luxury' }
+    ], price: { budget: '£140–160', mid: '£160–250', expensive: '£250–400', luxury: '£400+' } },
     'florence': { h: [
       { name: 'Hotel La Gemma', note: 'Independent — Via dei Cavalieri a block off Piazza del Duomo, rooftop Luca Ristorante, spa with hammam · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/la-gemma-firenze.html' },
       { name: 'Portrait Firenze', note: 'Lungarno Collection — 14 riverfront suites on the Arno above the Ponte Vecchio · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/portrait-firenze.html' },
