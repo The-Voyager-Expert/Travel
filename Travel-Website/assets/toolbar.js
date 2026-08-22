@@ -6086,11 +6086,17 @@ window.TVE.home = (function () {
     ], price: { budget: 'MXN 2,400–3,500', mid: 'MXN 3,500–7,000', expensive: 'MXN 7,000–11,000', luxury: 'MXN 11,000+' } },
 
     'cannes': { h: [
-      { name: 'Carlton Cannes, a Regent Hotel', note: 'IHG Regent brand — iconic 1911 La Croisette palace, private beach concession, Belle Époque sea-view suites · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/carlton-cannes-a-regent-hotel.html' },
-      { name: 'Majestic Barrière Cannes', note: 'Barrière group — La Croisette landmark, two pools, private beach club, Fouquet\'s Cannes restaurant, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/majestic-barriere.html' },
-      { name: 'Five Seas by Inwood Hotels', note: 'Independent boutique — 5-star, 328 feet from La Croisette and Palais des Festivals, rooftop pool, full-service spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/five.html' },
-      { name: 'Mondrian Cannes', note: 'Mondrian brand — La Croisette, 75 rooms and suites with sea or city views, 8.9 Booking.com', url: 'https://www.booking.com/hotel/fr/grand-cannes.html' }
-    ] },
+      { name: 'Carlton Cannes, a Regent Hotel', note: 'IHG Regent brand — iconic 1911 La Croisette palace, private beach concession, Belle Époque sea-view suites · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/carlton-cannes-a-regent-hotel.html', tier: 'luxury' },
+      { name: 'Majestic Barrière Cannes', note: 'Barrière group — La Croisette landmark, two pools, private beach club, Fouquet\'s Cannes restaurant, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/majestic-barriere.html', tier: 'expensive' },
+      { name: 'Five Seas by Inwood Hotels', note: 'Independent boutique — 5-star, 328 feet from La Croisette and Palais des Festivals, rooftop pool, full-service spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/five.html', tier: 'expensive' },
+      { name: 'Mondrian Cannes', note: 'Mondrian brand — La Croisette, 75 rooms and suites with sea or city views, 8.9 Booking.com', url: 'https://www.booking.com/hotel/fr/grand-cannes.html', tier: 'expensive' },
+      { name: 'JW Marriott Cannes', note: 'Marriott brand — 50 La Croisette with a rooftop pool and private beach, 4 min walk west of the Martinez · 8.3 Booking.com', url: 'https://www.booking.com/hotel/fr/jw-marriott-cannes.html', tier: 'expensive' },
+      { name: 'Canopy by Hilton Cannes', note: 'Hilton brand — Boulevard Jean Hibert at the foot of Le Suquet, spa and hammam, 5 min drive west of the Martinez · 8.3 Booking.com', url: 'https://www.booking.com/hotel/fr/canopybyhilton-cannes.html', tier: 'mid' },
+      { name: 'Hôtel Barrière Le Gray d\'Albion', note: 'Barrière group — Rue des Serbes one block off La Croisette, private beach and Majestic spa access, 12 min walk from the Martinez · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/gray-d-albion.html', tier: 'mid' },
+      { name: 'Hotel Splendid', note: 'Independent — Belle Époque villa on Rue Félix Faure facing the Vieux-Port, balcony rooms over the harbour, 18 min walk from the Martinez · 8.5 Booking.com', url: 'https://www.booking.com/hotel/fr/splendid-cannes.html', tier: 'budget' },
+      { name: 'OKKO Hotels Cannes Centre', note: 'OKKO group — adults-only at Place de la Gare with an all-inclusive club lounge, 6 min drive from the Martinez · 8.4 Booking.com', url: 'https://www.booking.com/hotel/fr/okko-cannes-centre.html', tier: 'budget' }
+    ], price: { budget: '€100–150', mid: '€150–230', expensive: '€230–300', luxury: '€300+' } },
+
     'cape-cod': { h: [
       { name: 'The Wequassett Resort and Golf Club', note: 'Independent luxury — Pleasant Bay waterfront in Harwich, 18-hole championship golf, 4 pools, spa with Cape Cod salt-air treatments · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/wequassett-resort-and-golf-club.html' },
       { name: 'Ocean Edge Resort & Golf Club', note: 'Independent resort — Brewster beachfront, 6 pools, oceanfront private beach, 18-hole golf, tennis and spa complex · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/the-mansion-at-ocean-edge-resort-amp-golf-club.html' },
