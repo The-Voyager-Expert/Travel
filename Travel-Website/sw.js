@@ -1877,7 +1877,8 @@
 /* 2026-08-22: THE NEGATIVE-FINDING PHOTO LINE READS "No pictures available." (owner: "Change that the message now shows: No pictures available"). The retired wording "No pictures found." is gone from all 41 guides that carried it, from Photos Rules.html and from guide-style.css's own shape comment for the empty wrapper — a comment describing a retired string is what feeds it back into the next guide. validate_itinerary hard-fails the retired phrase BY NAME anywhere in a guide (Cleanliness 937). Comment only, no rule changed: this bump purges the stale stylesheet. guide-style.css -> 260. CACHE to v1324. */
 /* 2026-08-22: arrival chip plane toolbar.js -> v941. CACHE to v1325. */
 /* 2026-08-22: wx-hot sprite — the Hot & humid filter icon toolbar.js -> v942. CACHE to v1326. */
-var CACHE = 'travel-cache-v1326';
+/* 2026-08-22: binoculars sprite — the Activity Focused field toolbar.js -> v943. CACHE to v1327. */
+var CACHE = 'travel-cache-v1327';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1890,7 +1891,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 260,'toolbar.js': 942, 'mobile.css': 88, 'web-travel-style.css': 93, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 11, 'trains.js': 2, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 260,'toolbar.js': 943, 'mobile.css': 88, 'web-travel-style.css': 93, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 11, 'trains.js': 2, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
