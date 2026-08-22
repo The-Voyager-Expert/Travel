@@ -5783,7 +5783,7 @@ window.TVE.home = (function () {
       { name: 'W Austin', note: 'Marriott W brand — Downtown on Lavaca Street above ACL Live, rooftop pool with city views, AWAY spa · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/w-austin.html', tier: 'expensive' },
       { name: 'JW Marriott Austin', note: 'Marriott family — rooftop pool and spa, 2nd Street dining district, downtown luxury · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/jw-marriott-austin.html', tier: 'luxury' },
       { name: 'Four Seasons Hotel Austin', note: 'Four Seasons brand — San Jacinto Boulevard on the Lady Bird Lake shore, saltwater pool, full-service spa, lakefront lawn · 8.2 Booking.com', url: 'https://www.booking.com/hotel/us/ninty-eight-downtown-austin.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: '$250–525', mid: '$270–445', expensive: '$380–600', luxury: '$390–1,600' } },
     'azores': { h: [
       { name: 'NINE DOTS Azorean Art Boutique Hotel', note: 'Independent boutique — Rua dos Mercadores in the old town, heated indoor pool, spa with steam room, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/nine-dots-azorean-art-boutique.html', tier: 'budget' },
       { name: 'Hotel Talisman', note: 'Independent boutique — historic center Ponta Delgada, rooftop pool, park views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/pt/talisman.html', tier: 'budget' },
@@ -11194,7 +11194,7 @@ window.TVE.home = (function () {
        list) while every European guide jumped to its country rather than to
        its airport. */
     var LOUNGE_IATAS = [
-      'AES','AGP','AJU','AMM','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
+      'AES','AGP','AJU','AMM','AMS','ANC','ARN','ATH','ATL','AUA','AUH','AUS','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FOR', 'FRA','GIG','GOT','GRU','GVA','HAM',
       'HAN','HEL','HER','HKG','HKT','HND','IAD','IAH','ICN','IGU', 'IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
