@@ -5695,7 +5695,7 @@ window.TVE.home = (function () {
       { name: 'Hotel Luna Convento', note: 'Independent — 13th-century clifftop convent on Via Pantaleone Comite, saltwater pool with sea views, cloister, Saracen tower bar · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/luna-convento-torre-saracena-sas.html', tier: 'expensive' },
       { name: 'Anantara Convento di Amalfi Grand Hotel', note: 'Anantara brand — converted 13th-century convent above town, infinity pool, dramatic coastal views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/anantara-convento-di-amalfi-grand-hotel.html', tier: 'luxury' },
       { name: 'Hotel Santa Caterina', note: 'Independent family estate — 1880s cliffside villa, saltwater pool, sea-view terraces, Michelin-starred dining · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/santa-caterina-amalfi.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: '€240–320', mid: '€170–435', expensive: '€165–1,365', luxury: '€615–2,235' } },
     'amsterdam': { h: [
       { name: 'Hampton by Hilton Amsterdam Centre East', note: 'Hilton Hampton brand — Panamalaan in Zeeburg, tram to the centre, fitness centre, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/nl/hampton-by-hilton-amsterdam-centre-east.html', tier: 'budget' },
       { name: 'Hotel Casa Amsterdam', note: 'Independent — Eerste Ringdijkstraat in Oost by the Amstel, metro to the centre, terrace bar, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/nl/casa-400.html', tier: 'budget' },
