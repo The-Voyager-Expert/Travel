@@ -120,9 +120,12 @@ a.pill:visited { color: #6a6660; }
 /* base .empty-state lives in web-travel-style.css — page keeps only the grid span */
 .empty-state { grid-column: 1 / -1; }
 /* ── Night mark — local hour 22:00–06:59 draws catalogue #306 (crescent moon, sprite
-   `wx-moon`) beside the time. The card itself is NEVER dimmed: the old `.sleeping`
-   opacity drop read as "filtered out" with All selected (owner 2026-08-21). ── */
-.card-night { width: 13px; height: 13px; align-self: center; flex-shrink: 0; }
+   `wx-moon`) in the card's BOTTOM-RIGHT corner, last in the meta row (owner
+   2026-08-22). It sat beside the time until then. The card itself is NEVER dimmed:
+   the old `.sleeping` opacity drop read as "filtered out" with All selected
+   (owner 2026-08-21). ── */
+.card-meta-right { display: flex; align-items: center; gap: 6px; }
+.card-night { width: 13px; height: 13px; flex-shrink: 0; }
 /* ── Mobile overrides ── */
 @media (max-width: 600px) and (pointer: coarse) {
   /* Controls: search full-width on top, pills below */
@@ -662,11 +665,17 @@ function render() {
       '<div class="card-clock">' +
         '<span class="card-time" title="Tap to copy">' + time + '</span>' +
         '<span class="card-day">'  + day  + '</span>' +
-        nightMark +
       '</div>' +
+      /* The night mark rides the BOTTOM-RIGHT corner, not the clock line (owner,
+         2026-08-22: "the moon should move all down to the right corner"). The
+         difference chip keeps its place, so the two share one right-hand group
+         and the UTC offset stays alone on the left. */
       '<div class="card-meta">' +
         '<span class="utc-offset">' + utc + '</span>' +
-        (vs ? '<span class="vs-sea ' + vs.cls + '">' + vs.label + '</span>' : '') +
+        '<span class="card-meta-right">' +
+          (vs ? '<span class="vs-sea ' + vs.cls + '">' + vs.label + '</span>' : '') +
+          nightMark +
+        '</span>' +
       '</div>';
     return c.url
       ? '<a class="' + cardCls + ' card-link" href="' + c.url + '">' + inner + '</a>'
