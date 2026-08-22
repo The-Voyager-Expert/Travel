@@ -6847,11 +6847,16 @@ window.TVE.home = (function () {
       { name: 'Courtyard by Marriott Los Angeles Pasadena/Monrovia', note: 'Marriott Courtyard brand — 700 West Huntington Drive in Monrovia, 15 min by car, heated outdoor pool, 24h reception, free parking · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-los-angeles-pasadena-monrovia.html', tier: 'budget' }
     ], price: { budget: '$110–190', mid: '$190–260', expensive: '$260–400', luxury: '$400+' } },
     'pensacola': { h: [
-      { name: 'Portofino Island Resort', note: 'Independent — Santa Rosa Island, Gulf Spa, multiple pools, direct Gulf of Mexico beachfront · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/portofino-island-resort.html' },
-      { name: 'Fairfield by Marriott Inn & Suites Pensacola Beach', note: 'Marriott family — Pensacola Beach beachfront, two pools, lazy river, breakfast included · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/fairfield-by-marriott-inn-suites-pensacola-beach.html' },
-      { name: 'Margaritaville Beach Hotel', note: 'Margaritaville Hotels — Pensacola Beach waterfront, five pools, Landshark Bar & Grill · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/margaritaville-beach-hotel-pensacola-beach.html' },
-      { name: 'Hilton Pensacola Beach', note: 'Hilton brand — Gulf Breeze Parkway beachfront, outdoor pool, Seafood & Grille restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-pensacola-beach.html' }
-    ] },
+      { name: 'Portofino Island Resort', note: 'Independent — Santa Rosa Island, Gulf Spa, multiple pools, direct Gulf of Mexico beachfront · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/portofino-island-resort.html', tier: 'luxury' },
+      { name: 'Fairfield by Marriott Inn & Suites Pensacola Beach', note: 'Marriott family — Pensacola Beach beachfront, two pools, lazy river, breakfast included · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/fairfield-by-marriott-inn-suites-pensacola-beach.html', tier: 'mid' },
+      { name: 'Margaritaville Beach Hotel', note: 'Margaritaville Hotels — Pensacola Beach waterfront, five pools, Landshark Bar & Grill · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/margaritaville-beach-hotel-pensacola-beach.html', tier: 'expensive' },
+      { name: 'Hilton Pensacola Beach', note: 'Hilton brand — Gulf Breeze Parkway beachfront, outdoor pool, Seafood & Grille restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-pensacola-beach.html', tier: 'expensive' },
+      { name: 'Residence Inn by Marriott Pensacola Downtown', note: 'Marriott Residence Inn brand — 601 East Chase Street, suites with kitchens, outdoor pool, free parking · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/residence-inn-pensacola-downtown.html', tier: 'mid' },
+      { name: 'SpringHill Suites by Marriott Pensacola Beach', note: 'Marriott SpringHill brand — 24 Via De Luna on the Gulf, outdoor pool, 24h reception, free parking · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/springhill-suites-pensacola-beach.html', tier: 'mid' },
+      { name: 'Hampton Inn Pensacola Beach', note: 'Hilton Hampton brand — 2 Via DeLuna Drive on the Gulf, heated outdoor pool, 24h reception, breakfast included · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/hampton-inn-pensacola-beach-gulf-front.html', tier: 'mid' },
+      { name: 'Courtyard by Marriott Pensacola Downtown', note: 'Marriott Courtyard brand — 700 East Chase Street, outdoor pool, 24h reception, free parking · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-pensacola-downtown.html', tier: 'budget' },
+      { name: 'Hyatt Place Pensacola Airport', note: 'Hyatt Place brand — 161 Airport Lane, indoor pool, 24h reception, free airport shuttle · 7.9 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-place-pensacola-airport.html', tier: 'budget' }
+    ], price: { budget: '$100–175', mid: '$175–230', expensive: '$230–350', luxury: '$350+' } },
     'petra': { h: [
       { name: 'Petra Guest House Hotel', note: 'Independent boutique — at the siq entrance gate, Cave Bar in a 2,000-year-old Nabataean cave, unbeatable proximity to the Treasury · 8.9 Booking.com', url: 'https://www.booking.com/hotel/jo/guesthouse-petra.html' },
       { name: 'The Old Village Hotel & Resort Petra', note: 'Independent — village setting near the siq entrance, terrace pool with wadi views, traditional stone architecture · 9.0 Booking.com', url: 'https://www.booking.com/hotel/jo/the-old-village-amp-resort.html' },
@@ -11032,7 +11037,7 @@ window.TVE.home = (function () {
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN',
       'HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR',
       'LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE',
-      'OPO','ORD','ORY','OSL','PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN',
+      'OPO','ORD','ORY','OSL','PEK','PMI','PNS','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN',
       'SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC','WLG','YUL','YVR',
       'YYZ','ZAG','ZRH'
     ];
