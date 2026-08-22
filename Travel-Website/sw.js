@@ -1771,7 +1771,8 @@
    Short chips are untouched: 32 of wine-regions' 38 still sit on one line.
    web-travel-style.css -> v92. CACHE to v1220. */
 
-var CACHE = 'travel-cache-v1220';
+/* 2026-08-22: one Lounges page for the whole world — essentials/lounges-us/ and essentials/lounges-europe/ merged into essentials/lounges/ and left the deployed tree (owner: "Lounges needs to be one page with all the lounges in the world" · "nor US or EU should have any priority, all the countries need to look the same and have the same treatment"). 45 countries A-Z, 91 airports, 266 lounges; every airport card keyed on its own IATA. toolbar.js: US_IATAS + EU_ANCHOR (a list and a country-anchor map) replaced by one flat LOUNGE_IATAS, so the Day 1 chip needs no per-region branch — which also fixes LAS, on the page and missing from the US list, so every Las Vegas guide shipped chipless. web-travel-style.css: .section-label.skyteam / .amex retired for the four ACCESS families .airline / .pay / .pp / .card, coloured from the badge family tokens so they flip for dark mode with no second rule — one alliance cannot own a colour on a worldwide page. Both are MIN_VERSIONS assets, so both floors move. toolbar.js -> v843, web-travel-style.css -> v93. CACHE to v1221. */
+var CACHE = 'travel-cache-v1221';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1784,7 +1785,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 842, 'mobile.css': 88, 'web-travel-style.css': 92, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 843, 'mobile.css': 88, 'web-travel-style.css': 93, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -857,7 +857,12 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
       var OCEANIA_COUNTRIES = {'Australia':1,'New Zealand':1,'French Polynesia':1};
       var isOceania = !!OCEANIA_COUNTRIES[country];
       var statsLink = isUS ? '/stats/us/' : isEurope ? '/stats/europe/' : isAsia ? '/stats/asia/' : isCaribbean ? '/stats/caribbean/' : isSouthAmerica ? '/stats/south-america/' : isCanada ? '/stats/canada/' : isOceania ? '/stats/oceania/' : null;
-      var loungeLink = isUS ? '/essentials/lounges-us/' : isEurope ? '/essentials/lounges-europe/' : null;
+      /* One worldwide lounge page since 2026-08-22, so this is no longer a
+         region branch. It used to read US -> lounges-us, Europe -> lounges-europe,
+         null for everyone else — which silently dropped the whole card for a
+         reader flying out of Tokyo, Sao Paulo or Cape Town. Never re-add a
+         country test here (owner rule: no region has priority). */
+      var loungeLink = '/essentials/lounges/';
       var climateKey = k.replace(/ /g, '-');
 
       var safetyData = SAFETY_FULL[climateKey] || SAFETY_FULL[k] || null;
@@ -1092,7 +1097,10 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
             '<div class="byg-links-row"><a href="https://www.tsawaittimes.com/" class="byg-link" target="_blank" rel="noopener">Check wait →</a></div></div>';
         }
       }
-      if (loungeLink) {
+      /* The detail rows come from LOUNGE_DATA, which does not cover every
+         airport. Where it has nothing, the compact card is shown instead of
+         an empty one carrying only a link. */
+      if (airInfo && LOUNGE_DATA[airInfo.iata]) {
         var loungeCardHtml = '<div class="byg-card byg-card-fixed-sm"><div class="byg-card-head"><span class="byg-card-title">Airport Lounges</span></div>';
         if (airInfo) {
           var ld = LOUNGE_DATA[airInfo.iata];
@@ -1118,6 +1126,8 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
         }
         loungeCardHtml += '<div class="byg-links-row"><a href="' + loungeLink + '?q=' + cityParam + '" class="byg-link">All lounges →</a></div></div>';
         html += loungeCardHtml;
+      } else {
+        html += essCard('', 'Lounges', 'Lounge guide', loungeLink);
       }
       html += essCard('', 'Packing', 'Packing list', '/essentials/packing/');
       if (DAY_TRIP_CITIES[climateKey]) {

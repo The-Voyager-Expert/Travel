@@ -2491,9 +2491,9 @@ window.TVE.home = (function () {
      nesting for no new page. Every page is still one tap from here. */
   var RES_GROUPS = [
     { name: 'Money', links: [
-      ['essentials/budget/',            'Budget'],
+      ['essentials/budget/',            'Budget Guide'],
       ['essentials/cards-atm/',         'Cards & ATM'],
-      ['essentials/tipping/',           'Tipping']
+      ['essentials/tipping/',           'Tipping Guide']
     ] },
     /* Airline Networks replaces the Delta / United / American Network rows the
        landing block still carries. Those three pages left the deployed tree on
@@ -2501,7 +2501,7 @@ window.TVE.home = (function () {
        so the old rows are dead links — never copy them back from that block. */
     { name: 'Flights & airports', links: [
       ['essentials/north-american-airlines/', 'North American Airlines'],
-      ['essentials/latin-american-airlines/', 'Latin American Airlines'],
+      ['essentials/latin-american-airlines/', 'Latin American & Caribbean Airlines'],
       ['essentials/european-airlines/',       'European Airlines'],
       ['essentials/middle-east-airlines/',    'Middle East Airlines'],
       ['essentials/african-airlines/',        'African Airlines'],
@@ -2509,29 +2509,28 @@ window.TVE.home = (function () {
       ['essentials/oceania-airlines/',        'Airlines of Oceania'],
       ['essentials/baggage/',           'Baggage'],
       ['essentials/connections/',       'Airport Connections'],
-      ['essentials/lounges-us/',        'US Lounges'],
-      ['essentials/lounges-europe/',    'EU Lounges'],
+      ['essentials/lounges/',           'Lounges'],
       ['essentials/airline-networks/',  'US Airline Networks']
     ] },
     /* The four regional train guides reach the nav for the first time here —
        until now they were linked only from inside the European trains page. */
     { name: 'Trains', links: [
-      ['essentials/european-trains/',   'European Trains'],
-      ['essentials/african-trains/',    'African Trains'],
-      ['essentials/americas-trains/',   'Americas Trains'],
-      ['essentials/asian-trains/',      'Asian Trains'],
-      ['essentials/oceania-trains/',    'Oceania Trains'],
+      ['essentials/european-trains/',   'European Train Guide'],
+      ['essentials/african-trains/',    'African Train Guide'],
+      ['essentials/americas-trains/',   'Americas Train Guide'],
+      ['essentials/asian-trains/',      'Asian Train Guide'],
+      ['essentials/oceania-trains/',    'Oceania Train Guide'],
       ['essentials/train-passes/',      'Train Passes'],
       ['essentials/scenic-trains/',     'Scenic Trains'],
       ['essentials/day-trips/',         'Day Trips']
     ] },
     { name: 'Getting around', links: [
-      ['essentials/worldwide-car-rental/',          'Worldwide Car Rental'],
+      ['essentials/worldwide-car-rental/',          'Worldwide Car Rental Networks'],
       ['essentials/european-car-rental/',           'Car Rental in Europe'],
       ['essentials/north-american-car-rental/',     'Car Rental in North America'],
       ['essentials/latin-american-car-rental/',     'Car Rental in Latin America'],
-      ['essentials/asia-pacific-car-rental/',       'Car Rental in Asia & Pacific'],
-      ['essentials/africa-middle-east-car-rental/', 'Car Rental in Africa & Middle East'],
+      ['essentials/asia-pacific-car-rental/',       'Car Rental in Asia & the Pacific'],
+      ['essentials/africa-middle-east-car-rental/', 'Car Rental in Africa & the Middle East'],
       ['essentials/private-transfers/',             'Private Transfers'],
       ['essentials/transit-cards/',     'Transit Cards'],
       ['essentials/storage/',           'Luggage Storage']
@@ -2540,21 +2539,24 @@ window.TVE.home = (function () {
       ['essentials/visa/',              'Visas'],
       ['essentials/entry/',             'Entry Requirements'],
       ['essentials/passport/',          'Passport'],
-      ['essentials/trusted-traveler/',  'Trusted Traveler'],
+      ['essentials/trusted-traveler/',  'Trusted Traveler Programs'],
       ['essentials/visa-times/',        'Visa Processing Times'],
-      ['essentials/nomad-visas/',       'Digital Nomad Visas']
+      ['essentials/nomad-visas/',       'Digital Nomad Visa Quick Reference']
     ] },
+    /* essentials/hotels/ + essentials/neighborhoods/ merged into ONE page,
+       essentials/where-to-stay/, on 2026-08-22 (owner: "combine this page
+       with this page ... make it work" · "title needs to be Where to Stay").
+       Both old paths 404; never re-add either row. */
     { name: 'Stay & eat', links: [
-      ['essentials/hotels/',            'Hotels'],
-      ['essentials/neighborhoods/',     'Neighborhoods'],
-      ['essentials/restaurants/',       'Restaurants']
+      ['essentials/where-to-stay/',      'Where to Stay'],
+      ['essentials/restaurants/',        'Restaurants & Reservations']
     ] },
     { name: 'Health & safety', links: [
-      ['essentials/safety/',            'Safety'],
+      ['essentials/safety/',            'Safety Guide'],
       ['essentials/vaccines/',          'Vaccines'],
       ['essentials/tap-water/',         'Tap Water'],
-      ['essentials/insurance/',         'Insurance'],
-      ['essentials/scams/',             'Scams'],
+      ['essentials/insurance/',         'Travel Insurance'],
+      ['essentials/scams/',             'Scams & Tourist Traps'],
       ['essentials/mistakes/',          'First-timer Mistakes']
     ] },
     /* Packing is NOT here (owner 2026-08-17: "remove packing from the plan and
@@ -2566,17 +2568,17 @@ window.TVE.home = (function () {
        plugs, currencies and time-zones are NOT under essentials/ — they moved
        to the site root on 2026-08-16 — so they stay tabs only, no group. */
     { name: 'Plan', links: [
-      ['essentials/sims/',              'Phone & SIM'],
+      ['essentials/sims/',              'Phone & SIM Abroad'],
       ['essentials/apps/',              'Travel Apps'],
       ['essentials/tours/',             'Tours & Tickets'],
       ['essentials/resources/',         'More Resources']
     ] },
     { name: 'Special trips', links: [
-      ['essentials/cruises/',           'Cruises'],
-      ['essentials/disney/',            'Disney Parks'],
-      ['essentials/sports-calendar/',   'Sports Calendar'],
-      ['essentials/festival-finder/',   'Festivals'],
-      ['essentials/pickleball/',        'Pickleball']
+      ['essentials/cruises/',           'Best Cruise Lines'],
+      ['essentials/disney/',            'Best of Disney Parks'],
+      ['essentials/sports-calendar/',   'Sports & Major Events Calendar'],
+      ['essentials/festival-finder/',   'Best Festivals & Holidays'],
+      ['essentials/pickleball/',        'Best Places to Play Pickleball']
     ] }
   ];
 
@@ -7065,7 +7067,7 @@ window.TVE.home = (function () {
       anPills.className = 'also-on-this-site-pills neigh-more';
       var anLink = document.createElement('a');
       anLink.className = 'also-on-this-site-pill';
-      anLink.href = base + 'essentials/neighborhoods/#' + encodeURIComponent(anCity);
+      anLink.href = base + 'essentials/where-to-stay/#' + encodeURIComponent(anCity);
       anLink.innerHTML = monoSVG('neighborhoods', 14) + ' Which neighborhood to stay in';
       anPills.appendChild(anLink);
       wrap.appendChild(anPills);
@@ -8853,7 +8855,7 @@ window.TVE.home = (function () {
        difference where there is none is the opposite fix. */
     var PAGE_ICON = {
       /* Air */
-      'connections': 'hourglass', 'lounges-us': 'coffee', 'lounges-europe': 'coffee',
+      'connections': 'hourglass', 'lounges': 'coffee',
       'delta-routes': 'flight-nav', 'united-routes': 'flight-nav',
       'airline-networks': 'flight-nav', 'airlines': 'plane',
       /* Stats — every regional page plus the overview and the records page */
@@ -10181,8 +10183,9 @@ window.TVE.home = (function () {
 
   /* ── Lounge arrival chip — injected at the top of Day 1 ─────────────────────
      Reads the city slug from the page path → looks up destination IATA via
-     CHIP_DATA → routes to Lounges-US, Lounges-Europe, or Before-You-Go#lounges
-     based on which page covers that airport. Chip sits immediately after the
+     CHIP_DATA → links to /essentials/lounges/#<iata> when that airport has a
+     card there, and is a plain unclickable chip when it does not (owner
+     2026-08-16). Chip sits immediately after the
      .day-header (above .hotel-first). CSS: guide-style.css .lounge-arrival-chip */
   (function _loungeChipInject() {
     if (!/\/guides\//i.test(location.pathname)
@@ -10430,27 +10433,23 @@ window.TVE.home = (function () {
       'zurich':            {iata:'ZRH', name:'Zurich International'}
     };
 
-    /* US airport → lowercase IATA anchor in Lounges-US.html */
-    var US_IATAS = ['ATL','BOS','DTW','JFK','LAX','MSP','SAN','SEA','SFO','SLC','IAD','IAH','LGA','MIA','ORD'];
-    /* EU airport → country anchor in Lounges-Europe.html */
-    var EU_ANCHOR = {
-      'AMS':'nl',
-      'CDG':'fr','ORY':'fr','NCE':'fr','LYS':'fr',
-      'LHR':'uk','LGW':'uk','MAN':'uk','EDI':'uk',
-      'VIE':'at','BRU':'be',
-      'DBV':'hr','SPU':'hr','ZAG':'hr',
-      'CPH':'dk','HEL':'fi',
-      'FRA':'de','MUC':'de','BER':'de','DUS':'de','HAM':'de',
-      'ATH':'gr','HER':'gr','SKG':'gr',
-      'DUB':'ie',
-      'FCO':'it','MXP':'it','VCE':'it','NAP':'it',
-      'LUX':'lu',
-      'OSL':'no','BGO':'no',
-      'LIS':'pt','OPO':'pt','FAO':'pt',
-      'MAD':'es','BCN':'es','AGP':'es','PMI':'es','VLC':'es',
-      'ARN':'se','GOT':'se',
-      'GVA':'ch','ZRH':'ch'
-    };
+    /* Every airport with a card on /essentials/lounges/ — the one worldwide
+       lounge page since 2026-08-22.  It replaced US_IATAS (a list) and
+       EU_ANCHOR (a map to a COUNTRY anchor, because the European page's cards
+       carried no id).  One page, one shape: every card is keyed on its own
+       IATA code, so this is a flat list and the href below needs no branch.
+       Never re-introduce a per-region map — that is what made a Las Vegas
+       guide silently chipless (LAS was on the page and missing from the US
+       list) while every European guide jumped to its country rather than to
+       its airport. */
+    var LOUNGE_IATAS = [
+      'AGP','AMS','ARN','ATH','ATL','AUA','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG','CMB',
+      'CPH','CPT','CUN','DBV','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT','GRU',
+      'GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','KTM','LAS','LAX','LGA',
+      'LGW','LHR','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MSP','MUC','MXP','NAP','NCE',
+      'OPO','ORD','ORY','OSL','PEK','PMI','PVG','RAK','SAN','SCL','SEA','SFO','SIN','SKG','SLC','SPU',
+      'SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+    ];
 
     function _inject() {
       var parts = location.pathname.split('/');
@@ -10474,12 +10473,9 @@ window.TVE.home = (function () {
          that page and jumps straight to the airport's own row. Everywhere else
          the chip is a plain <div>: no href, no hover, nothing to click (owner
          2026-08-16). */
-      var href = null;
-      if (US_IATAS.indexOf(info.iata) >= 0) {
-        href = '/essentials/lounges-us/#' + info.iata.toLowerCase();
-      } else if (EU_ANCHOR[info.iata]) {
-        href = '/essentials/lounges-europe/#' + EU_ANCHOR[info.iata];
-      }
+      var href = LOUNGE_IATAS.indexOf(info.iata) >= 0
+        ? '/essentials/lounges/#' + info.iata.toLowerCase()
+        : null;
 
       var chip = document.createElement(href ? 'a' : 'div');
       chip.className = 'lounge-arrival-chip';
