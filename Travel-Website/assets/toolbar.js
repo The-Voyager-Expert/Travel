@@ -5955,11 +5955,18 @@ window.TVE.home = (function () {
       { name: 'The Bradley Boulder Inn', note: 'Independent 12-room inn — 2040 16th Street one block off Pearl Street, adults only, evening wine hour, fireplace lounge, private parking · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-bradley-boulder-inn.html', tier: 'expensive' }
     ], price: { budget: '$130–140', mid: '$160–170', expensive: '$220–300', luxury: '$350+' } },
     'bruges': { h: [
-      { name: 'Hotel Heritage', note: 'Leading Hotels of the World — 15th-century mansion on Niklaas Desparsstraat, indoor pool, spa, refined brasserie · 9.4 Booking.com', url: 'https://www.booking.com/hotel/be/heritage.html' },
-      { name: 'Hotel de Orangerie', note: 'Small Luxury Hotels — converted 15th-century nunnery on the Dijver canal, canal-view rooms, Les Jardins de Bruges restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/be/de-orangerie.html' },
-      { name: 'Jan Brito Hotel', note: 'Independent — 16th-century manor in the historic center, garden, marble bathrooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/be/jan-brito.html' },
-      { name: 'The Pand Hotel', note: 'Independent boutique — 18th-century townhouse on Pandreitje canal, antique décor · 9.4 Booking.com', url: 'https://www.booking.com/hotel/be/the-pand.html' }
-    ] },
+      { name: 'Hotel Heritage', note: 'Leading Hotels of the World — 15th-century mansion on Niklaas Desparsstraat, indoor pool, spa, refined brasserie · 9.4 Booking.com', url: 'https://www.booking.com/hotel/be/heritage.html', tier: 'luxury' },
+      { name: 'Hotel de Orangerie', note: 'Small Luxury Hotels — converted 15th-century nunnery on the Dijver canal, canal-view rooms, Les Jardins de Bruges restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/be/de-orangerie.html', tier: 'expensive' },
+      { name: 'Jan Brito Hotel', note: 'Independent — 16th-century manor in the historic center, garden, marble bathrooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/be/jan-brito.html', tier: 'luxury' },
+      { name: 'The Pand Hotel', note: 'Independent boutique — 18th-century townhouse on Pandreitje canal, antique décor · 9.4 Booking.com', url: 'https://www.booking.com/hotel/be/the-pand.html', tier: 'mid' },
+      { name: "Dukes' Academie Brugge", note: "Dukes' Hotel Collection — Wijngaardstraat 7-9 by the Begijnhof and Minnewater, 24h reception, garden terrace, fitness room, private parking · 9.0 Booking.com", url: 'https://www.booking.com/hotel/be/academie.html', tier: 'budget' },
+      { name: 'Canal View Hotel Ter Brughe', note: 'CW Hotel Collection — 16th-century house on Oost Gistelhof with rooms over the Augustijnenrei canal, 24h reception, breakfast in the old cellar · 9.0 Booking.com', url: 'https://www.booking.com/hotel/be/terbrughe.html', tier: 'budget' },
+      { name: 'Hotel Biskajer', note: 'CW Hotel Collection — adults-only townhouse on Biskajersplein two minutes from the Markt, 24h reception, quiet square · 9.0 Booking.com', url: 'https://www.booking.com/hotel/be/biskajer-brugge.html', tier: 'mid' },
+      { name: 'Boutique Hotel Sablon', note: 'CW Hotel Collection — Kopstraat 10 off the Markt, sauna and steam room, 24h reception, garage parking · 9.0 Booking.com', url: 'https://www.booking.com/hotel/be/grandhoteldusablonbruges.html', tier: 'mid' },
+      { name: 'Relais Bourgondisch Cruyce', note: 'Independent — timber-fronted 15th-century house on Wollestraat with rooms over the Dijver canal, 24h reception, antiques throughout · 9.6 Booking.com', url: 'https://www.booking.com/hotel/be/cruyce.html', tier: 'expensive' },
+      { name: "Dukes' Palace Brugge", note: "Dukes' Hotel Collection — 15th-century ducal palace on Prinsenhof, the city's only five-star, spa and sauna, garden, 24h reception · 9.2 Booking.com", url: 'https://www.booking.com/hotel/be/dukes-palace.html', tier: 'expensive' }
+    ], price: { budget: '€120–145', mid: '€145–165', expensive: '€195–210', luxury: '€250+' } },
+
     'brussels': { h: [
       { name: 'Hotel Amigo', note: 'Rocco Forte brand — Renaissance-style building steps from Grand Place, art-curated interiors, Italian-influenced brasserie · 9.0 Booking.com', url: 'https://www.booking.com/hotel/be/amigo.html' },
       { name: 'Brussels Marriott Hotel Grand Place', note: 'Marriott brand — Rue Auguste Orts, rooftop terrace, steps from Grand Place and Sainte-Catherine quarter · 8.6 Booking.com', url: 'https://www.booking.com/hotel/be/brussels-marriott.html' },
