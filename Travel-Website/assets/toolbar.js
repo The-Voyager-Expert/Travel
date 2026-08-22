@@ -7116,11 +7116,13 @@ window.TVE.home = (function () {
       { name: 'Cour du Corbeau, Strasbourg', note: 'Small Luxury Hotels — 16th-century coaching inn in the historic center, courtyard, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/fr/cour-du-corbeau.html', tier: 'luxury' }
     ], price: { budget: '€90–130', mid: '€130–190', expensive: '€190–280', luxury: '€280+' } },
     'stuttgart': { h: [
-      { name: 'EmiLu Design Hotel', note: 'Independent design hotel — Nadlerstraße 4 in Stuttgart-Mitte off Königstraße, sauna, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/de/emilu-gmbh-stuttgart.html' },
-      { name: 'Steigenberger Graf Zeppelin', note: 'Steigenberger brand — Arnulf-Klett-Platz opposite the Hauptbahnhof, spa, 24h reception, AC · 8.1 Booking.com', url: 'https://www.booking.com/hotel/de/steigenberger-graf-zeppelin.html' },
-      { name: 'Kronen Hotel Stuttgart', note: 'Independent — Kronenstraße pedestrian zone, 4-star design rooms, close to Schlossplatz · 8.8 Booking.com', url: 'https://www.booking.com/hotel/de/kronengmbh.html' },
-      { name: 'Marquardt Stuttgart', note: 'Independent — Bolzstraße by the Kunstmuseum, design hotel with BASA Restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/de/marquardt.html' }
-    ] },
+      { name: 'Aloft Stuttgart', note: 'Marriott Aloft brand — Heilbronner Straße 70 behind the Hauptbahnhof, WXYZ bar, gym, 24h reception, AC · 8.4 Booking.com', url: 'https://www.booking.com/hotel/de/aloft-hotels.html', tier: 'budget' },
+      { name: 'Hampton by Hilton Stuttgart City Centre', note: 'Hilton Hampton brand — Wolframstraße 27 by the Milaneo mall, gym, 24h reception, AC · 8.3 Booking.com', url: 'https://www.booking.com/hotel/de/hampton-by-hilton-stuttgart-city-centre.html', tier: 'mid' },
+      { name: 'Kronen Hotel Stuttgart', note: 'Independent — Kronenstraße pedestrian zone, 4-star design rooms, close to Schlossplatz · 8.8 Booking.com', url: 'https://www.booking.com/hotel/de/kronengmbh.html', tier: 'mid' },
+      { name: 'EmiLu Design Hotel', note: 'Independent design hotel — Nadlerstraße 4 in Stuttgart-Mitte off Königstraße, sauna, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/de/emilu-gmbh-stuttgart.html', tier: 'expensive' },
+      { name: 'Marquardt Stuttgart', note: 'Independent — Bolzstraße by the Kunstmuseum, design hotel with BASA Restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/de/marquardt.html', tier: 'expensive' },
+      { name: 'Steigenberger Graf Zeppelin', note: 'Steigenberger brand — Arnulf-Klett-Platz opposite the Hauptbahnhof, spa, 24h reception, AC · 8.1 Booking.com', url: 'https://www.booking.com/hotel/de/steigenberger-graf-zeppelin.html', tier: 'luxury' }
+    ], price: { budget: '€80–120', mid: '€120–180', expensive: '€180–240', luxury: '€240+' } },
     'sydney': { h: [
       { name: 'Park Hyatt Sydney', note: 'Hyatt brand — Lavender Bay, Opera House and Harbour Bridge views from 155 rooms, rooftop pool · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/au/park-hyatt-sydney.html' },
       { name: 'Capella Sydney', note: 'Capella Hotels — restored 1950s–60s heritage ensemble, spa, David Laris-conceived dining · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/au/capella-sydney.html' },
@@ -10913,8 +10915,8 @@ window.TVE.home = (function () {
       'FAO','FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN',
       'IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT',
       'MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS',
-      'PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','SXB','SYD',
-      'TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB',
+      'SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
