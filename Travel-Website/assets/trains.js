@@ -14,7 +14,9 @@
      .train-card[data-type]   type filtering + free-text search
      .country-section         a jump-nav pill, an id, and scroll-spy
      .multi-section           same, for the cross-border groupings
-     .legend-item[data-dfilt] the origin/crossed/stop dot filters
+     .purpose-section         same — the transport-or-the-trip groups on the
+                              three small pages (no jump pill; they have no nav)
+     .rail-band               the opening band; static, nothing attaches to it
      .route-item              city names linkified to their guide
      #train-search            the search box, wired to TVESearch when present
 
@@ -23,7 +25,6 @@
    ══════════════════════════════════════════════════════════════════════════ */
 (function () {
   var activeType = 'all';
-  var activeDot = null;
   var searchEl = document.getElementById('train-search');
   var countEl = document.getElementById('train-count');
   var noRes = document.getElementById('train-noresult');
@@ -35,6 +36,22 @@
   [].forEach.call(document.querySelectorAll('.multi-section'), function (m, i) {
     if (!m.id) m.id = 'sec-multi' + (i || '');
     sections.push(m);
+  });
+  /* .purpose-section — the transport-or-the-trip grouping that replaced the
+     8-pill type filter on the three small pages (owner rule 2026-08-22:
+     "each of them needs to be re thought"). It is registered here for one
+     reason: applyFilters() hides a SECTION whose cards are all filtered out,
+     and a group left out of `sections` keeps its heading on screen above an
+     empty space during a search. No jump pill is built for these — the three
+     pages that carry them have no jump nav. */
+  [].forEach.call(document.querySelectorAll('.purpose-section'), function (s, i) {
+    if (!s.id) {
+      var h = s.querySelector('.purpose-header h2');
+      var base = (h ? h.textContent : 'group-' + i).trim().toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      s.id = 'sec-' + base;
+    }
+    sections.push(s);
   });
   [].forEach.call(document.querySelectorAll('.country-section'), function (s) {
     if (!s.id) {
@@ -68,8 +85,7 @@
       var typeMatch = activeType === 'all' || (card.dataset.type || '').includes(activeType);
       var hay = card.textContent.toLowerCase().replace(/\buk\b/g, 'uk united kingdom').replace(/\busa\b/g, 'usa united states').replace(/\buae\b/g, 'uae united arab emirates');
       var textMatch = !q || hay.includes(q);
-      var dotMatch = !activeDot || card.querySelector('.ctag.' + activeDot);
-      if (typeMatch && textMatch && dotMatch) { card.classList.remove('hidden'); shown++; }
+      if (typeMatch && textMatch) { card.classList.remove('hidden'); shown++; }
       else { card.classList.add('hidden'); }
     });
     sections.forEach(function (section) {
@@ -79,10 +95,8 @@
     });
     var agg = document.querySelector('.aggregators-section');
     var ctrl = document.querySelector('.controls');
-    var legend = document.querySelector('.legend');
     var foot = document.querySelector('.tb-footnote');
     if (agg) agg.style.display = q ? 'none' : '';
-    if (legend) legend.style.display = q ? 'none' : '';
     if (foot) foot.style.display = q ? 'none' : '';
     if (ctrl) ctrl.style.display = q ? 'none' : '';
     if (nav) nav.style.display = q ? 'none' : '';
@@ -200,21 +214,8 @@
     applyFilters();
   };
 
-  // ---- Legend dot filters ----
-  document.querySelectorAll('.legend-item[data-dfilt]').forEach(function (item) {
-    item.addEventListener('click', function () {
-      var filt = item.dataset.dfilt;
-      if (activeDot === filt) {
-        activeDot = null;
-        item.classList.remove('active');
-      } else {
-        activeDot = filt;
-        document.querySelectorAll('.legend-item[data-dfilt]').forEach(function (i) { i.classList.remove('active'); });
-        item.classList.add('active');
-      }
-      applyFilters();
-    });
-  });
+  /* The legend dot filters RETIRED 2026-08-22 with the legend itself — see
+     trains.css. Nothing on any of the five pages carries [data-dfilt] now. */
 
   // ---- Scroll-spy — highlight the jump pill for the section in view ----
   if ('IntersectionObserver' in window) {
