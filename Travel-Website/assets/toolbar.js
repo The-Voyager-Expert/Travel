@@ -7291,11 +7291,17 @@ window.TVE.home = (function () {
       { name: 'The Regent Taipei', note: 'IHG Regent brand — Zhongshan District, Crystal Jade restaurant, indoor pool · 8.9 Booking.com', url: 'https://www.booking.com/hotel/tw/regent-taipei.html', tier: 'luxury' }
     ], price: { budget: 'TWD 3,500–5,000', mid: 'TWD 5,000–8,000', expensive: 'TWD 8,000–12,000', luxury: 'TWD 12,000+' } },
     'tallinn': { h: [
-      { name: 'Nunne Boutique Hotel', note: 'Independent boutique — Nunne 14 against the Old Town wall, sauna and spa, 24h reception, AC · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ee/nunne-boutique.html' },
-      { name: 'Schlössle Hotel', note: 'Small Luxury Hotels — 15th-century merchant house in medieval Old Town, oak-panelled rooms, intimate · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/ee/schlossle.html' },
-      { name: 'The Three Sisters Hotel', note: 'Independent boutique — Old Town UNESCO site, three 15th-century merchant houses, Bordoo restaurant, antique furnishings · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ee/the-three-sisters.html' },
-      { name: 'Hotel Viru', note: 'Independent — Viru Square, Old Town landmark from 1972, rooftop sauna, Viru bar lounge, KGB Museum on the 23rd floor · 8.5 Booking.com', url: 'https://www.booking.com/hotel/ee/viru.html' }
-    ] },
+      { name: 'Hestia Hotel Kentmanni', note: 'Hestia — Kentmanni 13 in the city centre, spa with hot tub and sauna, gym, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ee/hestia-kentmanni.html', tier: 'budget' },
+      { name: 'Hampton by Hilton Tallinn', note: 'Hilton Hampton brand — Tartu maantee 49 by the bus station, sauna, gym, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ee/hampton-by-hilton-tallinn.html', tier: 'budget' },
+      { name: 'Hilton Tallinn Park', note: 'Hilton brand — Kreutzwaldi 23 beside Politseiaed park, indoor pool and spa, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ee/hilton-tallinn-park.html', tier: 'budget' },
+      { name: 'Hotel Viru', note: 'Independent — Viru Square, Old Town landmark from 1972, rooftop sauna, Viru bar lounge, KGB Museum on the 23rd floor · 8.5 Booking.com', url: 'https://www.booking.com/hotel/ee/viru.html', tier: 'budget' },
+      { name: 'Radisson Collection Hotel, Tallinn', note: 'Radisson Collection — Rävala puiestee 3, 24th-floor Lounge 24 bar, indoor pool and spa, 24h reception, AC · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ee/radisson-sas-tallinn.html', tier: 'mid' },
+      { name: 'Mövenpick Hotel Tallinn', note: 'Mövenpick — Lembitu 12 by Tammsaare Park, indoor pool and spa, 24h reception, AC · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ee/l-39-embitu.html', tier: 'mid' },
+      { name: 'The Three Sisters Hotel', note: 'Independent boutique — Old Town UNESCO site, three 15th-century merchant houses, Bordoo restaurant, antique furnishings · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ee/the-three-sisters.html', tier: 'mid' },
+      { name: 'Palace Hotel Tallinn', note: 'Radisson Individuals — Vabaduse väljak 3 on Freedom Square, indoor pool and spa, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ee/palace-tallinn.html', tier: 'expensive' },
+      { name: 'Nunne Boutique Hotel', note: 'Independent boutique — Nunne 14 against the Old Town wall, sauna and spa, 24h reception, AC · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ee/nunne-boutique.html', tier: 'expensive' },
+      { name: 'Schlössle Hotel', note: 'Small Luxury Hotels — 15th-century merchant house in medieval Old Town, oak-panelled rooms, intimate · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/ee/schlossle.html', tier: 'luxury' }
+    ], price: { budget: '€80–105', mid: '€105–140', expensive: '€140–200', luxury: '€200+' } },
     'tbilisi': { h: [
       { name: 'Qarvasla Hotel', note: 'Independent — 36 Kote Afkhazi Street in Sololaki, restored caravanserai walls, 24h reception, AC · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ge/qarvasla-tbilisi.html' },
       { name: 'Stamba Hotel', note: 'Independent — 1930s Soviet-era publishing house on Merab Kostava Street, 8-metre loft ceilings, garden, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ge/stamba-tbilisi.html' },
@@ -11059,7 +11065,7 @@ window.TVE.home = (function () {
       'HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
       'NCE','OPO','ORD','ORY','OSL','PEK','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
-      'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC',
+      'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TLL','TPE','VCE','VIE','VLC',
       'WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
