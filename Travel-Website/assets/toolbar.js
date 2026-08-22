@@ -5943,7 +5943,7 @@ window.TVE.home = (function () {
       { name: 'Residence Inn by Marriott Boston Back Bay/Fenway', note: 'Marriott Residence Inn — 125 Brookline Avenue between Back Bay and Fenway, suites with kitchens, rooftop indoor pool, 24h reception · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/residence-inn-boston-back-bay-fenway.html', tier: 'mid' },
       { name: 'AC Hotel by Marriott Boston Cleveland Circle', note: 'Marriott AC brand — 395 Chestnut Hill Avenue at Cleveland Circle, European-style rooms, AC lounge bar, 24h reception, Green Line to downtown · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/ac-by-marriott-boston-cleveland-circle.html', tier: 'mid' },
       { name: 'The Westin Copley Place, Boston', note: 'Marriott Westin brand — 10 Huntington Avenue in Back Bay, skybridge into Copley Place and the Prudential, fitness centre, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/westin-copley-place.html', tier: 'expensive' }
-    ] },
+    ], price: { budget: '$220–300', mid: '$250–320', expensive: '$520–710', luxury: '$700+' } },
     'boulder': { h: [
       { name: 'Hilton Garden Inn Boulder', note: 'Hilton brand — 2701 Canyon Boulevard, rooftop heated pool, Boulder Creek Path at the door, 10-min walk to Pearl Street · 8.0 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-garden-inn-boulder-co.html' },
       { name: 'Marriott Boulder', note: 'Marriott brand — Village Shopping Center at 28th and Canyon, outdoor pool, 10-min walk to Pearl Street · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/boulder-marriott.html' },
