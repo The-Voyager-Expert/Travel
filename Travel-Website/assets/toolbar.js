@@ -6339,11 +6339,15 @@ window.TVE.home = (function () {
       { name: 'Sunset Key Cottages', note: 'Opal Collection — private island cottages a seven-minute launch from Mallory Square, beach, pool, Latitudes restaurant', url: 'https://www.sunsetkeycottages.com/', tier: 'luxury' }
     ], price: { budget: '$290–430', mid: '$430–600', expensive: '$600–750', luxury: '$750+' } },
     'fortaleza': { h: [
-      { name: 'Gran Marquise Hotel', note: 'Independent luxury — Meireles Av. Beira Mar beachfront, rooftop pool with Atlantic views, top-rated address in Fortaleza · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/gran-marquise.html' },
-      { name: 'Luzeiros Hotel Fortaleza', note: 'Independent — Meireles beachfront, sea-view pool, steps from Iracema Beach nightlife and restaurants · 8.4 Booking.com', url: 'https://www.booking.com/hotel/br/luzeiros.html' },
-      { name: 'Othon Palace Fortaleza', note: 'Othon Hotels — Meireles beachfront, rooftop pool with sea view, Athenas restaurant · 8.6 Booking.com', url: 'https://www.booking.com/hotel/br/othon-palace-fortaleza.html' },
-      { name: 'Marina Park Hotel', note: 'Independent — Aldeota waterfront with Fortaleza Bay views, outdoor pool, rooftop bar · 8.6 Booking.com', url: 'https://www.booking.com/hotel/br/marina-park.html' }
-    ] },
+      { name: 'Hotel Praia Centro', note: 'Independent — Avenida Monsenhor Tabosa two blocks from Iracema beach, rooftop pool, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/br/praia-centro.html', tier: 'budget' },
+      { name: 'Crocobeach Hotel', note: 'Independent — Praia do Futuro beachfront, heated pool, water park and kids\' club, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/crocobeach.html', tier: 'mid' },
+      { name: 'Afago Mareiro Hotel', note: 'Independent — Avenida Beira Mar in Meireles, beachfront pool, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/br/olympo-praia.html', tier: 'mid' },
+      { name: 'Othon Palace Fortaleza', note: 'Othon Hotels — Meireles beachfront, rooftop pool with sea view, Athenas restaurant · 8.6 Booking.com', url: 'https://www.booking.com/hotel/br/othon-palace-fortaleza.html', tier: 'mid' },
+      { name: 'Marina Park Hotel', note: 'Independent — Aldeota waterfront with Fortaleza Bay views, outdoor pool, rooftop bar · 8.6 Booking.com', url: 'https://www.booking.com/hotel/br/marina-park.html', tier: 'mid' },
+      { name: 'Luzeiros Hotel Fortaleza', note: 'Independent — Meireles beachfront, sea-view pool, steps from Iracema Beach nightlife and restaurants · 8.4 Booking.com', url: 'https://www.booking.com/hotel/br/luzeiros.html', tier: 'expensive' },
+      { name: 'Praiano Hotel', note: 'Independent — Avenida Beira Mar in Meireles, rooftop pool, kids\' club, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/praiano-fortaleza.html', tier: 'expensive' },
+      { name: 'Gran Marquise Hotel', note: 'Independent luxury — Meireles Av. Beira Mar beachfront, rooftop pool with Atlantic views, top-rated address in Fortaleza · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/gran-marquise.html', tier: 'luxury' }
+    ], price: { budget: 'R$400–600', mid: 'R$600–900', expensive: 'R$900–1,300', luxury: 'R$1,300+' } },
     'foz-do-iguacu': { h: [
       { name: 'JL Hotel by Bourbon', note: 'Bourbon Hotéis \u2014 Avenida Costa e Silva north of the centre, outdoor pool, fitness, soundproofed rooms \u00b7 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/bourbon-foz-do-iguacu-business.html' },
       { name: 'San Rafael Comfort Class Hotel', note: 'Independent \u2014 Rua Almirante Barroso in the city centre, garden and outdoor pool, free parking, kids\u2019 club \u00b7 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/san-rafael-ltda.html' },
@@ -11120,7 +11124,7 @@ window.TVE.home = (function () {
     var LOUNGE_IATAS = [
       'AES','AGP','AJU','AMM','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
-      'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FRA','GIG','GOT','GRU','GVA','HAM',
+      'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FOR', 'FRA','GIG','GOT','GRU','GVA','HAM',
       'HAN','HEL','HER','HKG','HKT','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
       'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
