@@ -6098,11 +6098,17 @@ window.TVE.home = (function () {
     ], price: { budget: '€100–150', mid: '€150–230', expensive: '€230–300', luxury: '€300+' } },
 
     'cape-cod': { h: [
-      { name: 'The Wequassett Resort and Golf Club', note: 'Independent luxury — Pleasant Bay waterfront in Harwich, 18-hole championship golf, 4 pools, spa with Cape Cod salt-air treatments · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/wequassett-resort-and-golf-club.html' },
-      { name: 'Ocean Edge Resort & Golf Club', note: 'Independent resort — Brewster beachfront, 6 pools, oceanfront private beach, 18-hole golf, tennis and spa complex · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/the-mansion-at-ocean-edge-resort-amp-golf-club.html' },
-      { name: 'Old Harbor Inn', note: 'Independent adults-only inn — 22 Old Harbor Road in Chatham village, garden terrace, fitness room and tennis, breakfast in the room · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/old-harbor-inn.html' },
-      { name: "Captain's House Inn", note: 'Independent adults-only inn — 369 Old Harbor Road in Chatham, 4-star, on-site restaurant and massage, gardens and shared lounge · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/captain-39-s-house-inn.html' }
-    ] },
+      { name: 'The Wequassett Resort and Golf Club', note: 'Independent luxury — Pleasant Bay waterfront in Harwich, 18-hole championship golf, 4 pools, spa with Cape Cod salt-air treatments · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/wequassett-resort-and-golf-club.html', tier: 'luxury' },
+      { name: 'Ocean Edge Resort & Golf Club', note: 'Independent resort — Brewster beachfront, 6 pools, oceanfront private beach, 18-hole golf, tennis and spa complex · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/the-mansion-at-ocean-edge-resort-amp-golf-club.html', tier: 'expensive' },
+      { name: 'Old Harbor Inn', note: 'Independent adults-only inn — 22 Old Harbor Road in Chatham village, garden terrace, fitness room and tennis, breakfast in the room · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/old-harbor-inn.html', tier: 'expensive' },
+      { name: "Captain's House Inn", note: 'Independent adults-only inn — 369 Old Harbor Road in Chatham, 4-star, on-site restaurant and massage, gardens and shared lounge · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/captain-39-s-house-inn.html', tier: 'expensive' },
+      { name: 'Chatham Bars Inn', note: 'Independent luxury — 1914 grand resort on Chatham Harbor with a private beach, spa, four restaurants and boat trips from its own dock, 35 min drive from the Fairfield Inn', url: 'https://www.trivago.com/en-US/lm/resort-chatham-bars-inn', tier: 'luxury' },
+      { name: 'Courtyard Cape Cod Hyannis', note: 'Marriott brand — 707 Iyannough Road, indoor pool and bistro, 2 min drive from the Fairfield Inn · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-cape-cod-hyannis.html', tier: 'mid' },
+      { name: 'DoubleTree by Hilton Cape Cod - Hyannis', note: 'Hilton brand — 287 Iyannough Road with indoor and outdoor pools, sauna and restaurant, 5 min drive from the Fairfield Inn · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/doubletree-by-hilton-cape-cod-hyannis.html', tier: 'mid' },
+      { name: 'Hampton Inn & Suites Cape Cod - West Yarmouth', note: 'Hilton brand — Route 28 in West Yarmouth, indoor and outdoor pools, hot tub, breakfast included, 7 min drive from the Fairfield Inn · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/hampton-inn-suites-cape-cod-west-yarmouth.html', tier: 'budget' },
+      { name: 'Hyannis Harbor Hotel', note: 'Independent — 213 Ocean Street on Hyannis Harbor by the ferry docks, indoor and outdoor pools, 8 min drive from the Fairfield Inn · 8.2 Booking.com', url: 'https://www.booking.com/hotel/us/hyannis-harbor.html', tier: 'budget' }
+    ], price: { budget: '$100–140', mid: '$140–220', expensive: '$220–380', luxury: '$380+' } },
+
     'cape-town': { h: [
       { name: 'One&Only Cape Town', url: 'https://www.booking.com/hotel/za/one-and-only-cape-town.html', note: 'One&Only Resorts — V&A Waterfront, two-island resort layout, overwater spa, NOBU restaurant, two pools · 9.4 Booking.com' },
       { name: 'The Silo Hotel', url: 'https://www.booking.com/hotel/za/the-silo.html', note: 'Royal Portfolio — V&A Waterfront Silo District, converted grain silo, 28 rooms, panoramic rooftop bar, curated art collection · 9.0 Booking.com' },
