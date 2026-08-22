@@ -6161,11 +6161,16 @@ window.TVE.home = (function () {
       { name: 'The Ritz-Carlton, Dallas', note: "Ritz-Carlton brand — Uptown at McKinney and Maple, indoor pool, Ellie's Restaurant and Lounge, 24-hour butler · 8.8 Booking.com" , url: 'https://www.booking.com/hotel/us/the-ritz-carlton-dallas.html', tier: 'luxury' }
     ], price: { budget: '$150–200', mid: '$200–300', expensive: '$300–600', luxury: '$600+' } },
     'denver': { h: [
-      { name: 'Four Seasons Hotel Denver', note: 'Four Seasons brand — 14th Street downtown, rooftop heated outdoor pool with mountain views, EDGE Restaurant & Bar, spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-denver.html' },
-      { name: 'The Crawford Hotel', note: 'Independent boutique — inside Denver Union Station on Wynkoop Street, spa access, Union Station dining and bars steps away · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-crawford-at-union-station-denver.html' },
-      { name: 'The Oxford Hotel', note: "Independent boutique — LoDo's oldest hotel (1891) on 17th Street, private health club and spa, historic Cruise Room cocktail bar · 9.0 Booking.com", url: 'https://www.booking.com/hotel/us/the-oxford-downtown-denver.html' },
-      { name: 'The Brown Palace Hotel and Spa, Autograph Collection', note: 'Marriott Autograph — 1892 triangular-atrium landmark on 17th Street, Ship Tavern, three-level spa · 7.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-brown-palace-and-spa-autograph-collection.html' }
-    ] },
+      { name: 'Hampton Inn & Suites Denver Downtown Convention Center', note: 'Hilton Hampton brand — 550 15th Street two blocks from the convention centre, indoor pool, breakfast included, 24h reception · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/hamptoninnampsuitesdenverdowntownconventioncenter.html', tier: 'budget' },
+      { name: 'Hilton Garden Inn Denver Downtown', note: 'Hilton Garden Inn brand — 1400 Welton Street in the downtown core, restaurant and bar, 24h reception · 8.1 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-garden-inn-denver-downtown.html', tier: 'budget' },
+      { name: 'Courtyard by Marriott Denver Downtown', note: 'Marriott Courtyard brand — 934 16th Street on the 16th Street Mall, 24h reception, fitness centre · 8.1 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-denver-downtown.html', tier: 'budget' },
+      { name: 'Hyatt Place Denver Downtown', note: 'Hyatt Place brand — 440 14th Street near the convention centre, indoor pool, 24h reception · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-place-denver-downtown.html', tier: 'mid' },
+      { name: 'AC Hotel by Marriott Denver Downtown', note: 'Marriott AC brand — 750 15th Street in the downtown core, rooftop AC Lounge, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/ac-by-marriottdenver-downtown.html', tier: 'mid' },
+      { name: 'The Crawford Hotel', note: 'Independent boutique — inside Denver Union Station on Wynkoop Street, spa access, Union Station dining and bars steps away · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-crawford-at-union-station-denver.html', tier: 'expensive' },
+      { name: 'The Oxford Hotel', note: "Independent boutique — LoDo's oldest hotel (1891) on 17th Street, private health club and spa, historic Cruise Room cocktail bar · 9.0 Booking.com", url: 'https://www.booking.com/hotel/us/the-oxford-downtown-denver.html', tier: 'expensive' },
+      { name: 'The Brown Palace Hotel and Spa, Autograph Collection', note: 'Marriott Autograph — 1892 triangular-atrium landmark on 17th Street, Ship Tavern, three-level spa · 7.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-brown-palace-and-spa-autograph-collection.html', tier: 'expensive' },
+      { name: 'Four Seasons Hotel Denver', note: 'Four Seasons brand — 14th Street downtown, rooftop heated outdoor pool with mountain views, EDGE Restaurant & Bar, spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-denver.html', tier: 'luxury' }
+    ], price: { budget: '$140–180', mid: '$180–300', expensive: '$300–450', luxury: '$450+' } },
     'doha': { h: [
       { name: 'Four Seasons Hotel Doha', note: 'Four Seasons brand — private beach on the West Bay Corniche, 3 outdoor pools, Nobu Doha restaurant, spa and wellness centre · 9.3 Booking.com', url: 'https://www.booking.com/hotel/qa/four-seasons-doha.html' },
       { name: 'Mandarin Oriental, Doha', note: 'Mandarin Oriental brand — Pearl-Qatar island, marina and skyline views, The Spa at Mandarin Oriental, five dining venues · 9.1 Booking.com', url: 'https://www.booking.com/hotel/qa/mandarin-oriental-doha.html' },
@@ -10879,7 +10884,7 @@ window.TVE.home = (function () {
        its airport. */
     var LOUNGE_IATAS = [
       'AGP','AMS','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG',
-      'CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DFW','DOH','DTW','DUB','DUS','DXB','EDI','FAO',
+      'CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS','DXB','EDI','FAO',
       'FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST',
       'JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL',
       'MIA','MLE','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS','PSP','PVG',
