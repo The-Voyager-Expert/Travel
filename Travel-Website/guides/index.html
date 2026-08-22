@@ -5754,46 +5754,51 @@
 
   backBtn.addEventListener('click', function () { if (step > 1) showStep(step - 1); });
 
-  /* ── Scoring ── */
-  function climateScore(climateKey, month, pref) {
+  /* ── Matching ── every answer is a yes/no, none of them is a score.
+     (owner rule 2026-08-22: "you need to remove anything to do with rank!") ── */
+  function climateFits(climateKey, month, pref) {
     var cl = window._CLIMATE;
-    if (!cl || !climateKey || !cl[climateKey] || !cl[climateKey].hi) return 0;
-    if (pref === 'any') return 2;
+    if (!cl || !climateKey || !cl[climateKey] || !cl[climateKey].hi) return false;
+    if (pref === 'any') return true;
     var hi = cl[climateKey].hi[month];
-    if (hi === undefined || hi === null) return 0;
-    if (pref === 'hot')  { if (hi >= 30) return 3; if (hi >= 26) return 2; if (hi >= 22) return 1; return 0; }
-    if (pref === 'warm') { if (hi >= 22 && hi <= 30) return 3; if ((hi >= 18 && hi < 22) || (hi > 30 && hi <= 35)) return 2; if (hi >= 15 && hi < 18) return 1; return 0; }
-    if (pref === 'mild') { if (hi >= 15 && hi <= 22) return 3; if ((hi >= 12 && hi < 15) || (hi > 22 && hi <= 26)) return 2; return 0; }
-    if (pref === 'cool') { if (hi >= 8 && hi <= 15) return 3; if ((hi >= 5 && hi < 8) || (hi > 15 && hi <= 18)) return 2; return 0; }
-    if (pref === 'cold') { if (hi < 8) return 3; if (hi < 12) return 2; return 0; }
-    return 0;
+    if (hi === undefined || hi === null) return false;
+    /* The same bands the scorer used, at the boundary where it returned 0 — a
+       score of nought was never "a weaker match", it was "not this climate". */
+    if (pref === 'hot')  return hi >= 22;
+    if (pref === 'warm') return hi >= 15 && hi <= 35;
+    if (pref === 'mild') return hi >= 12 && hi <= 26;
+    if (pref === 'cool') return hi >= 5 && hi <= 18;
+    if (pref === 'cold') return hi < 12;
+    return false;
   }
 
-  /* ORDERS, NEVER FILTERS (owner rule 2026-08-22): a guide's day count is the most
-     we planned, not a requirement — a reader with three days uses Days 1-3 of a
-     five-day guide. So a close fit ranks higher and nothing is hidden. */
-  function daysScore(city, n) {
+  /* The day count MATCHES or it does not: the asked-for number, or one either
+     side, because "4 days" and a 5-day itinerary are the same trip to a reader;
+     "8+" matches 8 and more. This replaced an ORDERS-NEVER-FILTERS rule that
+     could not survive the ranking being removed — with no order left to feed,
+     the question would have changed nothing at all. */
+  function daysFits(city, n) {
     var dd = window._DAYS_DATA;
-    if (!dd || n === null || n === undefined) return 0;
+    if (n === null || n === undefined || n === '') return true;
+    if (!dd) return true;
     var d = Number(dd[city]); n = parseInt(n, 10);
-    if (!d || !n) return 0;
-    if (n >= 8) return d >= 8 ? 2 : (d === 7 ? 1 : 0);
-    var diff = Math.abs(d - n);
-    return diff === 0 ? 2 : (diff === 1 ? 1 : 0);
+    if (!d || !n) return false;
+    if (n >= 8) return d >= 8;
+    return Math.abs(d - n) <= 1;
   }
 
-  function activityScore(city, acts) {
+  function activityFits(city, acts) {
+    if (!acts || !acts.length) return true;
     var td = window._THEME_DATA;
-    if (!td || !acts || !acts.length) return 0;
+    if (!td) return true;
     var tags = td[city] || [];
-    var score = 0;
-    acts.forEach(function (a) { if (tags.indexOf(a) > -1) score++; });
-    return score;
+    for (var i = 0; i < acts.length; i++) if (tags.indexOf(acts[i]) > -1) return true;
+    return false;
   }
 
-  function computeScores() {
+  function computeMatches() {
     var allCards = [].slice.call(document.querySelectorAll('.mosaic-wrap a.dest-card'));
-    var scored = [];
+    var hits = [];
     allCards.forEach(function (card) {
       if (card.hasAttribute('data-special')) return;
       var nameEl = card.querySelector('.dest-name');
@@ -5813,31 +5818,35 @@
             .replace(/·\s*$/, '').replace(/^[^A-Za-zÀ-ÿÀ-ɏ]+/, '').trim();
         }
       }
-      var cs = climateScore(climateKey, ans.month, ans.climate);
-      var ds = daysScore(city, ans.days);
-      var as = activityScore(city, ans.activities);
-      var total = cs * 2 + ds * 2 + as;
-      if (total === 0) return;
-      scored.push({ href: href, city: city, flag: flag, country: country, climateKey: climateKey, total: total });
+      if (!climateFits(climateKey, ans.month, ans.climate)) return;
+      if (!daysFits(city, ans.days)) return;
+      if (!activityFits(city, ans.activities)) return;
+      hits.push({ href: href, city: city, flag: flag, country: country, climateKey: climateKey });
     });
-    scored.sort(function (a, b) { return b.total - a.total; });
-    return scored;
+    /* Alphabetical, and localeCompare rather than `<`: a code-point sort files
+       every accented city past the end of the alphabet. */
+    hits.sort(function (a, b) { return a.city.localeCompare(b.city, 'en', { sensitivity: 'base' }); });
+    return hits;
   }
 
   /* ── Show results ── */
-  function showResults(scored) {
-    var top = scored.slice(0, 5);
+  function showResults(hits) {
     inner.hidden = true;
     results.hidden = false;
     var container = document.getElementById('hc-res-cards');
+    var headEl = document.querySelector('#hc-results .tt-res-head');
     container.innerHTML = '';
-    if (top.length === 0) {
-      container.innerHTML = '<p style="font-size:13px;color:var(--muted)">No strong matches — try different settings.</p>';
+    if (hits.length === 0) {
+      if (headEl) headEl.textContent = 'Your destination matches';
+      container.innerHTML = '<p style="font-size:13px;color:var(--muted)">No guide matches all of those at once. Try different settings.</p>';
       return;
     }
+    /* "All N matches" — every match, once, in one list (owner rule 2026-08-22).
+       No top five: the head names the number of cards under it. */
+    if (headEl) headEl.textContent = hits.length === 1 ? '1 match' : 'All ' + hits.length + ' matches';
     var td = window._THEME_DATA || {};
     var dd = window._DAYS_DATA || {};
-    top.forEach(function (item) {
+    hits.forEach(function (item) {
       var tags = td[item.city] || [];
       var days = dd[item.city] || null;
       var a = document.createElement('a');
@@ -5861,7 +5870,7 @@
 
   /* ── Go ── */
   goBtn.addEventListener('click', function () {
-    showResults(computeScores());
+    showResults(computeMatches());
   });
 
   /* ── Restart ── */
