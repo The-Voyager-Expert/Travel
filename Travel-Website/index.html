@@ -4332,6 +4332,16 @@ window.lpGuideCard = function (href, flag, name, extra) {
           fmap: grab('FMAP'),
           guides: guides, cont: cont, climate: null
         };
+        /* The city -> IANA zone map, taken from the SAME listing this already
+           parsed. It used to live only inside the Compare block further down,
+           which is lazily booted behind Trip Escape / Help Me Choose — so on a
+           normal page load window._TZ_DATA was undefined, and the finder's
+           tzDiffMinutes() silently returned null for every guide: the
+           "+9h vs your clock" fact vanished off every result card and the
+           "How much jet lag?" filter dropped the whole fleet (a null offset is
+           a non-match) and answered "No guide matches". One copy still, read
+           from the listing rather than typed here. */
+        window._TZ_DATA = window._TZ_DATA || grab('TZ_DATA');
         /* Climate is a second file and only matters if a warmth pill is used, so
            it rides along rather than blocking the first filter. */
         return fetch('/assets/climate.json')
@@ -7100,8 +7110,24 @@ function render() {
   }
 
   /* ── Three filters measured against the reader (owner 2026-08-22) ───────── */
+  /* Folded lookup, built once the map arrives. The exact-key read alone drops a
+     guide whose card spells the city differently from the time-zone table
+     ("Malaga" against "Málaga", "Cancun" against "Cancún") — and a dropped offset is
+     not a blank fact here, it is a guide removed from a jet-lag-filtered answer. */
+  var _TZ_FOLD = null;
+  function _tzFold(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+  function tzOf(name) {
+    var M = window._TZ_DATA;
+    if (!M) return null;
+    if (M[name]) return M[name];
+    if (!_TZ_FOLD || _TZ_FOLD.src !== M) {
+      _TZ_FOLD = { src: M };
+      Object.keys(M).forEach(function (k) { _TZ_FOLD[_tzFold(k)] = M[k]; });
+    }
+    return _TZ_FOLD[_tzFold(name)] || null;
+  }
   function tzDiffMinutes(name) {
-    var tz = window._TZ_DATA && window._TZ_DATA[name];
+    var tz = tzOf(name);
     if (!tz) return null;
     try {
       var now = new Date();
