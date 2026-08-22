@@ -1474,7 +1474,13 @@ window.TVE.home = (function () {
        it simply has nothing to iterate, and the next dropdown the owner asks
        for needs no code to come back. */
     { href: base + 'essentials/packing/', text: 'Packing Checklist', icon: 'packing' },
-    { href: base + 'maps/world/', text: 'Maps', icon: 'folded-map' },
+    /* OWNER-DIRECTED 2026-08-22: 'Your World Map', not 'Maps'. The tab opens the
+       world map whose gold pins are the READER'S OWN marked places (Thirty-ninth
+       non-negotiable), and 'Maps' named a plural the strip does not have — the
+       seven regional maps are views reached from inside that page, never tabs.
+       Label only: the href has not moved, so TOOLBAR_ITEMS_LOCK — keyed on
+       paths — does not move either. */
+    { href: base + 'maps/world/', text: 'Your World Map', icon: 'folded-map' },
     /* OWNER-DIRECTED 2026-08-16: three essentials pages added after Maps. */
     /* PLURAL, both of them (owner rule 2026-08-17: "rename currency to
        currencies and plug adaptors plural too"). Each page is a table of many —
@@ -1483,13 +1489,36 @@ window.TVE.home = (function () {
        (/currencies/, and /plugs/), which is what stopped them being renamed
        back by eye. Label only: no href moves, so TOOLBAR_ITEMS_LOCK — which is
        keyed on paths — does not move either. */
-    { href: base + 'plugs/', text: 'Plug Adaptors', icon: 'plug' },
-    { href: base + 'currencies/', text: 'Currencies', icon: 'exchange' },
-    { href: base + 'time-zones/', text: 'Time Zones', icon: 'clock' },
-    { href: 'mailto:contact@guidemydays.com', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
-     to the form. NOT base + ... — a mailto must not be depth-prefixed.
-     Owner 2026-08-16: no ?subject= — the mail app opens with an empty subject
-     line and the reader writes their own. */
+    /* OWNER-DIRECTED 2026-08-22: 'What Plug Adapter Do I Need?', not 'Plug
+       Adaptors'. Same move as the Currencies rename in the same sitting — the
+       label names the QUESTION the reader arrives with rather than the subject
+       of the page, and this page has been a search-and-one-answer lookup since
+       the table was retired (Fifty-third non-negotiable), so the question IS
+       what it does. The owner asked for it knowing the strip has no spare
+       width: "we will have problem with space do you best i will think late
+       solutions for that problem". MEASURED after the three renames and the
+       Contact removal, on /currencies/ at 1280 / 1366 / 1440 / 1512 / 1600 /
+       1728 / 1920: the row is 1334-1358px and sits on ONE line from 1366px up,
+       wrapping to two clean rows at 1280 through the existing <=1365px rule,
+       with no horizontal overflow anywhere. Dropping Contact paid for the
+       longer labels, so no breakpoint moved and none needed to. RE-MEASURE
+       before adding a tab or lengthening a label again — the margin at 1366 is
+       32px. Label only: the href has not moved. */
+    { href: base + 'plugs/', text: 'What Plug Adapter Do I Need?', icon: 'plug' },
+    /* OWNER-DIRECTED 2026-08-22: 'What Your Money Is Worth', not 'Currencies'.
+       The page's selling point is the comparison — the same money in all 52
+       currencies at once, ranked by where it goes furthest — which is the half a
+       search engine does not already answer inline (Fiftieth non-negotiable).
+       'Currencies' named the table; this names the question. Label only: the
+       href has not moved, so TOOLBAR_ITEMS_LOCK does not move either. */
+    { href: base + 'currencies/', text: 'What Your Money Is Worth', icon: 'exchange' },
+    /* OWNER-DIRECTED 2026-08-22: the Contact tab is REMOVED. It was the one
+       entry that did not open a page — a mailto that launched the reader's mail
+       app straight off the nav — and the landing page already carries the
+       contact form, which is where a reader who wants to write to us goes.
+       It carried no path, so TOOLBAR_ITEMS_LOCK (keyed on paths) never had an
+       entry for it and does not move on its removal. Do not re-add it. */
+    { href: base + 'time-zones/', text: 'Time Zones', icon: 'clock' }
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
   // Guide pages now share the #f5f4f0 warm background with essentials — colour detection
