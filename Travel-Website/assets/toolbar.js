@@ -6897,11 +6897,17 @@ window.TVE.home = (function () {
       { name: 'Four Seasons Hotel San Francisco at Embarcadero', note: 'Four Seasons brand — Embarcadero Center, bay-view rooms, waterfront location, indoor pool, The Market restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-embarcadero.html', tier: 'luxury' }
     ], price: { budget: '$190–260', mid: '$260–340', expensive: '$340–480', luxury: '$480+' } },
     'san-jose': { h: [
-      { name: 'Fairmont San Jose', note: 'Fairmont brand — Almaden Valley, rooftop pool, multiple restaurants, convention center linked', url: 'https://www.expedia.com/San-Jose-Hotels-The-Fairmont-San-Jose.h15920.Hotel-Information' },
-      { name: 'Hotel De Anza, a Tapestry Collection by Hilton', note: 'Hilton Tapestry — 1931 Art Deco landmark in downtown San Jose, La Pastaia Italian restaurant · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/de-anza.html' },
-      { name: 'The Westin San Jose', note: 'Marriott Westin — North Market Street Silicon Valley, WestinWORKOUT, Enoteca restaurant · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-westin-san-jose.html' },
-      { name: 'Hotel Valencia Santana Row', note: 'Independent — boutique on Santana Row shopping, Citrus restaurant, outdoor patio, rooftop lounge · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-valencia-santana-row.html' }
-    ] },
+      { name: 'Best Western Plus Airport Plaza', note: 'Best Western brand — 2118 The Alameda between downtown and the airport, seasonal outdoor pool and hot tub, free parking, 24h reception, AC · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/best-western-plus-airport-plaza-san-jose2.html', tier: 'budget' },
+      { name: 'Aloft by Marriott San Jose Cupertino', note: 'Marriott Aloft brand — 4241 Moorpark Avenue on the Cupertino side, outdoor pool, free parking, 24h reception, AC · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/moorpark.html', tier: 'budget' },
+      { name: 'TownePlace Suites by Marriott San Jose Downtown', note: 'Marriott TownePlace brand — 495 West San Carlos Street a short walk from the SAP Center and Diridon, all-suite with kitchens, fitness centre, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/towneplace-suites-by-marriott-san-jose-downtown.html', tier: 'mid' },
+      { name: 'Four Points by Sheraton San Jose Downtown', note: 'Marriott Four Points brand — 211 South First Street in the downtown core, fitness centre, 24h reception, AC · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/four-points-by-sheraton-san-jose.html', tier: 'mid' },
+      { name: 'Element by Marriott San Jose Airport', note: 'Marriott Element brand — 1130 Wondo Way by the airport, saltwater outdoor pool and hot tub, fitness centre, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/element-san-jose-airport.html', tier: 'mid' },
+      { name: 'AC Hotel by Marriott San Jose Downtown', note: 'Marriott AC brand — 350 West Santa Clara Street by the SAP Center, heated saltwater pool, fitness centre, 24h reception, AC · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/ac-by-marriott-san-jose-downtown.html', tier: 'expensive' },
+      { name: 'San Jose Marriott', note: 'Marriott brand — 301 South Market Street next to the convention center, rooftop heated pool, fitness centre, 24h reception, AC · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/san-jose-marriott.html', tier: 'expensive' },
+      { name: 'Hotel De Anza by IHG', note: 'IHG brand — 1931 Art Deco landmark in downtown San Jose, La Pastaia Italian restaurant · 8.0 Booking.com', url: 'https://www.booking.com/hotel/us/de-anza.html', tier: 'expensive' },
+      { name: 'The Westin San Jose', note: 'Marriott Westin — North Market Street Silicon Valley, WestinWORKOUT, Enoteca restaurant · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-westin-san-jose.html', tier: 'expensive' },
+      { name: 'Hotel Valencia Santana Row', note: 'Independent — boutique on Santana Row shopping, Citrus restaurant, outdoor patio, rooftop lounge · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-valencia-santana-row.html', tier: 'luxury' }
+    ], price: { budget: '$140–190', mid: '$190–260', expensive: '$260–340', luxury: '$340+' } },
     'san-jose-costa-rica': { h: [
       { name: 'Hotel Grano de Oro', note: 'Independent boutique — converted Victorian mansion, tropical gardens, pool, Café Mundo restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/cr/grano-de-oro.html' },
       { name: 'InterContinental Costa Rica at Multiplaza Mall', note: 'IHG brand — Escazú upscale suburb, pools, multiple restaurants, convenient business location · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cr/real-intercontinental.html' },
@@ -10876,9 +10882,9 @@ window.TVE.home = (function () {
       'CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DFW','DOH','DTW','DUB','DUS','DXB','EDI','FAO',
       'FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST',
       'JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL',
-      'MIA','MLE','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS','PVG','RAK',
-      'RSW','SAN','SCL','SEA','SFO','SIN','SJO','SKG','SLC','SPU','SXB','SYD','TPE','VCE','VIE','VLC',
-      'WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'MIA','MLE','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS','PSP','PVG',
+      'RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','SXB','SYD','TPE','VCE',
+      'VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
