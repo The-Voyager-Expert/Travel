@@ -5207,6 +5207,25 @@ window.TVE.home = (function () {
           st.textContent = css;
           head.insertBefore(st, head.firstChild);
         }
+        /* THE ENCODING DECLARATION MUST BE IN THE FIRST 1024 BYTES, and the
+           inlined stylesheet above is ~600 KB, so inserting it first pushes the
+           guide's own <meta charset> out of the window the parser sniffs.
+           Online that is invisible — GitHub Pages sends
+           `Content-Type: text/html; charset=utf-8` and the header wins — but a
+           file opened from disk has NO header, so the browser falls back to the
+           locale default and every accent in the guide renders as mojibake
+           (Panthéon, Musée d'Orsay, Sainte-Chapelle). Measured before this fix:
+           the meta sat at byte 601,659. insertBefore MOVES the existing node, so
+           this both relocates the guide's own declaration and supplies one for
+           any page that somehow lacks it. */
+        if (head) {
+          var cs = clone.querySelector('meta[charset]');
+          if (!cs) {
+            cs = document.createElement('meta');
+            cs.setAttribute('charset', 'utf-8');
+          }
+          head.insertBefore(cs, head.firstChild);
+        }
         /* <base> would send every remaining relative URL back to the network. */
         var bases = clone.querySelectorAll('base');
         for (var b = 0; b < bases.length; b++) bases[b].parentNode.removeChild(bases[b]);
