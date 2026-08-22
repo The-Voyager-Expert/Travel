@@ -5726,7 +5726,7 @@ window.TVE.home = (function () {
       { name: 'Celi Hotel Aracaju', note: 'Independent — Orla de Atalaia beachfront, Atlantic Ocean views, Maramar Restaurant, rooftop pool · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/celi-aracaju.html', tier: 'mid' },
       { name: 'Quality Hotel Aracaju', note: 'Choice Hotels brand — semi-Olympic pool and spa, near Sergipe River and Beira-Mar Avenue · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/quality-aracaju.html', tier: 'expensive' },
       { name: 'Del Mar Hotel', note: 'Independent — beachfront on Av. Santos Dumont in Atalaia, year-round outdoor pool, 24h reception, fitness centre · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/mercure-aracaju-del-mar.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: 'R$685–740', mid: 'R$640+', expensive: 'R$610–1,430', luxury: 'R$660–2,145' } },
     'arenal': { h: [
       { name: 'Hotel Los Lagos Spa & Resort', note: 'Independent — 6 km west of La Fortuna on the volcano road, thermal-spring pool complex with waterslides, spa, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/cr/los-lagos.html', tier: 'budget' },
       { name: 'Hotel El Silencio del Campo', note: 'Independent — farmstead cabinas 5 km northwest of town, own hot-spring pools, spa, volcano views from the grounds · 9.4 Booking.com', url: 'https://www.booking.com/hotel/cr/el-silencio-del-campo.html', tier: 'mid' },
@@ -11087,7 +11087,7 @@ window.TVE.home = (function () {
        list) while every European guide jumped to its country rather than to
        its airport. */
     var LOUNGE_IATAS = [
-      'AES','AGP','AMM','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
+      'AES','AGP','AJU','AMM','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FRA','GIG','GOT','GRU','GVA','HAM',
       'HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
