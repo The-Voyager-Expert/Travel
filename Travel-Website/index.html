@@ -3478,13 +3478,17 @@ window.lpGuideCard = function (href, flag, name, extra) {
     var nav = document.createElement('div');
     nav.className = 'lp-best-nav';
     /* The only route to /best-of/ left on a phone once the picture opens its
-       own category — the 37-name list beside it is display:none here. The
-       count is read off the table, never typed: a hardcoded number goes stale
-       the first time a category ships and nobody would think to check it. */
+       own category — the 37-name list beside it is display:none here. THE LINK
+       CARRIES NO COUNT: the `.lp-best-count` badge on the picture directly
+       above it already states how many categories there are, and saying it
+       twice on one card is what the owner removed (2026-08-22, "remove 37
+       categories we already say that above"). Never re-add the number here —
+       and never delete the link itself, or the index becomes unreachable from
+       the landing page on a phone. */
     var all = document.createElement('a');
     all.className = 'lp-best-all';
     all.href = '/best-of/';
-    all.textContent = 'All ' + B.length + ' categories';
+    all.textContent = 'All categories';
     nav.appendChild(all);
     function button(label, step) {
       var b = document.createElement('button');
@@ -4218,6 +4222,19 @@ window.lpGuideCard = function (href, flag, name, extra) {
             rel: rel,
             folder: rel.split('/')[0],
             lang: (card.getAttribute('data-lang') || '').split(/\s+/),
+            /* THE GUIDE IS THE SOURCE (owner rule 2026-08-22). Both of these are
+               declared on the guide's own toolbar-mount (data-advisory, data-currency)
+               and carried here by build_guide_facts.py, so the two filters that used
+               them answer synchronously off the card. What they replace: a runtime
+               fetch of /essentials/safety/ that scraped four grids out of a page
+               generated from a GITIGNORED json (237 rows in the source against 239
+               on the page — Riga and Vilnius existed on the site and nowhere in it),
+               and a currency lookup that keyed currency-rates.json by COUNTRY through
+               a hand alias table. NOTE the card's data-safety is a different thing —
+               a {"level":N} blob Trip Escape reads — which is why this one is
+               data-advisory. */
+            advisory: card.getAttribute('data-advisory') || '',
+            cur: card.getAttribute('data-currency') || '',
             /* data-train is the NUMBER of entries in the guide's Day Trips by
                Train section — the places already worked out for the reader,
                with journey time and booking link. build_train_days.py writes it
@@ -6454,8 +6471,8 @@ function render() {
 
      Fetched ONCE and only when a reader actually sets one of the two filters.
      Nobody who never opens the advanced panel pays for either. */
-  var BUDGET = null, ADVISORY = null;
-  var budgetPending = null, advPending = null;
+  var BUDGET = null;
+  var budgetPending = null;
 
   /* One key for three spellings of the same city: "Big Island" on the budget
      page, "big-island.html" as the guide's filename, "Big Island" on the card.
@@ -6495,30 +6512,11 @@ function render() {
     return budgetPending;
   }
 
-  function loadAdvisory() {
-    if (ADVISORY) return Promise.resolve(ADVISORY);
-    if (advPending) return advPending;
-    advPending = fetch('/essentials/safety/')
-      .then(function (r) { return r.text(); })
-      .then(function (html) {
-        var m = {}, doc = new DOMParser().parseFromString(html, 'text/html');
-        /* Four grids, one per level, each holding .city-row links straight to
-           the guide — so the join is on the guide's own filename and cannot
-           mis-key the way a city-name match can. */
-        [1, 2, 3, 4].forEach(function (lv) {
-          var g = doc.getElementById('grid-l' + lv);
-          if (!g) return;
-          [].forEach.call(g.querySelectorAll('.city-row'), function (a) {
-            var f = (a.getAttribute('href') || '').split('/').pop();
-            if (f) m[f] = lv;
-          });
-        });
-        ADVISORY = m;
-        return m;
-      })
-      .catch(function () { ADVISORY = {}; return ADVISORY; });
-    return advPending;
-  }
+  /* loadAdvisory() is RETIRED: the advisory level is on the card as
+     data-advisory (owner rule 2026-08-22, the guide is the source). It used to
+     fetch /essentials/safety/ and scrape #grid-l1..l4 — a page generated from a
+     gitignored json — so the filter could not answer until that page had loaded,
+     and its pruning sat disabled until then. */
 
   var BUDGET_BAND = {
     'u100':    function (n) { return n < 100; },
@@ -6803,7 +6801,7 @@ function render() {
          better, and several floors OR to the loosest. A guide with no advisory
          row is dropped, same rule. */
       if (s.sf.length) {
-        var lv = ADVISORY && ADVISORY[g.rel.split('/').pop()];
+        var lv = +String(g.advisory || '').slice(1);
         if (!lv || !anyOf(s.sf, function (f) { return lv <= +f; })) return false;
       }
       /* The s.st Routing block that stood here is gone with its control —
@@ -6823,7 +6821,7 @@ function render() {
         if (tzm === null || !anyOf(s.tz, function (h) { return Math.abs(tzm) <= (+h) * 60; })) return false;
       }
       if (s.cu.length) {
-        var iso = currencyIso(g);
+        var iso = g.cur;
         if (!iso || s.cu.indexOf(iso) === -1) return false;
       }
       if (s.dl.length) {
@@ -6899,7 +6897,7 @@ function render() {
          loaded — testing against an empty map reads every guide as unpriced and
          would grey the whole select. Leave them enabled; the panel-open
          prefetch below loads both and re-prunes. */
-      if ((pair.field === 'bd' && !BUDGET) || (pair.field === 'sf' && !ADVISORY) || (pair.field === 'cu' && !RATES)) {
+      if ((pair.field === 'bd' && !BUDGET) || (pair.field === 'cu' && !RATES)) {
         [].forEach.call(pair.el.options, function (o) { o.disabled = false; });
         return;
       }
@@ -6961,7 +6959,7 @@ function render() {
   if (door) door.addEventListener('click', function () {
     syncTrain();
     loadRates();
-    if (!BUDGET || !ADVISORY) Promise.all([loadBudget(), loadAdvisory()]).then(function () { if (anySet(state())) run(); });
+    if (!BUDGET) loadBudget().then(function () { if (anySet(state())) run(); });
   }, { once: true });
 
   /* daysScore: exact fit 2, one off 1, "8+" matches 8 and more. */
@@ -6995,12 +6993,20 @@ function render() {
       .catch(function () { RATES = {}; return RATES; });
     return ratesP;
   }
-  var CUR_ALIAS = { 'czechia': 'czech republic', 'virgin-islands': 'united states' };
+  /* CUR_ALIAS is RETIRED with the country-keyed lookup it existed to patch
+     ({'czechia': 'czech republic', 'virgin-islands': 'united states'}) — a lookup
+     that needs a hand alias table is one that will silently miss the next
+     mismatch. The ISO is the guide's own data-currency; RATES is consulted only
+     for the SYMBOL and the NAME, by ISO, which needs no alias. */
   function currencyOf(g) {
-    var iso = currencyIso(g);
+    var iso = g.cur;
     if (!iso) return null;
-    var r = RATES[CUR_ALIAS[g.country] || String(g.country || '').replace(/-/g, ' ')];
+    var r = RATES && rateByIso(iso);
     return r && r.sym ? r.sym + ' ' + iso : iso;
+  }
+  function rateByIso(iso) {
+    for (var k in RATES) if (RATES[k] && RATES[k].iso === iso) return RATES[k];
+    return null;
   }
 
   /* ── Three filters measured against the reader (owner 2026-08-22) ───────── */
@@ -7013,12 +7019,6 @@ function render() {
       var utc = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
       return Math.round((there - utc) / 60000) + now.getTimezoneOffset();
     } catch (e) { return null; }
-  }
-  function currencyIso(g) {
-    if (!RATES) return null;
-    var k = CUR_ALIAS[g.country] || String(g.country || '').replace(/-/g, ' ');
-    var r = RATES[k];
-    return r && r.iso ? r.iso : null;
   }
   /* Daylight hours for each month the reader picked (today's month if none). */
   function daylightFor(d, g, s) {
@@ -7034,7 +7034,7 @@ function render() {
     window._lpData().then(function (d) {
       if (!d || curOptsBuilt) return;
       var seen = {};
-      d.guides.forEach(function (g) { var iso = currencyIso(g); if (iso) seen[iso] = (seen[iso] || 0) + 1; });
+      d.guides.forEach(function (g) { if (g.cur) seen[g.cur] = (seen[g.cur] || 0) + 1; });
       var isos = Object.keys(seen).sort();
       var byIso = {};
       for (var k in RATES) if (RATES[k] && RATES[k].iso) byIso[RATES[k].iso] = RATES[k];
@@ -7084,7 +7084,6 @@ function render() {
   function needData(s) {
     var jobs = [];
     if (s.bd.length && !BUDGET)   jobs.push(loadBudget());
-    if (s.sf.length && !ADVISORY) jobs.push(loadAdvisory());
     if (s.cu.length && !RATES)    jobs.push(loadRates());
     return jobs.length ? Promise.all(jobs) : null;
   }
@@ -7307,10 +7306,8 @@ function render() {
        nobody who keeps the panel shut pays), then re-prune so no option in the
        open panel can lead to zero guides. */
     if (opening) loadRates();
-    if (opening && (!BUDGET || !ADVISORY)) {
-      Promise.all([loadBudget(), loadAdvisory()]).then(function () {
-        if (anySet(state())) run();
-      });
+    if (opening && !BUDGET) {
+      loadBudget().then(function () { if (anySet(state())) run(); });
     }
   });
 
