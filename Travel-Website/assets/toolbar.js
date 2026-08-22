@@ -7387,11 +7387,18 @@ window.TVE.home = (function () {
       { name: 'Abama Resort Tenerife', note: 'Abama — clifftop west coast, two Michelin-star MB restaurant, golf, private beach · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/abama-resort.html', tier: 'luxury' }
     ], price: { budget: '€80–120', mid: '€120–200', expensive: '€200–300', luxury: '€300+' } },
     'tokyo': { h: [
-      { name: 'Aman Tokyo', note: 'Aman brand — Otemachi forest tower, 33rd–35th floor rooms with Imperial Palace views, spa with indoor pool · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/jp/aman-tokyo.html' },
-      { name: 'The Okura Tokyo', note: 'Independent luxury — 1962 mid-century Japanese modernism, restored heritage wing, Orchid Bar, spa · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/jp/the-okura-tokyo.html' },
-      { name: 'The Peninsula Tokyo', note: 'Peninsula brand — Hibiya and Marunouchi, Peter restaurant on the 24th floor, Hei Fung Terrace dim sum, spa with indoor pool · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/jp/the-peninsula-tokyo.html' },
-      { name: 'Park Hyatt Tokyo', note: 'Hyatt brand — Shinjuku floors 41–52 of the Tokyo Park Tower, 14th-floor pool, New York Bar and Grill, full-service spa · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/jp/park-hyatt-tokyo.html' }
-    ] },
+      { name: 'Section L Shimbashi West', note: 'Section L — Nishi-Shimbashi 3-chome, apartment-style rooms with kitchenettes, sauna and gym, 24h reception, AC · 9.3 Booking.com', url: 'https://www.booking.com/hotel/jp/section-l-shinbashi-west.html', tier: 'budget' },
+      { name: 'Aloft Tokyo Ginza', note: 'Marriott Aloft brand — Ginza 6-chome a block from the EDITION, WXYZ bar, gym, 24h reception, AC · 8.4 Booking.com', url: 'https://www.booking.com/hotel/jp/aloft-tokyo-ginza.html', tier: 'budget' },
+      { name: 'Hyatt Centric Ginza Tokyo', note: 'Hyatt Centric brand — Ginza 6-chome on Namiki-dori, NAMIKI667 restaurant, gym, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/jp/hyatt-centric-ginza-tokyo.html', tier: 'mid' },
+      { name: 'AC Hotel Tokyo Ginza', note: 'Marriott AC brand — Ginza 6-chome, rooftop terrace bar, gym, 24h reception, AC · 8.5 Booking.com', url: 'https://www.booking.com/hotel/jp/ac-tokyo-ginza.html', tier: 'mid' },
+      { name: 'The Blossom Hibiya', note: 'JR Kyushu — Shimbashi 1-chome beside Hibiya, 24th-floor lounge and gym, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/jp/the-blossom-hibiya.html', tier: 'mid' },
+      { name: 'Imperial Hotel Tokyo', note: 'Independent — Uchisaiwaicho facing Hibiya Park since 1890, indoor pool, Old Imperial Bar, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/jp/imperial-tokyo.html', tier: 'mid' },
+      { name: 'Conrad Tokyo', note: 'Hilton Conrad brand — Higashi-Shimbashi tower above Hamarikyu Gardens, 29th-floor indoor pool, Mizuki spa, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/jp/conrad-tokyo.html', tier: 'expensive' },
+      { name: 'The Okura Tokyo', note: 'Independent luxury — 1962 mid-century Japanese modernism, restored heritage wing, Orchid Bar, spa · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/jp/the-okura-tokyo.html', tier: 'expensive' },
+      { name: 'The Peninsula Tokyo', note: 'Peninsula brand — Hibiya and Marunouchi, Peter restaurant on the 24th floor, Hei Fung Terrace dim sum, spa with indoor pool · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/jp/the-peninsula-tokyo.html', tier: 'luxury' },
+      { name: 'Aman Tokyo', note: 'Aman brand — Otemachi forest tower, 33rd–35th floor rooms with Imperial Palace views, spa with indoor pool · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/jp/aman-tokyo.html', tier: 'luxury' },
+      { name: 'Park Hyatt Tokyo', note: 'Hyatt brand — Shinjuku floors 41–52 of the Tokyo Park Tower, 14th-floor pool, New York Bar and Grill, full-service spa · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/jp/park-hyatt-tokyo.html', tier: 'luxury' }
+    ], price: { budget: 'JPY 25,000–50,000', mid: 'JPY 50,000–90,000', expensive: 'JPY 90,000–150,000', luxury: 'JPY 150,000+' } },
     'toledo': { h: [
       { name: 'Áurea Toledo by Eurostars', note: 'Independent — Bajada Pozo Amargo below the cathedral, spa, 24h reception, AC · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/aurea-toledo.html' },
       { name: 'Eurostars Palacio Buenavista', note: 'Eurostars Hotels — Buenavista Palace 3 km west of the walls, outdoor pool, spa, city panoramas · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/eurostars-buenavista.html' },
