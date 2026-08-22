@@ -17,6 +17,19 @@
 }
 
 .alert-banner strong { color: var(--text); }
+/* The search block owns the 32px below it (Forty-third non-negotiable: the same
+   distance above and below the bar). .section-head carries its own 30px
+   margin-top, which stacked on top of that and put the first section 46px away
+   from a bar sitting 32px from the count above it. Zeroed on the FIRST head
+   only — every later one still needs its own separation from the section
+   before it. */
+#er-preauth { margin-top: 0; }
+/* The § 14 base rule gives .search-input its own margin-bottom:14px, which
+   stacks INSIDE this flex wrapper and made the wrapper 70px tall around a 56px
+   bar — so the first section sat 46px below a bar that was 32px from the count
+   above it. The wrapper owns the gap; the input owns none (Forty-third
+   non-negotiable, the "zero the input's own margin-bottom" clause). */
+.er-searchwrap > .search-input { margin-bottom: 0; }
 /* ── Jump-nav pills ── */
 .pill {
   display: inline-flex; align-items: center; justify-content: center;
@@ -171,13 +184,20 @@ a.apply-btn:visited { color: #6a6660; }
   <div class="alert-banner">
     <strong>ETIAS has been delayed.</strong> In July 2026, EU-Lisa confirmed that a Q4 2026 launch was no longer feasible after technical issues with the EES border system. A revised timeline is expected in late 2026. Visa-exempt visitors will eventually need a quick online pre-authorization (€20, valid 3 years) to visit France, Italy, Spain, Germany, and 27 other Schengen countries — similar in shape to the US's own ESTA. No action needed until a launch date is confirmed.
   </div>
-  <div style="display:flex;flex-wrap:nowrap;gap:8px;justify-content:center;margin:0 0 4px;">
+  <!-- THE CONTROL STACK, and its rhythm (owner rule 2026-08-22, "calculate
+       distance between all and make sense of it"). The coverage count is the
+       PILL ROW'S CAPTION, so it is centred like the pills — it shipped
+       text-align:start under a justify-content:center row, one line of grey
+       hanging off the left edge under three centred chips — and sits at the
+       10px caption gap, not the 32px page rhythm. The 32s then sit between the
+       GROUPS: alert → pills+count → search → first section. -->
+  <div class="er-pillrow" style="display:flex;flex-wrap:nowrap;gap:8px;justify-content:center;margin:var(--search-gap, 32px) 0 0;">
     <a href="#er-preauth" class="pill">Pre-entry authorizations</a>
     <a href="#er-evisas" class="pill">e-Visas</a>
     <a href="#er-visafree" class="pill">Visa-free</a>
   </div>
-  <div id="er-dest-count" style="font-size:12px;color:var(--muted);margin:8px 0 10px;"></div>
-  <div style="display:flex;justify-content:center;margin:var(--search-gap, 32px) 0;">
+  <div id="er-dest-count" style="font-size:12px;color:var(--muted);margin:10px 0 0;text-align:center;"></div>
+  <div class="er-searchwrap" style="display:flex;justify-content:center;margin:var(--search-gap, 32px) 0;">
     <input type="search" class="search-input" id="er-search" placeholder="Country or system" aria-label="Search entry requirements by country or system" autocomplete="off" spellcheck="false">
   </div>
   <div id="er-noresult" style="display:none;text-align:center;color:var(--muted);font-size:14px;padding:10px 0;">No entry requirements match your search.</div>

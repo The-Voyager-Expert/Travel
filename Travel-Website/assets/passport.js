@@ -358,12 +358,47 @@
       btn.classList.toggle('pp-unset', !me);
     }
 
-    function rows(cb) { loadList(function (l) { indexNames(l); cb((l && l.p) || []); }); }
+    /* SORTED BY NAME, AND SORTED ON A COPY (owner rule 2026-08-22: "does not
+       have all the countries and or i can scroll to the end").
+
+       passports.json is authored in ISO-CODE order — AD, AE, AF, AG, AL, AM,
+       AO, AR, AT, AU — so the browse list opened on Andorra, United Arab
+       Emirates, Afghanistan, Antigua, Albania, Armenia, Angola, Argentina,
+       Austria, Australia. Every one of those does start with A, which is
+       exactly why the jumble read as a rendering fault rather than as an
+       ordering one: it LOOKS alphabetical until you notice the U.
+
+       .slice() first — never sort the shared array in place. loadList caches
+       one object in _list and in sessionStorage, handed to every caller on the
+       page; reordering it under them is a mutation nobody would think to look
+       for. */
+    var _sorted = null;
+    function rows(cb) {
+      loadList(function (l) {
+        indexNames(l);
+        var all = (l && l.p) || [];
+        if (!_sorted || _sorted.length !== all.length) {
+          _sorted = all.slice().sort(function (a, b) {
+            var x = fold(a[1]), y = fold(b[1]);
+            return x < y ? -1 : x > y ? 1 : 0;
+          });
+        }
+        cb(_sorted);
+      });
+    }
 
     function paintList(q) {
       rows(function (all) {
         var picked = read();
-        var show = q ? lookup(q, all, 10) : all.slice(0, 10);
+        /* EVERY passport, both branches. The browse list was .slice(0, 10) and
+           a search capped at 10, so 189 of 199 passports could not be reached
+           by scrolling and a search for "guinea" or "united" showed a truncated
+           answer with nothing saying so. .pp-list is max-height:264px with
+           overflow-y:auto, so the panel has always been able to scroll — there
+           was simply never anything below the fold to scroll to. 199 <li> is
+           nothing to build, and a picker the reader cannot browse is a search
+           box wearing a dropdown. */
+        var show = q ? lookup(q, all, all.length) : all;
         list.innerHTML = '';
         show.forEach(function (r) {
           var li = document.createElement('li');

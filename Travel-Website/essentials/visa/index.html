@@ -93,16 +93,40 @@ a.chip-link:hover {
   .etype { scroll-margin-top: 140px; }
 }
 /* ── Visa Check view ── */
+/* NOT STICKY (owner rule 2026-08-22: "no stick page either the top it is
+   stick"). It was position:sticky;top:0;z-index:10 with an opaque ground and a
+   border-bottom, so the search and the six entry-type pills rode down the whole
+   238-row list, taking ~140px of every screen and cutting each country row in
+   half as it passed under them. Nothing on this page is fixed or sticky now —
+   scrolling shows the page, not a bar with the page moving behind it. Never
+   re-add position:sticky here: the z-index it needs is also what painted
+   straight through the open passport dropdown once before. */
 .legend { display: flex; flex-direction: column; align-items: center; gap: var(--search-gap, 32px);
   padding: var(--search-gap, 32px) 0; margin: 0 0 18px;
-  position: sticky; top: 0; z-index: 10;
   background: var(--bg); border-bottom: 1px solid var(--border2, #e6e2da); }
 .legend-toggle { display: none; }
 /* The passport bar — same centred column and rhythm as .legend, but NOT
    sticky and carrying no z-index. See the note on the markup: two sticky
    z-index:10 bars is what painted through the open dropdown. */
+/* THE THREE DISTANCES, and they are two different KINDS of gap (owner rule
+   2026-08-22: "then entry rules way above? calculate distance between all and
+   make sense of it"). "Entry rules for" is the BUTTON'S CAPTION, not a block of
+   its own — the two read as one sentence — so it sits at 10px, the same value
+   .cmp-passport-strip already uses for exactly this pair. At the 32px page
+   rhythm it read as a stray heading floating above an unrelated control.
+   The 32px then belongs OUTSIDE the pair: 32 above the label, 32 below the
+   button (Fifty-fourth non-negotiable — a block's gap above equals its gap
+   below). The bottom 32 is NOT padding here: whichever element follows owns
+   it, because the two that can follow are mutually exclusive — #visa-empty
+   when no passport is set (margin-top below), and .legend when one is, which
+   already carries its own 32px padding-top and is sticky, so zeroing it would
+   put the search bar hard against the viewport edge. Padding on .pp-bar would
+   give 64px in the picked state. */
 .pp-bar { display: flex; flex-direction: column; align-items: center;
-  gap: var(--search-gap, 32px); padding: var(--search-gap, 32px) 0 0; margin: 0; }
+  gap: 10px; padding: var(--search-gap, 32px) 0 0; margin: 0; }
+/* The button's gap below, in the unset state. Scoped to the id, never to
+   .launch-note — that class is also the Launch-portal view's own note. */
+#visa-empty { margin-top: var(--search-gap, 32px); }
 .legend-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
 .legend .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
   background: #fff; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; line-height: 1; }
