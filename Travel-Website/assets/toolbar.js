@@ -7006,11 +7006,17 @@ window.TVE.home = (function () {
       { name: 'Hotel ABC, Boutique Hotel in Pokhara', note: 'Independent 3-star — Barahi Path off 14th Street in Lakeside, garden, 24h reception, AC, free parking · 9.5 Booking.com', url: 'https://www.booking.com/hotel/np/abc-boutique-in-pokhara.html', tier: 'budget' }
     ], price: { budget: 'NPR 3,000–6,000', mid: 'NPR 6,000–12,000', expensive: 'NPR 12,000–20,000', luxury: 'NPR 20,000+' } },
     'portland': { h: [
-      { name: 'Inn at Northrup Station', note: 'Independent — 2025 NW Northrup in the Nob Hill streetcar district, suites with kitchens, rooftop garden, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-inn-at-northrup-station.html' },
-      { name: 'Cambria Hotel Portland - Pearl District', note: 'Independent-operated Cambria — 165 NW Park Avenue on the Park Blocks, rooftop bar, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/cambria-portland-pearl-district.html' },
-      { name: 'Silver Cloud Hotel - Portland', note: 'Independent — 2426 NW Vaughn Street in the Northwest District, free parking, 24h reception, 921 reviews · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/silver-cloud-inn-portland.html' },
-      { name: 'The Nines, A Luxury Collection Hotel', note: 'Marriott Luxury Collection — upper floors of the 1909 Meier & Frank Building on National Register, atrium lobby, Urban Farmer restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-nines.html' }
-    ] },
+      { name: 'Inn at Northrup Station', note: 'Independent — 2025 NW Northrup in the Nob Hill streetcar district, suites with kitchens, rooftop garden, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-inn-at-northrup-station.html', tier: 'expensive' },
+      { name: 'Cambria Hotel Portland - Pearl District', note: 'Independent-operated Cambria — 165 NW Park Avenue on the Park Blocks, rooftop bar, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/cambria-portland-pearl-district.html', tier: 'expensive' },
+      { name: 'Silver Cloud Hotel - Portland', note: 'Independent — 2426 NW Vaughn Street in the Northwest District, free parking, 24h reception, 921 reviews · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/silver-cloud-inn-portland.html', tier: 'mid' },
+      { name: 'The Nines, A Luxury Collection Hotel', note: 'Marriott Luxury Collection — upper floors of the 1909 Meier & Frank Building on National Register, atrium lobby, Urban Farmer restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-nines.html', tier: 'luxury' },
+      { name: 'Canopy by Hilton Portland Pearl District', note: 'Hilton Canopy brand — 425 NW 9th Avenue, two blocks from the Residence Inn, 24h reception · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/canopy-by-hilton-portland-pearl-district.html', tier: 'expensive' },
+      { name: 'Hyatt Regency Portland at the Oregon Convention Center', note: 'Hyatt brand — 375 NE Holladay Street by the Convention Center on the MAX line, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-regency-portland.html', tier: 'mid' },
+      { name: 'The Duniway Portland, A Hilton Hotel', note: 'Hilton brand — 545 SW Taylor downtown, heated indoor pool, 24h reception · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-duniway-portland-a-hilton.html', tier: 'mid' },
+      { name: 'Hyatt Centric Downtown Portland', note: 'Hyatt brand — 601 SW 11th Avenue downtown, 24h reception · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-centric-downtown-portland.html', tier: 'mid' },
+      { name: 'Hampton Inn And Suites By Hilton Portland-Pearl District', note: 'Hilton Hampton brand — 354 NW 9th Avenue, one block from the Residence Inn, heated indoor pool, 24h reception, breakfast included · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/hampton-inn-and-suites-by-hilton-portland-pearl-district.html', tier: 'budget' },
+      { name: 'Courtyard by Marriott Portland City Center', note: 'Marriott Courtyard brand — 550 SW Oak Street downtown, 24h reception · 7.9 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-portland-city-center.html', tier: 'budget' }
+    ], price: { budget: '$110–150', mid: '$150–210', expensive: '$210–300', luxury: '$300+' } },
     'porto': { h: [
       { name: 'The Yeatman Hotel', note: 'Independent luxury — Taylor\'s Port wine cellars hilltop, infinity pool, two-Michelin-star Yeatman Restaurant, Douro panorama · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/pt/the-yeatman.html' },
       { name: 'Timbre Virtudes', note: 'Independent 5-star — Rua São Pedro de Miragaia above the Virtudes gardens, Douro-facing terrace, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/das-virtudes.html' },
@@ -11199,7 +11205,7 @@ window.TVE.home = (function () {
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FOR', 'FRA','GIG','GOT','GRU','GVA','HAM',
       'HAN','HEL','HER','HKG','HKT','HND','IAD','IAH','ICN','IGU', 'IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
-      'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSA','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
+      'NCE', 'OGG','OPO','ORD','ORY','PDX','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSA','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
       'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TBS','TFS','TIV','TLL','TPE','VCE','VIE','VLC',
       'WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
