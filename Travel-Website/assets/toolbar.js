@@ -6718,11 +6718,17 @@ window.TVE.home = (function () {
       { name: 'Homewood Suites by Hilton Palm Desert', note: 'Hilton Homewood brand — 36999 Cook Street, suites with kitchens, outdoor pool, 24h reception, free parking · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/homewood-suites-by-hilton-palm-desert.html', tier: 'budget' }
     ], price: { budget: '$120–180', mid: '$180–250', expensive: '$250–450', luxury: '$450+' } },
     'palo-alto': { h: [
-      { name: 'Rosewood Sand Hill', note: 'Rosewood brand — 16-acre Menlo Park estate, two outdoor pools, Sense spa, Madera restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/rosewood-sand-hill-94025.html' },
-      { name: 'The Clement Palo Alto', note: 'Independent boutique — 711 El Camino Real, all-suite with rooftop pool, close to University Avenue · 9.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-clement.html' },
-      { name: 'AC Hotel by Marriott Palo Alto', note: 'Marriott AC brand — 744 San Antonio Road, terrace and bar, fitness centre, 4-star · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/ac-by-marriott-palo-alto.html' },
-      { name: 'Graduate by Hilton Palo Alto', note: 'Hilton Graduate brand — 488 University Avenue downtown, restaurant and bar, walk to Stanford campus · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/graduate-palo-alto.html' }
-    ] },
+      { name: 'Rosewood Sand Hill', note: 'Rosewood brand — 16-acre Menlo Park estate, two outdoor pools, Sense spa, Madera restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/rosewood-sand-hill-94025.html', tier: 'luxury' },
+      { name: 'The Clement Palo Alto', note: 'Independent boutique — 711 El Camino Real, all-suite with rooftop pool, close to University Avenue · 9.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-clement.html', tier: 'luxury' },
+      { name: 'AC Hotel by Marriott Palo Alto', note: 'Marriott AC brand — 744 San Antonio Road, terrace and bar, fitness centre, 4-star · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/ac-by-marriott-palo-alto.html', tier: 'mid' },
+      { name: 'Graduate by Hilton Palo Alto', note: 'Hilton Graduate brand — 488 University Avenue downtown, restaurant and bar, walk to Stanford campus · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/graduate-palo-alto.html', tier: 'expensive' },
+      { name: 'Sheraton Palo Alto Hotel', note: 'Marriott Sheraton brand — 625 El Camino Real opposite the Stanford campus and Caltrain, heated outdoor pool, 24h reception · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/sheraton-palo-alto.html', tier: 'expensive' },
+      { name: 'The Westin Palo Alto', note: 'Marriott Westin brand — 675 El Camino Real next to the Sheraton, heated outdoor pool, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/westin-palo-alto.html', tier: 'expensive' },
+      { name: 'Homewood Suites by Hilton Palo Alto', note: 'Hilton Homewood brand — 4329 El Camino Real, suites with kitchens, outdoor pool, 24h reception, free parking · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/palo-alto.html', tier: 'mid' },
+      { name: 'Courtyard Palo Alto Los Altos', note: 'Marriott Courtyard brand — 4320 El Camino Real, outdoor pool, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-palo-alto-los-altos.html', tier: 'mid' },
+      { name: 'Hilton Garden Inn Palo Alto', note: 'Hilton Garden Inn brand — 4216 El Camino Real, indoor pool, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-garden-inn-east-palo-alto.html', tier: 'budget' },
+      { name: 'Hampton Inn & Suites Mountain View', note: 'Hilton Hampton brand — 390 Moffett Boulevard by downtown Mountain View, 24h reception, breakfast included · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/hampton-inn-suites-mountainview.html', tier: 'budget' }
+    ], price: { budget: '$160–260', mid: '$260–420', expensive: '$420–700', luxury: '$700+' } },
     'paris': { h: [
       { name: 'Le Meurice', note: 'Dorchester Collection — Tuileries-facing Palace hotel, two-Michelin-star Alain Ducasse restaurant, spa · 9.5 Booking.com', url: 'https://www.booking.com/hotel/fr/le-meurice-paris.html' },
       { name: 'Hotel de Crillon, A Rosewood Hotel', note: 'Rosewood brand — Place de la Concorde landmark, Les Ambassadeurs brasserie, indoor pool · 9.5 Booking.com', url: 'https://www.booking.com/hotel/fr/de-crillon-paris.html' },
