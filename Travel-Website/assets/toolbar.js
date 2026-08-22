@@ -8876,7 +8876,11 @@ window.TVE.home = (function () {
       'most-luxurious-hotels': 'gem-yellow', 'ultra-luxurious-resorts': 'palm',
       'unique-hotels': 'boutique', 'resorts': 'tropical-bay',
       /* Rail */
-      'european-trains': 'high-speed-train', 'scenic-trains': 'train',
+      /* Rail draws ONE train site-wide - #1237 'train' (owner rule
+         2026-08-22: "all train titles and anything related to trains will
+         use this icon"). european-trains drew the HSR nose #171 until then,
+         so the rail row showed two different trains side by side. */
+      'european-trains': 'train', 'scenic-trains': 'train',
       'train-passes': 'ticket', 'transit-cards': 'transit',
       /* Documents */
       'visa': 'visas', 'visa-times': 'clock-hourglass', 'nomad-visas': 'laptop',
