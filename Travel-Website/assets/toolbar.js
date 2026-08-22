@@ -6674,11 +6674,17 @@ window.TVE.home = (function () {
       { name: 'Le Méridien Lav Split', note: 'Marriott brand — Podstrana beachfront 9 km south, indoor and outdoor pools, spa, tennis and kids\' club · 8.6 Booking.com', url: 'https://www.booking.com/hotel/hr/le-meridien-lav-split.html' }
     ] },
     'stockholm': { h: [
-      { name: 'Nobis Hotel Stockholm', note: 'Independent boutique — Norrmalmstorg Square, 201 rooms, spa, celebrated Gold Bar and restaurant · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/se/nobis.html' },
-      { name: 'At Six', note: 'Independent boutique — Brunkebergstorg, prominent art collection, rooftop bar and pool, 343 rooms · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/se/at-six.html' },
-      { name: 'Grand Hôtel Stockholm', note: 'Leading Hotels of the World — 1874 Blasieholmen waterfront, direct Royal Palace views, Mathias Dahlgren Matbaren Michelin-starred dining, Spa Mathom · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/se/grand-hotel-stockholm.html' },
-      { name: 'Ett Hem', note: 'Independent — Sköldungagatan 2 in Östermalm, 12-room private house, two gardens, communal kitchen-dining, butler and chef service · 9.7 Booking.com' , url: 'https://www.booking.com/hotel/se/ett-hem.html' }
-    ] },
+      { name: 'NOFO Hotel, WorldHotels Crafted', note: 'Independent — Tjärhovsgatan 11 on Södermalm, 1700s courtyard building, garden restaurant, 24h reception, no AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/se/nofo.html', tier: 'budget' },
+      { name: 'Villa Dahlia', note: 'Independent — Tegnérlunden 8 in Vasastan, park-side 1920s villa, sauna and spa, 24h reception, no AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/se/tegnerlunden.html', tier: 'budget' },
+      { name: 'Hilton Stockholm Slussen', note: 'Hilton brand — Guldgränd 8 above Slussen, Gamla Stan and Riddarfjärden views, sauna and gym, 24h reception, AC · 8.2 Booking.com', url: 'https://www.booking.com/hotel/se/hilton-stockholm-slussen.html', tier: 'mid' },
+      { name: 'Hotel Kungsträdgården', note: 'Independent — Västra Trädgårdsgatan 11B on the Kungsträdgården park, 1600s palace courtyard, sauna and gym, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/se/kungstradgarden.html', tier: 'mid' },
+      { name: 'Sheraton Stockholm Hotel', note: 'Marriott Sheraton brand — Tegelbacken 6 on the waterfront facing City Hall, sauna and gym, 24h reception, AC · 8.7 Booking.com', url: 'https://www.booking.com/hotel/se/sheratonstockholmhoteltowers.html', tier: 'expensive' },
+      { name: 'Hotel Rival', note: 'Independent — Mariatorget 3 on Södermalm, 1930s cinema hotel owned by ABBA\'s Benny Andersson, bistro and cocktail bar, 24h reception, AC · 9.3 Booking.com', url: 'https://www.booking.com/hotel/se/hotelrival.html', tier: 'expensive' },
+      { name: 'Nobis Hotel Stockholm', note: 'Independent boutique — Norrmalmstorg Square, 201 rooms, spa, celebrated Gold Bar and restaurant · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/se/nobis.html', tier: 'expensive' },
+      { name: 'At Six', note: 'Independent boutique — Brunkebergstorg, prominent art collection, rooftop bar and pool, 343 rooms · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/se/at-six.html', tier: 'expensive' },
+      { name: 'Grand Hôtel Stockholm', note: 'Leading Hotels of the World — 1874 Blasieholmen waterfront, direct Royal Palace views, Mathias Dahlgren Matbaren Michelin-starred dining, Spa Mathom · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/se/grand-hotel-stockholm.html', tier: 'luxury' },
+      { name: 'Ett Hem', note: 'Independent — Sköldungagatan 2 in Östermalm, 12-room private house, two gardens, communal kitchen-dining, butler and chef service · 9.7 Booking.com' , url: 'https://www.booking.com/hotel/se/ett-hem.html', tier: 'luxury' }
+    ], price: { budget: 'SEK 1,500–2,000', mid: 'SEK 2,000–2,700', expensive: 'SEK 2,700–4,000', luxury: 'SEK 4,000+' } },
     'strasbourg': { h: [
       { name: 'HANNONG Hotel & Wine Bar', note: 'Independent boutique — rue du 22 Novembre on the Grande Île, Art Deco interiors, wine bar, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/tihannong.html' },
       { name: 'Hotel Beaucour', note: 'Independent — 5 rue des Bouchers off the cathedral quarter, timbered courtyard, jacuzzi rooms, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/beaucour.html' },
