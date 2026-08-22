@@ -1891,7 +1891,8 @@
 /* 2026-08-23: krakow KRK added to LOUNGE_IATAS + hotel four price tiers (budget/mid/expensive/luxury) with PLN price ranges toolbar.js -> v950. CACHE to v1338. */
 /* 2026-08-23: climate date refresh 2026-08-23 toolbar.js -> v951. CACHE to v1339. */
 /* 2026-08-23: climate date refresh — weather.js baked CLIMATE block regenerated (date stamp only, no data change). weather.js -> v12. CACHE to v1340. */
-var CACHE = 'travel-cache-v1341';
+/* 2026-08-23: cape-town HOTEL_ALT_DATA — 4-tier setup (budget Protea/Southern Sun, mid Hilton/Radisson, expensive Twelve Apostles, luxury One&Only/Silo/Belmond) with ZAR price ranges. toolbar.js -> v952. CACHE to v1342. */
+var CACHE = 'travel-cache-v1342';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
