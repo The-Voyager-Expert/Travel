@@ -7264,11 +7264,19 @@ window.TVE.home = (function () {
       { name: 'Tivoli Mofarrej São Paulo', note: 'Tivoli Hotels — Jardim Paulista, Seen Restaurant & Rooftop bar, spa with pool · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/tivoli-mofarrej-sao-paulo.html' }
     ] },
     'taipei': { h: [
-      { name: 'Mandarin Oriental, Taipei', note: 'Mandarin Oriental brand — Dunhua North Road, outdoor pool, Michelin-starred Ya Ge Cantonese restaurant, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/tw/mandarin-oriental-taipei.html' },
-      { name: 'W Taipei', note: 'Marriott W brand — Zhongxiao East Road in Xinyi by Taipei 101, WET rooftop pool, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/tw/w-taipei.html' },
-      { name: 'The Regent Taipei', note: 'IHG Regent brand — Zhongshan District, Crystal Jade restaurant, indoor pool · 8.9 Booking.com', url: 'https://www.booking.com/hotel/tw/regent-taipei.html' },
-      { name: 'Palais de Chine Hotel', note: 'Independent — near Taipei Main Station, Art Deco design, Le Palais Cantonese restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/tw/palais-de-chine.html' }
-    ] },
+      { name: 'Ambience Hotel Taipei', note: 'Independent — Changan East Road in Zhongshan, design rooms, free parking, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/tw/ambience-taipei.html', tier: 'budget' },
+      { name: 'Taipei Fullerton Hotel Maison North', note: 'Independent — Fuxing North Road by Songshan Airport MRT, gym, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/tw/taipei-fullerton-315.html', tier: 'budget' },
+      { name: 'Evergreen Laurel Hotel Taipei', note: 'Evergreen — Songjiang Road in Zhongshan, 5-star business hotel with airport shuttle, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/tw/evergreen-laurel-taipei.html', tier: 'mid' },
+      { name: 'Les Suites Taipei Ching Cheng', note: 'Independent boutique — Chingcheng Street off Nanjing East Road, garden courtyard, gym, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/tw/lessuitescc.html', tier: 'mid' },
+      { name: 'Hotel Metropolitan Premier Taipei', note: 'JR East — Nanjing East Road Section 3, indoor pool, spa, gym, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/tw/jr-dong-ri-ben-da-fan-dian-tai-bei.html', tier: 'mid' },
+      { name: 'Hotel Resonance Taipei, Tapestry Collection by Hilton', note: 'Hilton Tapestry brand — Linsen South Road by Shandao Temple MRT, gym, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/tw/resonance.html', tier: 'expensive' },
+      { name: 'Kimpton Da An Taipei', note: 'IHG Kimpton brand — Lane 27 off Ren\'ai Road Section 4 in Da\'an, rooftop garden, The Tavernist restaurant, 24h reception, AC · 9.2 Booking.com', url: 'https://www.booking.com/hotel/tw/kimpton-da-an.html', tier: 'expensive' },
+      { name: 'Palais de Chine Hotel', note: 'Independent — near Taipei Main Station, Art Deco design, Le Palais Cantonese restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/tw/palais-de-chine.html', tier: 'expensive' },
+      { name: 'Sheraton Grand Taipei Hotel', note: 'Marriott Sheraton brand — Zhongxiao East Road Section 1 by Shandao Temple MRT, outdoor pool, spa, 24h reception, AC · 8.5 Booking.com', url: 'https://www.booking.com/hotel/tw/sheraton-taipei.html', tier: 'luxury' },
+      { name: 'Mandarin Oriental, Taipei', note: 'Mandarin Oriental brand — Dunhua North Road, outdoor pool, Michelin-starred Ya Ge Cantonese restaurant, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/tw/mandarin-oriental-taipei.html', tier: 'luxury' },
+      { name: 'W Taipei', note: 'Marriott W brand — Zhongxiao East Road in Xinyi by Taipei 101, WET rooftop pool, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/tw/w-taipei.html', tier: 'luxury' },
+      { name: 'The Regent Taipei', note: 'IHG Regent brand — Zhongshan District, Crystal Jade restaurant, indoor pool · 8.9 Booking.com', url: 'https://www.booking.com/hotel/tw/regent-taipei.html', tier: 'luxury' }
+    ], price: { budget: 'TWD 3,500–5,000', mid: 'TWD 5,000–8,000', expensive: 'TWD 8,000–12,000', luxury: 'TWD 12,000+' } },
     'tallinn': { h: [
       { name: 'Nunne Boutique Hotel', note: 'Independent boutique — Nunne 14 against the Old Town wall, sauna and spa, 24h reception, AC · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ee/nunne-boutique.html' },
       { name: 'Schlössle Hotel', note: 'Small Luxury Hotels — 15th-century merchant house in medieval Old Town, oak-panelled rooms, intimate · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/ee/schlossle.html' },
