@@ -3545,7 +3545,39 @@ window.lpGuideCard = function (href, flag, name, extra) {
     }
     function warm(i) { var r = B[((i % B.length) + B.length) % B.length];
                        if (r) { var im = new Image(); im.src = r[0]; } }
+
+    /* Same rule as the two carousels below, and the same reason — this tile
+       needs it because the band title became per-category ("The best Art
+       Museums"). The picture is one 16:10 crop for all 37, so it never moves;
+       the TITLE does. At 320px "The best Ultra Luxurious Resorts" wraps to two
+       lines where every other category takes one, and the card jumped 20.6px
+       on that one step. Measured, never a literal: the reservation is a
+       different number at 320, 360 and 430, and it moves again the day a
+       category is renamed. Only the title is varied here — the description
+       below it is one fixed paragraph. */
+    var bestBand = tile.querySelector('.lp-best-band');
+    function reserve() {
+      if (!bestBand || !bandT) return;
+      bestBand.style.minHeight = '';
+      var tall = 0;
+      for (var i = 0; i < B.length; i++) {
+        bandT.textContent = 'The best ' + B[i][2];
+        var h = bestBand.getBoundingClientRect().height;
+        if (h > tall) tall = h;
+      }
+      bestBand.style.minHeight = (Math.ceil(tall * 100) / 100) + 'px';
+    }
+
+    reserve();
     paint(at); warm(at + 1);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { reserve(); paint(at); });
+    }
+    var brt;
+    window.addEventListener('resize', function () {
+      clearTimeout(brt);
+      brt = setTimeout(function () { reserve(); paint(at); }, 150);
+    });
 
     /* Arrows — the hero carousel's control, reused class and all. Built here so
        the tile degrades to a single daily picture with no dead buttons when this
@@ -3823,6 +3855,47 @@ window.lpGuideCard = function (href, flag, name, extra) {
     var count = document.createElement('span');
     count.className = 'lp-steps-count';
 
+    /* THE CARD NEVER CHANGES HEIGHT AS YOU PAGE (owner rule 2026-08-22: some
+       screens "expand as we change the carousel pages and should never").
+
+       The PICTURE was never the problem and must not be blamed for it: every
+       step is the same 1101x687 crop, and the shot measured 225px on all of
+       them. What moved was the BAND under it — one sentence per step, and on
+       a phone the longest wraps to four lines where the shortest takes three,
+       so the card grew and shrank by ~20px under the reader's thumb and the
+       arrow row jumped with it. Measured before this: lp-tools 319<->340,
+       lp-plan 340<->360. Desktop happened to be stable at 1440 and 900, which
+       is luck of the line count, not a design that holds.
+
+       RESERVED BY MEASURING, NEVER BY A HARDCODED min-height. The number
+       depends on the viewport, the webfont and the copy all at once, so a
+       literal is wrong at some width on the day it is typed and silently
+       wrong at every width the first time a sentence is edited. Each row's
+       text is written into the real band and its height read straight back in
+       one synchronous pass — the browser paints nothing until the task ends,
+       so there is no flicker to see — and paint() then restores the step on
+       screen. Same principle as the "All N categories" count on the Best Of
+       tile: read it off the data, never type it. */
+    var band = sec.querySelector('[class$="-band"]');
+    function reserve() {
+      if (!band) return;
+      band.style.minHeight = '';
+      var tall = 0;
+      for (var i = 0; i < rows.length; i++) {
+        title.innerHTML = rows[i][4];
+        desc.innerHTML = rows[i][5];
+        /* getBoundingClientRect, not offsetHeight: offsetHeight is ROUNDED TO
+           AN INTEGER, so a band whose real height is 114.4 measures 114, the
+           reservation lands a fraction UNDER the tallest step's natural
+           height, and that one step still stands proud — the jump shrinks
+           from 20px to 1px instead of going away. Ceil the fraction and every
+           step resolves to exactly the same box. */
+        var h = band.getBoundingClientRect().height;
+        if (h > tall) tall = h;
+      }
+      band.style.minHeight = (Math.ceil(tall * 100) / 100) + 'px';
+    }
+
     function paint(i) {
       var r = rows[((i % rows.length) + rows.length) % rows.length];
       img.src = '/assets/landing/steps/' + r[0] + '.png';
@@ -3859,7 +3932,23 @@ window.lpGuideCard = function (href, flag, name, extra) {
       });
       return b;
     }
+    /* reserve() leaves the band holding the LAST row's text, so paint() runs
+       after it, never before. */
+    reserve();
     paint(at); warm(at + 1);
+
+    /* A webfont landing after this ran, or a rotation, re-wraps every line and
+       makes the reservation stale — in the wrong direction, because a band
+       reserved narrow then clips nothing and simply starts jumping again. */
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { reserve(); paint(at); });
+    }
+    var rt;
+    window.addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(function () { reserve(); paint(at); }, 150);
+    });
+
     var nav = document.createElement('div');
     nav.className = 'lp-steps-nav';
     nav.appendChild(count);
