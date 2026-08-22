@@ -6659,11 +6659,14 @@ window.TVE.home = (function () {
       { name: 'Les Bords de Mer · Fontenille Collection', note: 'Independent — 52 Corniche Kennedy above the water, rooftop heated pool, spa and hammam, sea-facing rooms · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/les-bords-de-mer.html', tier: 'luxury' }
     ], price: { budget: '€70–120', mid: '€120–200', expensive: '€200–320', luxury: '€320+' } },
     'maui': { h: [
-      { name: 'Hotel Wailea, Relais & Châteaux', note: 'Relais & Châteaux — adults-only on Wailea\'s Ulua Ridge, pool and whirlpool, spectacular West Maui sunset views · 9.5 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-wailea-relais-chateaux.html' },
-      { name: 'Andaz Maui at Wailea Resort', note: 'Hyatt brand — five pools on Mokapu Beach, cliff-edge adults pool, seven dining venues · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/andaz-maui-at-wailea.html' },
-      { name: 'Grand Wailea, A Waldorf Astoria Resort', note: 'Waldorf Astoria — nine themed pools on 40 oceanfront acres of Wailea Beach, Spa Grande, multiple dining outlets · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/grand-wailea-resort-spa.html' },
-      { name: 'Fairmont Kea Lani, Maui', note: 'Fairmont — all-suite and private villa resort, plunge pools, Kea Lani Restaurant, white-sand Polo Beach · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/the-fairmont-kea-lani.html' }
-    ] },
+      { name: 'Maui Coast Hotel', note: 'Independent — South Kihei Road a block from Kamaole Beach, infinity pool, free resort shuttle, 24h front desk, 10 min drive to Wailea · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/maui-coast.html', tier: 'budget' },
+      { name: 'Courtyard by Marriott Maui Kahului Airport', note: 'Marriott Courtyard — Keolani Place by the airport, pool, free airport shuttle, 24h front desk, 25 min drive to Wailea · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-by-marriott-maui-kahului-airport.html', tier: 'mid' },
+      { name: 'AC Hotel by Marriott Maui Wailea', note: 'Marriott AC — Wailea Ike Place beside the Shops at Wailea, pool deck, 24h front desk, 5 min drive to the Residence Inn · 8.0 Booking.com', url: 'https://www.booking.com/hotel/us/ac-by-marriott-maui-wailea.html', tier: 'expensive' },
+      { name: 'Hotel Wailea, Relais & Châteaux', note: 'Relais & Châteaux — adults-only on Wailea\'s Ulua Ridge, pool and whirlpool, spectacular West Maui sunset views · 9.5 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-wailea-relais-chateaux.html', tier: 'luxury' },
+      { name: 'Andaz Maui at Wailea Resort', note: 'Hyatt brand — five pools on Mokapu Beach, cliff-edge adults pool, seven dining venues · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/andaz-maui-at-wailea.html', tier: 'luxury' },
+      { name: 'Grand Wailea, A Waldorf Astoria Resort', note: 'Waldorf Astoria — nine themed pools on 40 oceanfront acres of Wailea Beach, Spa Grande, multiple dining outlets · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/grand-wailea-resort-spa.html', tier: 'luxury' },
+      { name: 'Fairmont Kea Lani, Maui', note: 'Fairmont — all-suite and private villa resort, plunge pools, Kea Lani Restaurant, white-sand Polo Beach · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/the-fairmont-kea-lani.html', tier: 'luxury' }
+    ], price: { budget: '$230–340', mid: '$340–500', expensive: '$500–700', luxury: '$700+' } },
     'miami': { h: [
       { name: 'The Setai Miami Beach', note: 'Independent luxury — three infinity pools, private beach on Collins Avenue, Asian-influenced spa and restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/the-setai-south-beach.html' },
       { name: 'Faena Hotel Miami Beach', note: 'Faena brand — oceanfront on mid-Beach, Damien Hirst woolly mammoth, Tierra Santa Healing House spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/faena-miami-beach.html' },
@@ -11082,7 +11085,7 @@ window.TVE.home = (function () {
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FRA','GIG','GOT','GRU','GVA','HAM',
       'HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
-      'NCE','OPO','ORD','ORY','OSL','PEK','PHL','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
+      'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
       'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TLL','TPE','VCE','VIE','VLC',
       'WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
