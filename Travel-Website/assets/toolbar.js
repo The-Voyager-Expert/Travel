@@ -6381,11 +6381,18 @@ window.TVE.home = (function () {
       { name: 'Santa Maria Suites Resort', note: 'Independent — Simonton Street by South Beach, 4-star all-suite, heated pool with pool bar, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/santa-maria-suites-resort.html', tier: 'luxury' }
     ], price: { budget: '$170–240', mid: '$260–300', expensive: '$360–500', luxury: '$500+' } },
     'kotor': { h: [
-      { name: 'Hotel Alkima', note: 'Independent — Dobrota waterfront on the bay, 4-star, outdoor pool, spa, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/me/alkima.html' },
-      { name: 'Kerber-Graz 1860', note: 'Independent — Stari grad 381 inside the walled Old Town, 4-star, sauna and spa, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/me/kerber-graz-1860.html' },
-      { name: 'Historic Boutique Hotel Cattaro', note: 'Independent — 16th-century Grgurina Palace on the Old Town square, 4-star, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/me/hotel-cattaro.html' },
-      { name: 'HUMA Kotor Bay Hotel and Villas', note: 'Independent — Dobrota waterfront on the bay, 5-star, infinity pool, beach, spa, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/me/allure-palazzi-kotor-bay.html' }
-    ] },
+      { name: 'Hotel Alkima', note: 'Independent — Dobrota waterfront on the bay, 4-star, outdoor pool, spa, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/me/alkima.html', tier: 'mid' },
+      { name: 'Kerber-Graz 1860', note: 'Independent — Stari grad 381 inside the walled Old Town, 4-star, sauna and spa, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/me/kerber-graz-1860.html', tier: 'expensive' },
+      { name: 'Historic Boutique Hotel Cattaro', note: 'Independent — 16th-century Grgurina Palace on the Old Town square, 4-star, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/me/hotel-cattaro.html', tier: 'expensive' },
+      { name: 'HUMA Kotor Bay Hotel and Villas', note: 'Independent — Dobrota waterfront on the bay, 5-star, infinity pool, beach, spa, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/me/allure-palazzi-kotor-bay.html', tier: 'expensive' },
+      { name: 'Casa Nuova', note: 'Independent — Dobrota bb a short walk up from the bay road, 4-star guesthouse-style rooms, free parking, private check-in · 9.3 Booking.com', url: 'https://www.booking.com/hotel/me/casa-nuova.html', tier: 'budget' },
+      { name: 'Hotel Boka', note: 'Independent — Prčanj waterfront on the west shore of the bay, 4-star, a 10-minute drive round to the Old Town · 9.4 Expedia', url: 'https://www.expedia.com/Kotor-Hotels-Hotel-Boka.h104052105.Hotel-Information', tier: 'budget' },
+      { name: 'Boutique Hotel R Palazzo', note: 'Independent — Kriva Ulica in Dobrota on the waterfront, 4-star, seasonal outdoor pool, free parking, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/me/r-palazzo.html', tier: 'mid' },
+      { name: 'Hotel Villa Duomo', note: 'Independent — Stari grad 358 inside the walled Old Town beside the cathedral, 4-star, sauna, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/me/villa-duomo.html', tier: 'mid' },
+      { name: 'Hotel Casa del Mare - Amfora', note: 'Independent — Orahovac on the bay shore north of Dobrota, 4-star, private beach, spa with sauna and hot tub, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/me/amfora.html', tier: 'expensive' },
+      { name: 'Regent Porto Montenegro', note: 'IHG Regent brand — Porto Montenegro marina in Tivat, 5-star, indoor and infinity pools, spa, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/me/regent-porto-montenegro.html', tier: 'luxury' },
+      { name: 'One&Only Portonovi', note: 'One&Only brand — Portonovi resort at the mouth of the bay in Herceg Novi, 5-star, private beach, Chenot spa, 24h reception · 9.5 Booking.com', url: 'https://www.booking.com/hotel/me/one-amp-only-portonovi.html', tier: 'luxury' }
+    ], price: { budget: '€75–100', mid: '€130–175', expensive: '€200–240', luxury: '€400+' } },
     'krakow': { h: [
       { name: 'Hotel Copernicus', note: 'Relais & Châteaux — 15th-century Renaissance house in Old Town, rooftop pool with Royal Castle and Wawel panorama, Copernicus restaurant · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/pl/copernicus.html' },
       { name: 'Sheraton Grand Kraków', note: 'Marriott family — Wisła Riverfront with Wawel Castle views, Dolce Vita Spa, indoor pool, walking distance to Old Town · 8.6 Booking.com' , url: 'https://www.booking.com/hotel/pl/sheraton-grand-krakow.html' },
@@ -10960,7 +10967,7 @@ window.TVE.home = (function () {
       'HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX',
       'LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY',
       'OSL','PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG',
-      'SLC','SPU','STR','SXB','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
