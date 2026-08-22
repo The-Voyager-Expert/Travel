@@ -1116,6 +1116,7 @@
       ]
     };
 
+    var bands = [];
     Object.keys(STEPS).forEach(function (key) {
       var sec = document.querySelector('.' + key);
       if (!sec) return;
@@ -1170,6 +1171,77 @@
       nav.appendChild(button('Previous screen', -1));
       nav.appendChild(button('Next screen', 1));
       tile.parentNode.insertBefore(nav, tile.nextSibling);
+      bands.push(sec);
+    });
+
+    /* ── ONE CARD HEIGHT, FOR EVERY STEP AND BOTH CAROUSELS ──────────────────
+       Owner rule 2026-08-22: "make sure looks good on mobile all should be same
+       size not expanding."
+
+       The picture is a fixed box, so the thing that moved was the BAND: a
+       caption that wraps to three lines on a phone and two on the next step
+       makes the card grow and shrink as you page, and leaves the two stacked
+       cards different heights at rest. Measured at 393px before this: gi-mine
+       rendered 299.4px on step 1 and 319.7 on steps 2 and 3.
+
+       THE HEIGHT IS MEASURED, NEVER A CONSTANT. How many lines a caption takes
+       depends on the viewport — two on a desktop column, three on a phone — so
+       any fixed line count is right at one width and wrong at every other, and
+       reserving the phone's three would leave a blank line on desktop. This
+       paints every caption into every band, keeps the tallest, and applies it to
+       both. Six rows across two bands is twelve reflows, once, and the swaps are
+       synchronous so nothing is ever painted mid-measure.
+
+       ONE max across BOTH carousels, not one each — "all should be same size"
+       is about the pair as much as about the steps. And it re-runs on resize,
+       because the whole point is that the answer changes with the width. */
+    function syncBandHeights() {
+      var all = [];
+      Object.keys(STEPS).forEach(function (k) { STEPS[k].forEach(function (r) { all.push(r); }); });
+      var pairs = bands.map(function (sec) {
+        return [sec.querySelector('.gi-band'), sec.querySelector('.gi-band-t'), sec.querySelector('.gi-band-d')];
+      }).filter(function (p) { return p[0] && p[1] && p[2]; });
+      if (!pairs.length) return;
+      pairs.forEach(function (p) { p[0].style.minHeight = ''; });
+      var max = 0;
+      pairs.forEach(function (p) {
+        var kt = p[1].innerHTML, kd = p[2].innerHTML;
+        all.forEach(function (r) {
+          p[1].innerHTML = r[4];
+          p[2].innerHTML = r[5];
+          /* getBoundingClientRect, never offsetHeight: offsetHeight ROUNDS to an
+             integer, so a band whose true height is 94.09 reports 94, the
+             min-height lands a fraction under the natural box, and the cards
+             come out 0.1-0.4px apart — measured, and visible to nothing except
+             the assertion that they are the same. */
+          var h = p[0].getBoundingClientRect().height;
+          if (h > max) max = h;
+        });
+        p[1].innerHTML = kt;
+        p[2].innerHTML = kd;
+      });
+      pairs.forEach(function (p) { p[0].style.minHeight = max + 'px'; });
+    }
+    /* IT RUNS AGAIN ONCE THE PAGE IS SETTLED, and that is not belt-and-braces.
+       This script is inline in the body, so the first call happens at PARSE
+       TIME — before toolbar.js has appended its runtime <style> blocks to
+       <head>, and before the webfont has swapped in. Measured at 393px: the
+       parse-time pass returned a 135px max where the settled layout returns
+       114.375, so the cards shipped a whole blank line taller than they needed
+       and only agreed with themselves again after a resize. The first call
+       still stands so the cards never flash at two heights; each later one is
+       idempotent and costs twelve reflows.
+
+       Never reduce this to the parse-time call alone — the bug it fixes is
+       invisible unless you resize the window, which nobody does. */
+    syncBandHeights();
+    if (document.readyState === 'loading') addEventListener('DOMContentLoaded', syncBandHeights);
+    addEventListener('load', syncBandHeights);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncBandHeights);
+    var rt;
+    addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(syncBandHeights, 150);
     });
   })();
   </script>
