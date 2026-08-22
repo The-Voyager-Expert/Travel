@@ -6127,11 +6127,15 @@ window.TVE.home = (function () {
     ], price: { budget: '$100–140', mid: '$140–220', expensive: '$220–380', luxury: '$380+' } },
 
     'cape-town': { h: [
-      { name: 'One&Only Cape Town', url: 'https://www.booking.com/hotel/za/one-and-only-cape-town.html', note: 'One&Only Resorts — V&A Waterfront, two-island resort layout, overwater spa, NOBU restaurant, two pools · 9.4 Booking.com' },
-      { name: 'The Silo Hotel', url: 'https://www.booking.com/hotel/za/the-silo.html', note: 'Royal Portfolio — V&A Waterfront Silo District, converted grain silo, 28 rooms, panoramic rooftop bar, curated art collection · 9.0 Booking.com' },
-      { name: 'Belmond Mount Nelson Hotel', url: 'https://www.booking.com/hotel/za/mount-nelson.html', note: 'Belmond — Gardens district, iconic pink hotel, 9 acres of gardens, spa, six restaurants and bars, direct Garden Route access · 9.2 Booking.com' },
-      { name: 'The Twelve Apostles Hotel & Spa', url: 'https://www.booking.com/hotel/za/the-twelve-apostles.html', note: 'Red Carnation Hotels — Camps Bay, nestled between Twelve Apostles mountain and Atlantic, spa, movie theatre, two restaurants · 9.1 Booking.com' }
-    ] },
+      { name: 'Protea Hotel by Marriott Cape Town Waterfront Breakwater Lodge', url: 'https://www.booking.com/hotel/za/breakwater-lodge.html', note: 'Marriott Protea — V&A Waterfront, outdoor pool, 24h reception, harbour-view rooms, walking distance to shops and restaurants · 8.2 Booking.com', tier: 'budget' },
+      { name: 'Southern Sun Cullinan Cape Town', url: 'https://www.booking.com/hotel/za/southern-sun-cullinan.html', note: 'Southern Sun brand — Buitenkant Street in the City Bowl, outdoor pool, 24h reception, 5 min walk to the V&A Waterfront · 8.1 Booking.com', tier: 'budget' },
+      { name: 'Hilton Cape Town City Centre', url: 'https://www.booking.com/hotel/za/hilton-cape-town.html', note: 'Hilton brand — Buitenkant and Longmarket Streets in the CBD, heated outdoor pool, 24h reception, Executive Lounge with Table Mountain views · 8.4 Booking.com', tier: 'mid' },
+      { name: 'Radisson Hotel & Suites Cape Town', url: 'https://www.booking.com/hotel/za/radisson-hotel-suites-cape-town-de-waterkant.html', note: 'Radisson Hotels — De Waterkant, rooftop pool with Table Mountain and city views, 24h reception, 10 min walk to V&A Waterfront · 8.6 Booking.com', tier: 'mid' },
+      { name: 'The Twelve Apostles Hotel & Spa', url: 'https://www.booking.com/hotel/za/the-twelve-apostles.html', note: 'Red Carnation Hotels — Camps Bay, nestled between Twelve Apostles mountain and Atlantic, spa, movie theatre, two restaurants · 9.1 Booking.com', tier: 'expensive' },
+      { name: 'One&Only Cape Town', url: 'https://www.booking.com/hotel/za/one-and-only-cape-town.html', note: 'One&Only Resorts — V&A Waterfront, two-island resort layout, overwater spa, NOBU restaurant, two pools · 9.4 Booking.com', tier: 'luxury' },
+      { name: 'The Silo Hotel', url: 'https://www.booking.com/hotel/za/the-silo.html', note: 'Royal Portfolio — V&A Waterfront Silo District, converted grain silo, 28 rooms, panoramic rooftop bar, curated art collection · 9.0 Booking.com', tier: 'luxury' },
+      { name: 'Belmond Mount Nelson Hotel', url: 'https://www.booking.com/hotel/za/mount-nelson.html', note: 'Belmond — Gardens district, iconic pink hotel, 9 acres of gardens, spa, six restaurants and bars, direct Garden Route access · 9.2 Booking.com', tier: 'luxury' }
+    ], price: { budget: 'ZAR 1,500–2,500', mid: 'ZAR 2,500–5,000', expensive: 'ZAR 5,000–10,000', luxury: 'ZAR 10,000+' } },
     'capri': { h: [
       { name: 'J.K. Place Capri', note: 'Independent boutique — Marina Grande, 22 rooms, infinity sea-view pool, Forbes Five-Star-rated sun terraces · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/j-k-place-capri.html' },
       { name: 'Hotel Punta Tragara', note: 'Manfredi Collection — southern cliff above the Faraglioni, two outdoor pools, sea-view suites, Ristorante Punta Tragara · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/punta-tragara.html' },
