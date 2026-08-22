@@ -5945,11 +5945,15 @@ window.TVE.home = (function () {
       { name: 'The Westin Copley Place, Boston', note: 'Marriott Westin brand — 10 Huntington Avenue in Back Bay, skybridge into Copley Place and the Prudential, fitness centre, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/westin-copley-place.html', tier: 'expensive' }
     ], price: { budget: '$220–300', mid: '$250–320', expensive: '$520–710', luxury: '$700+' } },
     'boulder': { h: [
-      { name: 'Hilton Garden Inn Boulder', note: 'Hilton brand — 2701 Canyon Boulevard, rooftop heated pool, Boulder Creek Path at the door, 10-min walk to Pearl Street · 8.0 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-garden-inn-boulder-co.html' },
-      { name: 'Marriott Boulder', note: 'Marriott brand — Village Shopping Center at 28th and Canyon, outdoor pool, 10-min walk to Pearl Street · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/boulder-marriott.html' },
-      { name: 'Hotel Boulderado', note: '1909 Pearl Street Mall landmark, atrium lobby, Q\'s restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/boulderado.html' },
-      { name: 'Basecamp Boulder', note: 'Independent mountain-contemporary — downtown Pearl Street, fire pits, bike storage · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-arapahoe-ave-boulder.html' }
-    ] },
+      { name: 'Hilton Garden Inn Boulder', note: 'Hilton brand — 2701 Canyon Boulevard, rooftop heated pool, Boulder Creek Path at the door, 10-min walk to Pearl Street · 8.0 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-garden-inn-boulder-co.html', tier: 'mid' },
+      { name: 'Marriott Boulder', note: 'Marriott brand — Village Shopping Center at 28th and Canyon, outdoor pool, 10-min walk to Pearl Street · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/boulder-marriott.html', tier: 'luxury' },
+      { name: 'Hotel Boulderado', note: '1909 Pearl Street Mall landmark, atrium lobby, Q\'s restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/boulderado.html', tier: 'mid' },
+      { name: 'Basecamp Boulder', note: 'Independent mountain-contemporary — downtown Pearl Street, fire pits, bike storage · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-arapahoe-ave-boulder.html', tier: 'budget' },
+      { name: 'Courtyard by Marriott Boulder', note: 'Marriott Courtyard — 4710 Pearl East Circle by the Pearl Street shops, indoor pool and hot tub, 24h reception, Boulder Creek Path two blocks away · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/courtyard-boulder.html', tier: 'budget' },
+      { name: 'Embassy Suites by Hilton Boulder', note: 'Hilton Embassy Suites — 2601 Canyon Boulevard next to the Residence Inn, two-room suites, rooftop heated pool, cooked breakfast included, 24h reception · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/embassy-suites-by-hilton-boulder.html', tier: 'mid' },
+      { name: 'Hyatt Place Boulder Pearl Street', note: 'Hyatt Place — 2280 Junction Place by the Boulder Junction bus hub, indoor pool and hot tub, 24h reception, 15-min walk to Pearl Street · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-place-boulder-47-pearl-street.html', tier: 'mid' },
+      { name: 'The Bradley Boulder Inn', note: 'Independent 12-room inn — 2040 16th Street one block off Pearl Street, adults only, evening wine hour, fireplace lounge, private parking · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-bradley-boulder-inn.html', tier: 'expensive' }
+    ], price: { budget: '$130–140', mid: '$160–170', expensive: '$220–300', luxury: '$350+' } },
     'bruges': { h: [
       { name: 'Hotel Heritage', note: 'Leading Hotels of the World — 15th-century mansion on Niklaas Desparsstraat, indoor pool, spa, refined brasserie · 9.4 Booking.com', url: 'https://www.booking.com/hotel/be/heritage.html' },
       { name: 'Hotel de Orangerie', note: 'Small Luxury Hotels — converted 15th-century nunnery on the Dijver canal, canal-view rooms, Les Jardins de Bruges restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/be/de-orangerie.html' },
@@ -10884,12 +10888,12 @@ window.TVE.home = (function () {
        its airport. */
     var LOUNGE_IATAS = [
       'AGP','AMS','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG',
-      'CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS','DXB','EDI','FAO',
-      'FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST',
-      'JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL',
-      'MIA','MLE','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS','PSP','PVG',
-      'RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','SXB','SYD','TPE','VCE',
-      'VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS','DXB','EDI',
+      'FAO','FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN',
+      'IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT',
+      'MEL','MIA','MLE','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI','PPS','PSP',
+      'PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','SXB','SYD','TPE',
+      'VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
