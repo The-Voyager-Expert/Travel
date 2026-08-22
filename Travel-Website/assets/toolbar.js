@@ -6989,11 +6989,17 @@ window.TVE.home = (function () {
       { name: 'Hotel Pisa Tower', note: 'Independent 3-star — 9 Piazza Manin at the Porta Nuova gate to the Campo dei Miracoli, garden, AC, 9.0 on Expedia · 8.7 Booking.com', url: 'https://www.booking.com/hotel/it/pisa-tower.html', tier: 'budget' }
     ], price: { budget: '€80–120', mid: '€120–170', expensive: '€170–230', luxury: '€230+' } },
     'pokhara': { h: [
-      { name: 'Temple Himalaya Hotel & Spa', note: 'Independent — Street No. 13 in Lakeside, outdoor pool, sauna, 24h reception, free airport shuttle · 9.2 Booking.com', url: 'https://www.booking.com/hotel/np/temple-himalaya-amp-spa.html' },
-      { name: 'Temple Tree Resort & Spa', note: 'Independent — Lakeside district, Phewa Lake views, pool, Himalayan spa treatments · 8.8 Booking.com', url: 'https://www.booking.com/hotel/np/temple-tree-resort.html' },
-      { name: 'Tiger Mountain Pokhara Lodge', note: 'Tiger Mountain — hillside eco-lodge, panoramic Annapurna and Machhapuchhre views, trekking base · 9.3 Booking.com', url: 'https://www.booking.com/hotel/np/tiger-mountain-pokhara-lodge.html' },
-      { name: 'Fish Tail Lodge', note: 'Independent — peninsula in Phewa Lake reached by rope ferry, gardens, pool with Fishtail Mountain views · 8.3 Booking.com', url: 'https://www.booking.com/hotel/np/fish-tail-lodge.html' }
-    ] },
+      { name: 'Temple Himalaya Hotel & Spa', note: 'Independent — Street No. 13 in Lakeside, outdoor pool, sauna, 24h reception, free airport shuttle · 9.2 Booking.com', url: 'https://www.booking.com/hotel/np/temple-himalaya-amp-spa.html', tier: 'mid' },
+      { name: 'Temple Tree Resort & Spa', note: 'Independent — Lakeside district, Phewa Lake views, pool, Himalayan spa treatments · 8.8 Booking.com', url: 'https://www.booking.com/hotel/np/temple-tree-resort.html', tier: 'expensive' },
+      { name: 'Tiger Mountain Pokhara Lodge', note: 'Tiger Mountain — hillside eco-lodge, panoramic Annapurna and Machhapuchhre views, trekking base · 9.3 Booking.com', url: 'https://www.booking.com/hotel/np/tiger-mountain-pokhara-lodge.html', tier: 'luxury' },
+      { name: 'Fish Tail Lodge', note: 'Independent — peninsula in Phewa Lake reached by rope ferry, gardens, pool with Fishtail Mountain views · 8.3 Booking.com', url: 'https://www.booking.com/hotel/np/fish-tail-lodge.html', tier: 'expensive' },
+      { name: 'Hotel Barahi Pokhara', note: 'Independent 5-star — Barahi Path in Lakeside, outdoor pool with mountain views, spa, 24h reception, AC · 9.5 Booking.com', url: 'https://www.booking.com/hotel/np/barahi.html', tier: 'luxury' },
+      { name: 'Temple Bell Boutique Hotel & Spa', note: 'Independent 5-star — Lakeside, outdoor pool, spa and sauna, 24h reception, AC · 9.2 Booking.com', url: 'https://www.booking.com/hotel/np/temple-bell-boutique-and-spa.html', tier: 'luxury' },
+      { name: 'Hotel Dashain', note: 'Independent 4-star — Street No. 13 in Lakeside, outdoor pool, 24h reception, AC, free parking · 9.5 Booking.com', url: 'https://www.booking.com/hotel/np/dashain.html', tier: 'mid' },
+      { name: 'Hotel Chino Pokhara', note: 'Independent — Lakeside Road at Street No. 16, spa, 24h reception, AC, free parking · 9.2 Booking.com', url: 'https://www.booking.com/hotel/np/chino-pokhara.html', tier: 'mid' },
+      { name: 'Hotel Quest', note: 'Independent 3-star — Lakeside Road 16, garden terrace, 24h reception, AC, free parking · 9.7 Booking.com', url: 'https://www.booking.com/hotel/np/quest.html', tier: 'budget' },
+      { name: 'Hotel ABC, Boutique Hotel in Pokhara', note: 'Independent 3-star — Barahi Path off 14th Street in Lakeside, garden, 24h reception, AC, free parking · 9.5 Booking.com', url: 'https://www.booking.com/hotel/np/abc-boutique-in-pokhara.html', tier: 'budget' }
+    ], price: { budget: 'NPR 3,000–6,000', mid: 'NPR 6,000–12,000', expensive: 'NPR 12,000–20,000', luxury: 'NPR 20,000+' } },
     'portland': { h: [
       { name: 'Inn at Northrup Station', note: 'Independent — 2025 NW Northrup in the Nob Hill streetcar district, suites with kitchens, rooftop garden, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-inn-at-northrup-station.html' },
       { name: 'Cambria Hotel Portland - Pearl District', note: 'Independent-operated Cambria — 165 NW Park Avenue on the Park Blocks, rooftop bar, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/cambria-portland-pearl-district.html' },
