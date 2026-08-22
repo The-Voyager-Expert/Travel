@@ -2511,7 +2511,7 @@ window.TVE.home = (function () {
       ['essentials/connections/',       'Airport Connections'],
       ['essentials/lounges-us/',        'US Lounges'],
       ['essentials/lounges-europe/',    'EU Lounges'],
-      ['essentials/airline-networks/',  'Airline Networks']
+      ['essentials/airline-networks/',  'US Airline Networks']
     ] },
     /* The four regional train guides reach the nav for the first time here —
        until now they were linked only from inside the European trains page. */
