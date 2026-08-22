@@ -6277,11 +6277,17 @@ window.TVE.home = (function () {
       { name: 'The Balmoral Hotel', note: 'Rocco Forte brand — 1902 Waverley clock-tower landmark on Princes Street, Number One Michelin-starred restaurant, indoor pool and spa · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/gb/the-balmoral-edinburgh.html', tier: 'luxury' }
     ], price: { budget: '£140–160', mid: '£160–250', expensive: '£250–400', luxury: '£400+' } },
     'florence': { h: [
-      { name: 'Hotel La Gemma', note: 'Independent — Via dei Cavalieri a block off Piazza del Duomo, rooftop Luca Ristorante, spa with hammam · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/la-gemma-firenze.html' },
-      { name: 'Portrait Firenze', note: 'Lungarno Collection — 14 riverfront suites on the Arno above the Ponte Vecchio · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/portrait-firenze.html' },
-      { name: 'Hotel Savoy Florence', note: "Rocco Forte brand — Piazza della Repubblica address, L'Incontro restaurant, rooftop terrace overlooking the Duomo and Campanile, spa · 9.4 Booking.com", url: 'https://www.booking.com/hotel/it/savoy-firenze.html' },
-      { name: 'Four Seasons Hotel Firenze', note: 'Four Seasons — 15th-century Palazzo della Gherardesca, 11-acre private garden with pool, Il Palagio restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/four-seasons-firenze.html' }
-    ] },
+      { name: 'Hotel Davanzati', note: 'Independent — Via Porta Rossa between the Duomo and the Ponte Vecchio, family-run, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/davanzati.html', tier: 'budget' },
+      { name: 'AC Hotel Firenze by Marriott', note: 'Marriott AC brand — Via Luciano Bausi by the Fortezza da Basso, rooftop terrace, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/it/ac-firenze.html', tier: 'budget' },
+      { name: 'Hotel Spadai', note: 'Independent boutique — Via dei Martelli a minute from the Duomo, spa with hot tub, 24h reception · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/hotelspadai.html', tier: 'mid' },
+      { name: 'Hotel L\'Orologio Firenze', note: 'WTB Hotels — Piazza Santa Maria Novella, watch-themed interiors, sauna, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/l-orologio.html', tier: 'mid' },
+      { name: 'Hotel Calimala', note: 'Independent boutique — Via Lamberti beside the Mercato Nuovo, rooftop bar, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/angeli-firenze.html', tier: 'mid' },
+      { name: 'Brunelleschi Hotel', note: 'Independent — Piazza Santa Elisabetta around a Byzantine tower beside the Duomo, Santa Elisabetta Michelin-starred restaurant, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/hotelbrunelleschi.html', tier: 'expensive' },
+      { name: 'Hotel La Gemma', note: 'Independent — Via dei Cavalieri a block off Piazza del Duomo, rooftop Luca Ristorante, spa with hammam · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/la-gemma-firenze.html', tier: 'expensive' },
+      { name: 'Portrait Firenze', note: 'Lungarno Collection — 14 riverfront suites on the Arno above the Ponte Vecchio · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/portrait-firenze.html', tier: 'luxury' },
+      { name: 'Hotel Savoy Florence', note: "Rocco Forte brand — Piazza della Repubblica address, L'Incontro restaurant, rooftop terrace overlooking the Duomo and Campanile, spa · 9.4 Booking.com", url: 'https://www.booking.com/hotel/it/savoy-firenze.html', tier: 'luxury' },
+      { name: 'Four Seasons Hotel Firenze', note: 'Four Seasons — 15th-century Palazzo della Gherardesca, 11-acre private garden with pool, Il Palagio restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/four-seasons-firenze.html', tier: 'luxury' }
+    ], price: { budget: '€120–160', mid: '€160–300', expensive: '€300–600', luxury: '€600+' } },
     'florianopolis': { h: [
       { name: 'LK Design Hotel Florianópolis', note: 'Independent — Rua Bocaiúva above Beira-Mar Norte, rooftop infinity pool over the bay, spa, beachfront · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/lk-design-florianopolis.html' },
       { name: 'Blue Tree Premium Florianópolis', note: 'Blue Tree Hotels — Rua Bocaiúva off Beira-Mar Norte, rooftop pool, sauna and fitness · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/blue-tree-towers-florianopolis.html' },
@@ -11042,7 +11048,7 @@ window.TVE.home = (function () {
     var LOUNGE_IATAS = [
       'AES','AGP','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
-      'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN',
+      'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLR','FRA','GIG','GOT','GRU','GVA','HAM','HAN',
       'HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR',
       'LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE',
       'OPO','ORD','ORY','OSL','PEK','PMI','PNS','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN',
