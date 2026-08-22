@@ -11266,10 +11266,18 @@ window.TVE.home = (function () {
       chip.innerHTML =
         /* The plane is drawn, full stop. The hidden glyph span this used to
            carry existed only to keep textContent byte-identical for the mark
-           sweep; that sweep is gone and nothing reads this chip as text. */
+           sweep; that sweep is gone and nothing reads this chip as text.
+
+           ONE PLANE, and it is `flight-nav` — Site-Icons.html specimen #124,
+           the one the catalogue captions "plane, shipped" and the one the
+           landing-page finder draws on its "Where are you flying from?" field
+           (index.html, span.fnd-ic). This chip drew `plane` — specimen #127,
+           "take off" — until 2026-08-22, so a reader met two different planes
+           moving between the index filter and a guide's Day 1 (owner). Never
+           swap it back to `plane` or to a hand-drawn glyph. */
         '<span class="lac-iata"><span class="gm-icon" aria-hidden="true"' +
         ' style="margin-right:4px">' +
-        '<svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span>' +
+        '<svg viewBox="0 0 24 24"><use href="#gm-i-flight-nav"/></svg></span>' +
         info.iata + '</span>' +
         '<span class="lac-div">|</span>' +
         '<span class="lac-name">' + info.name + '</span>';
