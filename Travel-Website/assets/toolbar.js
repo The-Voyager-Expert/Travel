@@ -6953,11 +6953,17 @@ window.TVE.home = (function () {
       { name: 'Real InterContinental San José', note: 'IHG brand — Escazú shopping district, outdoor pool, four restaurants · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cr/real-intercontinental-costa-rica.html', tier: 'luxury' }
     ], price: { budget: '$55–90', mid: '$90–140', expensive: '$140–200', luxury: '$200+' } },
     'san-juan-island': { h: [
-      { name: 'Friday Harbor House Hotel', note: 'Independent boutique — above Friday Harbor Marina, harbor and Olympic Mountain views, Pacific Northwest design · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/friday-harbor-house.html' },
-      { name: 'Tucker House Inn', note: 'Independent — Friday Harbor, 1898 Victorian B&B with garden hot tub, walk to ferry · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/tucker-house-inn.html' },
-      { name: 'Earthbox Inn & Spa', note: 'Independent — Friday Harbor, eco-minded inn, spa and hot tub, two blocks from the ferry · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/earthbox-inn-amp-spa.html' },
-      { name: 'Trumpeter Inn', note: 'Independent — country-setting B&B, private pond with trumpeter swans, full gourmet breakfast · 9.7 Booking.com', url: 'https://www.booking.com/hotel/us/trumpeter-inn.html' }
-    ] },
+      { name: 'Discovery Inn', note: 'Independent — 1016 Guard Street a short walk above the harbour, garden hot tub and spa, free parking · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/discovery-inn-and-gardens.html', tier: 'budget' },
+      { name: 'Juniper Lane Guest House', note: 'Independent — Beaverton Valley Road a mile from the ferry, adults-only guest house with gardens and a sun deck, free parking · 9.7 Booking.com', url: 'https://www.booking.com/hotel/us/juniper-lane-guest-house.html', tier: 'budget' },
+      { name: 'Earthbox Inn & Spa', note: 'Independent — Friday Harbor, eco-minded inn, spa and hot tub, two blocks from the ferry · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/earthbox-inn-amp-spa.html', tier: 'mid' },
+      { name: 'Trumpeter Inn', note: 'Independent — country-setting B&B, private pond with trumpeter swans, full gourmet breakfast · 9.7 Booking.com', url: 'https://www.booking.com/hotel/us/trumpeter-inn.html', tier: 'mid' },
+      { name: 'Peter Jensen House', note: 'Independent — 475 Argyle Avenue in the heart of Friday Harbor, a restored 1890s house with family rooms, free parking · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/peter-jensen-house.html', tier: 'mid' },
+      { name: 'Bird Rock Hotel', note: 'Independent — 35 First Street steps from the ferry landing, boutique rooms with harbour views and a sun deck · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/bird-rock.html', tier: 'mid' },
+      { name: 'Tucker House Inn', note: 'Independent — Friday Harbor, 1898 Victorian B&B with garden hot tub, walk to ferry · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/tucker-house-inn.html', tier: 'expensive' },
+      { name: 'The KirkHouse Bed and Breakfast', note: 'Independent — 595 Park Street in the town centre, a 1907 Craftsman house with garden terrace, free parking · 9.7 Booking.com', url: 'https://www.booking.com/hotel/us/the-kirkhouse-bed-and-breakfast.html', tier: 'expensive' },
+      { name: 'Snug Harbor Resort and Marina', note: 'Independent — Mitchell Bay on the west side near Lime Kiln Point, waterfront cabins on a private beach, restaurant, free parking · 9.6 Booking.com', url: 'https://www.booking.com/hotel/us/snug-harbor-resort-and-marina.html', tier: 'expensive' },
+      { name: 'Friday Harbor House Hotel', note: 'Independent boutique — above Friday Harbor Marina, harbor and Olympic Mountain views, Pacific Northwest design · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/friday-harbor-house.html', tier: 'luxury' }
+    ], price: { budget: '$160–190', mid: '$190–260', expensive: '$260–370', luxury: '$370+' } },
     'san-sebastian': { h: [
       { name: 'Hotel Maria Cristina, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1912 Belle Époque landmark on Urumea riverside, San Sebastián Film Festival HQ · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/maria-cristina-san-sebastian.html' },
       { name: 'Akelarre Hotel', note: 'Independent — Pedro Subijana three-Michelin-star restaurant, 22 rooms on Igeldo cliffs, Bay of Biscay panorama · 9.7 Booking.com', url: 'https://www.booking.com/hotel/es/akelarre-igueldo.html' },
@@ -10920,11 +10926,11 @@ window.TVE.home = (function () {
     var LOUNGE_IATAS = [
       'AGP','AMS','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG',
       'CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS','DXB','EDI',
-      'EYW','FAO','FCO','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH',
-      'ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD','MAN',
-      'MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK','PMI',
-      'PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR',
-      'SXB','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'EYW','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD',
+      'IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD',
+      'MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK',
+      'PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU',
+      'STR','SXB','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
