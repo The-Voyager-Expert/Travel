@@ -93,43 +93,30 @@
 
   /* Collect [{label, labelEl, continent, cards[]}] in DOM order.
 
-     Two sources, and the country is the SAME fact either way:
-       · legacy page — a <div class="best-of-section-label">Peru</div> heading
-         above each run of cards;
-       · converted page — data-country="Peru" on the card itself, with no
-         heading at all, so the grid flows continuously instead of breaking to
-         a new row at every country (2026-08-22 owner rule).
-     labelEl is null on a converted page; every consumer below already guards
-     on it, so the continent chips, the sort dropdown and the country filter
-     all keep working with no heading to read. */
+     The country is read from data-country ON THE CARD. It used to be a
+     <div class="best-of-section-label">Peru</div> heading above each run of
+     cards; those are retired on every place page (owner rule 2026-08-22 - the
+     grid breaks to a new row at every heading, which cost 55% of the section's
+     height), and check_best_of_pages_are_flat fails a page that brings one back.
+
+     labelEl is therefore always null, and every consumer below already guards on
+     it. Note the class itself is NOT dead: best-of/index.html still uses it for
+     its five theme groups (Nature & outdoors, Family, ...), which are not
+     countries and are marked data-no-filter - but that page has no
+     .showcase-grid, so none of this runs there. */
   function collectSections() {
-    var result = [], cur = null;
-    var haveLabels = !!grid.querySelector('.best-of-section-label');
-    var byCountry = {};
+    var result = [], byCountry = {};
     [].slice.call(grid.children).forEach(function (node) {
-      if (haveLabels && node.classList.contains('best-of-section-label') &&
-          !node.classList.contains('best-of-subsection-label')) {
-        cur = { label: node.textContent.trim(), labelEl: node,
-                continent: getContinent(node.textContent.trim()), cards: [] };
-        result.push(cur);
-        return;
-      }
       if (!node.classList.contains('showcase-card')) return;
-      if (!haveLabels) {
-        /* Group by data-country, keyed rather than by consecutive run, so a
-           country appearing twice in the grid stays one section (and so one
-           entry in the filter) instead of two. */
-        var ctry = (node.dataset.country || '').trim();
-        if (!Object.prototype.hasOwnProperty.call(byCountry, ctry)) {
-          byCountry[ctry] = { label: ctry, labelEl: null,
-                              continent: getContinent(ctry), cards: [] };
-          result.push(byCountry[ctry]);
-        }
-        byCountry[ctry].cards.push(node);
-        return;
+      /* keyed, not by consecutive run, so a country appearing twice in the grid
+         stays one section - and so one entry in the filter - instead of two */
+      var ctry = (node.dataset.country || '').trim();
+      if (!Object.prototype.hasOwnProperty.call(byCountry, ctry)) {
+        byCountry[ctry] = { label: ctry, labelEl: null,
+                            continent: getContinent(ctry), cards: [] };
+        result.push(byCountry[ctry]);
       }
-      if (!cur) { cur = { label: '', labelEl: null, continent: null, cards: [] }; result.push(cur); }
-      cur.cards.push(node);
+      byCountry[ctry].cards.push(node);
     });
     return result;
   }
@@ -146,18 +133,16 @@
   var regionJumpEl = document.getElementById('regionJump');
 
   /* ── Country filter dropdown ──────────────────────────────────────────────
-     Owns #regionJump on a CONVERTED page — one whose country headings are gone
-     and whose cards carry data-country instead. A page that still has headings
-     keeps its own inline copy of this and is left alone here, so the two can
-     never both bind to the same dropdown during the rollout.
+     Owns #regionJump. Every place page used to carry its own inline copy of
+     this, reading the country headings; a page must not bind that dropdown
+     itself any more, and check_best_of_pages_are_flat fails one that does.
 
-     Behaviour is deliberately identical to the inline version it replaces:
+     Behaviour is deliberately identical to the inline version it replaced:
      the menu lists every country in grid order, picking one shows only that
      country's cards, and _regionJumpReset (called when a continent chip or a
      non-default sort is used) clears it. Only the SOURCE of the country moved
      — from the heading above the card to an attribute on the card. */
   function initCountryFilter(sections) {
-    if (document.querySelector('.best-of-section-label')) return;  /* legacy page owns its own */
     var jump   = document.getElementById('regionJump');
     var toggle = document.getElementById('regionJumpToggle');
     var label  = document.getElementById('regionJumpLabel');

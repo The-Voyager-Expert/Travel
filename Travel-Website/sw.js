@@ -1752,7 +1752,15 @@
    under the band — festival-finder, nomad-visas, pickleball and scams were all
    56px bars in 70px boxes. web-travel-style.css -> 91, mobile.css -> 88.
    CACHE to v1216. */
-var CACHE = 'travel-cache-v1217';
+/* 2026-08-22: Best-Of flat grid complete — all 37 place pages converted, so
+   best-of-features.js drops the branch that read country headings. The class is
+   NOT dead (best-of/index.html still groups its five theme rows with it) but no
+   .showcase-grid page carries one any more, and check_best_of_pages_are_flat
+   fails one that brings it back — a branch that still handles the retired shape
+   is how a crib talks itself into re-adding it. Measured across the section:
+   788,567px -> 353,235px. best-of-features.js -> v4. CACHE to v1218. */
+
+var CACHE = 'travel-cache-v1218';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1765,7 +1773,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 841, 'mobile.css': 88, 'web-travel-style.css': 91, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 3, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 841, 'mobile.css': 88, 'web-travel-style.css': 91, 'guides-index-style.css': 24, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
