@@ -5658,7 +5658,7 @@ window.TVE.home = (function () {
       { name: 'Embassy Suites by Hilton Anchorage', note: 'Hilton Embassy Suites brand — two-room suites on East Benson Boulevard, indoor pool, evening reception · 7.9 Booking.com', url: 'https://www.booking.com/hotel/us/embassy-suites-anchorage.html', tier: 'expensive' },
       { name: 'Hotel Captain Cook', note: 'Independent — Anchorage landmark since 1965, three-tower downtown complex with on-site dining · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/us/hotel-captain-cook.html', tier: 'luxury' },
       { name: 'Marriott Anchorage Downtown', note: 'Marriott brand — indoor pool, largest downtown full-service hotel, West 7th Avenue · 7.9 Booking.com' , url: 'https://www.booking.com/hotel/us/anchorage-marriott-downtown.html', tier: 'luxury' }
-    ] },
+    ], price: { budget: '$145–490', mid: '$225–425', expensive: '$245–600', luxury: '$280–645' } },
     'alesund': { h: [
       { name: 'Hotel Noreg', note: 'Independent — Kongensgate in the Art Nouveau centre, sauna, fitness centre, hot spring bath · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/hotel-noreg.html', tier: 'budget' },
       { name: 'Scandic Parken', note: 'Scandic brand — Storgata below Aksla hill, sauna, fitness centre, on-site restaurant · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/scandic-parken.html', tier: 'budget' },
@@ -10935,13 +10935,13 @@ window.TVE.home = (function () {
        list) while every European guide jumped to its country rather than to
        its airport. */
     var LOUNGE_IATAS = [
-      'AGP','AMS','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG',
-      'CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS','DXB','EDI',
-      'EYW','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD',
-      'IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS','MAD',
-      'MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL','PEK',
-      'PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU',
-      'STR','SXB','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'AGP','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI',
+      'CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW','DUB','DUS','DXB',
+      'EDI','EYW','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL','HER','HKG','HND',
+      'IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH','LIS','LUX','LYS',
+      'MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO','ORD','ORY','OSL',
+      'PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC','SJO','SKG','SLC',
+      'SPU','STR','SXB','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
