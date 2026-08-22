@@ -138,6 +138,14 @@ def check_guide(name: str, path: Path) -> list[str]:
 
 _IMG_EXTS = (".jpg", ".jpeg", ".png", ".webp")
 _WIKI_SUFFIXES = ("wikimedia.org", "wikipedia.org")
+# FOUR SOURCES (Photos Rules.html § 1, owner rule 2026-08-21). Kept in step with
+# photo_provenance.py's STOCK_HOST_SUFFIXES / PREMIUM_STOCK_MARKERS — this file
+# is a deliberate self-contained copy of that gate, so BOTH move in the same
+# pass or the copy starts rejecting photos the rules allow.
+_STOCK_SUFFIXES = ("unsplash.com", "pexels.com", "pixabay.com")
+# Unsplash+ is a PAID licence. Tested BEFORE the allowlist because
+# plus.unsplash.com is a subdomain of unsplash.com and suffix matching admits it.
+_PREMIUM_MARKERS = ("plus.unsplash.com", "premium_photo-")
 # Guide HTML links photos root-absolutely since the 2026-08-16 URL flatten.
 # This required `_build/assets/...` — a path the fleet has not used since the
 # photos moved to photos/ — so it matched nothing and _photo_failures() returned
@@ -161,6 +169,26 @@ def _is_wiki(url) -> bool:
     except Exception:
         return False
     return any(host == s or host.endswith("." + s) for s in _WIKI_SUFFIXES)
+
+
+def _is_allowed_source(url) -> bool:
+    """One of the four libraries Photos Rules.html § 1 allows."""
+    if not url:
+        return False
+    try:
+        host = (urlparse(url).hostname or "").lower()
+    except Exception:
+        return False
+    return any(host == s or host.endswith("." + s)
+               for s in _WIKI_SUFFIXES + _STOCK_SUFFIXES)
+
+
+def _is_premium(*urls) -> bool:
+    for u in urls:
+        low = (u or "").lower()
+        if any(m in low for m in _PREMIUM_MARKERS):
+            return True
+    return False
 
 
 def _photo_failures(guide_html_path: Path, html: str) -> list[str]:
@@ -220,8 +248,17 @@ def _photo_failures(guide_html_path: Path, html: str) -> list[str]:
                 if not isinstance(entry, dict):
                     fails.append(f"photo missing from provenance manifest: {ref}")
                     continue
-                if not _is_wiki(entry.get("source_url")):
-                    fails.append(f"photo provenance source is not Wikimedia/Wikipedia: {ref}")
+                _src, _img = entry.get("source_url"), entry.get("image_url")
+                if _is_premium(_src, _img):
+                    fails.append(
+                        f"photo is an Unsplash+ PREMIUM file (paid licence, not one of "
+                        f"the four free sources): {ref}"
+                    )
+                elif not _is_allowed_source(_src):
+                    fails.append(
+                        f"photo provenance source is not one of the four allowed "
+                        f"libraries (Commons, Unsplash, Pexels, Pixabay): {ref}"
+                    )
                 if entry.get("sha256") and entry["sha256"] != h:
                     fails.append(f"photo bytes don't match recorded provenance sha256: {ref}")
     return fails
