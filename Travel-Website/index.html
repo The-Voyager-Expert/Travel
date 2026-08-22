@@ -1225,8 +1225,11 @@ a.land-cta:hover:visited {
 .fnd-more[aria-expanded="true"]::after { content: ' \25b4'; }
 #fnd-more-panel { margin-top: clamp(0.7rem, 1.6vw, 1rem); }
 .fnd-results { margin-top: clamp(0.9rem, 2vw, 1.3rem); border-top: 1px solid var(--border2,#e6e2da); padding-top: clamp(0.8rem, 1.8vw, 1.1rem); }
-.fnd-res-head { font-size: 0.9rem; color: var(--muted,#6a6660); margin: 0 0 0.7rem; }
+/* A statement now, so it takes the ink and a step up in size (owner,
+   2026-08-23: "in fonts a bit bigger"). It was a muted 0.9rem count line. */
+.fnd-res-head { font-size: 1.05rem; color: var(--ink,#3d3a32); margin: 0 0 0.85rem; }
 .fnd-res-head b { color: var(--ink,#3d3a32); }
+.fnd-res-sub { display: block; margin-top: 0.3rem; font-size: 0.82rem; color: var(--muted,#6a6660); }
 .fnd-res-list { display: flex; flex-wrap: wrap; gap: 0.45rem; }
 .fnd-res-list a {
   border: 1px solid var(--border,#e3ddd2); border-radius: 999px;
@@ -2021,7 +2024,12 @@ summary.res-head:focus-visible { outline: 2px solid var(--rust, #C04E1A); outlin
 .hc-hint { margin: 0 0 .55rem; font-size: .84rem; font-weight: 400; color: var(--muted,#6a6660); }
 #help-choose-panel .fnd-results { margin-top: 20px; }
 .tt-narrow .fnd-row { margin-top: 6px; }
-.fnd-facts { flex-basis: 100%; font-size: 11.5px; line-height: 1.5; color: #8a857c; margin-top: 3px; font-variant-numeric: tabular-nums; }
+/* 13px on the shared --muted, not 11.5px on #8a857c (owner, 2026-08-23: "this is
+   hard to read make it bigger and clear"). The old grey measured 3.0:1 on the
+   cream card, under the 4.5:1 small-text floor; --muted #6a6660 is 4.9:1 and is
+   the colour every other secondary line on the site already uses. The hover rule
+   below still flips it to white on the terracotta card. */
+.fnd-facts { flex-basis: 100%; font-size: 13px; line-height: 1.55; color: var(--muted,#6a6660); margin-top: 5px; font-variant-numeric: tabular-nums; }
 @media (hover:hover) { .flt-grid .dest-card:hover .fnd-facts { color: #fff !important; } }
 #hc-back { font-family:inherit; font-size:12px; background:none; border:none; color:var(--accent, #8a6c1a); cursor:pointer; padding:0; text-decoration:underline; }
 #hc-back:hover { color:#C04E1A; }
@@ -3128,25 +3136,41 @@ window.lpGuideCard = function (href, flag, name, extra) {
         <div class="fnd-field">
                   <label for="fnd-tz">How much jet lag?</label>
                   <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-wall-clock"/></svg></span><select id="fnd-tz">
-                    <!-- Three options, and each one says WHICH WAY (owner, 2026-08-22:
-                         "2 hours ahead and back is the same? … too many options and does
-                         not say forward or backward"). The six "Up to Nh from your clock"
-                         lines that stood here were all |offset|, so Tokyo and Honolulu
-                         answered the same pick from Seattle — a reader asking about jet
-                         lag was told nothing, because east and west are the whole
-                         question and the label hid it.
+                    <!-- NINE BANDS, cut at 3 / 6 / 9 / 12 IN BOTH DIRECTIONS (owner,
+                         2026-08-23: "the filter needs to have at least - and + 6 - and + 9
+                         - and +12"). Three options could only say near / east / west: past
+                         +3h held Paris and Tokyo together, and past &minus;3h held Mexico City
+                         with Honolulu, so the two ends of the control answered a third of
+                         the fleet each and narrowed almost nothing.
 
-                         A clean partition, no gap and no overlap: within &plusmn;3h, or
-                         past +3h / &minus;3h. 3h is where the half-hour zones (India +5:30,
-                         Nepal, Adelaide) sit safely on one side, and where a trip stops
-                         being the same working day. The sign IS the direction and needs no
-                         gloss (owner, 2026-08-22: "we can just say -3 and +3 everyone will
-                         understand that") &mdash; + is the destination clock ahead of the
-                         reader's, &minus; is behind it. -->
+                         Every option still says WHICH WAY (owner, 2026-08-22: "2 hours
+                         ahead and back is the same? … too many options and does not say
+                         forward or backward"). The six "Up to Nh from your clock" lines
+                         that stood here before that were all |offset|, so Tokyo and
+                         Honolulu answered the same pick — east and west are the whole
+                         question and the label hid it. The sign IS the direction and needs
+                         no gloss (owner, 2026-08-22: "we can just say -3 and +3 everyone
+                         will understand that") &mdash; + is the destination clock ahead of
+                         the reader's, &minus; is behind it.
+
+                         Still a clean partition, no gap and no overlap: &plusmn;3h owns both
+                         its ends, each band above it owns its upper bound, and the two
+                         open bands take everything past &plusmn;12h. 3h is where the half-hour
+                         zones (India +5:30, Nepal, Adelaide) sit safely on one side, and
+                         where a trip stops being the same working day. fTz is in
+                         PRUNE_PAIRS, so once any other field is set a band that would
+                         come back empty greys itself out rather than offering the
+                         reader an option that returns nothing. -->
                     <option value="">No preference</option>
                     <option value="near">Within &plusmn;3h of your clock</option>
-                    <option value="ahead">More than +3h</option>
-                    <option value="behind">More than &minus;3h</option>
+                    <option value="a6">+3 to +6h</option>
+                    <option value="a9">+6 to +9h</option>
+                    <option value="a12">+9 to +12h</option>
+                    <option value="ao12">More than +12h</option>
+                    <option value="b6">&minus;3 to &minus;6h</option>
+                    <option value="b9">&minus;6 to &minus;9h</option>
+                    <option value="b12">&minus;9 to &minus;12h</option>
+                    <option value="bo12">More than &minus;12h</option>
                   </select></div>
                 </div>
         <div class="fnd-field">
@@ -6531,6 +6555,23 @@ function render() {
      destination airports: a single "12h and up" holds 83% of them from Sydney
      and 79% from Auckland — a filter that returns almost everything. Split at
      16h, the largest band from any tested origin is 67% and most sit near 40%. */
+  /* Jet lag, in MINUTES of signed offset from the reader's own clock: positive
+     is the destination clock ahead of theirs. Cut at 3 / 6 / 9 / 12 each way
+     (owner, 2026-08-23) and exact — near owns ±3h, every band above it owns its
+     upper bound, and the pair of open bands takes the rest, so a guide sits in
+     exactly one of the nine wherever the reader happens to be. */
+  var TZ_BAND = {
+    near: function (m) { return Math.abs(m) <= 180; },
+    a6:   function (m) { return m >  180 && m <=  360; },
+    a9:   function (m) { return m >  360 && m <=  540; },
+    a12:  function (m) { return m >  540 && m <=  720; },
+    ao12: function (m) { return m >  720; },
+    b6:   function (m) { return m < -180 && m >= -360; },
+    b9:   function (m) { return m < -360 && m >= -540; },
+    b12:  function (m) { return m < -540 && m >= -720; },
+    bo12: function (m) { return m < -720; }
+  };
+
   var FAR = {
     u3:  function (m) { return m < 180; },
     u6:  function (m) { return m >= 180 && m < 360; },
@@ -6975,13 +7016,13 @@ function render() {
          filtered answer, the same rule as climate and distance. */
       if (s.tz.length) {
         var tzm = tzDiffMinutes(g.name);
-        /* Positive = the destination clock is AHEAD of the reader's. The old
-           test was Math.abs(tzm) <= h*60, which is why the control could not
-           name a direction: it never had one. */
+        /* Positive = the destination clock is AHEAD of the reader's. The test
+           reads TZ_BAND, the way the Daylight and flight-time filters read
+           theirs — an inline ternary chain could carry three options and could
+           not carry nine. An unknown key returns false rather than true: a band
+           that no longer exists must match nothing, never everything. */
         if (tzm === null || !anyOf(s.tz, function (k) {
-          return k === 'near'  ? Math.abs(tzm) <= 180
-               : k === 'ahead' ? tzm > 180
-               : tzm < -180;
+          return TZ_BAND[k] ? TZ_BAND[k](tzm) : false;
         })) return false;
       }
       if (s.cu.length) {
@@ -7353,15 +7394,20 @@ function render() {
                        !s.tz.length && !s.cu.length && !s.dl.length);
       var moNames = s.mo.map(function (m) { return MON[m]; }).join(' or ');
 
-      /* "All N matches" — the header names the whole answer, because the whole
-         answer is what is under it: one list, every match, nothing held back in
-         a second grid (owner rule 2026-08-22). A single hit reads "1 match";
-         "All 1 match" is not a sentence. */
+      /* THE HEAD IS A SENTENCE, NOT A TALLY (owner, 2026-08-23: "say This are the
+         place recommended for you. in fonts a bit bigger and then show the
+         results"). It read "All 48 matches" — the language of a query returning
+         rows, on a block whose whole job is to hand a reader somewhere to go.
+         The count is not restated because the answer is directly beneath it and
+         nothing is held back in a second grid (owner rule 2026-08-22).
+
+         Singular when one guide comes back, because "These are the places" over
+         a single card is not a sentence either. */
       var head = '<p class="fnd-res-head">' +
-                 (hits.length === 1 ? '<b>1</b> match'
-                                    : 'All <b>' + hits.length + '</b> matches') +
-                 (monthOnly ? ' &mdash; every guide is open in ' + moNames +
-                              '. Add a temperature and this narrows.' : '') + '</p>';
+                 (hits.length === 1 ? 'This is the place recommended for you.'
+                                    : 'These are the places recommended for you.') +
+                 (monthOnly ? ' <span class="fnd-res-sub">Every guide is open in ' + moNames +
+                              ' &mdash; add a temperature and this narrows.</span>' : '') + '</p>';
 
       if (!hits.length) {
         /* No count line above "no guide matches" — "All 0 matches" is not a
@@ -7433,7 +7479,17 @@ function render() {
       if (!row) {
         row = document.createElement('div');
         row.className = 'fnd-chips';
-        fieldEl.appendChild(row);
+        /* Straight under the control, NEVER appended to the end of the field
+           (owner, 2026-08-23: "put the answer first and then the text below
+           with * … in the middle looks really odd"). Appending put the picked
+           band below the explanatory note on the one field that carries one,
+           so the note sat between the question and its answer — and the
+           Sixty-second non-negotiable is that the answer sits under the
+           control that asked for it. Every other field has nothing after its
+           control, so inserting rather than appending changes only this one. */
+        var ctl = fieldEl.querySelector('.fnd-ctl');
+        if (ctl && ctl.nextSibling) fieldEl.insertBefore(row, ctl.nextSibling);
+        else fieldEl.appendChild(row);
       }
       row.textContent = '';
       list.forEach(function (p) {
@@ -7581,8 +7637,18 @@ function render() {
              whether the reader flies direct or connects — a connection adds
              its dogleg and its waiting, and the waiting is the part this
              number is telling them it does not carry. */
-          farNote.textContent = 'Total time in the air from ' + h.code +
-            ' — waiting and connections are not counted.';
+          /* A STARRED FOOTNOTE, and it says what the number is in two short
+             sentences (owner, 2026-08-23: "this text should say: Total time in
+             the air. is time waiting between connections not counted" · "put
+             the answer first and then the text below with * that would read
+             more as a note"). The line it replaces ran two facts together —
+             "waiting and connections are not counted" reads as though a
+             connecting itinerary were excluded from the number, which is not
+             what it does: a connection's own flying time IS in there, its
+             layover is not. The origin is not repeated either; the field
+             directly beside this one asks for the airport and shows it. */
+          farNote.textContent = '* Total time in the air. ' +
+            'Time waiting between connections is not counted.';
         }
         homeNote.textContent = '';
         return;
