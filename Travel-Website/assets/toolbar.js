@@ -6028,11 +6028,16 @@ window.TVE.home = (function () {
     ], price: { budget: '$160–180', mid: '$220–250', expensive: '$320–430', luxury: '$650+' } },
 
     'busan': { h: [
-      { name: 'Park Hyatt Busan', note: 'Hyatt brand — Haeundae-gu, 38th-floor infinity pool with Gwangalli Bridge panorama, spa, ocean-view dining · 9.0 Booking.com', url: 'https://www.booking.com/hotel/kr/park-hyatt-busan.html' },
-      { name: 'Westin Josun Busan', note: 'Marriott brand — Haeundae Beach, direct beachfront access, outdoor pool, full-service spa, panoramic sea views · 8.9 Booking.com', url: 'https://www.booking.com/hotel/kr/westin-josun-busan.html' },
-      { name: 'Centara Grand Hotel Busan', note: 'Centara brand — Haeundae-gu tower, 20-minute drive from Seomyeon, ocean views, pool and spa, near Centum City · 8.6 Booking.com', url: 'https://www.booking.com/hotel/kr/centara-grand-hotel-busan.html' },
-      { name: 'Novotel Ambassador Busan', note: 'Accor brand — Haeundae-gu, outdoor pool, business center, 10-min walk to Haeundae Beach, free airport shuttle · 8.2 Booking.com', url: 'https://www.booking.com/hotel/kr/novotel-ambassador-busan.html' }
-    ] },
+      { name: 'Park Hyatt Busan', note: 'Hyatt brand — Haeundae-gu, 38th-floor infinity pool with Gwangalli Bridge panorama, spa, ocean-view dining · 9.0 Booking.com', url: 'https://www.booking.com/hotel/kr/park-hyatt-busan.html', tier: 'luxury' },
+      { name: 'Westin Josun Busan', note: 'Marriott brand — Haeundae Beach, direct beachfront access, outdoor pool, full-service spa, panoramic sea views · 8.9 Booking.com', url: 'https://www.booking.com/hotel/kr/westin-josun-busan.html', tier: 'expensive' },
+      { name: 'Centara Grand Hotel Busan', note: 'Centara brand — Haeundae-gu tower, 20-minute drive from Seomyeon, ocean views, pool and spa, near Centum City · 8.6 Booking.com', url: 'https://www.booking.com/hotel/kr/centara-grand-hotel-busan.html', tier: 'expensive' },
+      { name: 'Novotel Ambassador Busan', note: 'Accor brand — Haeundae-gu, outdoor pool, business center, 10-min walk to Haeundae Beach, free airport shuttle · 8.2 Booking.com', url: 'https://www.booking.com/hotel/kr/novotel-ambassador-busan.html', tier: 'mid' },
+      { name: 'Fairfield by Marriott Busan', note: 'Marriott Fairfield — 314 Haeundaehaebyeon-ro one block from Haeundae Beach, fitness room, 24h reception, parking garage · 8.4 Booking.com', url: 'https://www.booking.com/hotel/kr/fairfield-by-marriott-busan.html', tier: 'budget' },
+      { name: 'L7 Haeundae by Lotte Hotels', note: 'Lotte L7 — 55 Haeun-daero 570beon-gil by Haeundae Station, rooftop infinity pool, 24h reception, five minutes on foot from the beach · 9.0 Booking.com', url: 'https://www.booking.com/hotel/kr/l7-haeundae-busan.html', tier: 'budget' },
+      { name: 'Grand Josun Busan', note: 'Josun Hotels — 292 Haeundaehaebyeon-ro on Haeundae Beach, indoor and outdoor pools, spa and sauna, 24h reception, free parking · 9.2 Booking.com', url: 'https://www.booking.com/hotel/kr/grand-josun-busan.html', tier: 'mid' },
+      { name: 'Signiel Busan', note: 'Lotte Signiel — floors 3 to 19 of the LCT tower at 30 Dalmaji-gil, outdoor infinity pool over Haeundae Beach, spa, kids club, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/kr/signiel-busan.html', tier: 'luxury' }
+    ], price: { budget: 'KRW 130,000–150,000', mid: 'KRW 220,000–240,000', expensive: 'KRW 285,000–300,000', luxury: 'KRW 325,000+' } },
+
     'cairo': { h: [
       { name: 'Four Seasons Hotel Cairo at Nile Plaza', note: 'Four Seasons brand — Garden City Nile frontage, indoor pool, spa, panoramic city views across the river · 9.2 Booking.com', url: 'https://www.booking.com/hotel/eg/four-seasons-cairo-at-nile-plaza.html' },
       { name: 'Kempinski Nile Hotel Cairo', note: 'Kempinski brand — Garden City Nile address, rooftop pool, Osmanly Ottoman restaurant, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/eg/kempinski-nile-cairo.html' },
@@ -11048,12 +11053,12 @@ window.TVE.home = (function () {
     var LOUNGE_IATAS = [
       'AES','AGP','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
-      'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLR','FRA','GIG','GOT','GRU','GVA','HAM','HAN',
-      'HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR',
-      'LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE',
-      'OPO','ORD','ORY','OSL','PEK','PMI','PNS','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN',
-      'SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC','WLG','YUL','YVR',
-      'YYZ','ZAG','ZRH'
+      'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLR','FRA','GIG','GOT','GRU','GVA','HAM',
+      'HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
+      'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
+      'NCE','OPO','ORD','ORY','OSL','PEK','PMI','PNS','PPS','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
+      'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC',
+      'WLG','YUL','YVR','YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
