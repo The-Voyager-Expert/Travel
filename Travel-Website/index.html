@@ -3185,20 +3185,63 @@ window.lpGuideCard = function (href, flag, name, extra) {
                   </select></div>
                 </div>
         <div class="fnd-field">
-                  <label for="fnd-home-in">Where are you flying from?</label>
+                  <label for="fnd-far">How far are you willing to fly?</label>
+                  <!-- ASKED BEFORE THE AIRPORT, not after (owner, 2026-08-22: "the filter
+                       should ask How far are you willing to fly? and then ask for the
+                       airport code or city? it does not make sense to ask before").
+                       Willingness is a thing a reader knows about themselves and can
+                       answer cold; the airport is the follow-up question the answer
+                       creates. Shipped the other way round for one iteration and the
+                       form asked a stranger for an IATA code before telling them what
+                       it was for.
+
+                       So this control is NEVER disabled. The first version greyed it
+                       out until an origin existed, which is exactly the order the owner
+                       rejected. Pick a band with no airport and the band is HELD, not
+                       applied - see holdFar() - and the airport field below asks for
+                       what it needs. Nothing silently returns zero.
+
+                       WHAT THE BANDS MEASURE: nonstop FLYING time, gate to gate. No
+                       connection, no layover, no waiting (owner, 2026-08-22: "are you
+                       add the waiting time or not?" - no). That is not a shortcut, it
+                       is the only one of the two numbers that can be computed for an
+                       arbitrary pair of airports: whether a nonstop exists between two
+                       of the 3,268 origins and 193 destinations is the largest single
+                       term in a journey time and is precisely what nothing here can
+                       know. See TVE.home in toolbar.js for the fit and its error.
+
+                       Bands are 3h wide and contiguous, so a guide sits in exactly one
+                       of them - the shape Daylight took the same day, and for the same
+                       reason a pair of open-ended options left the middle of the range
+                       unaskable. The top two split at 16h because a single "12h and up"
+                       holds 83% of the fleet from Sydney and narrows nothing. -->
+                  <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-hourglass"/></svg></span><select id="fnd-far">
+                    <option value="">Flexible</option>
+                    <option value="u3">Short hop &mdash; under 3h</option>
+                    <option value="u6">Half a day &mdash; 3 to 6h</option>
+                    <option value="u9">Long haul &mdash; 6 to 9h</option>
+                    <option value="u12">Very long &mdash; 9 to 12h</option>
+                    <option value="u16">Ultra long &mdash; 12 to 16h</option>
+                    <option value="o16">The far side &mdash; 16h and up</option>
+                  </select></div>
+                  <p id="fnd-far-note" class="fnd-home-note"></p>
+                  <!-- The Connections/Routing control that used to hang below (and later
+                       in the advanced panel) is REMOVED, owner rule 2026-08-17: it read
+                       FMAP, a Delta itinerary out of Seattle, so it could only ever
+                       answer for a Seattle reader &mdash; "NOTHING should have anything to
+                       Seattle &hellip; needs to work for all." Do not bring it back unless it
+                       works from any home. -->
+                </div>
+        <div class="fnd-field">
+                  <label for="fnd-home-in">Which airport are you flying from?</label>
+                  <!-- SECOND, because it is the follow-up the question above creates:
+                       "under 6h" is not a filter until the form knows 6h from where. -->
                   <div class="fnd-ctl">
                     <span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-flight-nav"/></svg></span>
                     <input type="text" id="fnd-home-in" placeholder="City or airport" autocomplete="off" spellcheck="false">
                   </div>
                   <ul id="fnd-home-list" class="fnd-home-list" role="listbox" hidden></ul>
                   <p id="fnd-home-note" class="fnd-home-note"></p>
-                  <!-- kept for filter engine compat; defaults to any distance -->
-                  <select id="fnd-far" hidden aria-hidden="true"><option value=""></option></select>
-                  <!-- The Connections/Routing control that used to hang here (and later in
-                       the advanced panel) is REMOVED, owner rule 2026-08-17: it read FMAP,
-                       a Delta itinerary out of Seattle, so it could only ever answer for a
-                       Seattle reader — "NOTHING should have anything to Seattle … needs to
-                       work for all." Do not bring it back unless it works from any home. -->
                 </div>
       </div>
       <div class="hc-nav">
@@ -6482,9 +6525,26 @@ function render() {
     short:  function (h) { return h >= 9  && h < 11; },
     vshort: function (h) { return h < 9; }
   };
-  /* Same cut points the guides index uses for its duration chips, so "under
-     8 hours" means the same number in both places. */
-  var FAR = { u5: 300, u8: 480, u10: 600, u12: 720, u15: 900 };
+  /* FLYING-time bands, in minutes, 3h wide and CONTIGUOUS — a guide is in
+     exactly one of them from any given airport, the same shape Daylight took
+     (owner, 2026-08-22: "can we have more range options here?"). The old map
+     was five open-ended floors (u5/u8/u10/u12/u15) that all overlapped, which
+     multi-pick cannot express: picking "under 8h" and "under 12h" is just
+     "under 12h" twice.
+
+     The top band splits at 16h rather than running open from 12h because the
+     fleet is not evenly spread around the globe. Measured over all 193 mapped
+     destination airports: a single "12h and up" holds 83% of them from Sydney
+     and 79% from Auckland — a filter that returns almost everything. Split at
+     16h, the largest band from any tested origin is 67% and most sit near 40%. */
+  var FAR = {
+    u3:  function (m) { return m < 180; },
+    u6:  function (m) { return m >= 180 && m < 360; },
+    u9:  function (m) { return m >= 360 && m < 540; },
+    u12: function (m) { return m >= 540 && m < 720; },
+    u16: function (m) { return m >= 720 && m < 960; },
+    o16: function (m) { return m >= 960; }
+  };
 
   /* ── Home city ────────────────────────────────────────────────────────────
      TVE.home holds the reader's airport — or null, until they pick one, in
@@ -6846,17 +6906,20 @@ function render() {
      surfaces answer the same question the same way. Each pick keeps its
      option label so the chip reads like the menu did. */
   var picks = { mo: [], wx: [], ty: [], lg: [], ct: [],
-                bd: [], sf: [], co: [], tr: [], tz: [], cu: [], dl: [] };
+                bd: [], sf: [], co: [], tr: [], tz: [], cu: [], dl: [], fr: [] };
 
   function state() {
     var s = {};
+    /* fr joined the multi-pick group when the field came back (2026-08-22).
+       It used to read far.value straight off the select, which made it the one
+       filter on the form that could hold a single answer — "6 to 9h OR 9 to
+       12h" is exactly the question a reader with a fortnight asks. */
     for (var k in picks) s[k] = picks[k].map(function (p) { return p.value; });
-    s.fr = far.value;
     s.days = days;
     return s;
   }
   function anySet(s) {
-    return !!(s.mo.length || s.wx.length || s.fr || s.days !== null ||
+    return !!(s.mo.length || s.wx.length || s.fr.length || s.days !== null ||
               s.ty.length || s.lg.length || s.ct.length || s.bd.length ||
               s.sf.length || s.co.length || s.tr.length ||
               s.tz.length || s.cu.length || s.dl.length);
@@ -6899,11 +6962,23 @@ function render() {
       }
       /* The s.st Routing block that stood here is gone with its control —
          owner rule 2026-08-17, Seattle-only FMAP data. */
-      if (s.fr) {
-        var far = farOf(d, g);
-        if (!far) return false;
-        if (s.fr === 'o15' && !(far.mins >= 900)) return false;
-        if (s.fr !== 'o15' && !(far.mins < FAR[s.fr])) return false;
+      /* Within the group the bands are OR, like every other dimension. A guide
+         with no mapped arrival airport is DROPPED rather than passed through —
+         the same rule the weather filter applies to a guide with no climate
+         row, and for the same reason: padding the answer with cities nobody
+         measured is worse than a shorter list.
+
+         HELD, not applied, while there is no origin. The reader is asked how
+         far they will fly BEFORE they are asked where from (owner rule
+         2026-08-22), so between those two answers there is a real moment when
+         a band is picked and cannot yet be measured. Testing it anyway fails
+         every guide and empties the page; holding it leaves the rest of the
+         form working while the note under the airport field asks for the one
+         thing missing. */
+      if (s.fr.length && HOME && HOME.get()) {
+        var fr = farOf(d, g);
+        if (!fr) return false;
+        if (!anyOf(s.fr, function (b) { return FAR[b] ? FAR[b](fr.mins) : true; })) return false;
       }
       /* Time difference is |offset from the READER'S clock|; currency is the
          destination's own; daylight is computed for the picked month(s). A guide
@@ -6989,7 +7064,8 @@ function render() {
       { el: fTrain,   field: 'tr' },
       { el: fTz,      field: 'tz' },
       { el: fCur,     field: 'cu' },
-      { el: fDay,     field: 'dl' }
+      { el: fDay,     field: 'dl' },
+      { el: far,      field: 'fr' }
     ];
   }
   function pruneSelects(d, s) {
@@ -6999,7 +7075,13 @@ function render() {
          loaded — testing against an empty map reads every guide as unpriced and
          would grey the whole select. Leave them enabled; the panel-open
          prefetch below loads both and re-prunes. */
-      if ((pair.field === 'bd' && !BUDGET) || (pair.field === 'cu' && !RATES)) {
+      /* 'fr' joins them: every band tests through farOf(), which needs the
+         airport positions AND an origin. Judged before either is in, every
+         band reads as unreachable and the whole select greys out — the reader
+         then names an airport and finds the field they were told to fill in
+         already dead. */
+      if ((pair.field === 'bd' && !BUDGET) || (pair.field === 'cu' && !RATES) ||
+          (pair.field === 'fr' && (!AIR || !(HOME && HOME.get())))) {
         [].forEach.call(pair.el.options, function (o) { o.disabled = false; });
         return;
       }
@@ -7024,7 +7106,13 @@ function render() {
   }
 
   function card(d, g, s) {
-    var far = s.fr ? farOf(d, g) : null;
+    /* Gated on the AIRPORT, not on the filter (2026-08-22). It used to appear
+       only while a flight-length band was picked, so a reader who named their
+       airport and asked for July saw no flying times at all — the one number
+       the airport exists to produce, withheld because they had not also
+       filtered by it. No airport, still nothing: there is no origin to
+       measure from and no fallback (owner rule 2026-08-20). */
+    var far = (HOME && HOME.get()) ? farOf(d, g) : null;
     var flt = '';
     if (far && far.atHome) {
       flt = '<span class="flt">' + '<svg class="gm-icon fdot" data-icon="dot-yellow" data-role="dot" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-dot-yellow"/></svg>' +
@@ -7235,9 +7323,18 @@ function render() {
      would read every change event as a forced run. */
   var forced = false;
 
+  /* Set by the home-picker block at the foot of this IIFE, which is where
+     syncFar and the two note elements live. A no-op until then, and a no-op
+     forever on a page with no picker — run() must not care which. Not a
+     forward reference to the function itself: it is declared inside an `if`
+     block, and a block-scoped declaration is not reliably visible up here. */
+  var syncFarNote = function () {};
+
   function run() {
     syncTrain();
     renderChips();
+    /* After renderChips, because both notes describe the CURRENT picks. */
+    syncFarNote();
     var s = state();
     /* The guard still holds for a plain change event: clearing your last filter
        should put the page back, not dump 237 cards you did not ask for. */
@@ -7273,7 +7370,7 @@ function render() {
 
       /* A month on its own narrows nothing — every guide is open every month.
          Say that, rather than returning all 237 as though it were an answer. */
-      var monthOnly = (s.mo.length > 0 && !s.wx.length && !s.fr &&
+      var monthOnly = (s.mo.length > 0 && !s.wx.length && !s.fr.length &&
                        s.days === null &&
                        !s.ty.length && !s.lg.length && !s.ct.length &&
                        !s.bd.length && !s.sf.length && !s.co.length && !s.tr.length &&
@@ -7383,7 +7480,6 @@ function render() {
     if (!pair.el) return;
     pair.el.addEventListener('change', function () { addPick(pair.field, pair.el); });
   });
-  far.addEventListener('change', run);
 
   /* The button is what the brief asked for and what a form is expected to have.
      The controls also run on change, so it confirms rather than gates — nobody
@@ -7395,14 +7491,43 @@ function render() {
     if (!out.hidden) out.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   });
 
-  var reset = document.getElementById('fnd-reset');
-  if (reset) reset.addEventListener('click', function () {
+  /* One function, two callers: the button and a Back-button restore. It
+     clears the AIRPORT too — "Clear everything" is the label, and the airport
+     is an answer the reader gave like any other. HOME.clear() repaints the
+     text box and both notes through the onChange subscription, so nothing
+     here touches them directly. */
+  function resetAll() {
     forced = false;
     for (var k in picks) picks[k] = [];
     all.forEach(function (el) { el.value = ''; });
     days = null;
     if (fDays) fDays.value = '';
+    if (HOME) HOME.clear();
     run();
+  }
+
+  var reset = document.getElementById('fnd-reset');
+  if (reset) reset.addEventListener('click', resetAll);
+
+  /* THE FORM STARTS EMPTY ON EVERY ARRIVAL, INCLUDING BACK (owner rule
+     2026-08-22: "make sure fields start empty and we dont cache the airport
+     and we start fresh").
+
+     Nothing here is persisted and that was never the gap: TVE.home is a plain
+     variable, no filter is written to localStorage, and a hard reload was
+     measured clean — no airport, every select empty. A BFCACHE restore is a
+     different thing entirely. Back from a guide hands the browser's frozen
+     copy of this page back, JS variables included, so the reader returns to
+     an airport and a set of chips from a previous visit with nothing having
+     "saved" anything. Measured before this listener existed: pick LHR, open a
+     guide, press Back - LHR still in the box, two chips still under their
+     fields, the old result list still on screen.
+
+     `persisted` is the whole test. pageshow also fires on an ordinary load,
+     where the form is already empty and clearing it would just re-run the
+     filter engine for nothing. */
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) resetAll();
   });
 
   var moreBtn = document.getElementById('fnd-more');
@@ -7452,9 +7577,58 @@ function render() {
 
     function label(r) { return r[1] + ' (' + r[0] + ')' + (r[2] ? ' · ' + r[2] : ''); }
 
+    /* THE FLIGHT-LENGTH FIELD IS NEVER DISABLED. It was, for one iteration,
+       until an airport existed — and that is precisely the order the owner
+       rejected: "it does not make sense to ask before". The question above is
+       now asked first and answered cold, so all this does is say, in the two
+       notes, which of the two answers is still missing and what the number
+       means once both are in.
+
+       The second note answers a question the owner asked outright (2026-08-22:
+       "are you assuming flying time with connections? are you add the waiting
+       time or not?"). It is NEITHER: no connection and no waiting. It says so
+       on screen rather than in a comment, because a reader comparing "~9h" to
+       a 14h itinerary a booking site quoted them deserves to know which of the
+       two numbers this is. */
+    var farNote = document.getElementById('fnd-far-note');
+    function syncFar() {
+      var h = HOME.get();
+      if (h) {
+        if (farNote) {
+          /* "TIME IN THE AIR", not "nonstop flying time" — owner rule
+             2026-08-22, closing the question they had just asked about
+             connections and waiting: "we need to decide total flying time and
+             not the waiting? otherwise you would need to run all connections.
+             so just give the total time in that air and we let the user know
+             that."
+
+             It is also the more durable of the two labels. "Nonstop" is only
+             true when a nonstop exists; time in the air stays roughly true
+             whether the reader flies direct or connects — a connection adds
+             its dogleg and its waiting, and the waiting is the part this
+             number is telling them it does not carry. */
+          farNote.textContent = 'Total time in the air from ' + h.code +
+            ' — waiting and connections are not counted.';
+        }
+        homeNote.textContent = '';
+        return;
+      }
+      /* No origin yet. Silent until a band is actually picked — a permanent
+         instruction under an untouched control is noise. */
+      if (farNote) {
+        farNote.textContent = picks.fr.length
+          ? 'Not applied yet — name your airport below.' : '';
+      }
+      homeNote.textContent = picks.fr.length
+        ? 'Needed to measure the flight length above.' : '';
+    }
+
     function syncHome() {
       var h = HOME.get();
       homeNote.textContent = '';
+      /* AFTER the blank, not before: syncFar writes into homeNote when a band
+         is waiting on an airport, and a clear that ran second would wipe it. */
+      syncFar();
       /* Empty until the reader picks. There is no city to show them, because
          there is no default any more — owner rule 2026-08-20. */
       homeIn.value = h ? (h.city + ' (' + h.code + ')') : '';
@@ -7525,6 +7699,7 @@ function render() {
       }
     });
 
+    syncFarNote = syncFar;
     HOME.onChange(syncHome);
     syncHome();
   }
