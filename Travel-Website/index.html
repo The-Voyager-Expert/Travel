@@ -3168,9 +3168,18 @@ window.lpGuideCard = function (href, flag, name, extra) {
         <div class="fnd-field">
                   <label for="fnd-day">Hours of Daylight per day</label>
                   <div class="fnd-ctl"><span class="fnd-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#gm-i-horizon-sun"/></svg></span><select id="fnd-day">
+                    <!-- Five bands, 2h wide, symmetric about the 12h equinox, and
+                         contiguous — two options (14h+ / under 10h) left the whole middle
+                         of the year unaskable, which is where most of the fleet sits most
+                         of the time (owner, 2026-08-22: "can we have more range options
+                         here?"). Pruning greys whatever the picked month cannot reach, so
+                         "15h and up" is live in June and dead in December. -->
                     <option value="">Flexible</option>
-                    <option value="long">Long days (14h or more)</option>
-                    <option value="short">Short days (under 10h)</option>
+                    <option value="vlong">Very long &mdash; 15h and up</option>
+                    <option value="long">Long &mdash; 13 to 15h</option>
+                    <option value="avg">Average &mdash; 11 to 13h</option>
+                    <option value="short">Short &mdash; 9 to 11h</option>
+                    <option value="vshort">Very short &mdash; under 9h</option>
                   </select></div>
                 </div>
         <div class="fnd-field">
@@ -6452,6 +6461,15 @@ function render() {
       fTz = adv[7], fCur = adv[8], fDay = adv[9];
 
   var BANDS = { hot: [28, 99], warm: [22, 28], mild: [15, 22], cool: [8, 15], cold: [-99, 8] };
+  /* Daylight hours per day, in the month the reader picked. 2h wide, symmetric
+     about 12h, no gap between them — a guide is in exactly one band per month. */
+  var DAYLIGHT_BAND = {
+    vlong:  function (h) { return h >= 15; },
+    long:   function (h) { return h >= 13 && h < 15; },
+    avg:    function (h) { return h >= 11 && h < 13; },
+    short:  function (h) { return h >= 9  && h < 11; },
+    vshort: function (h) { return h < 9; }
+  };
   /* Same cut points the guides index uses for its duration chips, so "under
      8 hours" means the same number in both places. */
   var FAR = { u5: 300, u8: 480, u10: 600, u12: 720, u15: 900 };
@@ -6896,7 +6914,9 @@ function render() {
       }
       if (s.dl.length) {
         var dhs = daylightFor(d, g, s);
-        if (!dhs || !anyOf(s.dl, function (k) { return anyOf(dhs, function (h) { return k === 'long' ? h >= 14 : h < 10; }); })) return false;
+        if (!dhs || !anyOf(s.dl, function (k) {
+          return anyOf(dhs, function (h) { return DAYLIGHT_BAND[k] ? DAYLIGHT_BAND[k](h) : false; });
+        })) return false;
       }
       /* Weather × months: pass if ANY chosen month (or the annual mean when no
          month is chosen) lands in ANY chosen band — "warm or hot, June or
