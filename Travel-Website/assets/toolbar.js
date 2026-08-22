@@ -5968,11 +5968,19 @@ window.TVE.home = (function () {
     ], price: { budget: '€120–145', mid: '€145–165', expensive: '€195–210', luxury: '€250+' } },
 
     'brussels': { h: [
-      { name: 'Hotel Amigo', note: 'Rocco Forte brand — Renaissance-style building steps from Grand Place, art-curated interiors, Italian-influenced brasserie · 9.0 Booking.com', url: 'https://www.booking.com/hotel/be/amigo.html' },
-      { name: 'Brussels Marriott Hotel Grand Place', note: 'Marriott brand — Rue Auguste Orts, rooftop terrace, steps from Grand Place and Sainte-Catherine quarter · 8.6 Booking.com', url: 'https://www.booking.com/hotel/be/brussels-marriott.html' },
-      { name: 'Sofitel Brussels Le Louise', note: 'Sofitel brand — Avenue Louise luxury triangle, rooftop bar, full spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/be/sofitel-brussels-le-louise.html' },
-      { name: 'Pillows Grand Boutique Hotel Place Rouppe Brussels', note: 'Pillows Hotels — former grand café, Art Deco heritage, Neni Brussels restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/be/pillows-grand-boutique-hotel-place-rouppe.html' }
-    ] },
+      { name: 'Hotel Amigo', note: 'Rocco Forte brand — Renaissance-style building steps from Grand Place, art-curated interiors, Italian-influenced brasserie · 9.0 Booking.com', url: 'https://www.booking.com/hotel/be/amigo.html', tier: 'luxury' },
+      { name: 'Brussels Marriott Hotel Grand Place', note: 'Marriott brand — Rue Auguste Orts, rooftop terrace, steps from Grand Place and Sainte-Catherine quarter · 8.6 Booking.com', url: 'https://www.booking.com/hotel/be/brussels-marriott.html', tier: 'expensive' },
+      { name: 'Sofitel Brussels Le Louise', note: 'Sofitel brand — Avenue Louise luxury triangle, rooftop bar, full spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/be/sofitel-brussels-le-louise.html', tier: 'luxury' },
+      { name: 'Pillows Grand Boutique Hotel Place Rouppe Brussels', note: 'Pillows Hotels — former grand café, Art Deco heritage, Neni Brussels restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/be/pillows-grand-boutique-hotel-place-rouppe.html', tier: 'expensive' },
+      { name: 'OPO Hotel', note: 'Independent — Rue de la Vierge Noire 2 by Place Sainte-Catherine, 24h reception, soundproofed rooms, five minutes on foot from the Grand-Place · 9.2 Booking.com', url: 'https://www.booking.com/hotel/be/opo-bruxelles3.html', tier: 'budget' },
+      { name: 'The Liman Hotel', note: 'Independent — Rue Royale 199 by the Botanique gardens, restaurant and bar, fitness room, 24h reception, metro Botanique at the door · 9.1 Booking.com', url: 'https://www.booking.com/hotel/be/the-liman.html', tier: 'budget' },
+      { name: 'Hotel Manos Premier', note: 'Independent — Chaussée de Charleroi 100 off Avenue Louise, garden, sauna and hammam, 24h reception, valet parking · 9.0 Booking.com', url: 'https://www.booking.com/hotel/be/manos-premier.html', tier: 'mid' },
+      { name: 'Hotel Fleur de Ville', note: 'Independent — Rue du Fossé aux Loups 46B between the Grand-Place and the Monnaie, fitness room, 24h reception, soundproofed rooms · 9.4 Booking.com', url: 'https://www.booking.com/hotel/be/fleur-de-ville.html', tier: 'mid' },
+      { name: 'Courtyard by Marriott Brussels EU', note: 'Marriott Courtyard — Rue Joseph II 32 in the European Quarter, restaurant and bar, fitness room, 24h reception, metro Maelbeek and Arts-Loi close by · 8.5 Booking.com', url: 'https://www.booking.com/hotel/be/courtyard-by-marriott-brussels-eu.html', tier: 'mid' },
+      { name: 'The Hoxton Brussels', note: 'Hoxton — Square Victoria Régina 1, a converted 1970s tower by the Botanique with a rooftop restaurant, 24h reception, fitness room · 9.0 Booking.com', url: 'https://www.booking.com/hotel/be/the-hoxton-brussels.html', tier: 'mid' },
+      { name: 'Pillows City Hotel Brussels Centre', note: 'Pillows Hotels — Rue des Paroissiens 15 beside the Cathedral and Brussels-Central, restaurant, fitness room, 24h reception, private parking · 9.1 Booking.com', url: 'https://www.booking.com/hotel/be/sandton-brussels-centre.html', tier: 'expensive' }
+    ], price: { budget: '€180–195', mid: '€205–245', expensive: '€265–300', luxury: '€380+' } },
+
     'budapest': { h: [
       { name: 'Four Seasons Hotel Gresham Palace Budapest', note: 'Four Seasons brand — 1906 Art Nouveau palace at Chain Bridge, Danube-view rooms, spa, Kollázs Brasserie & Bar · 9.4 Booking.com', url: 'https://www.booking.com/hotel/hu/four-seasons-gresham-palace-budapest.html' },
       { name: 'Corinthia Budapest', note: 'Independent luxury — 1896 grand Victorian building in central Pest, Royal Spa, Brasserie & Atrium, indoor pool · 9.2 Booking.com', url: 'https://www.booking.com/hotel/hu/corinthiaroyal.html' },
