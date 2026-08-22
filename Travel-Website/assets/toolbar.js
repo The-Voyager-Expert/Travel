@@ -4942,75 +4942,416 @@ window.TVE.home = (function () {
     _applyDayParam();
   }
 
-  /* ── Save for Offline — pill on guide pages so readers can explicitly cache
-     the guide before going offline (flight, tunnel, abroad without data).
-     The SW already caches every visited page; this button confirms intent and
-     persists the saved state in localStorage so returning visits show ✓. ── */
+  /* ── Save for Offline — writes ONE self-contained .html FILE the reader picks
+     a folder for (owner rule 2026-08-22: "ask the user where they want to save
+     and the user chooses a folder and saves it").
+
+     WHAT THIS REPLACED, AND WHY. Until today the pill confirmed a SERVICE WORKER
+     CACHE entry and stamped localStorage so a return visit showed a ✓. Every
+     part of that worked, and the feature was still unusable, because a cache
+     entry HAS NO ADDRESS. Owner: "how can i find the guide i ask to save off
+     line? where it goes? i can't load the site if i have no internet to find my
+     bookmark." That is the whole defect: the saved guide was reachable only by
+     navigating to a URL the reader could no longer look up — a bookmark they
+     could not reach without the network, on a page they could not load without
+     the bookmark. The cache was real and the guide was in it; there was simply
+     no door. A file has a door: it sits in Files or Downloads under a name, and
+     it opens with no network, no browser history and no service worker.
+
+     THE SERVICE-WORKER CACHE IS UNTOUCHED AND STILL DOES ITS JOB. sw.js goes on
+     caching every visited page, so a reader who returns to the URL online-then-
+     offline still gets it. This pill is no longer the way to ASK for that; it is
+     the way to get a copy you can find. Never re-point it at caches.match().
+
+     WHY THE WHOLE PAGE IS INLINED. The file has to survive with no origin at
+     all: opened from Files, from a folder, from a USB stick, on a plane. So the
+     stylesheet, the webfont and every photograph are embedded as data: URIs, and
+     the copy carries no <script>, no <link> and no same-origin request of any
+     kind. A saved file that still needs the network for its CSS is not a saved
+     file — it is a bookmark with extra steps, which is the bug being fixed.
+
+     WHY IT SERIALISES THE LIVE DOM RATHER THAN REFETCHING THE SOURCE. Almost
+     everything a reader sees on a guide is injected by this file at runtime —
+     the weather strip, the pill row, the Trip Overview, the drawn marks, the
+     hotel alternatives, the cross-links. Refetching guides/{slug}.html would
+     save the scaffold and none of it. Cloning documentElement captures the page
+     as rendered, including the runtime <style> blocks and the #gm-sprite <symbol>
+     defs, which is why the copy needs no script to look right.
+
+     AND WHY IT CARRIES NO JAVASCRIPT. A static file cannot run the collapse
+     toggles, the lightbox, the currency converter or the calendar export, so
+     rather than ship dead controls the builder REMOVES every control and OPENS
+     every collapsible (see _offlineStrip). The copy is a document, not an app:
+     everything is visible, anchors still jump, and nothing on it can fail. */
+
+  /* Read a Blob as a data: URI. */
+  function _offlineBlobToDataURI(blob) {
+    return new Promise(function (res, rej) {
+      var fr = new FileReader();
+      fr.onload = function () { res(fr.result); };
+      fr.onerror = function () { rej(fr.error || new Error('read failed')); };
+      fr.readAsDataURL(blob);
+    });
+  }
+
+  /* Fetch a URL and return it as a data: URI, or null on ANY failure. A photo
+     that 404s, a font host that is unreachable, a CORS refusal — none of them
+     may abort the save. The reader gets a copy with one picture missing, which
+     is strictly better than an error where a file should have been. */
+  function _offlineFetchDataURI(url) {
+    return fetch(url, { credentials: 'same-origin' })
+      .then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.blob();
+      })
+      .then(_offlineBlobToDataURI)
+      ['catch'](function () { return null; });
+  }
+
+  /* Inline every font file a Google Fonts stylesheet points at.
+
+     The guide asks for Public Sans (see the fonts.googleapis.com link this file
+     injects into <head>). Left alone, an offline copy falls back to the platform
+     sans-serif and the whole page re-wraps — every measured line length, every
+     pill width and the two-line breakpoints in the Trip Overview are wrong at
+     once, which reads as a broken save rather than a missing font.
+
+     fonts.gstatic.com serves the woff2 files with Access-Control-Allow-Origin:*,
+     so they can be fetched and embedded. If any part of this fails the CSS is
+     returned with whatever it had, and the copy quietly falls back — never a
+     failed save. */
+  function _offlineInlineFonts(cssText) {
+    var urls = [];
+    var re = /url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/g;
+    var m;
+    while ((m = re.exec(cssText))) { if (urls.indexOf(m[1]) === -1) urls.push(m[1]); }
+    if (!urls.length) return Promise.resolve(cssText);
+    return Promise.all(urls.map(function (u) {
+      return _offlineFetchDataURI(u).then(function (d) { return { u: u, d: d }; });
+    })).then(function (pairs) {
+      pairs.forEach(function (p) {
+        if (!p.d) return;
+        cssText = cssText.split('url(' + p.u + ')').join('url(' + p.d + ')');
+      });
+      return cssText;
+    });
+  }
+
+  /* Remove everything that cannot work without JavaScript, and open everything
+     that JavaScript would otherwise have to open.
+
+     The two removal rules are deliberately MECHANICAL rather than a list of ids.
+     Every action control on a guide is either a <button> or an
+     <a href="javascript:void(0)">, so those two selectors catch the pill row,
+     the per-stop mark/share/bookmark/note rail, the lightbox chrome, the
+     currency panel and anything added after this was written — a hand-kept list
+     of ids goes stale the first time a control is renamed, silently, leaving a
+     dead button in every saved copy. The collapse toggles are NOT buttons (a
+     .day-header is a div with a click handler), so they survive the sweep and
+     are handled by the .collapsed removal below, which is what makes the copy
+     readable end to end. */
+  function _offlineStrip(root) {
+    var kill = [
+      'script',
+      'link[rel="stylesheet"]',
+      'link[href*="fonts.googleapis.com"]',
+      'button',
+      'a[href^="javascript:"]',
+      'input', 'select', 'textarea',
+      'link[rel="manifest"]',  /* points at a file the copy will not have */
+      /* THE NAV GOES, THE WORDMARK STAYS. Every tab points at a page the file
+         cannot reach, so eight dead pills would sit above every saved guide;
+         the wordmark is what identifies the document as ours and is embedded
+         with the other images. Note this cannot be done by removing
+         #toolbar-mount: toolbar.js deletes that div itself once it has built
+         the bar (see the removeChild above), so by the time this clone is
+         taken the id no longer exists and a rule naming it passes vacuously. */
+      '.tb-links', '.tb-ham-menu', '.tb-scroll-wrap',
+      '.tb-progress',          /* scroll hairline — driven by a scroll listener */
+      '#ics-pill-row',         /* action pills — all JS, now empty anyway */
+      '#tve-lb',               /* photo lightbox overlay */
+      '#tve-a2hs-banner'       /* add-to-home-screen prompt */
+    ];
+    kill.forEach(function (sel) {
+      var nodes = root.querySelectorAll(sel);
+      for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].parentNode) nodes[i].parentNode.removeChild(nodes[i]);
+      }
+    });
+
+    /* Open every collapsible. .collapsed is the one class that hides content on
+       a guide — days, extras sections, Worth Knowing and Hotel Recommendations
+       all use it — and with no script to toggle it a collapsed section would be
+       permanently invisible in the saved copy. */
+    var collapsed = root.querySelectorAll('.collapsed');
+    for (var c = 0; c < collapsed.length; c++) collapsed[c].classList.remove('collapsed');
+
+    /* Anything the page had hidden behind a JS-set [hidden] that is really
+       content (the no-entries footnote is the live example) stays hidden — only
+       .collapsed is a collapse mechanism. Nothing else is force-shown, because
+       force-showing an overlay would paint it across the document. */
+  }
+
+  /* Rewrite same-origin links to absolute https URLs.
+
+     A relative /essentials/visa/ in a file sitting in Downloads resolves against
+     file:// and cannot go anywhere. Absolute means the link is dead offline —
+     which it always was — and LIVE the moment the reader has a connection, which
+     is the strictly better of the two. In-page anchors (#day2) are left exactly
+     as they are: they are the copy's own navigation and must keep working. */
+  function _offlineAbsolutise(root) {
+    var origin = location.origin;
+    var links = root.querySelectorAll('a[href]');
+    for (var i = 0; i < links.length; i++) {
+      var raw = links[i].getAttribute('href');
+      if (!raw || raw.charAt(0) === '#') continue;
+      if (/^(https?:|mailto:|tel:|data:)/i.test(raw)) continue;
+      try { links[i].setAttribute('href', new URL(raw, origin).href); } catch (e) { /* leave it */ }
+    }
+  }
+
+  /* Embed every image as a data: URI, reporting progress as it goes.
+
+     Photographs are the bulk of the file (a guide runs roughly 2–3.5 MB of
+     them), so this is the slow part and the only part worth a progress figure.
+     They are fetched in small batches rather than all at once — thirty parallel
+     requests on hotel wifi is how a save times out. */
+  function _offlineInlineImages(root, onProgress) {
+    var imgs = [];
+    var all = root.querySelectorAll('img[src]');
+    for (var i = 0; i < all.length; i++) {
+      var s = all[i].getAttribute('src');
+      if (s && s.slice(0, 5) !== 'data:') imgs.push(all[i]);
+    }
+    if (!imgs.length) return Promise.resolve();
+
+    var done = 0;
+    var BATCH = 4;
+    var cache = {};   /* one photograph used twice is fetched once */
+
+    function step(start) {
+      if (start >= imgs.length) return Promise.resolve();
+      var slice = imgs.slice(start, start + BATCH);
+      return Promise.all(slice.map(function (img) {
+        var abs;
+        try { abs = new URL(img.getAttribute('src'), location.href).href; }
+        catch (e) { abs = img.getAttribute('src'); }
+        var p = cache[abs] || (cache[abs] = _offlineFetchDataURI(abs));
+        return p.then(function (d) {
+          if (d) img.setAttribute('src', d);
+          /* srcset would override the src we just embedded and point back at
+             the network — the one attribute that silently un-does this work. */
+          img.removeAttribute('srcset');
+          img.removeAttribute('loading');
+          done++;
+          if (onProgress) onProgress(done, imgs.length);
+        });
+      })).then(function () { return step(start + BATCH); });
+    }
+    return step(0);
+  }
+
+  /* Build the complete self-contained document as a string. */
+  function _offlineBuildDoc(onProgress) {
+    var clone = document.documentElement.cloneNode(true);
+
+    _offlineStrip(clone);
+    _offlineAbsolutise(clone);
+
+    var head = clone.querySelector('head');
+    var body = clone.querySelector('body');
+
+    /* A short header identifying the copy and dating it. Without this a file
+       found in Downloads months later says nothing about when it was taken or
+       where the current version lives. */
+    if (body) {
+      var live = location.href.replace(/#.*$/, '');
+      var bar = document.createElement('div');
+      bar.setAttribute('style', [
+        'font:13px/1.5 system-ui,-apple-system,sans-serif',
+        'background:#f5f4f0', 'color:#6b6860',
+        'border-bottom:1px solid #e2ded6',
+        'padding:10px 16px', 'text-align:center'
+      ].join(';'));
+      bar.innerHTML = 'Offline copy · saved ' + new Date().toISOString().slice(0, 10)
+        + ' · <a href="' + live + '" style="color:#C04E1A">view the live guide</a>';
+      body.insertBefore(bar, body.firstChild);
+    }
+
+    /* The stylesheet, then the font files inside it, then the photographs. */
+    return fetch('/assets/guide-style.css', { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      ['catch'](function () { return ''; })
+      .then(function (css) {
+        var fontLink = document.querySelector('link[href*="fonts.googleapis.com/css2"]');
+        if (!fontLink) return css;
+        return fetch(fontLink.href)
+          .then(function (r) { return r.ok ? r.text() : ''; })
+          ['catch'](function () { return ''; })
+          .then(_offlineInlineFonts)
+          .then(function (fontCss) { return fontCss + '\n' + css; });
+      })
+      .then(function (css) {
+        if (head && css) {
+          /* Everything is open in the saved copy, so the collapse chevrons point
+             at a gesture that no longer exists and the pointer cursor promises
+             one. Both are drawn by the stylesheet, so they are switched off here
+             rather than by unpicking classes in the clone. */
+          css += '\n/* offline copy — collapse affordances have nothing to do */\n'
+               + '.day-block > .day-header::after,'
+               + '.extras-section > .extras-title::after,'
+               + '.worth-knowing > .extras-title::after,'
+               + '#hotel-alternatives > .extras-title::after{display:none!important}\n'
+               + '.day-header,.extras-title{cursor:default!important}\n';
+          var st = document.createElement('style');
+          st.textContent = css;
+          head.insertBefore(st, head.firstChild);
+        }
+        /* <base> would send every remaining relative URL back to the network. */
+        var bases = clone.querySelectorAll('base');
+        for (var b = 0; b < bases.length; b++) bases[b].parentNode.removeChild(bases[b]);
+        /* The tab icon is a <link>, not an <img>, so the image pass below never
+           sees it — left alone it stays a relative path and the saved copy opens
+           with a blank favicon. Small enough to embed outright. */
+        var icons = clone.querySelectorAll('link[rel*="icon"]');
+        return Promise.all(Array.prototype.map.call(icons, function (ln) {
+          var href = ln.getAttribute('href');
+          if (!href || href.slice(0, 5) === 'data:') return Promise.resolve();
+          var abs;
+          try { abs = new URL(href, location.href).href; } catch (e) { return Promise.resolve(); }
+          return _offlineFetchDataURI(abs).then(function (d) {
+            if (d) ln.setAttribute('href', d);
+            else if (ln.parentNode) ln.parentNode.removeChild(ln);
+          });
+        })).then(function () { return _offlineInlineImages(clone, onProgress); });
+      })
+      .then(function () {
+        return '<!doctype html>\n' + clone.outerHTML;
+      });
+  }
+
   function _injectOfflineBtn() {
     if (!isRealGuide) return;
-    if (!('caches' in window)) return;
-
-    var storageKey = 'tve-offline-' + location.pathname;
-    var saved = !!localStorage.getItem(storageKey);
 
     var btn = document.createElement('a');
     btn.href = 'javascript:void(0)';
     btn.className = 'overview-extra-link';
     btn.id = 'tve-offline-btn';
-    btn.innerHTML = saved
-      ? monoSVG('check', 15) + ' Saved for Offline'
-      : monoSVG('download', 15) + ' Save for Offline';
-    if (saved) {
-      btn.classList.add('tve-saved');
-      btn.style.setProperty('cursor', 'default', 'important');
+    var restLabel = monoSVG('download', 15) + ' Save for Offline';
+    btn.innerHTML = restLabel;
+
+    var busy = false;
+
+    function setLabel(html) { btn.innerHTML = html; }
+    function rest() {
+      busy = false;
+      setLabel(restLabel);
+      btn.style.setProperty('cursor', 'pointer', 'important');
     }
 
-    /* Transient confirmation toast — bottom-centre, auto-dismiss. Only fires on a
-       fresh save (not on page load when already saved), so the reader gets a clear
-       "this is now available offline" receipt at the moment of action. */
-    function showOfflineToast() {
+    function toast(msg) {
       var t = document.createElement('div');
       t.className = 'tve-toast';
       t.setAttribute('role', 'status');
-      t.textContent = '✓ Saved for Offline — available without a connection';
+      t.textContent = msg;
       document.body.appendChild(t);
-      /* Force a reflow so the opacity/transform transition fires reliably — more
-         robust than requestAnimationFrame, which browsers throttle in background
-         tabs (the fade-in would otherwise never start). */
+      /* Force a reflow so the transition fires reliably — more robust than
+         requestAnimationFrame, which browsers throttle in background tabs. */
       void t.offsetWidth;
       t.classList.add('tve-toast-in');
       setTimeout(function () {
         t.classList.remove('tve-toast-in');
         setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 320);
-      }, 3200);
+      }, 3600);
+    }
+
+    var slug = (location.pathname.split('/').pop() || 'guide').replace(/\.html?$/i, '') || 'guide';
+    var fileName = slug + '-guide.html';
+
+    /* Last-resort delivery. Needs no user activation, so it can always run —
+       which is what makes it the safe end of the cascade. */
+    function deliverDownload(html) {
+      var url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
+      var a = document.createElement('a');
+      a.href = url; a.download = fileName;
+      document.body.appendChild(a); a.click();
+      setTimeout(function () {
+        URL.revokeObjectURL(url);
+        if (a.parentNode) a.parentNode.removeChild(a);
+      }, 1500);
+      toast('Saved — check your Downloads folder');
+    }
+
+    /* iOS and iPadOS have no folder picker; the Share sheet IS the chooser, and
+       "Save to Files" inside it is where the reader picks the folder. Both
+       canShare and share are feature-detected, so a browser that refuses an HTML
+       file simply falls through to the download above rather than failing. */
+    function deliverShare(html) {
+      var file;
+      try { file = new File([html], fileName, { type: 'text/html' }); }
+      catch (e) { deliverDownload(html); return; }
+      if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
+        deliverDownload(html); return;
+      }
+      navigator.share({ files: [file], title: document.title })
+        .then(function () { rest(); })
+        ['catch'](function (err) {
+          /* AbortError is the reader closing the sheet — a deliberate cancel,
+             not a failure, and must not then force a download they declined. */
+          if (err && err.name === 'AbortError') { rest(); return; }
+          /* Anything else is usually a lost user activation: the build took
+             several seconds and the gesture that started it has expired. Offer
+             one fresh tap rather than silently dumping the file somewhere. */
+          setLabel(monoSVG('download', 15) + ' Tap to save');
+          btn.__pending = html;
+          busy = false;
+        });
     }
 
     btn.addEventListener('click', function (e) {
       e.preventDefault(); e.stopPropagation();
-      if (localStorage.getItem(storageKey)) {
-        /* Already saved → toggle back to the resting state (mirrors I've Been). */
-        localStorage.removeItem(storageKey);
-        btn.innerHTML = monoSVG('download', 15) + ' Save for Offline';
-        btn.classList.remove('tve-saved');
-        btn.style.setProperty('cursor', 'pointer', 'important');
+
+      /* A build that lost its activation is waiting for one fresh tap. */
+      if (btn.__pending) {
+        var pending = btn.__pending;
+        btn.__pending = null;
+        deliverShare(pending);
         return;
       }
-      btn.textContent = 'Saving…';
-      var markSaved = function () {
-        localStorage.setItem(storageKey, '1');
-        btn.textContent = '✓ Saved for Offline';
-        btn.classList.add('tve-saved');
-        btn.style.setProperty('cursor', 'default', 'important');
-        showOfflineToast();
-      };
-      /* caches.match searches all caches — if SW already cached this page on
-         load (normal case), confirm immediately without a second network hit. */
-      caches.match(location.href).then(function (hit) {
-        if (hit) return markSaved();
-        /* Not cached yet (first load, SW just registered) — fetch it; the SW
-           will intercept and cache the response. */
-        return fetch(location.href).then(markSaved)['catch'](markSaved);
-      })['catch'](markSaved);
+      if (busy) return;
+      busy = true;
+
+      /* THE PICKER IS OPENED FIRST, BEFORE THE BUILD, AND THE ORDER IS THE WHOLE
+         TRICK. showSaveFilePicker requires a live user activation, and the build
+         below takes several seconds of fetching — long enough for the activation
+         to expire. Asking for the destination while the tap is still warm is
+         what lets the reader choose a folder at all; build first and the picker
+         throws NotAllowedError every time. */
+      var handlePromise = Promise.resolve(null);
+      if (window.showSaveFilePicker) {
+        handlePromise = window.showSaveFilePicker({
+          suggestedName: fileName,
+          types: [{ description: 'Web page', accept: { 'text/html': ['.html'] } }]
+        })['catch'](function () { return null; });   /* cancelled → fall through */
+      }
+
+      return handlePromise.then(function (handle) {
+        setLabel('Saving… 0%');
+        return _offlineBuildDoc(function (done, total) {
+          setLabel('Saving… ' + Math.round(done / total * 100) + '%');
+        }).then(function (html) {
+          if (handle) {
+            return handle.createWritable()
+              .then(function (w) { return w.write(html).then(function () { return w.close(); }); })
+              .then(function () { rest(); toast('Saved — the guide now opens without a connection'); });
+          }
+          rest();
+          deliverShare(html);
+        });
+      })['catch'](function () {
+        rest();
+        toast('Could not save the guide — please try again');
+      });
     });
 
     /* Inject into the ICS pill row (_injectICSExport runs first because it is
@@ -5026,7 +5367,7 @@ window.TVE.home = (function () {
       pillRow.appendChild(btn);
       /* iOS :active workaround — touch events don't reliably fire :active */
       btn.addEventListener('touchstart', function () {
-        if (localStorage.getItem(storageKey)) return;
+        if (busy) return;
         btn.classList.add('tve-pressed');
         btn.style.setProperty('color', '#fff', 'important');
         btn.style.setProperty('-webkit-text-fill-color', '#fff', 'important');
