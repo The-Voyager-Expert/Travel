@@ -1,3 +1,4 @@
+/* 2026-08-22: the two circles in a Best-Of card's top-right corner are ROUND again on a phone. They are 30x30 with border-radius:50%, but mobile.css section 7 puts a 40px min-height on every <button> for the tap target, and min-height beats height - so on a phone they rendered 30 wide by 40 tall, an oval. Both go to 40x40 inside the existing phone block rather than opting out of the floor: still a circle, and now the tap target the floor was asking for. Same failure the compare bar hit a few lines below. web-travel-style.css -> v94. CACHE to v1336. */
 /* 2026-08-22: the landing finder's Show my matches is a PILL again. It carries id="hc-go" AND class="fnd-go", and index.html loads guides-index-style.css for the mosaic — so that file's unscoped #hc-go (the guides-index chooser button: 6px corners, 38px, 13px, a ::after '›') beat .fnd-go on specificity and repainted it, next to a Clear everything pill it no longer matched. The four #hc-go rules are scoped to #hc-inner, which exists only on the guides index. guides-index-style.css -> 25. CACHE to v1328. */
 /* 2026-08-22: THE APP ICON'S GROUND IS WHITE (owner, holding it against their own bookmark bar — a green rounded square, a pickleball, the GitHub octocat, all on white chrome: "i changed my mind to the background white it looks better with the rest"). Four grounds were tried in one day and each looked right at the time: navy tile, terracotta tile, page cream #f5f4f0 ("i dont see the cream background looks white"), catalogue cream #f6ecdb, then white. It is --c-paper from Site-Icons.html's light :root, READ not typed, found by brace balance (that page styles its own chrome for dark mode long before it declares the palette). FLAT: no ramp — --c-paper-shade #dad4cb would band the bottom of an icon whose job is to vanish into the bar — and no rim, which is a box outline. Still OPAQUE: iOS composites a transparent apple-touch icon against BLACK. The mark keeps the full catalogue treatment. Also fixed: the fill target rounds instead of truncating, which had shipped the 32px favicon at 0.906 of its box where every other size sat at 0.95. MEASURED against the neighbours at 32px — the pin is 0.969 tall and 0.688 wide, 47.6% of the box, against a filled rounded square at 88.7% and a circle at 72.7%: height matches, footprint cannot, because a pin is 0.71 as wide as it is tall. No JS or CSS changed: this bump purges the replaced image files. CACHE to v1323. */
 /* 2026-08-22: landing finder — catalogue #568 target-and-arrow registered as GM_SPRITE 'target' for the "What's your focus?" field (the ticket mark read as tours). toolbar.js -> v904. CACHE to v1285. */
@@ -1885,7 +1886,7 @@
 /* 2026-08-22: wx-hot re-drawn — the sun is visible now toolbar.js -> v947. CACHE to v1332. */
 /* 2026-08-22: the Day 1 airport chip has no left rail — border-left: 3px solid #C04E1A retired in light and both dark blocks; colour alone is the difference now (owner: "i want this out") guide-style.css -> 261. CACHE to v1333. */
 /* 2026-08-22: hotel tier head: rule on both sides of the price range toolbar.js -> v948, guide-style.css -> v262. CACHE to v1335. */
-var CACHE = 'travel-cache-v1335';
+var CACHE = 'travel-cache-v1336';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1898,7 +1899,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 262,'toolbar.js': 948, 'mobile.css': 88, 'web-travel-style.css': 93, 'guides-index-style.css': 25, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 11, 'trains.js': 2, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 262,'toolbar.js': 948, 'mobile.css': 88, 'web-travel-style.css': 94, 'guides-index-style.css': 25, 'read-about.css': 6, 'best-of-features.js': 4, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 11, 'trains.js': 2, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
