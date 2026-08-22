@@ -6735,11 +6735,16 @@ window.TVE.home = (function () {
       { name: 'Hotel Principe di Savoia · Dorchester Collection', note: 'Dorchester Collection — Piazza della Repubblica 17, 5-star, indoor pool, spa, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/principe-di-savoia.html', tier: 'luxury' }
     ], price: { budget: '€150–250', mid: '€250–350', expensive: '€350–600', luxury: '€600+' } },
     'monaco': { h: [
-      { name: 'Hotel de Paris Monte-Carlo', note: 'SBM brand — 1864 Place du Casino landmark, outdoor pool, Louis XV three-Michelin-star dining · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mc/ha-tel-de-paris.html' },
-      { name: 'Hotel Hermitage Monte-Carlo', note: 'SBM brand — Belle Époque landmark, heated outdoor pool, Vistamar Mediterranean restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/mc/ha-tel-hermitage.html' },
-      { name: 'Monte-Carlo Bay Hotel & Resort', note: 'SBM — Larvotto beachfront, lagoon pool on the sea, Le Blue Bay restaurant, The Bay spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/mc/monte-carlo-bay.html' },
-      { name: 'Fairmont Monte Carlo', note: 'Fairmont brand — beachfront on Avenue Princesse Grace, outdoor pool, casino adjacent · 8.7 Booking.com', url: 'https://www.booking.com/hotel/mc/fairmont-monte-carlo.html' }
-    ] },
+      { name: 'Alfred Hotels Monaco', note: 'Independent — Place des Moneghetti in Beausoleil, a 5 min walk over the border, rooftop bar, 24h front desk · 9.3 Booking.com', url: 'https://www.booking.com/hotel/fr/hotelformbeausoleil.html', tier: 'budget' },
+      { name: 'Hotel La Tonkine ex Olympia', note: 'Independent — Boulevard du Général Leclerc in Beausoleil, 5 min walk to the Casino, 24h front desk · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/olympia-beausoleil.html', tier: 'budget' },
+      { name: 'Columbus Hotel Monte-Carlo, Curio Collection by Hilton', note: 'Hilton Curio — Avenue des Papalins in Fontvieille, heated outdoor pool, 24h front desk, 10 min drive to the hotel · 8.5 Booking.com', url: 'https://www.booking.com/hotel/mc/columbus-monaco.html', tier: 'mid' },
+      { name: 'Port Palace', note: 'Independent — Avenue Kennedy on Port Hercule, harbour-view rooms, 24h front desk, 8 min walk to the hotel · 9.0 Booking.com', url: 'https://www.booking.com/hotel/mc/port-palace.html', tier: 'mid' },
+      { name: 'Le Méridien Beach Plaza', note: 'Marriott family — Avenue Princesse Grace on Larvotto, private beach, indoor and outdoor pools, 24h front desk · 8.4 Booking.com', url: 'https://www.booking.com/hotel/mc/lemeridienbeachplaza.html', tier: 'expensive' },
+      { name: 'Fairmont Monte Carlo', note: 'Fairmont brand — beachfront on Avenue Princesse Grace, outdoor pool, casino adjacent · 8.7 Booking.com', url: 'https://www.booking.com/hotel/mc/fairmont-monte-carlo.html', tier: 'expensive' },
+      { name: 'Hotel de Paris Monte-Carlo', note: 'SBM brand — 1864 Place du Casino landmark, outdoor pool, Louis XV three-Michelin-star dining · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mc/ha-tel-de-paris.html', tier: 'luxury' },
+      { name: 'Hotel Hermitage Monte-Carlo', note: 'SBM brand — Belle Époque landmark, heated outdoor pool, Vistamar Mediterranean restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/mc/ha-tel-hermitage.html', tier: 'luxury' },
+      { name: 'Monte-Carlo Bay Hotel & Resort', note: 'SBM — Larvotto beachfront, lagoon pool on the sea, Le Blue Bay restaurant, The Bay spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/mc/monte-carlo-bay.html', tier: 'luxury' }
+    ], price: { budget: '€100–200', mid: '€200–300', expensive: '€300–450', luxury: '€450+' } },
     'montevideo': { h: [
       { name: 'Radisson Montevideo Victoria Plaza Hotel', note: 'Radisson brand — Plaza Independencia landmark tower, outdoor pool, panoramic city views · 8.3 Booking.com', url: 'https://www.booking.com/hotel/uy/radisson-montevideo-victoria-plaza.html' },
       { name: 'Cottage Hotel Montevideo', note: 'Independent boutique — Pocitos neighborhood, curated art, quiet residential atmosphere · 9.1 Booking.com', url: 'https://www.booking.com/hotel/uy/cottage-puerto-buceo.html' },
