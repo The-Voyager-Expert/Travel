@@ -6053,11 +6053,17 @@ window.TVE.home = (function () {
     ], price: { budget: '$90–125', mid: '$185–210', expensive: '$280–325', luxury: '$450+' } },
 
     'cambridge': { h: [
-      { name: 'The Varsity Hotel & Spa', note: 'Independent boutique — Thompsons Lane, rooftop Glassworks restaurant, River Cam views, spa with rooftop pool · 9.1 Booking.com', url: 'https://www.booking.com/hotel/gb/the-varsity-spa.html' },
-      { name: 'Graduate Cambridge', note: 'Graduate Hotels brand — Granta Place riverside, punting-at-the-door location on the Cam, boutique heritage interiors · 8.9 Booking.com', url: 'https://www.booking.com/hotel/gb/cambridge-cambridge.html' },
-      { name: 'Gonville Hotel', note: 'Independent — Parker\'s Piece, Cotto restaurant and G2 Bar, 4-star · 8.9 Booking.com', url: 'https://www.booking.com/hotel/gb/gonville.html' },
-      { name: 'Hotel du Vin Cambridge', note: 'Hotel du Vin brand — Trumpington Street Victorian building, classic bistro and wine cellar · 8.8 Booking.com', url: 'https://www.booking.com/hotel/gb/hotel-du-vin-and-bistro-cambridge.html' }
-    ] },
+      { name: 'The Varsity Hotel & Spa', note: 'Independent boutique — Thompsons Lane, rooftop Glassworks restaurant, River Cam views, spa with rooftop pool · 9.1 Booking.com', url: 'https://www.booking.com/hotel/gb/the-varsity-spa.html', tier: 'expensive' },
+      { name: 'Graduate Cambridge', note: 'Graduate Hotels brand — Granta Place riverside, punting-at-the-door location on the Cam, boutique heritage interiors · 8.9 Booking.com', url: 'https://www.booking.com/hotel/gb/cambridge-cambridge.html', tier: 'mid' },
+      { name: 'Gonville Hotel', note: 'Independent — Parker\'s Piece, Cotto restaurant and G2 Bar, 4-star · 8.9 Booking.com', url: 'https://www.booking.com/hotel/gb/gonville.html', tier: 'mid' },
+      { name: 'Hotel du Vin Cambridge', note: 'Hotel du Vin brand — Trumpington Street Victorian building, classic bistro and wine cellar · 8.8 Booking.com', url: 'https://www.booking.com/hotel/gb/hotel-du-vin-and-bistro-cambridge.html', tier: 'mid' },
+      { name: 'Hyatt Centric Cambridge', note: 'Hyatt Centric — 37 Eddington Avenue in the Eddington quarter north-west of the centre, fitness room, 24h reception, garage parking, 10-min bus or taxi to the colleges · 8.4 Booking.com', url: 'https://www.booking.com/hotel/gb/hyatt-centric-cambridge.html', tier: 'budget' },
+      { name: 'Wilde Cambridge City Centre', note: 'Wilde aparthotel — Round Church Street two minutes from the Round Church and the Backs, studio kitchens, fitness room, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/gb/wilde-aparthotels-cambridge-city-centre.html', tier: 'mid' },
+      { name: 'Clayton Hotel Cambridge', note: 'Clayton Hotels — Station Road beside Cambridge Station, Garden House restaurant and bar, fitness room, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/gb/tamburlaine.html', tier: 'expensive' },
+      { name: 'The Regent Aparthotel', note: 'Independent — 41 Regent Street on Parker\'s Piece, serviced apartments with kitchens, lounge bar, ten minutes on foot to the Fitzwilliam · 9.0 Booking.com', url: 'https://www.booking.com/hotel/gb/regent-cambridge.html', tier: 'expensive' },
+      { name: 'University Arms Hotel', note: 'Autograph Collection (Marriott) — Regent Street on Parker\'s Piece, 1834 landmark rebuilt by John Simpson, Parker\'s Tavern, library, 24h reception, valet parking', url: 'https://www.booking.com/hotel/gb/university-arms-cambridge.html', tier: 'luxury' }
+    ], price: { budget: '£70–100', mid: '£130–165', expensive: '£170–190', luxury: '£330+' } },
+
     'cancun': { h: [
       { name: 'Nizuc Resort & Spa', note: 'Independent luxury — southernmost tip of the Hotel Zone, 5 pools, overwater hammam spa, private beach, adults-only · 9.2 Booking.com', url: 'https://www.booking.com/hotel/mx/nizuc-resort-amp-spa.html' },
       { name: 'Hyatt Zilara Cancun', note: 'Hyatt brand — adults-only all-inclusive, 3 oceanfront pools, 8 dining options, beachfront Hotel Zone · 9.0 Booking.com', url: 'https://www.booking.com/hotel/mx/the-royal-in-cancun.html' },
