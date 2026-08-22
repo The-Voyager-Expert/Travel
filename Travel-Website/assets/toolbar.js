@@ -6356,11 +6356,13 @@ window.TVE.home = (function () {
       { name: 'Gran Marquise Hotel', note: 'Independent luxury — Meireles Av. Beira Mar beachfront, rooftop pool with Atlantic views, top-rated address in Fortaleza · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/gran-marquise.html', tier: 'luxury' }
     ], price: { budget: 'R$280–650', mid: 'R$600–900', expensive: 'R$900–1,300', luxury: 'R$1,300+' } },
     'foz-do-iguacu': { h: [
-      { name: 'JL Hotel by Bourbon', note: 'Bourbon Hotéis \u2014 Avenida Costa e Silva north of the centre, outdoor pool, fitness, soundproofed rooms \u00b7 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/bourbon-foz-do-iguacu-business.html' },
-      { name: 'San Rafael Comfort Class Hotel', note: 'Independent \u2014 Rua Almirante Barroso in the city centre, garden and outdoor pool, free parking, kids\u2019 club \u00b7 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/san-rafael-ltda.html' },
-      { name: 'Viale Tower Hotel', note: 'Independent \u2014 Avenida Jorge Schimmelpfeng in the centre, heated rooftop infinity pool over the city \u00b7 8.7 Booking.com', url: 'https://www.booking.com/hotel/br/viale-tower.html' },
-      { name: 'Dom Pedro I Palace Hotel', note: 'Independent \u2014 Av. das Cataratas Km 3 on the road out to the falls, indoor and rooftop pools, tennis, gardens \u00b7 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/dom-pedro-palace.html' }
-    ] },
+      { name: 'JL Hotel by Bourbon', note: 'Bourbon Hotéis — Avenida Costa e Silva north of the centre, outdoor pool, fitness, soundproofed rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/bourbon-foz-do-iguacu-business.html', tier: 'budget' },
+      { name: 'San Rafael Comfort Class Hotel', note: 'Independent — Rua Almirante Barroso in the city centre, garden and outdoor pool, free parking, kids’ club · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/san-rafael-ltda.html', tier: 'budget' },
+      { name: 'Dom Pedro I Palace Hotel', note: 'Independent — Av. das Cataratas Km 3 on the road out to the falls, indoor and rooftop pools, tennis, gardens · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/dom-pedro-palace.html', tier: 'budget' },
+      { name: 'Viale Tower Hotel', note: 'Independent — Avenida Jorge Schimmelpfeng in the centre, heated rooftop infinity pool over the city · 8.7 Booking.com', url: 'https://www.booking.com/hotel/br/viale-tower.html', tier: 'mid' },
+      { name: 'Recanto Cataratas Thermas Resort', note: 'Independent — Avenida Costa e Silva, thermal pools and water park, spa, kids\' club, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/recanto-park.html', tier: 'expensive' },
+      { name: 'Gran Meliá Iguazú', note: 'Meliá brand — inside the Argentine national park with the falls in view from the infinity pool, spa, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ar/gran-melia-iguazu.html', tier: 'luxury' }
+    ], price: { budget: 'R$400–700', mid: 'R$700–1,200', expensive: 'R$1,200–2,500', luxury: 'R$2,500+' } },
     'frankfurt': { h: [
       { name: 'Steigenberger Frankfurter Hof', note: 'Steigenberger brand — 1876 Kaiserplatz landmark, Michelin-recognized The Faces restaurant, historic grand-hotel address · 8.7 Booking.com', url: 'https://www.booking.com/hotel/de/steigenberger-frankfurter-hof.html' },
       { name: 'Villa Kennedy', note: 'Rocco Forte brand — 1901 Sachsenhausen patrician villa, garden pool, Vigna restaurant, spa, 15-minute walk to Römer', url: 'https://www.expedia.com/Frankfurt-Hotels-Rocco-Forte-Villa-Kennedy.h1329504.Hotel-Information' },
@@ -11151,7 +11153,7 @@ window.TVE.home = (function () {
       'AES','AGP','AJU','AMM','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
       'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FLN','FLR','FOR', 'FRA','GIG','GOT','GRU','GVA','HAM',
-      'HAN','HEL','HER','HKG','HKT','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
+      'HAN','HEL','HER','HKG','HKT','HND','IAD','IAH','ICN','IGU', 'IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW',
       'LHR','LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP',
       'NCE', 'OGG','OPO','ORD','ORY','OSL','PEK','PHL','PHX','PMI','PNS','PPS','PSA','PSP','PUS','PVG','RAK','RSW','SAN','SCL',
       'SEA','SFO','SIN','SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TBS','TFS','TIV','TLL','TPE','VCE','VIE','VLC',
