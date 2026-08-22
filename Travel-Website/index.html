@@ -3280,6 +3280,8 @@ window.lpGuideCard = function (href, flag, name, extra) {
           <span class="hc-step-dot" id="hc-dot-2">2</span>
           <span class="hc-step-line"></span>
           <span class="hc-step-dot" id="hc-dot-3">3</span>
+          <span class="hc-step-line"></span>
+          <span class="hc-step-dot" id="hc-dot-4">4</span>
         </div>
 
         <div id="hc-s1" class="hc-step">
@@ -3297,6 +3299,13 @@ window.lpGuideCard = function (href, flag, name, extra) {
             <button type="button" class="hcchip" data-v="9">Oct</button>
             <button type="button" class="hcchip" data-v="10">Nov</button>
             <button type="button" class="hcchip" data-v="11">Dec</button>
+          </div>
+        </div>
+
+        <div id="hc-s2" class="hc-step" hidden>
+          <div class="tt-label">How many days do you have?</div>
+          <div class="ttchip-row" style="margin-top:10px">
+            <button type="button" class="hcchip" data-v="2">2</button><button type="button" class="hcchip" data-v="3">3</button><button type="button" class="hcchip" data-v="4">4</button><button type="button" class="hcchip" data-v="5">5</button><button type="button" class="hcchip" data-v="6">6</button><button type="button" class="hcchip" data-v="7">7</button><button type="button" class="hcchip" data-v="8">8+</button>
           </div>
         </div>
 
@@ -5264,7 +5273,7 @@ function render() {
   var restart = document.getElementById('hc-restart');
   if (!btnHC || !panel) return;
 
-  var ans  = { month: null, climate: null, activities: [] };
+  var ans  = { month: null, days: null, climate: null, activities: [] };
   var step = 1;
 
   var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -5272,7 +5281,7 @@ function render() {
 
   /* ── State & step navigation ── */
   function dots() {
-    for (var i = 1; i <= 3; i++) {
+    for (var i = 1; i <= 4; i++) {
       var d = document.getElementById('hc-dot-' + i);
       if (!d) continue;
       d.classList.toggle('on',   i === step);
@@ -5287,11 +5296,12 @@ function render() {
     /* Three steps: month, weather, activities. The trip-length step went on
        2026-08-22 — a guide's day count is the most we planned, not a
        requirement, so asking for it only hid guides. */
-    var steps = [document.getElementById('hc-s1'), document.getElementById('hc-s3'), document.getElementById('hc-s4')];
+    var steps = [document.getElementById('hc-s1'), document.getElementById('hc-s2'),
+                 document.getElementById('hc-s3'), document.getElementById('hc-s4')];
     steps.forEach(function (el, idx) { if (el) el.hidden = (idx + 1 !== n); });
     backBtn.hidden = (n === 1);
-    goBtn.hidden   = (n !== 3);
-    if (n === 3) goBtn.disabled = (ans.activities.length === 0);
+    goBtn.hidden   = (n !== 4);
+    if (n === 4) goBtn.disabled = (ans.activities.length === 0);
     dots();
   }
 
@@ -5338,7 +5348,8 @@ function render() {
     });
   }
   bindSingle('hc-s1', 'month',   2);
-  bindSingle('hc-s3', 'climate', 3);
+  bindSingle('hc-s2', 'days',    3);
+  bindSingle('hc-s3', 'climate', 4);
 
   [].slice.call(document.querySelectorAll('#hc-s4 .hcchip')).forEach(function (chip) {
     chip.addEventListener('click', function () {
@@ -5386,6 +5397,19 @@ function render() {
     return 0;
   }
 
+  /* ORDERS, NEVER FILTERS (owner rule 2026-08-22): a guide's day count is the most
+     we planned, not a requirement — a reader with three days uses Days 1-3 of a
+     five-day guide. So a close fit ranks higher and nothing is hidden. */
+  function daysScore(city, n) {
+    var dd = window._DAYS_DATA;
+    if (!dd || n === null || n === undefined) return 0;
+    var d = Number(dd[city]); n = parseInt(n, 10);
+    if (!d || !n) return 0;
+    if (n >= 8) return d >= 8 ? 2 : (d === 7 ? 1 : 0);
+    var diff = Math.abs(d - n);
+    return diff === 0 ? 2 : (diff === 1 ? 1 : 0);
+  }
+
   function activityScore(city, acts) {
     var td = window._THEME_DATA;
     if (!td || !acts || !acts.length) return 0;
@@ -5428,8 +5452,9 @@ function render() {
          (CLIMATE_INLINE is keyed "abu-dhabi", never "Abu-Dhabi"). */
       var folder = info.folder || city.toLowerCase().replace(/ /g, '-');
       var cs = climateScore(folder, ans.month, ans.climate);
+      var ds = daysScore(city, ans.days);
       var as = activityScore(city, ans.activities);
-      var total = cs * 2 + as;
+      var total = cs * 2 + ds * 2 + as;
       if (total === 0) return;
       /* Flat URL — the "/guides/Folder/folder.html" fallback shape 404s since
          the flatten. */
@@ -5466,7 +5491,7 @@ function render() {
 
   /* ── Restart ── */
   restart.addEventListener('click', function () {
-    ans = { month: null, climate: null, activities: [] };
+    ans = { month: null, days: null, climate: null, activities: [] };
     [].slice.call(document.querySelectorAll('#hc-inner .hcchip')).forEach(function (c) { c.classList.remove('on'); });
     results.hidden = true;
     inner.hidden = false;

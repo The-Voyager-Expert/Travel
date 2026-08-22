@@ -708,12 +708,9 @@
     </div>
 
     <div id="hc-s2" class="hc-step" hidden>
-      <div class="tt-label">How long is the trip?</div>
+      <div class="tt-label">How many days do you have?</div>
       <div class="ttchip-row" style="margin-top:10px">
-        <button type="button" class="hcchip" data-v="short">1–3 days</button>
-        <button type="button" class="hcchip" data-v="medium">4–6 days</button>
-        <button type="button" class="hcchip" data-v="long">7–10 days</button>
-        <button type="button" class="hcchip" data-v="extended">10+ days</button>
+        <button type="button" class="hcchip" data-v="2">2</button><button type="button" class="hcchip" data-v="3">3</button><button type="button" class="hcchip" data-v="4">4</button><button type="button" class="hcchip" data-v="5">5</button><button type="button" class="hcchip" data-v="6">6</button><button type="button" class="hcchip" data-v="7">7</button><button type="button" class="hcchip" data-v="8">8+</button>
       </div>
     </div>
 
@@ -5702,7 +5699,7 @@
   var restart = document.getElementById('hc-restart');
   if (!btnHC || !panel) return;
 
-  var ans  = { month: null, length: null, climate: null, activities: [] };
+  var ans  = { month: null, days: null, climate: null, activities: [] };
   var step = 1;
 
   var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -5776,7 +5773,7 @@
     });
   }
   bindSingle('hc-s1', 'month',   2);
-  bindSingle('hc-s2', 'length',  3);
+  bindSingle('hc-s2', 'days',    3);
   bindSingle('hc-s3', 'climate', 4);
 
   [].slice.call(document.querySelectorAll('#hc-s4 .hcchip')).forEach(function (chip) {
@@ -5806,16 +5803,17 @@
     return 0;
   }
 
-  function lengthScore(city, pref) {
+  /* ORDERS, NEVER FILTERS (owner rule 2026-08-22): a guide's day count is the most
+     we planned, not a requirement — a reader with three days uses Days 1-3 of a
+     five-day guide. So a close fit ranks higher and nothing is hidden. */
+  function daysScore(city, n) {
     var dd = window._DAYS_DATA;
-    if (!dd) return 0;
-    var d = dd[city];
-    if (d === undefined) return 0;
-    if (pref === 'short')    { if (d <= 3) return 2; if (d === 4) return 1; return 0; }
-    if (pref === 'medium')   { if (d >= 4 && d <= 6) return 2; if (d === 3 || d === 7) return 1; return 0; }
-    if (pref === 'long')     { if (d >= 7 && d <= 10) return 2; if (d >= 5 && d < 7) return 1; return 0; }
-    if (pref === 'extended') { if (d >= 10) return 2; if (d >= 7) return 1; return 0; }
-    return 0;
+    if (!dd || n === null || n === undefined) return 0;
+    var d = Number(dd[city]); n = parseInt(n, 10);
+    if (!d || !n) return 0;
+    if (n >= 8) return d >= 8 ? 2 : (d === 7 ? 1 : 0);
+    var diff = Math.abs(d - n);
+    return diff === 0 ? 2 : (diff === 1 ? 1 : 0);
   }
 
   function activityScore(city, acts) {
@@ -5850,9 +5848,9 @@
         }
       }
       var cs = climateScore(climateKey, ans.month, ans.climate);
-      var ls = lengthScore(city, ans.length);
+      var ds = daysScore(city, ans.days);
       var as = activityScore(city, ans.activities);
-      var total = cs * 2 + ls * 2 + as;
+      var total = cs * 2 + ds * 2 + as;
       if (total === 0) return;
       scored.push({ href: href, city: city, flag: flag, country: country, climateKey: climateKey, total: total });
     });
@@ -5902,7 +5900,7 @@
 
   /* ── Restart ── */
   restart.addEventListener('click', function () {
-    ans = { month: null, length: null, climate: null, activities: [] };
+    ans = { month: null, days: null, climate: null, activities: [] };
     [].slice.call(document.querySelectorAll('#hc-inner .hcchip')).forEach(function (c) { c.classList.remove('on'); });
     results.hidden = true;
     inner.hidden = false;
