@@ -1737,7 +1737,8 @@
    control. Measured a no-op on a page that still has headings — which is what makes
    the rollout safe one page at a time. best-of-features.js -> v3. CACHE to v1214. */
 
-var CACHE = 'travel-cache-v1214';
+/* 2026-08-22: THE 'Updated …' STAMP GOES BACK ON THE RAIL. _injectStamp wrote 'margin: 18px 0 20px' plus 'padding-left: 32px' inline, and the shorthand zeroed the auto side margins in body > .title-updated — so on all nine /stats/ pages the stamp carried the rail's WIDTH pinned to the left window edge, 130px out of line with every other line on the page at 1440. The comment justifying it read 'stats pages close .wrap early', which was true of a stray </div> in stats/asia and is true of no page now (Rule 926). Typography and the vertical margin only now; the horizontal margin and the gutter belong to the shared rule. The hardcoded 14px phone override went with it — mobile.css already forces var(--gutter), which is 16px. Measured after: text at 162 on desktop and 16 on a phone, both exactly on .wrap. toolbar.js -> v840. CACHE to v1215. */
+var CACHE = 'travel-cache-v1215';
 
 /* The guide-calendar hand-off cache. Written by toolbar.js, read and emptied
    once by the fetch handler below, and EXEMPT from the activate sweep — it is
@@ -1750,7 +1751,7 @@ var ICS_OUTBOX = 'gmd-ics-outbox';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 839, 'mobile.css': 87, 'web-travel-style.css': 90, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 3, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
+var MIN_VERSIONS = { 'guide-style.css': 257,'toolbar.js': 840, 'mobile.css': 87, 'web-travel-style.css': 90, 'guides-index-style.css': 23, 'read-about.css': 6, 'best-of-features.js': 3, 'best-of-cross-data.js': 24, 'weather.js': 11, 'trains.css': 10, 'trains.js': 1, 'airlines.css': 2, 'airlines.js': 2, 'passport.js': 4 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

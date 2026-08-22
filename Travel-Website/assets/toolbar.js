@@ -3518,16 +3518,22 @@ window.TVE.home = (function () {
         tp.appendChild(el);
       } else {
         /* ALL viewports: end of body, so the stamp lands at the true visual
-           bottom, left-aligned (stats pages close .wrap early). */
-        el.style.cssText = 'display:block;font-size:11px;color:#9a948a;margin:18px 0 20px;padding-left:32px;text-align:left;';
+           bottom, left-aligned.
+
+           TYPOGRAPHY ONLY, AND THE VERTICAL MARGIN ONLY. The horizontal margin
+           and the gutter belong to `body > .title-updated` in
+           web-travel-style.css, which puts the stamp on the same rail as every
+           other line on the page (max-width: var(--rail); margin auto; padding
+           0 var(--gutter)). This used to write `margin: 18px 0 20px` and
+           `padding-left: 32px`, whose shorthand zeroed those auto side margins
+           - so on all nine stats pages the stamp had the rail's WIDTH pinned to
+           the left window edge, 130px out of line with the content above it.
+           The comment justifying it said "stats pages close .wrap early", which
+           was true of a stray `</div>` fixed on 2026-08-22 (Rule 926) and is
+           not true of any page now. Never re-add a `margin` shorthand or a
+           `padding-left` here; the shared rule is the rail. */
+        el.style.cssText = 'display:block;font-size:11px;color:#9a948a;margin-top:18px;margin-bottom:20px;text-align:left;';
         document.body.appendChild(el);
-        /* Mobile: shrink padding-left to match .wrap mobile gutter (14px). */
-        if (!document.getElementById('tve-stamp-mobile-style')) {
-          var mst = document.createElement('style');
-          mst.id = 'tve-stamp-mobile-style';
-          mst.textContent = '@media (max-width: 600px) and (pointer: coarse) {body>.title-updated{padding-left:14px!important}}';
-          document.head.appendChild(mst);
-        }
       }
     }
     function _injectUpdated() {
