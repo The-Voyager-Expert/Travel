@@ -6315,11 +6315,13 @@ window.TVE.home = (function () {
       { name: 'Hotel Continental Oslo', note: 'Independent — Stortingsgaten near the National Theatre, Theatercaféen brasserie, acclaimed art collection, 155 rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/no/continental.html' }
     ] },
     'oxford': { h: [
-      { name: 'Le Manoir aux Quat\'Saisons, A Belmond Hotel', note: 'Belmond brand — Raymond Blanc\'s two-Michelin-star retreat in Great Milton, 32 rooms, kitchen garden · 9.7 Booking.com', url: 'https://www.booking.com/hotel/gb/belmond-le-manoir-aux-quat-39-saisons.html' },
-      { name: 'Old Bank Hotel', note: 'Independent boutique 5-star — Oxford High Street, views of university spires, Quod restaurant and terrace, 43 rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gb/the-old-bank.html' },
-      { name: 'Old Parsonage Hotel', note: 'Independent 5-star — 1660 stone house at 1 Banbury Road, walled roof terrace, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/gb/old-parsonage.html' },
-      { name: 'Courtyard by Marriott Oxford City Centre', note: 'Marriott brand — 15 Paradise Street by the Castle quarter, AC, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/gb/courtyard-by-marriott-oxford-city-centre.html' }
-    ] },
+      { name: 'Le Manoir aux Quat\'Saisons, A Belmond Hotel', note: 'Belmond brand — Raymond Blanc\'s two-Michelin-star retreat in Great Milton, 32 rooms, kitchen garden · 9.7 Booking.com', url: 'https://www.booking.com/hotel/gb/belmond-le-manoir-aux-quat-39-saisons.html', tier: 'luxury' },
+      { name: 'Old Bank Hotel', note: 'Independent boutique 5-star — Oxford High Street, views of university spires, Quod restaurant and terrace, 43 rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gb/the-old-bank.html', tier: 'expensive' },
+      { name: 'Old Parsonage Hotel', note: 'Independent 5-star — 1660 stone house at 1 Banbury Road, walled roof terrace, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/gb/old-parsonage.html', tier: 'luxury' },
+      { name: 'Courtyard by Marriott Oxford City Centre', note: 'Marriott brand — 15 Paradise Street by the Castle quarter, AC, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/gb/courtyard-by-marriott-oxford-city-centre.html', tier: 'mid' },
+      { name: 'The Store', note: 'Independent 5-star — 1-5 Broad Street in the old Boswells department store, rooftop bar and terrace, spa, AC, 24h reception, 4.7 on TripAdvisor · 8.7 Booking.com', url: 'https://www.booking.com/hotel/gb/the-store-oxfordshire1.html', tier: 'expensive' },
+      { name: 'easyHotel Oxford', note: 'easyHotel brand — 280 Banbury Road in Summertown, compact AC rooms, 24h reception, paid parking, 4.6 on TripAdvisor · 7.8 Booking.com', url: 'https://www.booking.com/hotel/gb/easyhotel-oxford.html', tier: 'budget' }
+    ], price: { budget: '£60–120', mid: '£120–200', expensive: '£200–320', luxury: '£320+' } },
     'palawan': { h: [
       { name: 'The Funny Lion - Puerto Princesa', note: 'Independent — F. Ponce de Leon Road, outdoor pool, 24h reception, airport shuttle · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ph/the-funny-lion-puerto-princesa.html' },
       { name: 'El Nido Resorts Pangulasian Island', note: 'El Nido Resorts — solar-powered adults-preferred island resort, white sand beach, three pools · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ph/el-nido-resorts-pangulasian-island.html' },
