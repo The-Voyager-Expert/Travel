@@ -6134,11 +6134,16 @@ window.TVE.home = (function () {
       { name: 'Malibu Country Inn', note: 'Independent — Point Dume area, ocean view from pool deck, fire pits, romantic 16-room inn · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/malibu-country-inn.html' }
     ] },
     'manuel-antonio': { h: [
-      { name: 'Arenas del Mar Beachfront & Rainforest Resort', note: 'Independent — adults-focused, twin-beach location within national park buffer, infinity pool with forest canopy views · 9.4 Booking.com', url: 'https://www.booking.com/hotel/cr/arenas-del-mar-beachfront-amp-rainforest-resort.html' },
-      { name: 'Tulemar Resort', note: 'Independent boutique — tree-canopy bungalows, private beach within park buffer, jungle-to-sea setting · 9.4 Booking.com', url: 'https://www.booking.com/hotel/cr/buena-vista-luxury-villas-and-tulemar-bungalows.html' },
-      { name: 'La Mansion Inn', note: 'Independent — hilltop boutique, 20 suites with jungle canopy views, two pools · 9.2 Booking.com', url: 'https://www.booking.com/hotel/cr/la-mansion-inn.html' },
-      { name: 'Si Como No Resort & Spa', note: 'Independent — private wildlife refuge, two pools, TreeTops Spa, Claro Que Si restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/cr/si-como-no-resort.html' }
-    ] },
+      { name: 'Layan Hotel & Spa', note: 'Independent — 24-room boutique on the hill above Playa Espadilla, infinity pool, spa, restaurant, 24h front desk · 4.5 TripAdvisor', url: 'https://www.expedia.com/Quepos-Hotels-Layan-Hotel-Spa.h100447436.Hotel-Information', tier: 'budget' },
+      { name: 'Shana by the Beach', note: 'Independent — hillside resort 800 m from Playa Espadilla, pool with Pacific view, spa, 24h front desk · 8.4 Booking.com', url: 'https://www.booking.com/hotel/cr/pacific-souss.html', tier: 'mid' },
+      { name: 'Si Como No Resort & Spa', note: 'Independent — private wildlife refuge, two pools, TreeTops Spa, Claro Que Si restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/cr/si-como-no-resort.html', tier: 'expensive' },
+      { name: 'La Mansion Inn', note: 'Independent — hilltop boutique, 20 suites with jungle canopy views, two pools · 9.2 Booking.com', url: 'https://www.booking.com/hotel/cr/la-mansion-inn.html', tier: 'expensive' },
+      { name: 'Parador Nature Resort and Spa', note: 'Independent — 5-star on the Punta Quepos headland, infinity pools, spa, 24h front desk · 9.3 Booking.com', url: 'https://www.booking.com/hotel/cr/parador-resort-and-spa.html', tier: 'expensive' },
+      { name: 'Arenas del Mar Beachfront & Rainforest Resort', note: 'Independent — adults-focused, twin-beach location within national park buffer, infinity pool with forest canopy views · 9.4 Booking.com', url: 'https://www.booking.com/hotel/cr/arenas-del-mar-beachfront-amp-rainforest-resort.html', tier: 'luxury' },
+      { name: 'Tulemar Resort', note: 'Independent boutique — tree-canopy bungalows, private beach within park buffer, jungle-to-sea setting · 9.4 Booking.com', url: 'https://www.booking.com/hotel/cr/buena-vista-luxury-villas-and-tulemar-bungalows.html', tier: 'luxury' },
+      { name: 'Gaia Hotel & Reserve', note: 'Independent — adults-only 5-star on a private reserve at Km 2.7, infinity pool, spa, 24h front desk · 8.9 Booking.com', url: 'https://www.booking.com/hotel/cr/gaia-reserve.html', tier: 'luxury' },
+      { name: 'Los Altos Resort', note: 'Independent — 5-star suites on the hillside at Km 4, private beach access, spa, 24h front desk · 8.9 Booking.com', url: 'https://www.booking.com/hotel/cr/los-altos-beach-resort-spa.html', tier: 'luxury' }
+    ], price: { budget: '$90–130', mid: '$130–210', expensive: '$210–380', luxury: '$380+' } },
     'marco-island': { h: [
       { name: 'Hilton Marco Island Beach Resort & Spa', note: 'Hilton family — directly on Marco Island\'s main beach, pools, spa, sunset views over Gulf of Mexico · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-marco-island-beach-resort.html' },
       { name: 'Marco Beach Ocean Resort', note: 'Independent boutique — 58 suites on the Esplanade, rooftop pool, Gulf-view balconies', url: 'https://www.expedia.com/Naples-Hotels-Marco-Beach-Ocean-Resort.h798448.Hotel-Information' },
@@ -10473,12 +10478,12 @@ window.TVE.home = (function () {
        list) while every European guide jumped to its country rather than to
        its airport. */
     var LOUNGE_IATAS = [
-      'AGP','AMS','ARN','ATH','ATL','AUA','BCN','BER','BGI','BGO','BKK','BOS','BRU','CAI','CDG','CMB',
-      'CPH','CPT','CUN','CUR','DBV','DOH','DTW','DUB','DUS','DXB','EDI','FAO','FCO','FRA','GIG','GOT',
-      'GRU','GVA','HAM','HAN','HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','KTM','LAS','LAX',
-      'LGA','LGW','LHR','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MSP','MUC','MXP','NAP',
-      'NCE','OPO','ORD','ORY','OSL','PEK','PMI','PVG','RAK','SAN','SCL','SEA','SFO','SIN','SKG','SLC',
-      'SPU','SYD','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ','ZAG','ZRH'
+      'AGP', 'AMS', 'ARN', 'ATH', 'ATL', 'AUA', 'BCN', 'BER', 'BGI', 'BGO', 'BKK', 'BOS', 'BRU', 'CAI', 'CDG', 'CMB',
+      'CPH', 'CPT', 'CUN', 'CUR', 'DBV', 'DOH', 'DTW', 'DUB', 'DUS', 'DXB', 'EDI', 'FAO', 'FCO', 'FRA', 'GIG', 'GOT',
+      'GRU', 'GVA', 'HAM', 'HAN', 'HEL', 'HER', 'HKG', 'HND', 'IAD', 'IAH', 'ICN', 'IST', 'JFK', 'KTM', 'LAS', 'LAX',
+      'LGA', 'LGW', 'LHR', 'LIS', 'LUX', 'LYS', 'MAD', 'MAN', 'MCT', 'MEL', 'MIA', 'MLE', 'MSP', 'MUC', 'MXP', 'NAP',
+      'NCE', 'OPO', 'ORD', 'ORY', 'OSL', 'PEK', 'PMI', 'PVG', 'RAK', 'SAN', 'SCL', 'SEA', 'SFO', 'SIN', 'SJO', 'SKG',
+      'SLC', 'SPU', 'SYD', 'TPE', 'VCE', 'VIE', 'VLC', 'WLG', 'YUL', 'YVR', 'YYZ', 'ZAG', 'ZRH',
     ];
 
     function _inject() {
