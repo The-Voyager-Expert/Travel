@@ -6014,11 +6014,19 @@ window.TVE.home = (function () {
     ], price: { budget: 'HUF 36,000–40,000', mid: 'HUF 52,000–70,000', expensive: 'HUF 75,000–100,000', luxury: 'HUF 195,000+' } },
 
     'buenos-aires': { h: [
-      { name: 'Park Hyatt Buenos Aires', note: 'Hyatt brand — 1934 Palacio Duhau mansion merged with contemporary tower, Recoleta, Duhau Restaurant & Vinoteca, 3 pools · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ar/park-hyatt-buenos-aires.html' },
-      { name: 'Alvear Palace Hotel', note: 'Leading Hotels of the World — 1932 French Renaissance landmark in Recoleta, Alvear Art Restaurant, butler service · 9.5 Booking.com', url: 'https://www.booking.com/hotel/ar/alvear-palace.html' },
-      { name: 'Four Seasons Hotel Buenos Aires', note: 'Four Seasons brand — Recoleta garden mansion tower, Le Mistral restaurant, outdoor pool, spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ar/four-seasons-buenos-aires.html' },
-      { name: 'Faena Hotel Buenos Aires', note: 'Faena brand — Philippe Starck–designed waterfront tower in Puerto Madero, Rojo Tango dinner-show, rooftop pool · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ar/faena-hotel-buenos-aires.html' }
-    ] },
+      { name: 'Park Hyatt Buenos Aires', note: 'Hyatt brand — 1934 Palacio Duhau mansion merged with contemporary tower, Recoleta, Duhau Restaurant & Vinoteca, 3 pools · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ar/park-hyatt-buenos-aires.html', tier: 'luxury' },
+      { name: 'Alvear Palace Hotel', note: 'Leading Hotels of the World — 1932 French Renaissance landmark in Recoleta, Alvear Art Restaurant, butler service · 9.5 Booking.com', url: 'https://www.booking.com/hotel/ar/alvear-palace.html', tier: 'luxury' },
+      { name: 'Four Seasons Hotel Buenos Aires', note: 'Four Seasons brand — Recoleta garden mansion tower, Le Mistral restaurant, outdoor pool, spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ar/four-seasons-buenos-aires.html', tier: 'luxury' },
+      { name: 'Faena Hotel Buenos Aires', note: 'Faena brand — Philippe Starck–designed waterfront tower in Puerto Madero, Rojo Tango dinner-show, rooftop pool · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ar/faena-hotel-buenos-aires.html', tier: 'luxury' },
+      { name: 'Casa Bevant Hotel Boutique', note: 'Independent boutique — Vicente López 1827 two blocks from Recoleta Cemetery, rooftop terrace, 24h reception, airport pickup · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ar/casa-bevant.html', tier: 'budget' },
+      { name: 'Sheraton Buenos Aires Hotel &amp; Convention Center', note: 'Marriott Sheraton brand — San Martín 1225 by Retiro and Plaza San Martín, indoor and outdoor pools, spa, 24h reception · 7.9 Booking.com', url: 'https://www.booking.com/hotel/ar/sheraton-buenos-aires.html', tier: 'mid' },
+      { name: 'DoubleTree by Hilton Buenos Aires', note: 'Hilton DoubleTree — Reconquista 945 in the Microcentro, indoor pool and spa, 24h reception, ten minutes on foot from Plaza San Martín · 8.3 Booking.com', url: 'https://www.booking.com/hotel/ar/melia-buenos-aires.html', tier: 'mid' },
+      { name: 'Urban Suites Recoleta Boutique Hotel', note: 'Independent — Junín 1727 beside Recoleta Cemetery, sauna and fitness room, 24h reception, airport pickup · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ar/urban-suites-recoleta.html', tier: 'mid' },
+      { name: 'AQ Tailored Suites', note: 'Independent — Montevideo 937 in Recoleta, rooftop pool with views, restaurant, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ar/aq-tailored-suites.html', tier: 'expensive' },
+      { name: 'Palladio Hotel Buenos Aires MGallery', note: 'Accor MGallery — Avenida Callao 924 in Recoleta, rooftop pool, spa with hot tub and sauna, 24h reception, valet parking · 9.5 Booking.com', url: 'https://www.booking.com/hotel/ar/palladio-buenos-aires-mgallery-by-sofitel.html', tier: 'expensive' },
+      { name: 'Hub Porteño', note: 'Independent — 11-suite townhouse at Rodríguez Peña 1967 in Recoleta, Tarquino restaurant, steam room, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ar/hub-portea-o.html', tier: 'expensive' }
+    ], price: { budget: '$160–180', mid: '$220–250', expensive: '$320–430', luxury: '$650+' } },
+
     'busan': { h: [
       { name: 'Park Hyatt Busan', note: 'Hyatt brand — Haeundae-gu, 38th-floor infinity pool with Gwangalli Bridge panorama, spa, ocean-view dining · 9.0 Booking.com', url: 'https://www.booking.com/hotel/kr/park-hyatt-busan.html' },
       { name: 'Westin Josun Busan', note: 'Marriott brand — Haeundae Beach, direct beachfront access, outdoor pool, full-service spa, panoramic sea views · 8.9 Booking.com', url: 'https://www.booking.com/hotel/kr/westin-josun-busan.html' },
@@ -11021,12 +11029,12 @@ window.TVE.home = (function () {
     var LOUNGE_IATAS = [
       'AES','AGP','AMS','ANC','ARN','ATH','ATL','AUA','AUH','BCN','BER','BGI','BGO','BIO','BKK','BOS',
       'BRU','BUD','CAI','CDG','CMB','CPH','CPT','CUN','CUR','CUZ','CWB','DBV','DEN','DFW','DOH','DTW',
-      'DUB','DUS','DXB','EDI','EYW','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN','HEL',
-      'HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR','LIH',
-      'LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE','OPO',
-      'ORD','ORY','OSL','PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN','SJC',
-      'SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC','WLG','YUL','YVR','YYZ',
-      'ZAG','ZRH'
+      'DUB','DUS','DXB','EDI','EYW','EZE','FAO','FCO','FHR','FRA','GIG','GOT','GRU','GVA','HAM','HAN',
+      'HEL','HER','HKG','HND','IAD','IAH','ICN','IST','JFK','JPA','KTM','LAS','LAX','LGA','LGW','LHR',
+      'LIH','LIS','LUX','LYS','MAD','MAN','MCT','MEL','MIA','MLE','MRS','MSP','MUC','MXP','NAP','NCE',
+      'OPO','ORD','ORY','OSL','PEK','PMI','PPS','PSP','PVG','RAK','RSW','SAN','SCL','SEA','SFO','SIN',
+      'SJC','SJO','SKG','SLC','SPU','STR','SXB','SYD','TIV','TPE','VCE','VIE','VLC','WLG','YUL','YVR',
+      'YYZ','ZAG','ZRH'
     ];
 
     function _inject() {
